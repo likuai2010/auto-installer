@@ -47,41 +47,45 @@
     </el-collapse>
     <el-divider />
     <div class="audit-status-content">
-      <el-result
-        ref="$el10"
-        title="审核状态"
-        :icon="status.icon"
-        :sub-title="status.subTitle"
-      >
-        <template #extra>
-          <div class="status-content">
-            <div class="status-content-title">下载地址：</div>
-            <el-input v-model="status.dowloadUrl">
-              <template #append>
-                <el-tooltip effect="light" placement="top" content="复制">
-                  <el-button ref="$el11" :icon="CopyDocument" />
-                </el-tooltip>
-              </template>
-            </el-input>
-          </div>
-        </template>
-      </el-result>
+      <el-form :model="form" label-width="auto" style="min-width: 1000px">
+        <el-result
+          ref="$el10"
+          title="审核状态"
+          :icon="status.icon"
+          :sub-title="status.subTitle"
+        >
+          <template #extra>
+            <div class="status-content">
+              <el-form-item label="下载地址：">
+                <el-input v-model="status.dowloadUrl">
+                  <template #append>
+                    <el-tooltip effect="light" placement="top" content="复制">
+                      <el-button ref="$el11" :icon="CopyDocument" />
+                    </el-tooltip>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </div>
+          </template>
+        </el-result>
+      </el-form>
     </div>
 
-    <el-tour v-model="open">
+    <!-- <el-tour v-model="open">
       <el-tour-step :target="$el1?.$el" title="输入GitHub地址"> </el-tour-step>
       <el-tour-step :target="$el2?.$el" title="输入应用名称"> </el-tour-step>
       <el-tour-step :target="$el3?.$el" title="输入应用包名"> </el-tour-step>
       <el-tour-step :target="$el4?.$el" title="确认开始构建"> </el-tour-step>
       <el-tour-step :target="$el5?.$el" title="检查本地docker环境">
       </el-tour-step>
-      <el-tour-step :target="$el6?.$el" title="开启构建"> </el-tour-step>
-      <el-tour-step :target="$el7?.$el" title="构建进度"> </el-tour-step>
+      <el-tour-step :target="$el6?.$el" title="华为开发者账号验证">
+      </el-tour-step>
+      <el-tour-step :target="$el7?.$el" title="开始构建"> </el-tour-step>
       <el-tour-step :target="$el8?.$el" title="可查看构建日志"> </el-tour-step>
       <el-tour-step :target="$el9?.$el" title="等待审核结果"> </el-tour-step>
       <el-tour-step :target="$el10?.$el" title="复制下载连接"></el-tour-step>
       <el-tour-step :target="$el11?.$el" title="复制下载连接"></el-tour-step>
-    </el-tour>
+    </el-tour> -->
   </div>
 </template>
 
@@ -151,11 +155,6 @@ const status = reactive({
       width: 100%;
       .status-content {
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        .status-content-title {
-        }
       }
 
       :deep(.el-input) {

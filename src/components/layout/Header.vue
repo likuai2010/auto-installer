@@ -6,11 +6,21 @@
     </div>
     <!-- 系统标题 -->
     <div class="title">{{ CONFIG.title }}</div>
+
     <div class="user-info">
+      <div class="contact-us">
+        <el-icon><Phone /></el-icon>
+        联系我们
+      </div>
+      <div class="reward">
+        <el-icon><Money /></el-icon>打赏
+      </div>
+
       <!-- 用户名下拉菜单 -->
       <el-dropdown class="user-name" trigger="click" @command="handleCommand">
         <span class="el-dropdown-link">
-          {{ username || "用户" }}
+          <el-icon><UserFilled /></el-icon>
+          <span class="user">{{ username || "用户" }}</span>
           <svg-icon icon="icon-down" />
         </span>
         <template #dropdown>
@@ -26,9 +36,7 @@
 </template>
 <script setup name="Header">
 import CONFIG from "@/config";
-import { useStore } from "vuex";
-
-const store = useStore();
+import { UserFilled, Phone, Money } from "@element-plus/icons-vue";
 
 const handleCommand = (command) => {
   switch (command) {
@@ -71,11 +79,18 @@ const handleCommand = (command) => {
     display: flex;
     margin-left: auto;
 
-    .user-guide,
-    .full-screen {
-      font-size: 32px;
+    .reward,
+    .contact-us {
+      display: flex;
+      font-size: 14px;
+      cursor: pointer;
+      align-items: center;
       line-height: 50px;
-      margin: 0px 5px;
+      margin-right: 15px;
+      color: var(--color);
+      .el-icon {
+        margin-right: 5px;
+      }
     }
     .user-avatar {
       width: 32px;
@@ -87,6 +102,24 @@ const handleCommand = (command) => {
       cursor: pointer;
       line-height: 50px;
       margin-right: 30px;
+      .el-dropdown-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .user {
+          cursor: pointer;
+          font-size: 14px;
+          color: var(--color);
+        }
+
+        .el-icon {
+          margin-right: 5px;
+        }
+        .svg-icon {
+          margin-left: 5px;
+        }
+      }
     }
   }
 }
