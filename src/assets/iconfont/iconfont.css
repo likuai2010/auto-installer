@@ -1,0 +1,103 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3355430 */
+  src: url('iconfont.woff2?t=1673163609800') format('woff2'),
+       url('iconfont.woff?t=1673163609800') format('woff'),
+       url('iconfont.ttf?t=1673163609800') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yiwen:before {
+  content: "\e666";
+}
+
+.icon-quanping:before {
+  content: "\eb11";
+}
+
+.icon-down:before {
+  content: "\e7f0";
+}
+
+.icon-shanchu:before {
+  content: "\e602";
+}
+
+.icon-control-layer:before {
+  content: "\e63b";
+}
+
+.icon-menu-map:before {
+  content: "\e8ad";
+}
+
+.icon-menu-home:before {
+  content: "\e60c";
+}
+
+.icon-measure-length:before {
+  content: "\e624";
+}
+
+.icon-measure-area:before {
+  content: "\e604";
+}
+
+.icon-menu-system:before {
+  content: "\e614";
+}
+
+.icon-menu-mapbox:before {
+  content: "\ec03";
+}
+
+.icon-menu-maptalks:before {
+  content: "\e72b";
+}
+
+.icon-control-delete:before {
+  content: "\e601";
+}
+
+.icon-control-locltion:before {
+  content: "\e600";
+}
+
+.icon-control-polygon:before {
+  content: "\e6af";
+}
+
+.icon-control-polyline:before {
+  content: "\e6bb";
+}
+
+.icon-menu-manage:before {
+  content: "\e7a5";
+}
+
+.icon-control-expand:before {
+  content: "\e65a";
+}
+
+.icon-control-collapse:before {
+  content: "\e65b";
+}
+
+.icon-menu-account:before {
+  content: "\e61a";
+}
+
+.icon-menu-users:before {
+  content: "\e633";
+}
+
+.icon-menu-roles:before {
+  content: "\e618";
+}
+

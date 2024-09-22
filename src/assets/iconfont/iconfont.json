@@ -1,0 +1,163 @@
+{
+  "id": "3355430",
+  "name": "blog-management",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1301392",
+      "name": "疑问",
+      "font_class": "yiwen",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
+      "icon_id": "5387606",
+      "name": "全屏",
+      "font_class": "quanping",
+      "unicode": "eb11",
+      "unicode_decimal": 60177
+    },
+    {
+      "icon_id": "4767014",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e7f0",
+      "unicode_decimal": 59376
+    },
+    {
+      "icon_id": "82757",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "5650931",
+      "name": "图层",
+      "font_class": "control-layer",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "11372655",
+      "name": "地图",
+      "font_class": "menu-map",
+      "unicode": "e8ad",
+      "unicode_decimal": 59565
+    },
+    {
+      "icon_id": "3768204",
+      "name": "首页",
+      "font_class": "menu-home",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "1166331",
+      "name": "测量距离",
+      "font_class": "measure-length",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "6677524",
+      "name": "面积测量",
+      "font_class": "measure-area",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "12694055",
+      "name": "系统管理",
+      "font_class": "menu-system",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "15378566",
+      "name": "mapbox",
+      "font_class": "menu-mapbox",
+      "unicode": "ec03",
+      "unicode_decimal": 60419
+    },
+    {
+      "icon_id": "19698231",
+      "name": "map",
+      "font_class": "menu-maptalks",
+      "unicode": "e72b",
+      "unicode_decimal": 59179
+    },
+    {
+      "icon_id": "1248",
+      "name": "删除",
+      "font_class": "control-delete",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1259",
+      "name": "位置",
+      "font_class": "control-locltion",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "26060540",
+      "name": "多边形",
+      "font_class": "control-polygon",
+      "unicode": "e6af",
+      "unicode_decimal": 59055
+    },
+    {
+      "icon_id": "26525880",
+      "name": "线段",
+      "font_class": "control-polyline",
+      "unicode": "e6bb",
+      "unicode_decimal": 59067
+    },
+    {
+      "icon_id": "7544797",
+      "name": "树型",
+      "font_class": "menu-manage",
+      "unicode": "e7a5",
+      "unicode_decimal": 59301
+    },
+    {
+      "icon_id": "20764004",
+      "name": "折叠菜单",
+      "font_class": "control-expand",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "20764005",
+      "name": "展开菜单",
+      "font_class": "control-collapse",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "25495400",
+      "name": "用户管理",
+      "font_class": "menu-account",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "145442",
+      "name": "用户",
+      "font_class": "menu-users",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "10213489",
+      "name": "角色管理",
+      "font_class": "menu-roles",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    }
+  ]
+}
