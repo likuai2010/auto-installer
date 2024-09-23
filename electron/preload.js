@@ -1,25 +1,31 @@
 const { contextBridge } = require('electron')
+import { CoreService } from '../core/services'
+
+var core = CoreService()
 
 // api桥
 contextBridge.exposeInMainWorld('Api', {
   toLogin: (text)=>{
       console.log("xxxxx")
-     
   }
 })
 
 
 
-window.addEventListener('DOMContentLoaded', () => {
-    const replaceText = (selector, text) => {
-      const element = document.getElementById(selector)
-      if (element) element.innerText = text
-    }
-  
-    for (const type of ['chrome', 'node', 'electron']) {
-      replaceText(`${type}-version`, process.versions[type])
-    }
-  })
+// api桥
+contextBridge.exposeInMainWorld('CoreApi', {
+  getEnvInfo: ()=>{
+    return core.getEnvInfo()
+  },
+  getAccountInfo: ()=>{
+    return core.getAccountInfo()
+  },
+  getBuildInfo: ()=>{
+    return core.getAccountInfo()
+  }
+})
+
+
 
 
 
