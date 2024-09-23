@@ -1,5 +1,5 @@
 {
-  "name": "auto-publish-manage",
+  "name": "auto-publish-harmonyos",
   "private": true,
   "version": "1.0.0",
   "description": "小白鸿蒙开源自助餐",
@@ -26,6 +26,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "element-plus": "^2.8.3",
+    "normalize.css": "^8.0.1",
     "qs": "^6.13.0",
     "vue": "^3.2.25",
     "vue-router": "^4.4.5",
