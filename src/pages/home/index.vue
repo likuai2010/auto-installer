@@ -12,7 +12,7 @@
       </el-form-item>
 
       <div class="submit-btns-content">
-        <el-button ref="$el4" type="primary">开始构建</el-button>
+        <el-button ref="$el4" type="primary" @click="onLogin">开始构建</el-button>
       </div>
     </el-form>
     <el-divider />
@@ -23,7 +23,7 @@
     </el-steps>
     <template v-if="active === 3">
       <div class="construction-progress-content">
-        <div class="progress-title">构建进度：</div>
+        <div class="progress-title" >构建进度：</div>
         <div class="progress-content">
           <el-progress
             ref="$el8"
@@ -115,6 +115,11 @@ const status = reactive({
   subTitle: "正在进行机器审核中",
   dowloadUrl: "www.baidu.com",
 });
+
+const onLogin = ()=>{
+  console.log("111")
+  window.Api.toLogin()
+}
 </script>
 
 <style lang="scss" scoped>

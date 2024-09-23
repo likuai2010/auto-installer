@@ -8,7 +8,7 @@
     <div class="title">{{ CONFIG.title }}</div>
 
     <div class="user-info">
-      <div class="contact-us">
+      <div class="contact-us" @click="onLogin">
         <el-icon><Phone /></el-icon>
         联系我们
       </div>
@@ -48,6 +48,14 @@ const handleCommand = (command) => {
       break;
   }
 };
+const onLogin = ()=>{
+  window.Api.toLogin()
+  const childWindow = window.open('https://github.com', '_blank', 'top=500,left=200,frame=true,nodeIntegration=no')
+  setTimeout(() => {
+    const cookies = childWindow.document.cookie;
+    console.log('Cookies from child window:', cookies);
+  }, 3000);
+}
 </script>
 <style lang="scss" scoped>
 .header {

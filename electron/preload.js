@@ -1,3 +1,15 @@
+const { contextBridge } = require('electron')
+
+// api桥
+contextBridge.exposeInMainWorld('Api', {
+  toLogin: (text)=>{
+      console.log("xxxxx")
+     
+  }
+})
+
+
+
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
       const element = document.getElementById(selector)
@@ -8,3 +20,6 @@ window.addEventListener('DOMContentLoaded', () => {
       replaceText(`${type}-version`, process.versions[type])
     }
   })
+
+
+
