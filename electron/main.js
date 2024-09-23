@@ -29,14 +29,13 @@ function createWindow () {
     },
   });
 
-  childWindow.loadURL('https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/');
-  childWindow.webContents.on('did-finish-load', async () => {
-    const cookies = await childWindow.webContents.session.cookies.get({ url: 'https://developer.huawei.com' });
-    
-    cookies.forEach(cookie => {
-      console.log(`Name: ${cookie.name}, Value: ${cookie.value}`);
-    });
-  });
+  // childWindow.loadURL('https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/');
+  // childWindow.webContents.on('did-finish-load', async () => {
+  //   const cookies = await childWindow.webContents.session.cookies.get({ url: 'https://developer.huawei.com' });
+  //   cookies.forEach(cookie => {
+  //     console.log(`Name: ${cookie.name}, Value: ${cookie.value}`);
+  //   });
+  // });
   childWindow.webContents.openDevTools();
 
   win.webContents.setWindowOpenHandler(({ url }) => {
