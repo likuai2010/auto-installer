@@ -30,8 +30,11 @@
   </el-header>
 </template>
 <script setup name="Header">
+import { ref } from "vue";
 import CONFIG from "@/config";
 import { ArrowDown, UserFilled } from "@element-plus/icons-vue";
+
+const username = ref(null);
 
 const handleCommand = (command) => {
   switch (command) {
