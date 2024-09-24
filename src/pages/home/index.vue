@@ -63,7 +63,9 @@ const submitForm = async () => {
   await formEl.value.validate((valid, fields) => {
     if (valid) {
       console.log("submit!");
-      window.CoreApi.getEnvInfo();
+      window.CoreApi.getEnvInfo().then((data) => {
+        console.log(data, "submit!1");
+      });
     } else {
       console.log("error submit!", fields);
     }
