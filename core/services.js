@@ -1,3 +1,4 @@
+const { AgcService } = require("./agcService")
 const { DownloadHelper } = require("./downloadHelper") 
 
 class EnvStep{
@@ -35,6 +36,8 @@ const { BrowserWindow, ipcMain  } = require('electron');
 
 
  class CoreService {
+    dh = new DownloadHelper()
+    agc = new AgcService()
     envInfo =  {
         steps: [
             {name:"安装docker", finish: false, progress:''},
@@ -68,13 +71,17 @@ const { BrowserWindow, ipcMain  } = require('electron');
     getBuildInfo(){
         return this.buildInfo;
     }
-    dh = new DownloadHelper()
     registerIpc(main){
         ipcMain.on('download-file', (_, fileUrl) => {
             this.dh.downloadAndInstallFile(main, fileUrl);
         });
         ipcMain.on('open-window', (_, fileUrl) => {
             this.createChildWindiow(fileUrl);
+            let cookieObj = this.dh.readFileTo("hw_cookies.json")
+            const cookie = cookieObj.reduce((n,c)=>{
+                return n+=(c.name +"="+ c.value + ";")
+            },"")            
+            this.agc.get(cookie)
         });
         ipcMain.on('getEnvInfo', (_) => {
             let info = this.getEnvInfo();
@@ -90,6 +97,7 @@ const { BrowserWindow, ipcMain  } = require('electron');
         });
     }
     childWindow = {}
+    huaweiCoockes = {}
     createChildWindiow(url = 'https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/'){
         const childWindow = new BrowserWindow({
             width: 800,
@@ -102,10 +110,11 @@ const { BrowserWindow, ipcMain  } = require('electron');
         childWindow.loadURL(url);
         childWindow.webContents.on('did-finish-load', async () => {
             const cookies = await childWindow.webContents.session.cookies.get({ url: 'https://developer.huawei.com' });
-            cookies.forEach((cookie) => {
-                console.log(`Name: ${cookie.name}, Value: ${cookie.value}`);
-            });
+            this.huaweiCoockes = cookies
+            // this.dh.writeObjToFile("hw_cookies.json", cookies)
         });
+        childWindow.webContents.on('will-navigate', async()=>{
+        })
     }
 }
 

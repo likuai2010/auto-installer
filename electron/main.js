@@ -18,7 +18,7 @@ function createWindow () {
   const core = new CoreService()
   core.registerIpc(win)
   Menu.setApplicationMenu(null)
-  win.webContents.openDevTools();
+  
   win.loadURL(process.env.VITE_DEV_SERVER_URL || `file://${indexHtml}`);
 
   globalShortcut.register('F12', () => {

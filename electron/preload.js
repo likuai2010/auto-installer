@@ -30,8 +30,8 @@ contextBridge.exposeInMainWorld('CoreApi', {
     })
   },
   toLogin: (text)=>{
-    downloadDocker()
-    //ipcRenderer.send('open-window', "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/");
+    //downloadDocker()
+    ipcRenderer.send('open-window', "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/");
   }
 })
 function downloadFile(fileUrl, onProgress){
@@ -45,7 +45,7 @@ function downloadFile(fileUrl, onProgress){
 function downloadDocker(){
   let win = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*13dn9it*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA."
   let mac = "https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*1jvi2eo*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA."
-  downloadFile(win, (p)=>{
+  downloadFile(process.platform !== 'darwin'? win : mac, (p)=>{
     console.log("progress", p)
   })
 }

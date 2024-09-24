@@ -32,7 +32,6 @@ class DownloadHelper{
     }
     installFile(filePath) {
         const { exec } = require('child_process');
-        
         exec(filePath, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing file: ${error}`);
@@ -41,6 +40,23 @@ class DownloadHelper{
             console.log(`Output: ${stdout}`);
             console.error(`Error: ${stderr}`);
         });
+    }
+
+    writeObjToFile(filename, obj){
+        const jsonData = JSON.stringify(obj, null, 2)
+        const filePath = path.join(app.getPath('documents'), filename);
+        fs.writeFile(filePath, jsonData, (err) => {
+            if (err) {
+                console.error('写入文件失败:', err);
+            } else {
+                console.log('文件已成功写入:', filePath);
+            }
+        });
+    }
+    readFileTo(filename){
+        const filePath = path.join(app.getPath('documents'), filename);
+        const data = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(data)
     }
 }
 
