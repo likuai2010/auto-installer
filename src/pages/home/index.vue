@@ -12,7 +12,7 @@
           <el-input v-model="form.packageName" />
         </el-form-item>
         <div class="btns-content">
-          <el-button type="primary" @click="onLogin">开始构建</el-button>
+          <el-button type="primary" @click="toLogin">开始构建</el-button>
         </div>
       </el-form>
     </div>
@@ -58,16 +58,19 @@ const status = reactive({
 });
 
 const submitForm = async () => {
+
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {
     if (valid) {
       console.log("submit!");
-      // window.Api.toLogin();
     } else {
       console.log("error submit!", fields);
     }
   });
 };
+const toLogin = async () =>{
+  window.CoreApi.toLogin();
+}
 </script>
 
 <style lang="scss" scoped>

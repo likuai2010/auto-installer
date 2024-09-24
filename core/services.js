@@ -70,7 +70,7 @@ const { BrowserWindow, ipcMain  } = require('electron');
     }
     dh = new DownloadHelper()
     registerIpc(main){
-        ipcMain.on('start-download', (_, fileUrl) => {
+        ipcMain.on('download-file', (_, fileUrl) => {
             this.dh.downloadAndInstallFile(main, fileUrl);
         });
         ipcMain.on('open-window', (_, fileUrl) => {
