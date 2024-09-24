@@ -191,19 +191,43 @@ import {
 const props = defineProps({
   active: {
     type: Number,
-    default: 1,
+    default: 2,
   },
   dataItems: {
     type: Array,
     default: () => {
       return [
-        // { name: "安装docker", finish: false, progress: 10 },
-        // { name: "命令行工具", finish: false, progress: 20 },
+        // { name: "安装docker", finish: false, url: "", error: "未安装" },
+        // { name: "安装命令行工具", finish: false, url: "", error: "未安装" },
 
-        { name: "登陆华为账号", finish: false, value: "" },
-        { name: "ClientID", finish: false, value: "" },
-        { name: "ClientKey", finish: false, value: "" },
-        { name: "创建应用", finish: false, value: "" },
+        {
+          name: "登陆华为账号",
+          finish: false,
+          value: "17611576573",
+          error: "未登录",
+        },
+        { name: "ClientID", finish: false, value: "xxx", error: "获取失败" },
+        { name: "ClientKey", finish: false, value: "xxx", error: "获取失败" },
+        {
+          name: "创建应用",
+          finish: false,
+          value: "com.xx.xx",
+          error: "创建失败",
+        },
+        { name: "创建证书", finish: false, value: "", error: "创建失败" },
+        { name: "创建Profile", finish: false, value: "", error: "创建失败" },
+
+        // { name: "构建应用", finish: false, error: "构建失败" },
+        // {
+        //   name: "签名应用",
+        //   finish: false,
+        //   value: "release",
+        //   error: "签名失败",
+        // },
+        // { name: "上传应用", finish: false, error: "上传失败" },
+        // { name: "发布版本", finish: false, error: "发布版本失败" },
+        // { name: "版本审核", finish: false, error: "审核失败" },
+        // { name: "安装链接", finish: false },
       ];
     },
   },
