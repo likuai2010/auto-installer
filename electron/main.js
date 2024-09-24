@@ -1,11 +1,17 @@
-const { app, BrowserWindow, Menu, session,globalShortcut  } = require('electron')
-const path = require('node:path')
-const { CoreService } = require('../core/services')
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  session,
+  globalShortcut,
+} = require("electron");
+const path = require("node:path");
+const { CoreService } = require("../core/services");
 
-const preload = path.join(__dirname, 'preload.js')
-const indexHtml = path.join(__dirname, '../dist/index.html')
+const preload = path.join(__dirname, "preload.js");
+const indexHtml = path.join(__dirname, "../dist/index.html");
 
-function createWindow () {
+function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -13,35 +19,33 @@ function createWindow () {
       preload,
       nodeIntegration: true, // 如果需要 Node.js API
       contextIsolation: true,
-    }
-  })
-  const core = new CoreService()
-  core.registerIpc(win)
-  Menu.setApplicationMenu(null)
-  
+    },
+  });
+  const core = new CoreService();
+  core.registerIpc(win);
+  Menu.setApplicationMenu(null);
+
   win.loadURL(process.env.VITE_DEV_SERVER_URL || `file://${indexHtml}`);
 
-  globalShortcut.register('F12', () => {
+  globalShortcut.register("F12", () => {
     // 打开开发者工具
     win.webContents.openDevTools();
   });
+  win.webContents.openDevTools();
 }
 
-
-
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
+      createWindow();
     }
-  })
-  
-})
+  });
+});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
-})
+});
