@@ -76,11 +76,20 @@ const { BrowserWindow, ipcMain  } = require('electron');
         ipcMain.on('open-window', (_, fileUrl) => {
             this.createChildWindiow(fileUrl);
         });
+        ipcMain.on('getEnvInfo', (_) => {
+            let info = this.getEnvInfo();
+            main.webContents.send('onEnvInfo', info);
+        });
+        ipcMain.on('getAccountInfo', (_ ) => {
+            let info = this.getAccountInfo();
+            main.webContents.send('onAccountInfo', info);
+        });
+        ipcMain.on('getBuildInfo', (_) => {
+            let info = this.getBuildInfo();
+            main.webContents.send('onBuildInfo', info);
+        });
     }
-    
-    
     childWindow = {}
-
     createChildWindiow(url = 'https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/'){
         const childWindow = new BrowserWindow({
             width: 800,
