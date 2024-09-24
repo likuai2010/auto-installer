@@ -29,6 +29,15 @@ contextBridge.exposeInMainWorld('CoreApi', {
       resolve("")
     })
   },
+  async checkEvnInfo(envInfo){
+  },
+  async checkAccountInfo(accountInfo){
+  },
+  async startBuild(buildInfo){
+  },
+  async downloadAndInstaller(url, onProgress){
+    downloadFile(url, onProgress)
+  },
   toLogin: (text)=>{
     //downloadDocker()
     ipcRenderer.send('open-window', "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/");

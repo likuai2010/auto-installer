@@ -28,6 +28,7 @@
     "element-plus": "^2.8.3",
     "normalize.css": "^8.0.1",
     "qs": "^6.13.0",
+    "simple-git": "^3.27.0",
     "vue": "^3.2.25",
     "vue-router": "^4.4.5",
     "vuex": "^4.1.0"
