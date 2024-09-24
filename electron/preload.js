@@ -27,6 +27,12 @@ contextBridge.exposeInMainWorld("CoreApi", {
       resolve("");
     });
   },
+  async checkEvnInfo(envInfo) {},
+  async checkAccountInfo(accountInfo) {},
+  async startBuild(buildInfo) {},
+  async downloadAndInstaller(url, onProgress) {
+    downloadFile(url, onProgress);
+  },
   toLogin: (text) => {
     //downloadDocker()
     ipcRenderer.send(

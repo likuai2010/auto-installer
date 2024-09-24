@@ -32,7 +32,7 @@ class AgcService{
             "appid":"5765880207855175251",
             "content-type":"application/json",
             "Cookie":cookie,
-            "x-hd-csrf":"21063C854C72DAAA2C53DC98E75A521794552879259CE1DD93"
+            "x-hd-csrf":"645D1FA8BC027A50A48F0842EF97658BA5FE002FC9F8FB79A6"
         }
         console.error("cookie", cookie)
         this.base("https://agc-drcn.developer.huawei.com/agc/edge/amis/version-manage/v1/app/test/version/list",headers )
