@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "./dist",  // 输出目录
+      "rootDir": ".",  // 源文件目录
+      "sourceMap": true    // 方便调试
+    },
+    "exclude": [
+      "node_modules"
+    ]
+  }
