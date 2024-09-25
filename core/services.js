@@ -40,7 +40,7 @@ const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
   agc = new AgcService();
-  build = new BuildService(this.agc, this);
+  build = new BuildService(this);
   commonInfo = {
     packageName: "com.xx.xx",
     appName: "app",
@@ -85,6 +85,13 @@ class CoreService {
         message: "未登录",
       },
       {
+        name: "创建应用",
+        finish: false,
+        value: "com.xx.xx",
+        loading: false,
+        message: "创建失败",
+      },
+      {
         name: "ClientID",
         finish: false,
         value: "xxx",
@@ -98,13 +105,7 @@ class CoreService {
         loading: false,
         message: "获取失败",
       },
-      {
-        name: "创建应用",
-        finish: false,
-        value: "com.xx.xx",
-        loading: false,
-        message: "创建失败",
-      },
+     
       {
         name: "创建证书",
         finish: false,
@@ -221,7 +222,7 @@ class CoreService {
     }catch(e){
       console.error("hw_cookies.json 不存在 \n")
     }
-    
+
     ipcMain.on("download-file", (_, fileUrl) => {
       this.dh.downloadAndInstallFile(main, fileUrl);
     });

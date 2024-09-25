@@ -18,13 +18,24 @@ class AgcService{
         return new Promise((resolve, reject)=>{
             request.on('response', (response) => {
                 response.on('data', (chunk) => {
-                    resolve(chunk)
+                    try{
+                        resolve(JSON.parse(chunk.toString()))
+                    }catch(e){
+                        console.log('baseGet response', e.mesage)
+                    }
+                   
                 })
+                if(response.statusCode != 200){
+                    console.error('baseGet error', response.statusCode)
+                    if(response.statusCode * 1 == 401){
+                        reject("登陆信息过期或无效")
+                    }
+                }
                 response.on('end', () => {
                     if(response.statusCode != 200){
-                        reject("error ", response.statusCode)
+                        reject(response.statusCode)
                     }else{
-                        console.log('No more data in response.')
+                        console.log('baseGet', 'No more data in response.')
                     }
                 })
               })
@@ -82,9 +93,9 @@ class AgcService{
         let params  = {"name":name,"createDevProjectFlag":0,"createTenantProjectFlag":0,"createAllianceProjectFlag":1}
         return this.base(uri, params, {})
     }
-    projectList(){
+    projectList(name){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cpms/project-management-service/v1/projectList"
-        let params  = {"fromPage":1,"pageSize":40,"projectIds":[],"projectName":"","queryFlag":1}
+        let params  = {"fromPage":1,"pageSize":40,"projectIds":[],"projectName":name,"queryFlag":1}
         return this.base(uri, params, {})
     }
     checkPackageName(packageName){
