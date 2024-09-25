@@ -1,42 +1,139 @@
 const { net } = require('electron')
+const { resolve } = require('path')
 
 class AgcService{
 
-    base(url, headers) {
+    async base(url, data={}, headers={},  method = "POST") {
         const request = net.request({
             url,
-            method:"POST",
-            headers,
-            
+            method: method,
+            headers:{
+                "content-type": "application/json",
+                "Cookie": this.cookie,
+                "x-hd-csrf": this.csrfToken,
+                "agcteamid":this.agcteamid,
+                ...headers
+            },
         })
-        request.on('response', (response) => {
-            console.log(`STATUS: ${response.statusCode}`)
-            response.on('data', (chunk) => {
-              console.log(`BODY: ${chunk}`)
-            })
-            response.on('end', () => {
-              console.log('No more data in response.')
-            })
-          })
-          const data = JSON.stringify({
-                fromPage: 1,
-                pageSize: 20,
-                queryType: 1
-            });
-            request.write(data);
+        return new Promise((resolve, reject)=>{
+            request.on('response', (response) => {
+                response.on('data', (chunk) => {
+                    resolve(chunk)
+                })
+                response.on('end', () => {
+                    if(response.statusCode != 200){
+                        reject("error ", response.statusCode)
+                    }else{
+                        console.log('No more data in response.')
+                    }
+                })
+              })
+            const str = JSON.stringify(data);
+            request.write(str);
             request.end();
+        })
     }
-    get(cookie){
-        let headers = {
-            "agcteamid":"2850086000506643987",
-            "appid":"5765880207855175251",
-            "content-type":"application/json",
-            "Cookie":cookie,
-            "x-hd-csrf":"645D1FA8BC027A50A48F0842EF97658BA5FE002FC9F8FB79A6"
+    cookie = ""
+    csrfToken = ""
+    agcteamid = "2850086000506643987"
+
+    initCookie(cookieObj){
+        const cookie = cookieObj.reduce((n, c) => {
+            return (n += c.name + "=" + c.value + ";");
+        }, "");
+        this.cookie = cookie
+        this.csrfToken = findCookieValue(cookieObj, "csrfToken")
+    }
+    findCookieValue(cookies, key){
+        let ck = cookies.find((d)=>d.name == key)
+        if(!ck)
+            return undefined
+        return ck.value
+    }
+
+    userTeamList(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/ups/user-permission-service/v1/user-team-list"
+        return this.base(uri, {}, {}, "GET")
+    }
+
+    vesrionList(appid="5765880207855175251"){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/version-manage/v1/app/test/version/list"
+        let params = {
+            fromPage: 1,
+            pageSize: 20,
+            queryType: 1
         }
-        console.error("cookie", cookie)
-        this.base("https://agc-drcn.developer.huawei.com/agc/edge/amis/version-manage/v1/app/test/version/list",headers )
-    }   
+        return this.base(uri, params, { appid })
+    }
+    GetApplistInitInfo(appid="5765880207855175251"){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/apios/invokeService/AGCDistOrchestration/GetApplistInitInfo"
+        let params = {"inputParameters":{"configNames":["app.distribution.device.config","app.package.name.sensitive.words","app.reserved.package.name.list","app.category.sensitive.words"],"checkedGroups":{"checkedGroups":[{"id":"noApk.whiteList","userType":1},{"id":"app.pc.user.allow.list","userType":1},{"id":"app.pc.internal.vmp.team.list","userType":1},{"id":"sysUrlCfg.whitelistUsers","userType":1},{"id":"app.cloudpc.user.whitelist","userType":1},{"id":"smart.cockpit.user.allow.list"},{"id":"harmony.app.support.2in1.allow.list"},{"id":"authorized.app.allow.operate.list"}]},"langType":"zh_CN","appDevelopStatus":1}}
+        return this.base(uri, params, { appid })
+    }
+    groupCheck(){
+        let headers = {
+            "appid":"5765880207855175251",
+        }
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/sfs/group-management/v1/group/check?id=harmony.reserved.package.name.allow.list&item=x.x.dddd"
+        return this.base(uri, {}, headers, "GET")
+    }
+    createProject(name){
+        let uri = " https://agc-drcn.developer.huawei.com/agc/edge/cpms/project-management-service/v1/projects"
+        let params  = {"name":name,"createDevProjectFlag":0,"createTenantProjectFlag":0,"createAllianceProjectFlag":1}
+        return this.base(uri, params, {})
+    }
+    projectList(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cpms/project-management-service/v1/projectList"
+        let params  = {"fromPage":1,"pageSize":40,"projectIds":[],"projectName":"","queryFlag":1}
+        return this.base(uri, params, {})
+    }
+    checkPackageName(packageName){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/app-manage/v1/app/check/package-name"
+        let params  = {"packageName": packageName}
+        return this.base(uri, params, {})
+    }
+    createApp(appName, packageName, projectId){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/app-manage/v1/app"
+        let params  = {"appName":appName,"packageName":packageName,"defaultLang":"zh-CN","parentType":13,"createCountry":"CN","projectId":projectId,"packageType":7,"deviceTypes":[{"deviceType":4}],"appDevelopStatus":0,"installationFree":0,"createChannel":0}
+        return this.base(uri, params, {})
+    }
+    //
+    getCertList(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert/list"
+        return this.base(uri, {}, {}, "GET")
+    }
+    deleteCertList(certId){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert"
+        return this.base(uri, {"certIds":[certId]}, {}, "DELETE")
+    }
+    createCert(){
+
+    }
+    profileList(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision/list?start=1&pageSize=5&packageName="
+        return this.base(uri, {}, {}, "GET")
+    }
+    createProfile(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision"
+        let params  = {"provisionName":"21421","certList":["1466899926406405696"],"provisionType":2,"appId":"5765880207855510379","deviceList":[],"permissionList":[]}
+        return this.base(uri, params, {})
+    }
+    downloadProfile(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cfs/file_service/v1/download/object/url?objectId=CN%2F2024092508%2F1727252940598-834a8dd5-9f8d-455c-bc4e-36f6d3c44ccd.p7b&downloadFileName=21421Release.p7b"
+        let params  = {}
+        return this.base(uri, params, {})
+    }
+    deviceList(name=""){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/device-manage/v1/device/list?start=1&pageSize=10&deviceName="+name
+        return this.base(uri, {}, {}, "GET")
+    }
+    createDevice(deviceName, uuid){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/device-manage/v1/device"
+        let params  = {"deviceName":deviceName,"udid":uuid,"deviceType":4}
+        return this.base(uri, params, {})
+    }
+
+    
 }
 
 
