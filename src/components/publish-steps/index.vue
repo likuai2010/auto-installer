@@ -34,6 +34,12 @@
       </div>
     </template>
     <template v-if="form.active === 2">
+      <div class="build-types">
+        <el-radio-group v-model="form.types" size="small">
+          <el-radio-button label="分发" :value="0" />
+          <el-radio-button label="本地安装" :value="1" />
+        </el-radio-group>
+      </div>
       <StepsStatus
         :key="index"
         :data="status"
@@ -63,19 +69,16 @@ import InstallStatus from "./components/install-status.vue";
 
 let timer = null;
 const props = defineProps({
-  active: {
-    type: Number,
-    default: () => 0,
-  },
-  dataItems: {
-    type: Array,
+  formData: {
+    type: Object,
     default: () => {
-      return [];
+      return {};
     },
   },
 });
 
 const form = reactive({
+  types: 0, // 0:分发,1:本地
   active: 0,
   finish: "process",
   status: "process",
@@ -102,8 +105,13 @@ const clearTimer = () => {
 // 下一步
 const handleNext = (active) => {
   form.active = active;
-  if(active == 1){
-    window.CoreApi.checkAccountInfo({})
+  if (active === 1) {
+    //调用登录检查
+    window.CoreApi.checkAccountInfo(props.formData);
+    // 注册登录检查完成回调
+  } else {
+    // 开始构建
+    window.CoreApi.startBuild(props.formData);
   }
 };
 
@@ -136,9 +144,12 @@ const initPublishSteps = (active) => {
         form.statusItems = data.steps || [];
       });
     } else if (form.active === 2) {
-      window.CoreApi.getBuildInfo().then((data) => {
-        console.log(data, "data");
-        form.statusItems = data.steps || [];
+      window.CoreApi.getBuildInfo(form.types).then((data) => {
+        if (form.types === 0) {
+          form.statusItems = data.steps || [];
+        } else {
+          form.statusItems = data.install || [];
+        }
       });
     } else {
       console.error(`未识别类型`);
@@ -151,6 +162,7 @@ defineExpose({ initPublishSteps });
 <style lang="scss" scoped>
 .publish-steps {
   flex: 1;
+  .build-types,
   .handle-btns,
   .logs-content {
     display: flex;
@@ -167,6 +179,11 @@ defineExpose({ initPublishSteps });
     .el-collapse {
       flex: 0.95;
     }
+  }
+
+  .build-types {
+    margin: 20px 0px;
+    justify-content: flex-start;
   }
 }
 </style>
