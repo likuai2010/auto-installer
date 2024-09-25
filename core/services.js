@@ -222,6 +222,7 @@ class CoreService {
       // this.cloneGit("https://github.com/likuai2010/ClashMeta.git")
       // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.openChildWindiow(fileUrl);
+    
     });
     ipcMain.on("getEnvInfo", (_) => {
       let info = this.getEnvInfo();
@@ -236,23 +237,23 @@ class CoreService {
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      this.build.checkAccount(commonInfo);
+      this.build.checkAccount(commonInfo)
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
-    });
+    })
     ipcMain.on("startBuild", (_, commonInfo) => {
-      this.build.startBuild(commonInfo);
+      this.build.startBuild(commonInfo)
       let info = this.getBuildInfo();
       main.webContents.send("onCheckAccount", info);
-    });
-    setInterval(() => {
-      try {
-        let cookies = this.dh.readFileToObj("hw_cookies.json");
-        this.agc.initCookie(cookies);
-      } catch (e) {
-        console.error("hw_cookies.json 不存在 \n");
+    })
+    setInterval(()=>{
+      try{
+        let cookies = this.dh.readFileToObj("hw_cookies.json")
+        this.agc.initCookie(cookies)
+      }catch(e){
+        console.error("hw_cookies.json 不存在 \n")
       }
-    }, 10000);
+    }, 10000)
   }
   childWindow = {};
   async repoBrank(repoUrl) {
@@ -265,7 +266,7 @@ class CoreService {
       }
     });
   }
-
+ 
   openChildWindiow(
     url = "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/"
   ) {
@@ -282,8 +283,9 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-      const authInfo = this.agc.findCookieValue(this.huaweiCoockes, "authInfo");
-      if (authInfo) this.dh.writeObjToFile("hw_cookies.json", cookies);
+      const authInfo = this.agc.findCookieValue(this.huaweiCoockes, "authInfo")
+      if (authInfo)
+          this.dh.writeObjToFile("hw_cookies.json", cookies)
     });
     childWindow.webContents.on("will-navigate", async () => {});
   }
