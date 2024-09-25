@@ -1,14 +1,24 @@
 <template>
   <div class="page-home">
     <div class="page-home-form">
-      <el-form ref="formEl" :model="form" label-width="auto">
-        <el-form-item label="GitHub地址：">
-          <el-input v-model="form.gitUrls" />
+      <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
+        <el-form-item label="GitHub地址：" :prop="['github']">
+          <el-input v-model="form.github">
+            <template #append>
+              <el-select
+                placeholder="选择分支"
+                v-model="form.branch"
+                :style="{ width: '120px' }"
+              >
+                <el-option label="master" value="master" />
+              </el-select>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="应用名称：">
+        <el-form-item label="应用名称：" :prop="['appName']">
           <el-input v-model="form.appName" />
         </el-form-item>
-        <el-form-item label="应用包名：">
+        <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
         </el-form-item>
         <div class="btns-content">
@@ -58,13 +68,28 @@ import PublishSteps from "@/components/publish-steps/index.vue";
 
 const formEl = ref(null);
 const stepsEl = ref(null);
-const form = reactive({ appName: "", gitUrls: "", packageName: "" });
+const form = reactive({
+  github: "xxx",
+  appName: "xxx",
+  packageName: "xxx",
+  branch: "master",
+});
+
 const status = reactive({
   icon: "success",
   loading: false,
   disabled: false,
   subTitle: "正在进行机器审核中",
   dowloadUrl: "www.baidu.com",
+});
+
+const formRules = reactive({
+  github: [{ required: true, message: "Git地址不允许为空", trigger: "blur" }],
+  branch: [{ required: true, message: "分支名称不允许为空", trigger: "blur" }],
+  appName: [{ required: true, message: "应用名称不允许为空", trigger: "blur" }],
+  packageName: [
+    { required: true, message: "应用包名不允许为空", trigger: "blur" },
+  ],
 });
 
 const submitForm = async () => {

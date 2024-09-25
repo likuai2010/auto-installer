@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.send("getAccountInfo");
     });
   },
-  getBuildInfo: () => {
+  getBuildInfo: (type) => {
     return new Promise((resolve, reject) => {
       ipcRenderer.on("onBuildInfo", (event, data) => {
         resolve(data);
@@ -31,9 +31,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.on("onCheckAccount", (event, data) => {
         resolve(data);
       });
-      ipcRenderer.send(
-        "checkAccount",commonInfo
-      );
+      ipcRenderer.send("checkAccount", commonInfo);
     });
   },
   async startBuild(commonInfo) {
@@ -41,10 +39,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.on("startBuild", (event, data) => {
         resolve(data);
       });
-      ipcRenderer.send(
-        "startBuild",
-        buildInfo
-      );
+      ipcRenderer.send("startBuild", buildInfo);
     });
   },
   async downloadAndInstaller(url, onProgress) {
