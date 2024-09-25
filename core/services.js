@@ -213,10 +213,7 @@ class CoreService {
       this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.createChildWindiow(fileUrl);
 
-      let cookieObj = this.dh.readFileTo("hw_cookies.json");
-      const cookie = cookieObj.reduce((n, c) => {
-        return (n += c.name + "=" + c.value + ";");
-      }, "");
+      
       this.agc.get(cookie);
     });
     ipcMain.on("getEnvInfo", (_) => {
