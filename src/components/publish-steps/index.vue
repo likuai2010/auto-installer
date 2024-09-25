@@ -102,6 +102,9 @@ const clearTimer = () => {
 // 下一步
 const handleNext = (active) => {
   form.active = active;
+  if(active == 1){
+    window.CoreApi.checkAccountInfo({})
+  }
 };
 
 // 重载更新

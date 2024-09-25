@@ -215,6 +215,13 @@ class CoreService {
     return this.buildInfo;
   }
   registerIpc(main) {
+    try{
+      let cookies = this.dh.readFileToObj("hw_cookies.json")
+      this.agc.initCookie(cookies)
+    }catch(e){
+      console.error("hw_cookies.json 不存在 \n")
+    }
+    
     ipcMain.on("download-file", (_, fileUrl) => {
       this.dh.downloadAndInstallFile(main, fileUrl);
     });
@@ -222,8 +229,9 @@ class CoreService {
       // this.cloneGit("https://github.com/likuai2010/ClashMeta.git")
       // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.openChildWindiow(fileUrl);
-    
     });
+    
+
     ipcMain.on("getEnvInfo", (_) => {
       let info = this.getEnvInfo();
       main.webContents.send("onEnvInfo", info);
@@ -283,11 +291,14 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-      const authInfo = this.agc.findCookieValue(this.huaweiCoockes, "authInfo")
-      if (authInfo)
-          this.dh.writeObjToFile("hw_cookies.json", cookies)
+      const authInfo = this.agc.findCookieValue(cookies, "authInfo")
+      if (authInfo){
+        this.agc.initCookie(cookies)
+        this.dh.writeObjToFile("hw_cookies.json", cookies)
+        this.build.checkAccount()
+        childWindow.close()
+      }
     });
-    childWindow.webContents.on("will-navigate", async () => {});
   }
 }
 

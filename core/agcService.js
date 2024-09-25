@@ -42,7 +42,7 @@ class AgcService{
             return (n += c.name + "=" + c.value + ";");
         }, "");
         this.cookie = cookie
-        this.csrfToken = findCookieValue(cookieObj, "csrfToken")
+        this.csrfToken = this.findCookieValue(cookieObj, "csrfToken")
     }
     findCookieValue(cookies, key){
         let ck = cookies.find((d)=>d.name == key)
