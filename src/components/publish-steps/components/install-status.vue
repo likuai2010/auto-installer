@@ -82,7 +82,7 @@ const dowloadTimer = () => {
   }, 200);
 };
 
-const emits = defineEmits(["dowload"]);
+const emits = defineEmits(["install", "dowload"]);
 
 const handleDowload = () => {
   if (props.data.url) {
@@ -97,7 +97,9 @@ const handleDowload = () => {
   }
 };
 
-const handleInstall = () => {};
+const handleInstall = () => {
+  emits("install", props.data);
+};
 </script>
 <style lang="scss" scoped>
 .install-status {

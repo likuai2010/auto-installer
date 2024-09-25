@@ -10,6 +10,7 @@
       <InstallStatus
         :key="index"
         :data="status"
+        @install="handleInstall"
         @dowload="handleDowload"
         v-for="(status, index) in form.statusItems"
       />
@@ -98,18 +99,27 @@ const clearTimer = () => {
   }
 };
 
+// 下一步
 const handleNext = (active) => {
   form.active = active;
 };
 
+// 重载更新
 const handleReload = (data) => {
   console.log(data, "handleReload");
 };
 
+// 安装环境
+const handleInstall = (data) => {
+  console.log(data, "handleInstall");
+};
+
+// 下载环境
 const handleDowload = (data) => {
   console.log(data, "handleDowload");
 };
 
+// 初始化数据轮询
 const initPublishSteps = (active) => {
   form.active = active;
   clearTimer();
