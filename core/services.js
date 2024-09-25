@@ -34,11 +34,13 @@ class buildInfo {
   steps = [];
 }
 const { BrowserWindow, ipcMain } = require("electron");
+const { BuildService } = require("./buildService");
 
 const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
   agc = new AgcService();
+  build = new BuildService(this.agc, this);
   commonInfo = {
     packageName: "com.xx.xx",
     appName: "app",
@@ -210,10 +212,8 @@ class CoreService {
     });
     ipcMain.on("open-window", (_, fileUrl) => {
       // this.cloneGit("https://github.com/likuai2010/ClashMeta.git")
-      this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
-      this.createChildWindiow(fileUrl);
-
-      this.agc.get(cookie);
+      // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
+      this.openChildWindiow(fileUrl);
     });
     ipcMain.on("getEnvInfo", (_) => {
       let info = this.getEnvInfo();
@@ -227,9 +227,26 @@ class CoreService {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
     });
+    ipcMain.on("checkAccount", (_, commonInfo) => {
+      this.build.checkAccount(commonInfo);
+      let info = this.getAccountInfo();
+      main.webContents.send("onCheckAccount", info);
+    });
+    ipcMain.on("startBuild", (_, commonInfo) => {
+      this.build.startBuild(commonInfo);
+      let info = this.getBuildInfo();
+      main.webContents.send("onCheckAccount", info);
+    });
+    setInterval(() => {
+      try {
+        let cookies = this.dh.readFileToObj("hw_cookies.json");
+        this.agc.initCookie(cookies);
+      } catch (e) {
+        console.error("hw_cookies.json 不存在 \n");
+      }
+    }, 10000);
   }
   childWindow = {};
-  huaweiCoockes = {};
   async repoBrank(repoUrl) {
     git.raw(["ls-remote", "--heads", repoUrl], (err, result) => {
       if (err) {
@@ -240,12 +257,8 @@ class CoreService {
       }
     });
   }
-  async cloneGit(repoUrl, branch = "master") {
-    git.clone(repoUrl, "./local-repo", ["--branch", branch]);
-    const tags = await git.tags();
-    console.log(tags.all);
-  }
-  createChildWindiow(
+
+  openChildWindiow(
     url = "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/"
   ) {
     const childWindow = new BrowserWindow({
@@ -261,8 +274,8 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-      this.huaweiCoockes = cookies;
-      // this.dh.writeObjToFile("hw_cookies.json", cookies)
+      const authInfo = this.agc.findCookieValue(this.huaweiCoockes, "authInfo");
+      if (authInfo) this.dh.writeObjToFile("hw_cookies.json", cookies);
     });
     childWindow.webContents.on("will-navigate", async () => {});
   }

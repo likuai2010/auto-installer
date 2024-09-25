@@ -24,12 +24,29 @@ contextBridge.exposeInMainWorld("CoreApi", {
         resolve(data);
       });
       ipcRenderer.send("getBuildInfo");
-      resolve("");
     });
   },
-  async checkEvnInfo(envInfo) {},
-  async checkAccountInfo(accountInfo) {},
-  async startBuild(buildInfo) {},
+  async checkAccountInfo(commonInfo) {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on("onCheckAccount", (event, data) => {
+        resolve(data);
+      });
+      ipcRenderer.send(
+        "checkAccount",commonInfo
+      );
+    });
+  },
+  async startBuild(commonInfo) {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on("startBuild", (event, data) => {
+        resolve(data);
+      });
+      ipcRenderer.send(
+        "startBuild",
+        commonInfo
+      );
+    });
+  },
   async downloadAndInstaller(url, onProgress) {
     downloadFile(url, onProgress);
   },

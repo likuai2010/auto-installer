@@ -41,7 +41,6 @@ class DownloadHelper{
             console.error(`Error: ${stderr}`);
         });
     }
-
     writeObjToFile(filename, obj){
         const jsonData = JSON.stringify(obj, null, 2)
         const filePath = path.join(app.getPath('documents'), filename);
@@ -53,10 +52,15 @@ class DownloadHelper{
             }
         });
     }
-    readFileTo(filename){
+    readFileToObj(filename){
         const filePath = path.join(app.getPath('documents'), filename);
         const data = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(data)
+    }
+    async cloneGit(repoUrl, branch = "master") {
+        git.clone(repoUrl, "./local-repo", ["--branch", branch]);
+        const tags = await git.tags();
+        console.log(tags.all);
     }
 }
 
