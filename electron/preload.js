@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.send("getBuildInfo");
     });
   },
+  onLoginFinish(callback){
+
+  },
   async checkAccountInfo(commonInfo) {
     return new Promise((resolve, reject) => {
       ipcRenderer.on("onCheckAccount", (event, data) => {
