@@ -43,7 +43,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
       });
       ipcRenderer.send(
         "startBuild",
-        commonInfo
+        buildInfo
       );
     });
   },
