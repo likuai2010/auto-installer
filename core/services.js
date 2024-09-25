@@ -213,7 +213,6 @@ class CoreService {
       this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.createChildWindiow(fileUrl);
 
-      
       this.agc.get(cookie);
     });
     ipcMain.on("getEnvInfo", (_) => {

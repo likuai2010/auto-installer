@@ -12,13 +12,19 @@
           <el-input v-model="form.packageName" />
         </el-form-item>
         <div class="btns-content">
-          <el-button type="primary" @click="submitForm">开始构建</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm"
+            :loading="status.loading"
+            :disabled="status.disabled"
+            >开始构建</el-button
+          >
         </div>
       </el-form>
     </div>
     <el-divider />
     <div class="page-home-steps">
-      <PublishSteps />
+      <PublishSteps ref="stepsEl" />
     </div>
     <el-divider />
     <div class="page-home-status">
@@ -51,9 +57,12 @@ import { CopyDocument } from "@element-plus/icons-vue";
 import PublishSteps from "@/components/publish-steps/index.vue";
 
 const formEl = ref(null);
+const stepsEl = ref(null);
 const form = reactive({ appName: "", gitUrls: "", packageName: "" });
 const status = reactive({
   icon: "success",
+  loading: false,
+  disabled: false,
   subTitle: "正在进行机器审核中",
   dowloadUrl: "www.baidu.com",
 });
@@ -62,9 +71,11 @@ const submitForm = async () => {
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!");
-      window.CoreApi.getEnvInfo().then((data) => {
-        console.log(data, "submit!1");
+      status.loading = true;
+      setTimeout(() => {
+        stepsEl.value.initPublishSteps(0);
+        status.loading = false;
+        status.disabled = true;
       });
     } else {
       console.log("error submit!", fields);

@@ -14,7 +14,9 @@
         v-for="(status, index) in form.statusItems"
       />
       <div class="handle-btns">
-        <el-button :disabled="disabled" type="primary">下一步</el-button>
+        <el-button :disabled="disabled" type="primary" @click="handleNext(1)"
+          >下一步</el-button
+        >
       </div>
     </template>
     <template v-if="form.active === 1">
@@ -25,7 +27,9 @@
         v-for="(status, index) in form.statusItems"
       />
       <div class="handle-btns">
-        <el-button :disabled="disabled" type="primary">下一步</el-button>
+        <el-button :disabled="disabled" type="primary" @click="handleNext(2)"
+          >下一步</el-button
+        >
       </div>
     </template>
     <template v-if="form.active === 2">
@@ -51,69 +55,52 @@
 </template>
 
 <script setup name="PublishSteps">
-import { reactive, computed } from "vue";
+import { reactive, computed, defineProps, defineExpose } from "vue";
 import StepsComp from "./components/steps-comp.vue";
 import StepsStatus from "./components/steps-status.vue";
 import InstallStatus from "./components/install-status.vue";
 
+let timer = null;
+const props = defineProps({
+  active: {
+    type: Number,
+    default: () => 0,
+  },
+  dataItems: {
+    type: Array,
+    default: () => {
+      return [];
+    },
+  },
+});
+
 const form = reactive({
-  active: 2,
+  active: 0,
   finish: "process",
   status: "process",
-  statusItems: [
-    {
-      name: "拉取代码",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "拉取失败",
-    },
-    {
-      name: "构建应用",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "构建失败",
-    },
-    {
-      name: "签名应用",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "签名失败",
-    },
-    {
-      name: "上传应用",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "上传失败",
-    },
-    {
-      name: "发布版本",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "发布版本失败",
-    },
-    {
-      name: "版本审核",
-      finish: false,
-      value: "",
-      loading: false,
-      message: "审核失败",
-    },
-  ],
+  statusItems: [],
 });
 
 const disabled = computed(() => {
   if (form.active === 0) {
-    return !form.statusItems.find((items) => items.finish) ? true : false;
+    // return !form.statusItems.find((items) => items.finish) ? true : false;
   } else if (form.active === 1) {
-    return form.statusItems.find((items) => !items.finish) ? true : false;
+    // return form.statusItems.find((items) => !items.finish) ? true : false;
   }
-  return true;
+  // return true;
+  return false;
 });
+
+const clearTimer = () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+};
+
+const handleNext = (active) => {
+  form.active = active;
+};
 
 const handleReload = (data) => {
   console.log(data, "handleReload");
@@ -122,6 +109,31 @@ const handleReload = (data) => {
 const handleDowload = (data) => {
   console.log(data, "handleDowload");
 };
+
+const initPublishSteps = (active) => {
+  form.active = active;
+  clearTimer();
+  timer = setInterval(() => {
+    if (form.active === 0) {
+      window.CoreApi.getEnvInfo().then((data) => {
+        form.statusItems = data.steps || [];
+      });
+    } else if (form.active === 1) {
+      window.CoreApi.getAccountInfo().then((data) => {
+        form.statusItems = data.steps || [];
+      });
+    } else if (form.active === 2) {
+      window.CoreApi.getBuildInfo().then((data) => {
+        console.log(data, "data");
+        form.statusItems = data.steps || [];
+      });
+    } else {
+      console.error(`未识别类型`);
+    }
+  }, 500);
+};
+
+defineExpose({ initPublishSteps });
 </script>
 <style lang="scss" scoped>
 .publish-steps {
