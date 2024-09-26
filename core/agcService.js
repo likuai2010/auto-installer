@@ -19,7 +19,12 @@ class AgcService{
             request.on('response', (response) => {
                 response.on('data', (chunk) => {
                     try{
-                        resolve(JSON.parse(chunk.toString()))
+                        let data = JSON.parse(chunk.toString())
+                        if (data.ret.code != 0){
+                            reject(new Error(data.ret.msg))
+                        } else {
+                            resolve(data)
+                        }
                     }catch(e){
                         console.log('baseGet response', e.mesage)
                     }
@@ -67,27 +72,6 @@ class AgcService{
         return this.base(uri, {}, {}, "GET")
     }
 
-    vesrionList(appid="5765880207855175251"){
-        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/version-manage/v1/app/test/version/list"
-        let params = {
-            fromPage: 1,
-            pageSize: 20,
-            queryType: 1
-        }
-        return this.base(uri, params, { appid })
-    }
-    GetApplistInitInfo(appid="5765880207855175251"){
-        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/apios/invokeService/AGCDistOrchestration/GetApplistInitInfo"
-        let params = {"inputParameters":{"configNames":["app.distribution.device.config","app.package.name.sensitive.words","app.reserved.package.name.list","app.category.sensitive.words"],"checkedGroups":{"checkedGroups":[{"id":"noApk.whiteList","userType":1},{"id":"app.pc.user.allow.list","userType":1},{"id":"app.pc.internal.vmp.team.list","userType":1},{"id":"sysUrlCfg.whitelistUsers","userType":1},{"id":"app.cloudpc.user.whitelist","userType":1},{"id":"smart.cockpit.user.allow.list"},{"id":"harmony.app.support.2in1.allow.list"},{"id":"authorized.app.allow.operate.list"}]},"langType":"zh_CN","appDevelopStatus":1}}
-        return this.base(uri, params, { appid })
-    }
-    groupCheck(){
-        let headers = {
-            "appid":"5765880207855175251",
-        }
-        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/sfs/group-management/v1/group/check?id=harmony.reserved.package.name.allow.list&item=x.x.dddd"
-        return this.base(uri, {}, headers, "GET")
-    }
     createProject(name){
         let uri = " https://agc-drcn.developer.huawei.com/agc/edge/cpms/project-management-service/v1/projects"
         let params  = {"name":name,"createDevProjectFlag":0,"createTenantProjectFlag":0,"createAllianceProjectFlag":1}
@@ -113,27 +97,47 @@ class AgcService{
         let params  = {"appName":appName,"packageName":packageName,"defaultLang":"zh-CN","parentType":13,"createCountry":"CN","projectId":projectId,"packageType":7,"deviceTypes":[{"deviceType":4}],"appDevelopStatus":0,"installationFree":0,"createChannel":0}
         return this.base(uri, params, {})
     }
-    //
+    orderApp(projectId, appId){
+        let uri = `https://agc-drcn.developer.huawei.com/agc/edge/cpms/project-service/v1/services/order?projectId=${projectId}&appID=${appId}&serviceName=`
+        let params  = {}
+        return this.base(uri, params, {},"GET")
+    }
+    //https://agc-drcn.developer.huawei.com/agc/edge/aps/api-permission-service/v1/client-list?type=1&page=1&limit=20&productId=
+    
+    clientApiList(){
+        let uri = `https://agc-drcn.developer.huawei.com/agc/edge/aps/api-permission-service/v1/client-list?type=1&page=1&limit=20&productId=`
+        let params  = {}
+        return this.base(uri, params, {},"GET")
+    }
+
+    createApi(name){
+        let uri = `https://agc-drcn.developer.huawei.com/agc/edge/aps/api-permission-service/v1/client`
+        let params  = {"name": name,"type":1,"roles":["com.huawei.connect.role.appmanager","com.huawei.connect.role.operator","com.huawei.connect.role.developer","com.huawei.connect.role.financial","com.huawei.connect.role.support"],"products":[]}
+        return this.base(uri, params, {})
+    }
+
     getCertList(){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert/list"
         return this.base(uri, {}, {}, "GET")
     }
+
     deleteCertList(certId){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert"
         return this.base(uri, {"certIds":[certId]}, {}, "DELETE")
     }
-    createCert(){
+    // type 1 debug 2 prod
+    createCert(name, type, csr){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert"
-        let params = {"csr":"-----BEGIN NEW CERTIFICATE REQUEST-----\nMIIBNTCB2wIBADBJMQkwBwYDVQQGEwAxCTAHBgNVBAgTADEJMAcGA1UEBxMAMQkw\r\nBwYDVQQKEwAxCTAHBgNVBAsTADEQMA4GA1UEAxMHeGlhb2JhaTBZMBMGByqGSM49\r\nAgEGCCqGSM49AwEHA0IABAp4GDxNyOOgPqa/Tzprp5IktG3i2x+PAUSgA/yUzRga\r\nm2vIF9Zlq2E89nIe+e1vLlki1SoChwfErVRSaYTpsjygMDAuBgkqhkiG9w0BCQ4x\r\nITAfMB0GA1UdDgQWBBT1Fjs3jS1SmLWZN+ACrGQMfLaqUDAKBggqhkjOPQQDAgNJ\r\nADBGAiEA8Edq1GI1CZZpMS/ECd5/tVgqFZqLCIv8bMORLE/wTPoCIQCrucAEi4hm\r\nQz016dCtv3taIi2Wiijk1Bo0LvIv7oNbKQ==\n-----END NEW CERTIFICATE REQUEST-----\n","certName":"111","certType":1}
+        let params = {"csr":"-----BEGIN NEW CERTIFICATE REQUEST-----\nMIIBNTCB2wIBADBJMQkwBwYDVQQGEwAxCTAHBgNVBAgTADEJMAcGA1UEBxMAMQkw\r\nBwYDVQQKEwAxCTAHBgNVBAsTADEQMA4GA1UEAxMHeGlhb2JhaTBZMBMGByqGSM49\r\nAgEGCCqGSM49AwEHA0IABAp4GDxNyOOgPqa/Tzprp5IktG3i2x+PAUSgA/yUzRga\r\nm2vIF9Zlq2E89nIe+e1vLlki1SoChwfErVRSaYTpsjygMDAuBgkqhkiG9w0BCQ4x\r\nITAfMB0GA1UdDgQWBBT1Fjs3jS1SmLWZN+ACrGQMfLaqUDAKBggqhkjOPQQDAgNJ\r\nADBGAiEA8Edq1GI1CZZpMS/ECd5/tVgqFZqLCIv8bMORLE/wTPoCIQCrucAEi4hm\r\nQz016dCtv3taIi2Wiijk1Bo0LvIv7oNbKQ==\n-----END NEW CERTIFICATE REQUEST-----\n","certName":name,"certType":type}
         return this.base(uri, params, {})
     }
-    profileList(){
-        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision/list?start=1&pageSize=5&packageName="
+    profileList(packageName){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision/list?start=1&pageSize=5&packageName=" + packageName
         return this.base(uri, {}, {}, "GET")
     }
-    createProfile(){
+    createProfile(name, certId, appId, type = 2){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision"
-        let params  = {"provisionName":"21421","certList":["1466899926406405696"],"provisionType":2,"appId":"5765880207855510379","deviceList":[],"permissionList":[]}
+        let params  = {"provisionName":name,"certList":[certId],"provisionType":type,"appId":appId,"deviceList":[],"permissionList":[]}
         return this.base(uri, params, {})
     }
     downloadProfile(){
@@ -149,6 +153,28 @@ class AgcService{
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/device-manage/v1/device"
         let params  = {"deviceName":deviceName,"udid":uuid,"deviceType":4}
         return this.base(uri, params, {})
+    }
+
+    vesrionList(appid="5765880207855175251"){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/version-manage/v1/app/test/version/list"
+        let params = {
+            fromPage: 1,
+            pageSize: 20,
+            queryType: 1
+        }
+        return this.base(uri, params, { appid })
+    }
+    GetApplistInitInfo(appid="5765880207855175251"){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/apios/invokeService/AGCDistOrchestration/GetApplistInitInfo"
+        let params = {"inputParameters":{"configNames":["app.distribution.device.config","app.package.name.sensitive.words","app.reserved.package.name.list","app.category.sensitive.words"],"checkedGroups":{"checkedGroups":[{"id":"noApk.whiteList","userType":1},{"id":"app.pc.user.allow.list","userType":1},{"id":"app.pc.internal.vmp.team.list","userType":1},{"id":"sysUrlCfg.whitelistUsers","userType":1},{"id":"app.cloudpc.user.whitelist","userType":1},{"id":"smart.cockpit.user.allow.list"},{"id":"harmony.app.support.2in1.allow.list"},{"id":"authorized.app.allow.operate.list"}]},"langType":"zh_CN","appDevelopStatus":1}}
+        return this.base(uri, params, { appid })
+    }
+    groupCheck(){
+        let headers = {
+            "appid":"5765880207855175251",
+        }
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/sfs/group-management/v1/group/check?id=harmony.reserved.package.name.allow.list&item=x.x.dddd"
+        return this.base(uri, {}, headers, "GET")
     }
 
     
