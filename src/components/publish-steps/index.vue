@@ -24,6 +24,7 @@
       <StepsStatus
         :key="index"
         :data="status"
+        :disabled="true"
         @reload="handleReload"
         v-for="(status, index) in form.statusItems"
       />
@@ -43,6 +44,7 @@
       <StepsStatus
         :key="index"
         :data="status"
+        :disabled="true"
         @reload="handleReload"
         v-for="(status, index) in form.statusItems"
       />

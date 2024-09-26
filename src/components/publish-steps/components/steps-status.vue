@@ -22,7 +22,7 @@
         link
         @click="handleLoads"
         :loading="data?.loading"
-        :disabled="data?.finish"
+        :disabled="disabled || data?.finish"
         :type="data?.finish ? 'success' : 'primary'"
         >{{ data?.message }}
       </el-button>
@@ -39,6 +39,12 @@ const props = defineProps({
     type: Object,
     default: () => {
       return {};
+    },
+  },
+  disabled: {
+    type: Boolean,
+    default: () => {
+      return false;
     },
   },
 });
