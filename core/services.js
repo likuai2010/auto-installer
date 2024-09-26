@@ -48,21 +48,13 @@ class CoreService {
     branch: "master",
     downloadUrl: "https://xxx",
   };
-  constructor() {
-    let win =
-      "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*13dn9it*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
-    let mac =
-      "https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*1jvi2eo*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
-    this.envInfo.steps[0].url = process.platform !== "darwin" ? win : mac;
-    this.envInfo.steps[1].url = process.platform !== "darwin" ? win : mac;
-  }
   envInfo = {
     steps: [
       {
         name: "安装docker",
         finish: false,
         value: "未检查到docker环境",
-        url: "https://docs.docker.com/desktop/install/windows-install/",
+        url: "",
         message: "未安装",
       },
       {
@@ -74,7 +66,6 @@ class CoreService {
       },
     ],
   };
-
   accountInfo = {
     steps: [
       {
@@ -169,13 +160,6 @@ class CoreService {
     ],
     install: [
       {
-        name: "拉取代码",
-        finish: false,
-        value: "",
-        loading: false,
-        message: "拉取失败",
-      },
-      {
         name: "构建应用",
         finish: false,
         value: "",
@@ -206,6 +190,14 @@ class CoreService {
     ],
     type: 0, // 0 分发，1 本地安装
   };
+  constructor() {
+    let win =
+      "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*13dn9it*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
+    let mac =
+      "https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*1jvi2eo*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
+    this.envInfo.steps[0].url = process.platform !== "darwin" ? win : mac;
+    this.envInfo.steps[1].url = process.platform !== "darwin" ? win : mac;
+  }
   getEnvInfo() {
     return this.envInfo;
   }
