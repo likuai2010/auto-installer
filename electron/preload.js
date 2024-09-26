@@ -27,7 +27,18 @@ contextBridge.exposeInMainWorld("CoreApi", {
     });
   },
   onLoginFinish(callback){
+  },
 
+  githubBranchs(url){
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on("onGithubBranchs", (event, data) => {
+        resolve(data);
+      });
+      ipcRenderer.on("onFailGithubBranchs", (event, data) => {
+        reject(data);
+      });
+      ipcRenderer.send("githubBranchs",url);
+    });
   },
   async checkAccountInfo(commonInfo) {
     return new Promise((resolve, reject) => {

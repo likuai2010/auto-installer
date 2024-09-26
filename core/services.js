@@ -94,16 +94,16 @@ class CoreService {
       {
         name: "ClientID",
         finish: false,
-        value: "xxx",
+        value: "",
         loading: false,
-        message: "获取失败",
+        message: "",
       },
       {
         name: "ClientKey",
         finish: false,
-        value: "xxx",
+        value: "",
         loading: false,
-        message: "获取失败",
+        message: "",
       },
      
       {
@@ -241,6 +241,14 @@ class CoreService {
       let info = this.getAccountInfo();
       main.webContents.send("onAccountInfo", info);
     });
+    ipcMain.on("githubBranchs", (_, url) => {
+      this.repoBranch(url).then((data)=>{
+          main.webContents.send("onGithubBranchs", data);
+      }).catch((e)=>{
+          main.webContents.send("onFailGithubBranchs", e);
+      })
+    });
+    
     ipcMain.on("getBuildInfo", (_) => {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
@@ -265,15 +273,19 @@ class CoreService {
     }, 10000)
   }
   childWindow = {};
-  async repoBrank(repoUrl) {
-    git.raw(["ls-remote", "--heads", repoUrl], (err, result) => {
-      if (err) {
-        console.error("获取远程分支失败:", err);
-      } else {
-        const branches = result.split("\n").map((line) => line);
-        console.log("远程分支列表:", branches);
-      }
-    });
+
+  async repoBranch(repoUrl) {
+    return new Promise((resolve, reject)=>{
+      git.raw(["ls-remote", "--heads", repoUrl], (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          const branches = result.split("\n").map((line) => line);
+          resolve(branches)
+        }
+      });
+    })
+    
   }
  
   openChildWindiow(

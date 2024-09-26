@@ -23,8 +23,7 @@ class BuildService{
             this.core.openChildWindiow();
         }else{
             // 已经登录
-            
-            this.startStep("accountInfo", 0, async (i)=>{
+            let result = await this.startStep("accountInfo", 0, async (i)=>{
                 let result = await this.agc.userTeamList();
                 let userTeam = result.teams.find((i)=> i.userType == 1)
                 this.agcConfig.teamId = userTeam.id;
@@ -34,6 +33,9 @@ class BuildService{
                     message: "登陆成功"
                 }
             }, "获取team失败")
+            if(!result){
+                this.core.openChildWindiow();
+            }
 
             this.startStep("accountInfo", 1, async (i)=>{
                 let result = await this.agc.projectList("xiaobai");
@@ -49,6 +51,8 @@ class BuildService{
                     console.debug("create result", result);
                 }
                 console.debug("project", JSON.stringify(project));
+                appList = await this.agc.appList()
+                console.debug("project", JSON.stringify(appList));
                 return {
                     value: projectId,
                     message: "创建成功"
@@ -62,8 +66,10 @@ class BuildService{
         try{
             let result = await callback(i,key)
             this.finishStep(key, i, result.value, result.message)
+            return true
         } catch(e){
             this.failStep(key, i, e, error)
+            return false
         }
     }
     finishStep(key, i, value, message){
