@@ -104,8 +104,8 @@ const getGitHub = (url) => {
   url = "https://gitee.com/zkaibycode/anything-llm.git";
   form.github = url;
   let name = url.split("/")[url.split("/").length - 1].replace(".git", "");
-  form.appName = name;
-  form.packageName = `com.xiaobai.${name}`;
+  form.appName = name.replace("-","_");
+  form.packageName = `com.xiaobai.${name.replace("-","_")}`;
   window.CoreApi.githubBranchs(url).then((data) => {
     branchItems.value = (data || [])
       .filter((items) => items && items !== "")

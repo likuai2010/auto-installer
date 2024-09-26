@@ -80,7 +80,7 @@ class CoreService {
         finish: false,
         value: "com.xx.xx",
         loading: false,
-        message: "创建失败",
+        message: "",
       },
       {
         name: "ClientID",
@@ -102,14 +102,14 @@ class CoreService {
         finish: false,
         value: "",
         loading: false,
-        message: "创建失败",
+        message: "",
       },
       {
         name: "创建Profile",
         finish: false,
         value: "",
         loading: false,
-        message: "创建失败",
+        message: "",
       },
     ],
   };
@@ -247,6 +247,7 @@ class CoreService {
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("checkAccount", (_, commonInfo) => {
+      console.debug("111", commonInfo)
       this.build.checkAccount(commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);

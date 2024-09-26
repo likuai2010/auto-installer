@@ -108,7 +108,7 @@ const handleNext = (active) => {
   if (active === 1) {
     //调用登录检查
     console.log(props.formData, "props.formData");
-    window.CoreApi.checkAccountInfo(props.formData);
+    window.CoreApi.checkAccountInfo({...props.formData});
     // 注册登录检查完成回调
   } else {
     // 开始构建
