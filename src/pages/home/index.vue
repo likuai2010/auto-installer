@@ -2,15 +2,21 @@
   <div class="page-home">
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
-        <el-form-item label="GitHub地址：" :prop="['github']">
-          <el-input v-model="form.github">
+        <el-form-item label="GitHub地址：" :prop="['github', 'branch']">
+          <el-input v-model="form.github" @input="getGitHub(value)">
             <template #append>
               <el-select
+                :loading="loading"
                 placeholder="选择分支"
                 v-model="form.branch"
                 :style="{ width: '120px' }"
               >
-                <el-option label="master" value="master" />
+                <el-option
+                  v-for="(item, index) in branchItems"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </template>
           </el-input>
@@ -68,11 +74,13 @@ import PublishSteps from "@/components/publish-steps/index.vue";
 
 const formEl = ref(null);
 const stepsEl = ref(null);
+const loading = ref(false);
+const branchItems = ref([]);
 const form = reactive({
-  github: "xxx",
-  appName: "xxx",
-  packageName: "xxx",
-  branch: "master",
+  github: "",
+  appName: "",
+  packageName: "",
+  branch: "",
 });
 
 const status = reactive({
@@ -91,6 +99,25 @@ const formRules = reactive({
     { required: true, message: "应用包名不允许为空", trigger: "blur" },
   ],
 });
+const getGitHub = (url) => {
+  loading.value = true;
+  url = "https://gitee.com/zkaibycode/anything-llm.git";
+  form.github = url;
+  let name = url.split("/")[url.split("/").length - 1].replace(".git", "");
+  form.appName = name;
+  form.packageName = name;
+  window.CoreApi.githubBranchs(url).then((data) => {
+    branchItems.value = (data || [])
+      .filter((items) => items && items !== "")
+      .map((items) => {
+        let branchArr = items.split("/");
+        let branch = branchArr[branchArr.length - 1];
+        return { label: branch, value: branch };
+      });
+    if (branchItems.value.length) form.branch = branchItems.value[0]?.value;
+    loading.value = false;
+  });
+};
 
 const submitForm = async () => {
   if (!formEl.value) return;

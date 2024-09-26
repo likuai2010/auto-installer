@@ -6,7 +6,7 @@
         <el-progress
           striped
           striped-flow
-          :duration="10"
+          :duration="1"
           :stroke-width="8"
           :percentage="status.process"
           :format="(percentage) => `${percentage}%`"
@@ -16,7 +16,7 @@
           link
           type="primary"
           @click="handleInstall"
-          :disabled="status.process !== 100"
+          :disabled="status.process < 100"
           >安装
         </el-button>
       </div>
@@ -86,9 +86,11 @@ const emits = defineEmits(["install", "dowload"]);
 
 const handleDowload = () => {
   if (props.data.url) {
-    dowloadTimer();
     status.dowload = true;
-    emits("dowload", props.data);
+    window.CoreApi.downloadAndInstaller(
+      props.data.url,
+      (process) => (status.process = Number(process.toFixed(3)))
+    );
   } else {
     ElNotification({
       title: "提示",

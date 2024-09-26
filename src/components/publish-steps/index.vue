@@ -10,8 +10,6 @@
       <InstallStatus
         :key="index"
         :data="status"
-        @install="handleInstall"
-        @dowload="handleDowload"
         v-for="(status, index) in form.statusItems"
       />
       <div class="handle-btns">
@@ -28,6 +26,12 @@
         @reload="handleReload"
         v-for="(status, index) in form.statusItems"
       />
+      <div class="build-types">
+        <el-radio-group v-model="form.types" size="small">
+          <el-radio-button label="分发" :value="0" />
+          <el-radio-button label="本地安装" :value="1" />
+        </el-radio-group>
+      </div>
       <div class="handle-btns">
         <el-button :disabled="disabled" type="primary" @click="handleNext(2)"
           >下一步</el-button
@@ -35,12 +39,6 @@
       </div>
     </template>
     <template v-if="form.active === 2">
-      <div class="build-types">
-        <el-radio-group v-model="form.types" size="small">
-          <el-radio-button label="分发" :value="0" />
-          <el-radio-button label="本地安装" :value="1" />
-        </el-radio-group>
-      </div>
       <StepsStatus
         :key="index"
         :data="status"
@@ -122,16 +120,6 @@ const handleReload = (data) => {
   console.log(data, "handleReload");
 };
 
-// 安装环境
-const handleInstall = (data) => {
-  console.log(data, "handleInstall");
-};
-
-// 下载环境
-const handleDowload = (data) => {
-  console.log(data, "handleDowload");
-};
-
 // 初始化数据轮询
 const initPublishSteps = (active) => {
   form.active = active;
@@ -184,8 +172,8 @@ defineExpose({ initPublishSteps });
   }
 
   .build-types {
-    margin: 20px 0px;
-    justify-content: flex-start;
+    margin: 20px 4% 0px 4%;
+    justify-content: flex-end;
   }
 }
 </style>

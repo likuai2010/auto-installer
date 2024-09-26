@@ -48,13 +48,13 @@ class CoreService {
     branch: "master",
     downloadUrl: "https://xxx",
   };
-  constructor(){
+  constructor() {
     let win =
       "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*13dn9it*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
     let mac =
       "https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*1jvi2eo*_gcl_au*Mzg3MDk4ODc5LjE3MjcxNTUwNzM.*_ga*MTI1ODE3OTcxNi4xNzIzNDQwMDY0*_ga_XJWPQMJYHQ*MTcyNzE1NTA3My4yLjEuMTcyNzE1NTA3OS41NC4wLjA.";
-    this.envInfo.steps[0].url = process.platform !== "darwin" ? win : mac
-    this.envInfo.steps[1].url = process.platform !== "darwin" ? win : mac
+    this.envInfo.steps[0].url = process.platform !== "darwin" ? win : mac;
+    this.envInfo.steps[1].url = process.platform !== "darwin" ? win : mac;
   }
   envInfo = {
     steps: [
@@ -62,7 +62,7 @@ class CoreService {
         name: "安装docker",
         finish: false,
         value: "未检查到docker环境",
-        url: "",
+        url: "https://docs.docker.com/desktop/install/windows-install/",
         message: "未安装",
       },
       {
@@ -105,7 +105,7 @@ class CoreService {
         loading: false,
         message: "",
       },
-     
+
       {
         name: "创建证书",
         finish: false,
@@ -216,11 +216,11 @@ class CoreService {
     return this.buildInfo;
   }
   registerIpc(main) {
-    try{
-      let cookies = this.dh.readFileToObj("hw_cookies.json")
-      this.agc.initCookie(cookies)
-    }catch(e){
-      console.error("hw_cookies.json 不存在 \n")
+    try {
+      let cookies = this.dh.readFileToObj("hw_cookies.json");
+      this.agc.initCookie(cookies);
+    } catch (e) {
+      console.error("hw_cookies.json 不存在 \n");
     }
 
     ipcMain.on("download-file", (_, fileUrl) => {
@@ -231,7 +231,6 @@ class CoreService {
       // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.openChildWindiow(fileUrl);
     });
-    
 
     ipcMain.on("getEnvInfo", (_) => {
       let info = this.getEnvInfo();
@@ -242,52 +241,53 @@ class CoreService {
       main.webContents.send("onAccountInfo", info);
     });
     ipcMain.on("githubBranchs", (_, url) => {
-      this.repoBranch(url).then((data)=>{
+      this.repoBranch(url)
+        .then((data) => {
           main.webContents.send("onGithubBranchs", data);
-      }).catch((e)=>{
+        })
+        .catch((e) => {
           main.webContents.send("onFailGithubBranchs", e);
-      })
+        });
     });
-    
+
     ipcMain.on("getBuildInfo", (_) => {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      this.build.checkAccount(commonInfo)
+      this.build.checkAccount(commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
-    })
+    });
     ipcMain.on("startBuild", (_, commonInfo) => {
-      this.build.startBuild(commonInfo)
+      this.build.startBuild(commonInfo);
       let info = this.getBuildInfo();
       main.webContents.send("onCheckAccount", info);
-    })
-    setInterval(()=>{
-      try{
-        let cookies = this.dh.readFileToObj("hw_cookies.json")
-        this.agc.initCookie(cookies)
-      }catch(e){
-        console.error("hw_cookies.json 不存在 \n")
+    });
+    setInterval(() => {
+      try {
+        let cookies = this.dh.readFileToObj("hw_cookies.json");
+        this.agc.initCookie(cookies);
+      } catch (e) {
+        console.error("hw_cookies.json 不存在 \n");
       }
-    }, 10000)
+    }, 10000);
   }
   childWindow = {};
 
   async repoBranch(repoUrl) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
       git.raw(["ls-remote", "--heads", repoUrl], (err, result) => {
         if (err) {
-          reject(new Error(err))
+          reject(new Error(err));
         } else {
           const branches = result.split("\n").map((line) => line);
-          resolve(branches)
+          resolve(branches);
         }
       });
-    })
-    
+    });
   }
- 
+
   openChildWindiow(
     url = "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/"
   ) {
@@ -304,12 +304,12 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-      const authInfo = this.agc.findCookieValue(cookies, "authInfo")
-      if (authInfo){
-        this.agc.initCookie(cookies)
-        this.dh.writeObjToFile("hw_cookies.json", cookies)
-        this.build.checkAccount()
-        childWindow.close()
+      const authInfo = this.agc.findCookieValue(cookies, "authInfo");
+      if (authInfo) {
+        this.agc.initCookie(cookies);
+        this.dh.writeObjToFile("hw_cookies.json", cookies);
+        this.build.checkAccount();
+        childWindow.close();
       }
     });
   }
