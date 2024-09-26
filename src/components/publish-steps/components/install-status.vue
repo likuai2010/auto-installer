@@ -89,7 +89,7 @@ const handleDowload = () => {
     status.dowload = true;
     window.CoreApi.downloadAndInstaller(
       props.data.url,
-      (process) => (status.process = Number(process.toFixed(3)))
+      (process) => (status.process = Number((process * 100).toFixed(1)))
     );
   } else {
     ElNotification({
