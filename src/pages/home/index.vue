@@ -40,7 +40,7 @@
     </div>
     <el-divider />
     <div class="page-home-steps">
-      <PublishSteps ref="stepsEl" />
+      <PublishSteps ref="stepsEl" :formData="form" />
     </div>
     <el-divider />
     <div class="page-home-status">
@@ -105,7 +105,7 @@ const getGitHub = (url) => {
   form.github = url;
   let name = url.split("/")[url.split("/").length - 1].replace(".git", "");
   form.appName = name;
-  form.packageName = name;
+  form.packageName = `com.xiaobai.${name}`;
   window.CoreApi.githubBranchs(url).then((data) => {
     branchItems.value = (data || [])
       .filter((items) => items && items !== "")
