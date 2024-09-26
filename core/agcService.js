@@ -98,6 +98,11 @@ class AgcService{
         let params  = {"fromPage":1,"pageSize":40,"projectIds":[],"projectName":name,"queryFlag":1}
         return this.base(uri, params, {})
     }
+    appList(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/app-manage/v1/app/list?maxReqCount=20&packageType=7&fromRecCount=1"
+        let params  = {}
+        return this.base(uri, params, {},"GET")
+    }
     checkPackageName(packageName){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/amis/app-manage/v1/app/check/package-name"
         let params  = {"packageName": packageName}
@@ -118,7 +123,9 @@ class AgcService{
         return this.base(uri, {"certIds":[certId]}, {}, "DELETE")
     }
     createCert(){
-
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/harmony-cert-manage/v1/cert"
+        let params = {"csr":"-----BEGIN NEW CERTIFICATE REQUEST-----\nMIIBNTCB2wIBADBJMQkwBwYDVQQGEwAxCTAHBgNVBAgTADEJMAcGA1UEBxMAMQkw\r\nBwYDVQQKEwAxCTAHBgNVBAsTADEQMA4GA1UEAxMHeGlhb2JhaTBZMBMGByqGSM49\r\nAgEGCCqGSM49AwEHA0IABAp4GDxNyOOgPqa/Tzprp5IktG3i2x+PAUSgA/yUzRga\r\nm2vIF9Zlq2E89nIe+e1vLlki1SoChwfErVRSaYTpsjygMDAuBgkqhkiG9w0BCQ4x\r\nITAfMB0GA1UdDgQWBBT1Fjs3jS1SmLWZN+ACrGQMfLaqUDAKBggqhkjOPQQDAgNJ\r\nADBGAiEA8Edq1GI1CZZpMS/ECd5/tVgqFZqLCIv8bMORLE/wTPoCIQCrucAEi4hm\r\nQz016dCtv3taIi2Wiijk1Bo0LvIv7oNbKQ==\n-----END NEW CERTIFICATE REQUEST-----\n","certName":"111","certType":1}
+        return this.base(uri, params, {})
     }
     profileList(){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision/list?start=1&pageSize=5&packageName="
