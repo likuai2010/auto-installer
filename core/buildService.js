@@ -13,7 +13,6 @@ class BuildService{
         teamId: "",
         projectId: "",
         appId: "",
-        packageName: "",
         prodCertId: "",
         debugCertId: "",
     }
@@ -54,7 +53,7 @@ class BuildService{
                     result =  await this.agc.createProject(projectName);
                     projectId= result.mapping.projectId
                 }
-                console.debug("project", projectId, JSON.stringify(project));
+                this.agcConfig.projectId = projectId
                 result = await this.agc.appList()
                 const appList = result.appList
                 let app = appList.find((a)=> a.packageName == packageName)
@@ -72,7 +71,7 @@ class BuildService{
                     message: "完成"
                 }
             },"失败")
-            this.startStep("accountInfo", 2, async (i)=>{
+            await this.startStep("accountInfo", 2, async (i)=>{
                 let clientName = "xiaobai-api"
                 let result = await this.agc.clientApiList()
                 const api = result.clients.find(a=> a.name == clientName)
@@ -82,6 +81,8 @@ class BuildService{
                     result = await this.agc.clientApiList()
                     api = result.clients.find(a=> a.clientId == clientId)
                 }
+                this.agcConfig.clientId = api.clientId
+                this.agcConfig.clientId = api.secrets[0].name
                 return {
                     value: `${api.clientId}(${api.secrets[0].name.substring(0,8)}...)`,
                     message: "完成"
@@ -116,7 +117,7 @@ class BuildService{
                     message: "完成"
                 }
             },"失败")
-            this.startStep("accountInfo", 5, async (i)=>{
+            await this.startStep("accountInfo", 5, async (i)=>{
                 const pordName = "xiaobai-prod"
                 let result = await this.agc.profileList(packageName)
                 let profile = result.list.find(a=> a.packageName == packageName && a.provisionType == 2)
@@ -132,6 +133,7 @@ class BuildService{
                     message: "完成"
                 }
             },"失败")
+            
         }
         this.running = false;
     }
