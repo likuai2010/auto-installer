@@ -55,10 +55,36 @@ class CmdService{
         else 
             return false
     }
-    async signHap(){
+     sginJar = "tools/toolchains/lib/hap-sign-tool.jar"
+    async signHap(signConfig = {
+        keystoreFile:"store/xiaobai.p12",
+        keystorePwd: "xiaobai123",
+        keyAlias:"xiaobai",
+        certFile: "store/xiaobai-debug.cer",
+        profilFile: "store/xiaobai-debugDebug.p7b",
+        inFile: "/Users/fiber/DevEcoStudioProjects/MyApplication/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        outFile: "./singned.hap"        
+    }){
         let javaPath = 'java'
-        let jarPath = 'jar'
-        let cmd = `java -jar jar  sign-app -mode localSign -keyAlias "oh-app1-key-v1" -appCertFile "D:\OH\app-release-cert.cer" -profileFile "D:\OH\signed-profile.p7b" -inFile "D:\OH\app1-unsigned.hap" -signAlg SHA256withECDSA  -keystoreFile  "D:\OH\app-keypair.jks" -keystorePwd ****** -outFile "D:\OH\app1-signed.hap -compatibleVersion 8" -signCode "1"`
+        let signParam = `-mode localSign -keyAlias "${signConfig.keyAlias}" -appCertFile "${signConfig.certFile}" -profileFile "${signConfig.profilFile}" -inFile "${signConfig.inFile}" -signAlg SHA256withECDSA  -keystoreFile  "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -outFile "${signConfig.outFile} -compatibleVersion 8" -signCode "1"`
+        let cmd = `${javaPath} -jar ${this.sginJar}  sign-app ${signParam}`
+        let result =  await this.exeCmd(cmd)
+        console.log("signHap", result)
+    }
+    async verifyApp(signConfig = {
+        keystoreFile:"store/xiaobai.p12",
+        keystorePwd: "xiaobai123",
+        certFile: "",
+        profilFile: "store/xiabai-debugDebug.p7b",
+        inFile: "/Users/fiber/DevEcoStudioProjects/MyApplication/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        outFile: "./singned.hap",
+        outCertChain:'./outCertChain.cer'        
+    }){
+        let javaPath = 'java'
+        let signParam = ` -inFile "${signConfig.inFile}" -outCertChain "${signConfig.outCertChain}" -outProfile "${signConfig.profilFile}"`
+        let cmd = `${javaPath} -jar ${this.sginJar} verify-app ${signParam}`
+        let result =  await this.exeCmd(cmd)
+        console.log("signHap", result)
     }
 }
 
@@ -73,5 +99,7 @@ async function  test(){
     await cmd.getUdid()
     await cmd.sendFile()
     await cmd.installHap()
+    await cmd.signHap()
+    //await cmd.verifyApp()
 }
 test()
