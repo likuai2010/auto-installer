@@ -17,7 +17,15 @@
     "productName": "MyElectronApp",
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "tools/**/*"
+    ],
+    "extraResources": [
+      {
+          "from": "tools", 
+          "to": "../tools",
+          "filter": ["**/*"]
+      }
     ],
     "directories": {
       "buildResources": "build"

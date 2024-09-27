@@ -12,7 +12,7 @@ class CmdService{
             });
         })
     }
-    hdc = "/Volumes/Macintosh\\ HD\\ 1/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains/hdc"
+    hdc = "tools/toolchains/hdc"
     async deviceList(){
         let result =  await this.exeCmd(`${this.hdc} list targets `)
         if (result == "[Empty]"){
@@ -54,6 +54,11 @@ class CmdService{
             return true
         else 
             return false
+    }
+    async signHap(){
+        let javaPath = 'java'
+        let jarPath = 'jar'
+        let cmd = `java -jar jar  sign-app -mode localSign -keyAlias "oh-app1-key-v1" -appCertFile "D:\OH\app-release-cert.cer" -profileFile "D:\OH\signed-profile.p7b" -inFile "D:\OH\app1-unsigned.hap" -signAlg SHA256withECDSA  -keystoreFile  "D:\OH\app-keypair.jks" -keystorePwd ****** -outFile "D:\OH\app1-signed.hap -compatibleVersion 8" -signCode "1"`
     }
 }
 
