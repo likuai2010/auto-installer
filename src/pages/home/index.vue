@@ -40,28 +40,34 @@
     </div>
     <el-divider />
     <div class="page-home-steps">
-      <PublishSteps ref="stepsEl" :formData="form" />
+      <PublishSteps ref="stepsEl" :formData="form" @update="handleUpdate" />
     </div>
     <el-divider />
     <div class="page-home-status">
       <el-form :model="form" label-width="auto">
-        <el-result
-          title="审核状态"
-          :icon="status.icon"
-          :sub-title="status.subTitle"
-        >
-          <template #extra>
-            <el-form-item label="下载地址：">
-              <el-input v-model="status.dowloadUrl">
-                <template #append>
-                  <el-tooltip effect="light" placement="top" content="复制">
-                    <el-button :icon="CopyDocument" />
-                  </el-tooltip>
-                </template>
-              </el-input>
-            </el-form-item>
-          </template>
-        </el-result>
+        <template v-if="status.active === 2">
+          <el-form-item label="下载地址：">
+            <el-input v-model="status.dowloadUrl">
+              <template #append>
+                <el-tooltip effect="light" placement="top" content="复制">
+                  <el-button :icon="CopyDocument" />
+                </el-tooltip>
+              </template>
+            </el-input>
+          </el-form-item>
+        </template>
+        <template v-if="status.active === 1 && status.installHup">
+          <el-upload
+            drag
+            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            multiple
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              将文件拖放到此处或<em>单击上传</em>
+            </div>
+          </el-upload>
+        </template>
       </el-form>
     </div>
   </div>
@@ -69,8 +75,8 @@
 
 <script setup name="HomePage">
 import { ref, reactive } from "vue";
-import { CopyDocument } from "@element-plus/icons-vue";
 import PublishSteps from "@/components/publish-steps/index.vue";
+import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
 
 const formEl = ref(null);
 const stepsEl = ref(null);
@@ -85,8 +91,12 @@ const form = reactive({
 
 const status = reactive({
   icon: "success",
+  active: -1,
+  types: 0,
   loading: false,
   disabled: false,
+  installHup: false,
+  statusItems: [],
   subTitle: "正在进行机器审核中",
   dowloadUrl: "www.baidu.com",
 });
@@ -104,8 +114,8 @@ const getGitHub = (url) => {
   url = "https://gitee.com/zkaibycode/anything-llm.git";
   form.github = url;
   let name = url.split("/")[url.split("/").length - 1].replace(".git", "");
-  form.appName = name.replace("-","_");
-  form.packageName = `com.xiaobai.${name.replace("-","_")}`;
+  form.appName = name.replace("-", "_");
+  form.packageName = `com.xiaobai.${name.replace("-", "_")}`;
   window.CoreApi.githubBranchs(url).then((data) => {
     branchItems.value = (data || [])
       .filter((items) => items && items !== "")
@@ -133,6 +143,13 @@ const submitForm = async () => {
       console.log("error submit!", fields);
     }
   });
+};
+
+const handleUpdate = (form) => {
+  status.types = form.types;
+  status.active = form.active;
+  status.installHup = form.installHup;
+  status.statusItems = form.statusItems;
 };
 </script>
 

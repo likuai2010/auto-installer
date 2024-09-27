@@ -62,7 +62,13 @@
 </template>
 
 <script setup name="PublishSteps">
-import { reactive, computed, defineProps, defineExpose } from "vue";
+import {
+  reactive,
+  computed,
+  defineProps,
+  defineEmits,
+  defineExpose,
+} from "vue";
 import StepsComp from "./components/steps-comp.vue";
 import StepsStatus from "./components/steps-status.vue";
 import InstallStatus from "./components/install-status.vue";
@@ -77,21 +83,23 @@ const props = defineProps({
   },
 });
 
+const emits = defineEmits(["update"]);
+
 const form = reactive({
   types: 0, // 0:分发,1:本地
   active: 0,
   finish: "process",
   status: "process",
+  installHup: false,
   statusItems: [],
 });
 
 const disabled = computed(() => {
   if (form.active === 0) {
-    // return !form.statusItems.find((items) => items.finish) ? true : false;
+    return !form.statusItems.find((items) => items.finish) ? true : false;
   } else if (form.active === 1) {
-    // return form.statusItems.find((items) => !items.finish) ? true : false;
+    return form.statusItems.find((items) => !items.finish) ? true : false;
   }
-  // return true;
   return false;
 });
 
@@ -108,7 +116,7 @@ const handleNext = (active) => {
   if (active === 1) {
     //调用登录检查
     console.log(props.formData, "props.formData");
-    window.CoreApi.checkAccountInfo({...props.formData});
+    window.CoreApi.checkAccountInfo({ ...props.formData });
     // 注册登录检查完成回调
   } else {
     // 开始构建
@@ -128,14 +136,17 @@ const initPublishSteps = (active) => {
   timer = setInterval(() => {
     if (form.active === 0) {
       window.CoreApi.getEnvInfo().then((data) => {
+        form.installHup = false;
         form.statusItems = data.steps || [];
       });
     } else if (form.active === 1) {
       window.CoreApi.getAccountInfo().then((data) => {
         form.statusItems = data.steps || [];
+        form.installHup = data.installHup || false;
       });
     } else if (form.active === 2) {
       window.CoreApi.getBuildInfo(form.types).then((data) => {
+        form.installHup = false;
         if (form.types === 0) {
           form.statusItems = data.steps || [];
         } else {
@@ -145,6 +156,8 @@ const initPublishSteps = (active) => {
     } else {
       console.error(`未识别类型`);
     }
+
+    emits("update", { ...form });
   }, 500);
 };
 
