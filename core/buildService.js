@@ -27,13 +27,16 @@ class BuildService {
         "accountInfo",
         0,
         async (i) => {
+        
           let result = await this.agc.userTeamList();
           let userTeam = result.teams.find((i) => i.userType == 1);
           this.agcConfig.teamId = userTeam.id;
           this.agc.agcteamid = userTeam.id;
+          console.debug("userTeam", userTeam, result.teams)
+          let userInfo = (await this.agc.userInfo()).body.getDetailInfo;
           return {
-            value: userTeam.name,
-            message: "登陆成功",
+            value: userTeam.name || userInfo.baseInfo.nickName,
+            message: "登录成功",
           };
         },
         "失败"
@@ -44,7 +47,7 @@ class BuildService {
       const appName = commonInfo?.appName || "xiaobai-app";
       const packageName = commonInfo?.packageName || "com.xiaobai.app";
 
-      console.log(222, appName);
+      console.log("commonInfo", commonInfo);
 
       await this.startStep(
         "accountInfo",
@@ -63,8 +66,6 @@ class BuildService {
           }
           this.agcConfig.projectId = projectId;
           result = await this.agc.appList();
-          console.log(111, result);
-
           const appList = result.appList || [];
           let app = appList.find((a) => a.packageName == packageName);
           if (!app) {
@@ -122,7 +123,7 @@ class BuildService {
             debugCert = result.harmonyCert;
           }
           console.debug("cert ", debugCert);
-          this.agcConfig.prodCertId = debugCert.id;
+          this.agcConfig.debugCertId = debugCert.id;
           return {
             value: `${debugCert.certName}`,
             message: "完成",
@@ -154,18 +155,27 @@ class BuildService {
         "accountInfo",
         5,
         async (i) => {
-          const pordName = "xiaobai-prod";
+          const profileName = "xiaobai-debug";
           let result = await this.agc.profileList(packageName);
           let profile = result.list.find(
-            (a) => a.packageName == packageName && a.provisionType == 2
+            (a) => a.packageName == packageName && a.provisionType == 1
           );
           if (!profile) {
-            console.debug("agcConfig", this.agcConfig);
+            let deviceUdid = "2CE6542BA4A186D329CC9C1B38CA1565C63BCDC1F703EBC4B496BB343338EAB4"
+            result = await this.agc.deviceList("xiaobai-device")
+            let deviceList = result.list || []
+            console.debug("device", deviceList);
+            if (deviceList.length == 0) {
+                await this.agc.createDevice("xiaobai-device", deviceUdid)
+                result = await this.agc.deviceList("xiaobai-device")
+                deviceList = result.list
+            }
             result = await this.agc.createProfile(
-              "xiaobai-prod",
-              this.agcConfig.prodCertId,
-              this.agcConfig.appId,
-              2
+                profileName,
+                this.agcConfig.debugCertId,
+                this.agcConfig.appId,
+                1,
+                deviceList.map((d)=>d.id)
             );
             console.debug("create profile ", result);
             profile = result.provisionInfo;
@@ -178,7 +188,35 @@ class BuildService {
         },
         "失败"
       );
+      await this.startStep(
+        "accountInfo",
+        6,
+        async (i) => {
+          const profileName = "xiaobai-prod";
+          let result = await this.agc.profileList(packageName);
+          let profile = result.list.find(
+            (a) => a.packageName == packageName && a.provisionType == 2
+          );
+          if (!profile) {
+            result = await this.agc.createProfile(
+            profileName,
+              this.agcConfig.prodCertId,
+              this.agcConfig.appId,
+              2
+            );
+            profile = result.provisionInfo;
+          }
+          console.debug("profile ", profile);
+          return {
+            value: `${packageName}(${profile.provisionName})`,
+            message: "完成",
+          };
+        },
+        "失败"
+      );
     }
+    console.debug("agcConfig", this.agcConfig);
+    this.dh.writeObjToFile("agc_config.json", this.agcConfig)
     this.running = false;
   }
 
@@ -189,6 +227,7 @@ class BuildService {
       this.finishStep(key, i, result.value, result.message);
       return true;
     } catch (e) {
+      console.error("startStep error", e.message, e.stack)
       this.failStep(key, i, e, error);
       return false;
     }

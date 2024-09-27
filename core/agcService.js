@@ -66,6 +66,10 @@ class AgcService{
             return undefined
         return ck.value
     }
+    userInfo(){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/apios/invokeService/AGCHomePageOrchestration/getUserInfo"
+        return this.base(uri, {"inputParameters":{}}, {})
+    }
 
     userTeamList(){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/ups/user-permission-service/v1/user-team-list"
@@ -135,9 +139,9 @@ class AgcService{
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision/list?start=1&pageSize=5&packageName=" + packageName
         return this.base(uri, {}, {}, "GET")
     }
-    createProfile(name, certId, appId, type = 2){
+    createProfile(name, certId, appId, type = 2, deviceIds=[]){
         let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cps/provision-manage/v1/provision"
-        let params  = {"provisionName":name,"certList":[certId],"provisionType":type,"appId":appId,"deviceList":[],"permissionList":[]}
+        let params  = {"provisionName":name,"certList":[certId],"provisionType":type,"appId":appId,"deviceList":deviceIds,"permissionList":[]}
         return this.base(uri, params, {})
     }
     downloadProfile(){
