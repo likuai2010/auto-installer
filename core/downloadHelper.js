@@ -3,6 +3,11 @@ const path = require('node:path')
 const fs = require('node:fs')
 const https = require('https');
 class DownloadHelper{
+    configDir = path.join(app.getPath('userData'), "config")
+    constructor(){
+        this.configDir =  path.join(app.getPath('userData'), "config")
+        fs.mkdirSync(this.configDir, {recursive: true})
+    }
     downloadAndInstallFile(mainWindow, fileUrl) {
         const filePath = path.join(app.getPath('downloads'), 'installer.exe');
         const file = fs.createWriteStream(filePath);
@@ -41,9 +46,11 @@ class DownloadHelper{
             console.error(`Error: ${stderr}`);
         });
     }
+
+   
     writeObjToFile(filename, obj){
         const jsonData = JSON.stringify(obj, null, 2)
-        const filePath = path.join(app.getPath('documents'), filename);
+        const filePath = path.join(this.configDir, filename);
         fs.writeFile(filePath, jsonData, (err) => {
             if (err) {
                 console.error('写入文件失败:', err);
@@ -53,7 +60,7 @@ class DownloadHelper{
         });
     }
     readFileToObj(filename){
-        const filePath = path.join(app.getPath('documents'), filename);
+        const filePath = path.join(this.configDir, filename);
         const data = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(data)
     }
