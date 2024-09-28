@@ -118,6 +118,7 @@ class CoreService {
         message: "",
       },
     ],
+    installHap: false,
   };
   buildInfo = {
     steps: [
@@ -231,12 +232,12 @@ class CoreService {
     });
 
     ipcMain.on("getEnvInfo", (_) => {
-      let info = this.getEnvInfo();
-      main.webContents.send("onEnvInfo", info);
+        let info = this.getEnvInfo();
+        main.webContents.send("onEnvInfo", info);
     });
     ipcMain.on("getAccountInfo", (_) => {
-      let info = this.getAccountInfo();
-      main.webContents.send("onAccountInfo", info);
+        let info = this.getAccountInfo();
+        main.webContents.send("onAccountInfo", info);
     });
     ipcMain.on("githubBranchs", (_, url) => {
       this.repoBranch(url)

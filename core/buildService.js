@@ -1,8 +1,11 @@
+const { CmdService } = require("./cmdService");
+
 class BuildService {
   constructor(core) {
     this.agc = core.agc;
     this.core = core;
     this.dh = core.dh;
+    this.cmd = new CmdService()
   }
   running = false;
 
@@ -15,13 +18,18 @@ class BuildService {
     prodCertId: "",
     debugCertId: "",
   };
+
+  async checkPackageName(packageName) {
+    try{
+      let result = await this.agc.checkPackageName(packageName);
+    } catch(e) {
+      this.core.openChildWindiow();
+      return  false;
+    }
+  }
   async checkAccount(commonInfo) {
     if (this.running) return;
     this.running = true;
-    if (this.agc.csrfToken == "") {
-      // 未登录
-      this.core.openChildWindiow();
-    } else {
       // 已经登录
       let result = await this.startStep(
         "accountInfo",
@@ -160,11 +168,18 @@ class BuildService {
           let profile = result.list.find(
             (a) => a.packageName == packageName && a.provisionType == 1
           );
+          let device = this.cmd.deviceList()
+          if (device.length == 0) {
+            throw new Error("请连接手机")
+          }
+          const udid = await this.cmd.getUdid(null)
+          console.debug("create udid ", udid);
           if (!profile) {
-            let deviceUdid = "2CE6542BA4A186D329CC9C1B38CA1565C63BCDC1F703EBC4B496BB343338EAB4"
+            let deviceUdid = udid
             result = await this.agc.deviceList("xiaobai-device")
             let deviceList = result.list || []
             console.debug("device", deviceList);
+           
             if (deviceList.length == 0) {
                 await this.agc.createDevice("xiaobai-device", deviceUdid)
                 result = await this.agc.deviceList("xiaobai-device")
@@ -173,7 +188,7 @@ class BuildService {
             result = await this.agc.createProfile(
                 profileName,
                 this.agcConfig.debugCertId,
-                this.agcConfig.appId,
+                 "xx",
                 1,
                 deviceList.map((d)=>d.id)
             );
@@ -214,7 +229,6 @@ class BuildService {
         },
         "失败"
       );
-    }
     console.debug("agcConfig", this.agcConfig);
     this.dh.writeObjToFile("agc_config.json", this.agcConfig)
     this.running = false;
@@ -227,7 +241,7 @@ class BuildService {
       this.finishStep(key, i, result.value, result.message);
       return true;
     } catch (e) {
-      console.error("startStep error", e.message, e.stack)
+      console.error("startStep error", e.message || e, e.stack)
       this.failStep(key, i, e, error);
       return false;
     }

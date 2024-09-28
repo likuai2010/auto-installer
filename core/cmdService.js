@@ -12,7 +12,7 @@ class CmdService{
             });
         })
     }
-    hdc = "tools/toolchains/hdc"
+    hdc = "G:/git/auto-publish-harmonyos/tools/toolchains/hdc"
     async deviceList(){
         let result =  await this.exeCmd(`${this.hdc} list targets `)
         if (result == "[Empty]"){
@@ -31,13 +31,13 @@ class CmdService{
         console.log(udid)
         return udid
     }
-    async sendFile(device = '127.0.0.1:5557', filePath = "/Users/fiber/DevEcoStudioProjects/MyApplication/entry/build/default/outputs/default/entry-default-unsigned.hap",){
+    async sendFile(device = '127.0.0.1:5557', filePath = "entry-default-unsigned.hap",){
         let deviceT = ""
         if (device) {
             deviceT = "-t " + device
         }
-         await this.exeCmd(`${this.hdc} ${deviceT} shell mkdir -p data/local/tmp/hap`)
-        let result =  await this.exeCmd(`${this.hdc} ${deviceT} file send ${filePath} data/local/tmp/hap/unsigned.hap`)
+        await this.exeCmd(`${this.hdc} ${deviceT} shell mkdir -p data/local/tmp/hap`)
+        let result =  await this.exeCmd(`${this.hdc} ${deviceT} file send ${filePath} data/local/tmp/hap/`)
         console.log("sendFile",result)
         if(result.indexOf("finish") > -1)
             return true
@@ -48,35 +48,41 @@ class CmdService{
         let deviceT = ""
         if (device) 
             deviceT = "-t " + device
-        let result =  await this.exeCmd(`${this.hdc} ${deviceT} shell bm install -p data/local/tmp/hap/unsigned.hap`)
+        let result =  await this.exeCmd(`${this.hdc} ${deviceT} shell bm install -p data/local/tmp/hap/singned.hap`)
         console.log("installHap", result)
         if(result.indexOf("successfully") > -1)
             return true
         else 
             return false
     }
-     sginJar = "tools/toolchains/lib/hap-sign-tool.jar"
+    sginJar = "G:/git/auto-publish-harmonyos/tools/toolchains/lib/hap-sign-tool.jar"
     async signHap(signConfig = {
         keystoreFile:"store/xiaobai.p12",
-        keystorePwd: "xiaobai123",
+        keystorePwd: "123456Abc",
         keyAlias:"xiaobai",
-        certFile: "store/xiaobai-debug.cer",
-        profilFile: "store/xiaobai-debugDebug.p7b",
-        inFile: "/Users/fiber/DevEcoStudioProjects/MyApplication/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        certFile: "store/xiaobai.cer",
+        profilFile: "store/testgoDebug.p7b",
+        inFile: "./entry-default.hap",
         outFile: "./singned.hap"        
     }){
         let javaPath = 'java'
-        let signParam = `-mode localSign -keyAlias "${signConfig.keyAlias}" -appCertFile "${signConfig.certFile}" -profileFile "${signConfig.profilFile}" -inFile "${signConfig.inFile}" -signAlg SHA256withECDSA  -keystoreFile  "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -outFile "${signConfig.outFile} -compatibleVersion 8" -signCode "1"`
+       
+        let signParam = `-mode "localSign" -keyAlias "${signConfig.keyAlias}" -appCertFile "${signConfig.certFile}" -profileFile "${signConfig.profilFile}" -inFile "${signConfig.inFile}" -signAlg "SHA256withECDSA"   -keystoreFile  "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "${signConfig.outFile}" -signCode "1"`
         let cmd = `${javaPath} -jar ${this.sginJar}  sign-app ${signParam}`
         let result =  await this.exeCmd(cmd)
         console.log("signHap", result)
     }
+    // generate-csr -keyAlias "oh-app1-key-v1" -keyPwd ****** -subject "C=CN,O=OpenHarmony,OU=OpenHarmony Community,CN=App1 Release" -signAlg SHA256withECDSA  -keystoreFile  "D:\OH\app-keypair.jks" -keystorePwd ****** -outFile "D:\OH\oh-app1-key-v1.csr"
+    async ceraeteCsr(){
+        let prams = `generate-csr -keyAlias "xiaobai" -keyPwd xiaobai123 -subject "C=CN,O=OpenHarmony,OU=OpenHarmony Community,CN=App1 Release" -signAlg SHA256withECDSA  -keystoreFile  "./store/xiaobai.jks" -keystorePwd xiaobai123 -outFile "./store/xiaobai.csr"`
+    }
+    
+
     async verifyApp(signConfig = {
         keystoreFile:"store/xiaobai.p12",
-        keystorePwd: "xiaobai123",
-        certFile: "",
-        profilFile: "store/xiabai-debugDebug.p7b",
-        inFile: "/Users/fiber/DevEcoStudioProjects/MyApplication/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        keystorePwd: "123456Abc",
+        profilFile: "store/testgoDebug.p7b",
+        inFile: "./singned.hap",
         outFile: "./singned.hap",
         outCertChain:'./outCertChain.cer'        
     }){
@@ -94,12 +100,16 @@ module.exports = {
 }
 async function  test(){
     const cmd  = new CmdService()
-    let target = await cmd.deviceList()
-    console.log("tagetList",target)
-    await cmd.getUdid()
-    await cmd.sendFile()
-    await cmd.installHap()
+    // let target = await cmd.deviceList()
+    // console.log("tagetList",target)
+    await cmd.getUdid(null)
     await cmd.signHap()
+    // await cmd.verifyApp()
+    await cmd.sendFile(null, "./singned.hap")
+  
+    await cmd.installHap(null)
+    // cmd.signHapByJava()
+   
     //await cmd.verifyApp()
 }
-test()
+ test()

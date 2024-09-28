@@ -22,9 +22,11 @@
     ],
     "extraResources": [
       {
-          "from": "tools", 
-          "to": "../tools",
-          "filter": ["**/*"]
+        "from": "tools",
+        "to": "../tools",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "directories": {
