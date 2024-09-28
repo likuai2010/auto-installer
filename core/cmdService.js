@@ -62,7 +62,7 @@ class CmdService{
         keyAlias:"xiaobai",
         certFile: "store/xiaobai.cer",
         profilFile: "store/testgoDebug.p7b",
-        inFile: "./entry-default.hap",
+        inFile: "./entry-default-unsigned.hap",
         outFile: "./singned.hap"        
     }){
         let javaPath = 'java'
@@ -108,8 +108,8 @@ async function  test(){
     await cmd.sendFile(null, "./singned.hap")
   
     await cmd.installHap(null)
-    // cmd.signHapByJava()
    
     //await cmd.verifyApp()
 }
- test()
+
+test()

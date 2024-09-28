@@ -254,7 +254,6 @@ class CoreService {
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      console.debug("111", commonInfo)
       this.build.checkAccount(commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);

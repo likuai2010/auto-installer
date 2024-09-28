@@ -144,8 +144,8 @@ class AgcService{
         let params  = {"provisionName":name,"certList":[certId],"provisionType":type,"appId":appId,"deviceList":deviceIds,"permissionList":[]}
         return this.base(uri, params, {})
     }
-    downloadProfile(){
-        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cfs/file_service/v1/download/object/url?objectId=CN%2F2024092508%2F1727252940598-834a8dd5-9f8d-455c-bc4e-36f6d3c44ccd.p7b&downloadFileName=21421Release.p7b"
+    downloadObj(objId, fileName){
+        let uri = "https://agc-drcn.developer.huawei.com/agc/edge/cfs/file_service/v1/download/object/url?objectId="+objId+"&downloadFileName="+fileName
         let params  = {}
         return this.base(uri, params, {})
     }

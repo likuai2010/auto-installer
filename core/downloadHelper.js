@@ -8,6 +8,29 @@ class DownloadHelper{
         this.configDir =  path.join(app.getPath('userData'), "config")
         fs.mkdirSync(this.configDir, {recursive: true})
     }
+
+    downloadFile(fileUrl, fileName) {
+        const filePath = path.join(this.configDir, fileName);
+        const file = fs.createWriteStream(filePath);
+        https.get(fileUrl, (response) => {
+            const totalBytes = parseInt(response.headers['content-length'], 10);
+            let downloadedBytes = 0;
+            response.pipe(file);
+            response.on('data', (chunk) => {
+                downloadedBytes += chunk.length;
+                const progress = downloadedBytes / totalBytes;
+            });
+    
+            file.on('finish', () => {
+                file.close();
+            });
+        }).on('error', (err) => {
+            fs.unlink(filePath, () => {}); // 删除不完整的文件
+            console.error('Download failed', err.message);
+        });
+        return filePath
+    }
+
     downloadAndInstallFile(mainWindow, fileUrl) {
         const filePath = path.join(app.getPath('downloads'), 'installer.exe');
         const file = fs.createWriteStream(filePath);
