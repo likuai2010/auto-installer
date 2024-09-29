@@ -1,4 +1,6 @@
 const { AgcService } = require("./agcService");
+const { EcoService } = require("./ecoService");
+const { CmdService } = require("./cmdService");
 const { DownloadHelper } = require("./downloadHelper");
 const simpleGit = require("simple-git");
 
@@ -39,13 +41,18 @@ const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
   agc = new AgcService();
+  cmd = new CmdService()
   build = new BuildService(this);
+  eco = new EcoService(this);
+  
+
   commonInfo = {
     packageName: "com.xx.xx",
     appName: "app",
     github: "https://github.com/likuai2010/ClashMeta.git",
     branch: "master",
     downloadUrl: "https://xxx",
+    type: 0,
   };
   envInfo = {
     steps: [
@@ -117,7 +124,6 @@ class CoreService {
         message: "",
       },
     ],
-    installHap: false,
   };
   buildInfo = {
     steps: [
@@ -194,7 +200,6 @@ class CoreService {
         message: "安装失败",
       },
     ],
-    type: 0, // 0 分发，1 本地安装
   };
   constructor() {
     let win =
@@ -213,12 +218,20 @@ class CoreService {
   getBuildInfo() {
     return this.buildInfo;
   }
-  registerIpc(main) {
+  async registerIpc(main) {
+   
     try {
       let cookies = this.dh.readFileToObj("hw_cookies.json");
       this.agc.initCookie(cookies);
     } catch (e) {
       console.error("hw_cookies.json 不存在 \n");
+    }
+    try {
+      let authInfo = this.dh.readFileToObj("ds-authInfo.json");
+      await this.eco.initCookie(authInfo.accessToken);
+      await this.eco.autoCreateProile()
+    } catch (e) {
+      console.error("ds-authInfo.json 不存在 \n", e);
     }
 
     ipcMain.on("download-file", (_, fileUrl) => {
@@ -228,6 +241,7 @@ class CoreService {
       // this.cloneGit("https://github.com/likuai2010/ClashMeta.git")
       // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
       this.openChildWindiow(fileUrl);
+      // this.loginEco()
     });
 
     ipcMain.on("getEnvInfo", (_) => {
@@ -302,11 +316,41 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
+      console.log("cookie", cookies)
       const authInfo = this.agc.findCookieValue(cookies, "authInfo");
       if (authInfo) {
         this.agc.initCookie(cookies);
         this.dh.writeObjToFile("hw_cookies.json", cookies);
         this.build.checkAccount();
+        childWindow.close();
+      }
+    });
+  }
+
+  loginEco(
+    url = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=8866&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc"
+  ) {
+    const childWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
+        nodeIntegration: false,
+      },
+    });
+    childWindow.webContents.openDevTools();
+    childWindow.loadURL(url);
+    childWindow.webContents.on("did-finish-load", async () => {
+      const cookies = await childWindow.webContents.session.cookies.get({
+        url: "https://developer.huawei.com",
+      });
+   
+      const authInfo = this.agc.findCookieValue(cookies, "ds-authInfo");
+      if (authInfo) {
+        const decoded = decodeURIComponent(authInfo);
+        this.dh.writeObjToFile("ds-authInfo.json", JSON.parse(decoded));
+
         childWindow.close();
       }
     });

@@ -37,6 +37,10 @@ class CmdService{
         console.log(udid)
         return udid
     }
+    async sendAndInstall(device, filePath){
+        await this.sendFile(device, filePath)
+        await this.installHap(device)
+    }
     async sendFile(device = '127.0.0.1:5557', filePath = "entry-default-unsigned.hap",){
         let deviceT = ""
         if (device) {
@@ -72,7 +76,6 @@ class CmdService{
         outFile: "./singned.hap"        
     }){
         let javaPath = 'java'
-       
         let signParam = `-mode "localSign" -keyAlias "${signConfig.keyAlias}" -appCertFile "${signConfig.certFile}" -profileFile "${signConfig.profilFile}" -inFile "${signConfig.inFile}" -signAlg "SHA256withECDSA"   -keystoreFile  "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "${signConfig.outFile}" -signCode "1"`
         let cmd = `${javaPath} -jar ${this.sginJar}  sign-app ${signParam}`
         let result =  await this.exeCmd(cmd)
@@ -115,6 +118,11 @@ class CmdService{
             console.error("buildApp", e.message || e)
         }
     }
+
+    unpack(){
+        //java -jar app_unpacking_tool.jar --mode hap --hap-path D:\entry-default-unsigned.hap --out-path D:\out3 --force true
+        //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
+    }
 }
 
 
@@ -132,4 +140,3 @@ async function  test(){
     await cmd.installHap(null)
     // await cmd.buildApp()
 }
-test()

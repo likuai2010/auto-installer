@@ -5,7 +5,7 @@ class BuildService {
     this.agc = core.agc;
     this.core = core;
     this.dh = core.dh;
-    this.cmd = new CmdService()
+    this.cmd = core.dh; 
   }
   running = false;
 
