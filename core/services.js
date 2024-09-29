@@ -35,7 +35,6 @@ class buildInfo {
 }
 const { BrowserWindow, ipcMain } = require("electron");
 const { BuildService } = require("./buildService");
-
 const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
@@ -78,7 +77,7 @@ class CoreService {
       {
         name: "创建应用",
         finish: false,
-        value: "com.xx.xx",
+        value: "",
         loading: false,
         message: "",
       },

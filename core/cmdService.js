@@ -1,9 +1,10 @@
-const { exec } = require('child_process');
+const { exec,spawn } = require('child_process');
+
 
 class CmdService{
-    exeCmd(cmd){
+    exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
-            exec(cmd, (error, stdout, stderr) => {
+            exec(cmd,  {  ...opt }, (error, stdout, stderr) => {
                 if (error) {
                     reject(error)
                 }else{
@@ -11,6 +12,11 @@ class CmdService{
                 }
             });
         })
+    }
+    async spawnCmd(cmd){
+       
+        
+       
     }
     hdc = "G:/git/auto-publish-harmonyos/tools/toolchains/hdc"
     async deviceList(){
@@ -62,7 +68,7 @@ class CmdService{
         keyAlias:"xiaobai",
         certFile: "store/xiaobai.cer",
         profilFile: "store/testgoDebug.p7b",
-        inFile: "./entry-default-unsigned.hap",
+        inFile: "D:/pack.hap",
         outFile: "./singned.hap"        
     }){
         let javaPath = 'java'
@@ -92,6 +98,23 @@ class CmdService{
         let result =  await this.exeCmd(cmd)
         console.log("signHap", result)
     }
+
+    async buildApp(workdir="C://Users//Administrator//AppData//Roaming//auto-publish-harmonyos//codetestgo/"){
+        try{
+            const hvigorw = 'D:\\command-line-tools\\bin\\hvigorw'
+            const ohpm = 'D:\\command-line-tools\\bin\\ohpm'
+            // let result = await this.exeCmd(`${ohpm} install --all`, {
+            //     cwd:workdir
+            // })
+            // console.log(result)
+            let result2 = await this.exeCmd(`${hvigorw} assembleHap  -p product=default`, {
+                cwd:workdir,
+            })
+            console.log(result2)
+        }catch(e){
+            console.error("buildApp", e.message || e)
+        }
+    }
 }
 
 
@@ -102,14 +125,11 @@ async function  test(){
     const cmd  = new CmdService()
     // let target = await cmd.deviceList()
     // console.log("tagetList",target)
-    await cmd.getUdid(null)
+    // await cmd.getUdid(null)
     await cmd.signHap()
-    // await cmd.verifyApp()
+    await cmd.verifyApp()
     await cmd.sendFile(null, "./singned.hap")
-  
     await cmd.installHap(null)
-   
-    //await cmd.verifyApp()
+    // await cmd.buildApp()
 }
-
 test()

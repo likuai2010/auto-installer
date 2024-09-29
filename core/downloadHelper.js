@@ -2,11 +2,16 @@ const { app } = require('electron');
 const path = require('node:path')
 const fs = require('node:fs')
 const https = require('https');
+const simpleGit = require("simple-git");
+const git = simpleGit();
 class DownloadHelper{
-    configDir = path.join(app.getPath('userData'), "config")
+    configDir = ""
+    codeDir = ""
     constructor(){
-        this.configDir =  path.join(app.getPath('userData'), "config")
+        this.configDir =  path.join(app.getPath('home'), ".autoPublisher/config")
+        this.codeDir = path.join(app.getPath('home'), ".autoPublisher/code")
         fs.mkdirSync(this.configDir, {recursive: true})
+        fs.mkdirSync(this.codeDir, {recursive: true})
     }
 
     downloadFile(fileUrl, fileName) {
@@ -70,27 +75,32 @@ class DownloadHelper{
         });
     }
 
-   
     writeObjToFile(filename, obj){
         const jsonData = JSON.stringify(obj, null, 2)
         const filePath = path.join(this.configDir, filename);
         fs.writeFile(filePath, jsonData, (err) => {
             if (err) {
-                console.error('写入文件失败:', err);
+                console.error('save file fail:', err);
             } else {
-                console.log('文件已成功写入:', filePath);
+                console.log('file saved:', filePath);
             }
         });
     }
     readFileToObj(filename){
-        const filePath = path.join(this.configDir, filename);
-        const data = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(data)
+        try {
+            const filePath = path.join(this.configDir, filename);
+            const data = fs.readFileSync(filePath, 'utf8');
+            return JSON.parse(data)
+        } catch(e) {
+            console.error("readFileToObj", e.message || e)
+        }
+        return {}
     }
     async cloneGit(repoUrl, branch = "master") {
-        git.clone(repoUrl, "./local-repo", ["--branch", branch]);
-        const tags = await git.tags();
-        console.log(tags.all);
+        const repoName = path.basename(repoUrl, '.git');
+        let destination = this.codeDir +"/"+ repoName
+        await git.clone(repoUrl, destination, ["--branch", branch]);
+        await git.cwd(destination).submoduleUpdate(['--init', '--recursive']);
     }
 }
 
