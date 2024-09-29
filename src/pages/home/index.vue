@@ -56,7 +56,8 @@
             </el-input>
           </el-form-item>
         </template>
-        <template v-if="status.active === 1 && status.installHup">
+        <!-- <template v-if="status.active === 1 && status.installHup"> -->
+        <template v-if="status.active === 1">
           <el-upload
             drag
             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
