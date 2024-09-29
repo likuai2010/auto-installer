@@ -35,7 +35,6 @@ class buildInfo {
 }
 const { BrowserWindow, ipcMain } = require("electron");
 const { BuildService } = require("./buildService");
-
 const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
@@ -78,7 +77,7 @@ class CoreService {
       {
         name: "创建应用",
         finish: false,
-        value: "com.xx.xx",
+        value: "",
         loading: false,
         message: "",
       },
@@ -118,6 +117,7 @@ class CoreService {
         message: "",
       },
     ],
+    installHap: false,
   };
   buildInfo = {
     steps: [
@@ -231,12 +231,12 @@ class CoreService {
     });
 
     ipcMain.on("getEnvInfo", (_) => {
-      let info = this.getEnvInfo();
-      main.webContents.send("onEnvInfo", info);
+        let info = this.getEnvInfo();
+        main.webContents.send("onEnvInfo", info);
     });
     ipcMain.on("getAccountInfo", (_) => {
-      let info = this.getAccountInfo();
-      main.webContents.send("onAccountInfo", info);
+        let info = this.getAccountInfo();
+        main.webContents.send("onAccountInfo", info);
     });
     ipcMain.on("githubBranchs", (_, url) => {
       this.repoBranch(url)
@@ -253,7 +253,6 @@ class CoreService {
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      console.debug("111", commonInfo)
       this.build.checkAccount(commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);

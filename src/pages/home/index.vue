@@ -112,7 +112,7 @@ const formRules = reactive({
 });
 const getGitHub = (url) => {
   loading.value = true;
-  url = "https://gitee.com/zkaibycode/anything-llm.git";
+  url = "https://github.com/likuai2010/testgo.git";
   form.github = url;
   let name = url.split("/")[url.split("/").length - 1].replace(".git", "");
   form.appName = name.replace("-", "_");

@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require("electron");
+const { console } = require("inspector");
 
 // api桥
 contextBridge.exposeInMainWorld("CoreApi", {
@@ -53,7 +54,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.on("startBuild", (event, data) => {
         resolve(data);
       });
-      ipcRenderer.send("startBuild", buildInfo);
+      ipcRenderer.send("startBuild", commonInfo);
     });
   },
   async downloadAndInstaller(url, onProgress) {

@@ -115,12 +115,11 @@ const handleNext = (active) => {
   form.active = active;
   if (active === 1) {
     //调用登录检查
-    console.log(props.formData, "props.formData");
     window.CoreApi.checkAccountInfo({ ...props.formData });
     // 注册登录检查完成回调
-  } else {
+  } else if (active === 2) {
     // 开始构建
-    window.CoreApi.startBuild(props.formData);
+    window.CoreApi.startBuild({ ...props.formData });
   }
 };
 
