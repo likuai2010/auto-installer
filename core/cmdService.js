@@ -81,11 +81,13 @@ class CmdService{
         let result =  await this.exeCmd(cmd)
         console.log("signHap", result)
     }
-    // generate-csr -keyAlias "oh-app1-key-v1" -keyPwd ****** -subject "C=CN,O=OpenHarmony,OU=OpenHarmony Community,CN=App1 Release" -signAlg SHA256withECDSA  -keystoreFile  "D:\OH\app-keypair.jks" -keystorePwd ****** -outFile "D:\OH\oh-app1-key-v1.csr"
     async ceraeteCsr(){
         let prams = `generate-csr -keyAlias "xiaobai" -keyPwd xiaobai123 -subject "C=CN,O=OpenHarmony,OU=OpenHarmony Community,CN=App1 Release" -signAlg SHA256withECDSA  -keystoreFile  "./store/xiaobai.jks" -keystorePwd xiaobai123 -outFile "./store/xiaobai.csr"`
     }
-    
+    /*
+    java -jar app_unpacking_tool.jar --mode hap --hap-path D:\entry-default-unsigned.hap --out-path D:\out3
+    java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
+    */
 
     async verifyApp(signConfig = {
         keystoreFile:"store/xiaobai.p12",
