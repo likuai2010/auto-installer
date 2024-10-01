@@ -42,8 +42,8 @@ class CoreService {
   dh = new DownloadHelper();
   agc = new AgcService();
   cmd = new CmdService()
-  build = new BuildService(this);
   eco = new EcoService(this);
+  build = new BuildService(this);
   
 
   commonInfo = {
@@ -183,21 +183,21 @@ class CoreService {
         finish: false,
         value: "",
         loading: false,
-        message: "签名失败",
+        message: "",
       },
       {
         name: "连接设备",
         finish: false,
         value: "",
         loading: false,
-        message: "请连接手机，并开启开发者模式",
+        message: "",
       },
       {
         name: "安装应用",
         finish: false,
         value: "",
         loading: false,
-        message: "安装失败",
+        message: "",
       },
     ],
   };
@@ -219,7 +219,6 @@ class CoreService {
     return this.buildInfo;
   }
   async registerIpc(main) {
-   
     try {
       let cookies = this.dh.readFileToObj("hw_cookies.json");
       this.agc.initCookie(cookies);
@@ -339,7 +338,6 @@ class CoreService {
         nodeIntegration: false,
       },
     });
-    childWindow.webContents.openDevTools();
     childWindow.loadURL(url);
     childWindow.webContents.on("did-finish-load", async () => {
       const cookies = await childWindow.webContents.session.cookies.get({
@@ -350,7 +348,6 @@ class CoreService {
       if (authInfo) {
         const decoded = decodeURIComponent(authInfo);
         this.dh.writeObjToFile("ds-authInfo.json", JSON.parse(decoded));
-
         childWindow.close();
       }
     });

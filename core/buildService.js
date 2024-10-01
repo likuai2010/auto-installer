@@ -5,7 +5,8 @@ class BuildService {
     this.agc = core.agc;
     this.core = core;
     this.dh = core.dh;
-    this.cmd = core.dh; 
+    this.cmd = core.dh;
+    this.eco = core.eco
   }
   running = false;
 
@@ -16,47 +17,62 @@ class BuildService {
     projectId: "",
     appId: "",
     prodCert: {},
+    prodProfile:{}
+  };
+  ecoConfig = {
+    teamId: "",
+    uid: "",
+    keystore: "store/xiaobai.p12",
+    storepass:"xiaobai123",
+    keyAlias:"xiaobai",
+    outPath:"",
     debugCert: {},
+    debugProfile:{}
   };
 
-  async checkPackageName(packageName) {
-    try {
-      let result = await this.agc.checkPackageName(packageName);
-      if (result.ret.code == 0)
-        return true
-      else {
-        console.log("create result", result)
-      }
-      return false
-    } catch (e) {
-      if (e == "401") {
-        this.core.openChildWindiow();
-      }
-      return false;
-    }
-  }
-  async createPackageName(appName) {
-    try {
-      let userInfo = (await this.agc.userInfo()).body.getDetailInfo;
-      let userId = userInfo.userID
-      let packageName = `com.${userId}.${appName}`
-      console.log("create tpackageName", packageName)
-      this.checkPackageName(packageName)
-
-      return packageName;
-    } catch (e) {
-      if (e == "401") {
-        this.core.openChildWindiow();
-      }
-      return false;
-    }
-  }
-
-  async checkAccount(commonInfo) {
+  async checkAgcAccount(commonInfo) {
     this.agcConfig = this.dh.readFileToObj("agc_config.json")
-
+    
     if (this.running) return;
     this.running = true;
+
+    this.core.accountInfo.steps = [
+      {
+        name: "华为账号",
+        finish: false,
+        value: "17611576573",
+        loading: false,
+        message: "未登录",
+      },
+      {
+        name: "创建应用",
+        finish: false,
+        value: "",
+        loading: false,
+        message: "",
+      },
+      {
+        name: "ClientApi",
+        finish: false,
+        value: "",
+        loading: false,
+        message: "",
+      },
+      {
+        name: "证书(发布)",
+        finish: false,
+        value: "",
+        loading: false,
+        message: "",
+      },
+      {
+        name: "Profile(发布)",
+        finish: false,
+        value: "",
+        loading: false,
+        message: "",
+      },
+    ]
     // 已经登录
     let result = await this.startStep(
       "accountInfo",
@@ -164,31 +180,10 @@ class BuildService {
       },
       "失败"
     );
-    // debugCert
-    await this.startStep(
-      "accountInfo",
-      3,
-      async (i) => {
-        if (this.agcConfig.debugCert.path) {
-          return {
-            value: `${this.agcConfig.debugCert.name}`,
-            message: "完成",
-          };
-        }
-        let debugName = "xiaobai-debug"
-        let debugCert = await this.createAndDownloadCert(debugName, 1)
-        this.agcConfig.debugCert = debugCert
-        return {
-          value: `${debugName}`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
     // prodCert
     await this.startStep(
       "accountInfo",
-      4,
+      3,
       async (i) => {
         if (this.agcConfig.prodCert.path) {
           return {
@@ -206,29 +201,10 @@ class BuildService {
       },
       "失败"
     );
-    // debugProfile
+    // prod profile
     await this.startStep(
       "accountInfo",
-      5,
-      async (i) => {
-        if (this.agcConfig.debugProfile.path) {
-          return {
-            value: `${this.agcConfig.debugProfile.name}`,
-            message: "完成",
-          };
-        }
-        const profileName = "xiaobai-debug";
-        this.agcConfig.debugProfile = await this.createAndDownloadProfile(packageName, profileName, 1)
-        return {
-          value: `${profileName}`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    await this.startStep(
-      "accountInfo",
-      6,
+      4,
       async (i) => {
         if (this.agcConfig.prodProfile.path) {
           return {
@@ -249,52 +225,146 @@ class BuildService {
     this.running = false;
   }
 
-  async startBuild(commonInfo) {
+  async checkEcoAccount(commonInfo) {
+    this.agcConfig = this.dh.readFileToObj("eco_config.json")
+    this.core.accountInfo.steps = [
+      {
+        name: "华为账号",
+        finish: false,
+        value: "",
+        loading: true,
+        message: "",
+      },
+      {
+        name: "证书(debug)",
+        finish: false,
+        value: "",
+        loading: true,
+        message: "",
+      },
+      {
+        name: "Profile(debug)",
+        finish: false,
+        value: "",
+        loading: true,
+        message: "",
+      },
+    ]
+    // 已经登录
+    let result = await this.startStep(
+      "accountInfo",
+      0,
+      async (i) => {
+        if (this.agcConfig.teamId) {
+          return {
+            value: "未登录",
+            message: "完成",
+          };
+        }
+        let result = await this.eco.userTeamList();
+        let userTeam = result.teams[0];
+        return {
+          value: userTeam.name,
+          message: "登录成功",
+        };
+      },
+      "失败"
+    );
+    if (!result) {
+      this.core.loginEco()
+      return;
+    }
+    const packageName = commonInfo?.packageName || "com.xiaobai.app";
 
-    console.log("startBuild", commonInfo)
-    this.buildAndInstaller(commonInfo)
-
+    // debugCert
+    await this.startStep(
+      "accountInfo",
+      3,
+      async (i) => {
+        if (this.ecoConfig.debugCert.path) {
+          return {
+            value: `${this.ecoConfig.debugCert.name}`,
+            message: "完成",
+          };
+        }
+        const pordName = "xioabi-debug";
+        let debugCert = await this.createAndDownloadDebugCert(pordName)
+        this.ecoConfig.debugCert = debugCert
+        return {
+          value: `${pordName}`,
+          message: "完成",
+        };
+      },
+      "失败"
+    );
+    // debug profile
+    await this.startStep(
+      "accountInfo",
+      4,
+      async (i) => {
+        if (this.ecoConfig.debugProfile.path) {
+          return {
+            value: `${this.ecoConfig.debugProfile.name}`,
+            message: "完成",
+          };
+        }
+        const profileName = "xiaobai-prod";
+        this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName)
+        return {
+          value: `${profileName}`,
+          message: "完成",
+        };
+      },
+      "失败"
+    );
+    this.dh.writeObjToFile("eco_config.json", this.ecoConfig)
   }
-  async buildAndPublish(commonInfo) {
+
+  async startBuild(commonInfo) {
+    this.sginAndInstall(commonInfo)
+  }
+  async sginAndInstall(commonInfo) {
+   this.buildInfo.steps=[
+    {
+      name: "签名应用",
+      finish: false,
+      value: "",
+      loading: false,
+      message: "签名失败",
+    },
+    {
+      name: "安装应用",
+      finish: false,
+      value: "",
+      loading: false,
+      message: "上传失败",
+    },
+   ]
+   
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
-        await this.dh.cloneGit(commonInfo.github, commonInfo.branch)
+        await this.cmd.signHap({
+          keystoreFile: this.ecoConfig.keystore,
+          keystorePwd: this.ecoConfig.storepass,
+          keyAlias:this.ecoConfig.keyAlias,
+          certFile: certPath,
+          profilFile: profilePath,
+          inFile: commonInfo.hapFilePath || "entry-default-unsigned.hap",
+          outFile: this.ecoConfig.outFile        
+        })
+        await this.cmd.verifyApp(this.ecoConfig.outFile)
         return {
-          value: `下载完成`,
+          value: ``,
           message: "完成",
         };
       },
       "失败"
     );
-    // build
     await this.startStep(
       "buildInfo", 1,
       async (i) => {
-        return {
-          value: ``,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    await this.startStep(
-      "buildInfo", 2,
-      async (i) => {
-        await this.cmd.signHap()
-        await cmd.verifyApp()
-        return {
-          value: ``,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    await this.startStep(
-      "buildInfo", 3,
-      async (i) => {
-        await cmd.sendFile(null, "./singned.hap")
-        await cmd.installHap(null)
+        await this.cmd.sendAndInstall(null, this.ecoConfig.outFile)
         return {
           value: ``,
           message: "完成",
@@ -305,17 +375,17 @@ class BuildService {
   }
   async buildAndInstaller(commonInfo) {
     // git clone 
-    await this.startStep(
-      "buildInfo", 0,
-      async (i) => {
-        await this.dh.cloneGit(commonInfo.github, commonInfo.branch)
-        return {
-          value: `下载完成`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
+    // await this.startStep(
+    //   "buildInfo", 0,
+    //   async (i) => {
+    //     await this.dh.cloneGit(commonInfo.github, commonInfo.branch)
+    //     return {
+    //       value: `下载完成`,
+    //       message: "完成",
+    //     };
+    //   },
+    //   "失败"
+    // );
     // build
     await this.startStep(
       "buildInfo", 1,
@@ -362,6 +432,89 @@ class BuildService {
     // );
   }
 
+  async checkPackageName(packageName) {
+    try {
+      let result = await this.agc.checkPackageName(packageName);
+      if (result.ret.code == 0)
+        return true
+      else {
+        console.log("create result", result)
+      }
+      return false
+    } catch (e) {
+      if (e == "401") {
+        this.core.openChildWindiow();
+      }
+      return false;
+    }
+  }
+  async createPackageName(appName) {
+    try {
+      let userInfo = (await this.agc.userInfo()).body.getDetailInfo;
+      let userId = userInfo.userID
+      let packageName = `com.${userId}.${appName}`
+      console.log("create tpackageName", packageName)
+      this.checkPackageName(packageName)
+
+      return packageName;
+    } catch (e) {
+      if (e == "401") {
+        this.core.openChildWindiow();
+      }
+      return false;
+    }
+  }
+  async createAndDownloadDebugCert(name, type = 1) {
+    let result = await this.eco.getCertList();
+    let debugCert = result.certList.find(
+      (a) => a.certName == name
+    );
+    if (!debugCert) {
+      const config = this.dh.configPath
+      this.ecoConfig.keystore = config + "/xiaobai.p12"
+      try{
+        await this.cmd.createKeystore(this.ecoConfig.keystore)
+      }catch(e){
+      }
+      await this.cmd.ceraeteCsr(this.ecoConfig.keystore, config + "/xioabi.csr")
+      const csr = await cmd.readcsr(config + "/xioabi.csr")
+      result = await this.eco.createCert(name, type, csr);
+      console.log("debug-", result)
+      debugCert = result.harmonyCert;
+    }
+    result = await this.downloadObj(debugCert.certObjectId)
+    const debugCertUrl = result.urlsInfo[0].newUrl
+    console.log("url", result.urlsInfo[0].newUrl)
+    const filePath = await this.dh.downloadFile(debugCertUrl, name + ".cer")
+    return {
+      id: debugCert.id,
+      name,
+      objId: debugCert.certObjectId,
+      url: urlnfo.url,
+      path: filePath
+    }
+  }
+  async createAndDownloadDebugProfile(packageName, name, type = 1) {
+    result = await this.eco.deviceList()
+    let deviceIds = result.list.map(d=>d.id)
+    if(deviceIds.length == 0){
+      let device = this.cmd.deviceList()
+      if (device.length == 0) {
+        throw new Error("请连接手机")
+      }
+      const udid = await this.cmd.getUdid(null)
+      result = await this.eco.createDevice("xiaobai-device", udid)
+    }
+    result = await this.createProfile("xiaobai-debug", this.ecoConfig.debugCert.id, packageName, deviceIds)
+    const profilePath = await this.dh.downloadFile(result.provisionFileUrl, name + ".p7b")
+    console.log("profile", result.provisionFileUrl)
+    return {
+      id: profile.id,
+      name: name,
+      url: esult.provisionFileUrl,
+      path: profilePath
+    }
+  }
 
   async createAndDownloadCert(name, type = 1) {
     let result = await this.agc.getCertList();

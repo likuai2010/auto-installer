@@ -19,7 +19,7 @@ class EcoService{
                 ...headers
             },
         })
-        return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
             request.on('response', (response) => {
                 response.on('data', (chunk) => {
                     try{
@@ -113,9 +113,15 @@ class EcoService{
         return this.base(uri, params, {})
     }
 
+  
     async autoCreateProile(packageName){
         let result = await this.getCertList()
         let debugCert = result.certList.filter(d=>d.certType == 1)[0]
+        if(!debugCert){
+            await cmd.ceraeteCsr("store/xiaobai.p12", "store/xioabi.csr")
+            const csr = await cmd.readcsr("store/xioabi.csr")
+            this.createCert("xiaobai-debug", 1, csr)
+        }
         result = await this.downloadObj(debugCert.certObjectId)
         const debugCertUrl = result.urlsInfo[0].newUrl
         const certPath = await this.dh.downloadFile(debugCertUrl, "xiabai-debug.cer")
@@ -123,21 +129,26 @@ class EcoService{
         result = await this.deviceList()
         let deviceIds = result.list.map(d=>d.id)
         if(deviceIds.length == 0){
-            result = await this.createDevice("xiaobai-device", "1CE6542BA4A186D329CC9C1B38CA1565C63BCDC1F703EBC4B496BB343338EAB3")
+            let device = this.cmd.deviceList()
+            if (device.length == 0) {
+              throw new Error("请连接手机")
+            }
+            const udid = await this.cmd.getUdid(null)
+            result = await this.createDevice("xiaobai-device", udid)
         }
         result = await this.createProfile("xiaobai-debug", debugCert.id, packageName, deviceIds)
         const profilePath = await this.dh.downloadFile(result.provisionFileUrl, "xiabai-debug.p7b")
         console.log("profile", result.provisionFileUrl)
         await this.cmd.signHap({
             keystoreFile:"store/xiaobai.p12",
-            keystorePwd: "123456Abc",
+            keystorePwd: "xiaobai123",
             keyAlias:"xiaobai",
             certFile: certPath,
             profilFile: profilePath,
             inFile: "entry-default-unsigned.hap",
             outFile: "./singned.hap"        
         })
-        await this.cmd.verifyApp()
+       
         await this.cmd.sendAndInstall(null, "./singned.hap")
         
     }
