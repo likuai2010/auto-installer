@@ -1,11 +1,13 @@
 const { CmdService } = require("./cmdService");
+const fs = require('node:fs')
+
 
 class BuildService {
   constructor(core) {
     this.agc = core.agc;
     this.core = core;
     this.dh = core.dh;
-    this.cmd = core.dh;
+    this.cmd = core.cmd;
     this.eco = core.eco
   }
   running = false;
@@ -270,6 +272,9 @@ class BuildService {
       },
       "失败"
     );
+    if(!result){
+      this.core.loginEco()
+    }
     const packageName = commonInfo?.packageName || "com.xiaobai.app";
 
     // debugCert
@@ -304,10 +309,10 @@ class BuildService {
             message: "完成",
           };
         }
-        const profileName = "xiaobai-prod";
+        const profileName = "xiaobai-debug";
         this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName)
         return {
-          value: `${profileName}`,
+          value: `${this.ecoConfig.debugProfile.name}`,
           message: "完成",
         };
       },
@@ -320,7 +325,7 @@ class BuildService {
     this.sginAndInstall(commonInfo)
   }
   async sginAndInstall(commonInfo) {
-   this.buildInfo.steps=[
+   this.core.buildInfo.steps=[
     {
       name: "签名应用",
       finish: false,
@@ -340,13 +345,15 @@ class BuildService {
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
+        this.ecoConfig.outFile = "./signed.hap"
+
         await this.cmd.signHap({
           keystoreFile: this.ecoConfig.keystore,
           keystorePwd: this.ecoConfig.storepass,
-          keyAlias:this.ecoConfig.keyAlias,
-          certFile: certPath,
-          profilFile: profilePath,
-          inFile: commonInfo.hapFilePath || "entry-default-unsigned.hap",
+          keyAlias: this.ecoConfig.keyAlias,
+          certFile: this.ecoConfig.debugCert.path,
+          profilFile: this.ecoConfig.debugProfile.path,
+          inFile: commonInfo.hapPath || "entry-default-unsigned.hap",
           outFile: this.ecoConfig.outFile        
         })
         await this.cmd.verifyApp(this.ecoConfig.outFile)
@@ -462,36 +469,47 @@ class BuildService {
   }
   async createAndDownloadDebugCert(name, type = 1) {
     let result = await this.eco.getCertList();
-    let debugCert = result.certList.find(
+    let debugCerts= result.certList.filter(
+      (a) => a.certType == 1
+    );
+    let debugCert= result.certList.find(
       (a) => a.certName == name
     );
+    if(!debugCert && debugCerts.length > 1){
+      await this.eco.deleteCertList(debugCerts[0])
+    }
+    const config = this.dh.configDir
+    this.ecoConfig.keystore = config + "/xiaobai.p12"
+    await this.cmd.createKeystore(this.ecoConfig.keystore)
+    const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
+    this.ecoConfig.csrPath = csrPath
     if (!debugCert) {
-      const config = this.dh.configPath
-      this.ecoConfig.keystore = config + "/xiaobai.p12"
-      try{
-        await this.cmd.createKeystore(this.ecoConfig.keystore)
-      }catch(e){
-      }
-      await this.cmd.ceraeteCsr(this.ecoConfig.keystore, config + "/xioabi.csr")
-      const csr = await cmd.readcsr(config + "/xioabi.csr")
+      const csr = await this.cmd.readcsr(csrPath)
       result = await this.eco.createCert(name, type, csr);
-      console.log("debug-", result)
       debugCert = result.harmonyCert;
     }
-    result = await this.downloadObj(debugCert.certObjectId)
+    console.log("debug cert", debugCert)
+    result = await this.eco.downloadObj(debugCert.certObjectId)
     const debugCertUrl = result.urlsInfo[0].newUrl
-    console.log("url", result.urlsInfo[0].newUrl)
+    console.log("url", debugCertUrl)
     const filePath = await this.dh.downloadFile(debugCertUrl, name + ".cer")
     return {
       id: debugCert.id,
       name,
       objId: debugCert.certObjectId,
-      url: urlnfo.url,
+      url: debugCertUrl,
       path: filePath
     }
   }
   async createAndDownloadDebugProfile(packageName, name, type = 1) {
-    result = await this.eco.deviceList()
+    let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
+    if(fs.existsSync(this.dh.configDir + profileName)){
+      return {
+        name: profileName,
+        path: this.dh.configDir + profileName
+      }
+    }
+    let result = await this.eco.deviceList()
     let deviceIds = result.list.map(d=>d.id)
     if(deviceIds.length == 0){
       let device = this.cmd.deviceList()
@@ -500,14 +518,15 @@ class BuildService {
       }
       const udid = await this.cmd.getUdid(null)
       result = await this.eco.createDevice("xiaobai-device", udid)
+      result = await this.eco.deviceList()
+      deviceIds = result.list.map(d=>d.id)
     }
-    result = await this.createProfile("xiaobai-debug", this.ecoConfig.debugCert.id, packageName, deviceIds)
-    const profilePath = await this.dh.downloadFile(result.provisionFileUrl, name + ".p7b")
-    console.log("profile", result.provisionFileUrl)
+    
+    result = await this.eco.createProfile(name, this.ecoConfig.debugCert.id, packageName, deviceIds)
+    const profilePath = await this.dh.downloadFile(result.provisionFileUrl, profileName)
+    console.log("profile", result)
     return {
-      id: profile.id,
-      name: name,
-      url: esult.provisionFileUrl,
+      name: profileName,
       path: profilePath
     }
   }

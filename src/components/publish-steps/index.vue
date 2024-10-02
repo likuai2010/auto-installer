@@ -86,7 +86,7 @@ const props = defineProps({
 const emits = defineEmits(["update"]);
 
 const form = reactive({
-  types: 0, // 0:分发,1:本地
+  types: 1, // 0:分发,1:本地
   active: 0,
   finish: "process",
   status: "process",
@@ -113,13 +113,14 @@ const clearTimer = () => {
 // 下一步
 const handleNext = (active) => {
   form.active = active;
+  const params = Object.assign({}, props.formData )
   if (active === 1) {
     //调用登录检查
-    window.CoreApi.checkAccountInfo({ ...props.formData });
+    window.CoreApi.checkAccountInfo(params);
     // 注册登录检查完成回调
   } else if (active === 2) {
     // 开始构建
-    window.CoreApi.startBuild({ ...props.formData });
+    window.CoreApi.startBuild(params);
   }
 };
 

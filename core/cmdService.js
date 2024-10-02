@@ -8,6 +8,7 @@ class CmdService{
         this.JavaHome = "tools/jbr/Contents/Home"
         this.SdkHome = "/Users/likuai/Library/Huawei/Sdk/openharmony/9/toolchains/"
         this.hdc = this.SdkHome + "hdc"
+        this.sginJar = this.SdkHome + "lib/hap-sign-tool.jar"
     }
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
@@ -67,7 +68,7 @@ class CmdService{
         else 
             return false
     }
-    sginJar = "G:/git/auto-publish-harmonyos/tools/toolchains/lib/hap-sign-tool.jar"
+    
     async signHap(signConfig = {
         keystoreFile:"store/xiaobai.p12",
         keystorePwd: "123456Abc",
@@ -83,10 +84,13 @@ class CmdService{
         let result =  await this.exeCmd(cmd)
         console.log("signHap", result)
     }
-    async ceraeteCsr(keystore, csrpath, alias="xiaobai", storepass="xiaobai123"){
+    async createCsr(keystore, csrpath, alias="xiaobai", storepass="xiaobai123"){
+        if (fs.existsSync(csrpath))
+            return csrpath
         let keytool = this.JavaHome + "/bin/keytool"
         let prams = `${keytool} -certreq -alias ${alias} -keystore ${keystore} -storetype pkcs12 -file ${csrpath} -storepass ${storepass}`
         await this.exeCmd(prams)
+        return csrpath
     }
     async readcsr(csrpath){
         const filePath = path.join(this.configDir || "", csrpath);
@@ -94,6 +98,8 @@ class CmdService{
         return data
     }
     async createKeystore(keystore, storepass="xiaobai123", alias="xiaobai", cn="xiaobai"){
+        if (fs.existsSync(keystore))
+            return true
         let keytool = this.JavaHome + "/bin/keytool"
         let prams = `${keytool} -genkeypair -alias ${alias} -keyalg EC -sigalg SHA256withECDSA -dname "C=CN,O=HUAWEI,OU=HUAWEI IDE,CN=${cn}"  -keystore ${keystore} -storetype pkcs12 -validity 9125 -storepass ${storepass} -keypass ${storepass}`
         await this.exeCmd(prams)

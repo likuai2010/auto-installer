@@ -56,14 +56,14 @@ class EcoService{
     oauth2Token = ""
     agcteamid = "2850086000506643987"
     userId = "2850086000506643987"
-    async initCookie(token){
-        this.oauth2Token = token
+    async initCookie(authInfo){
+        this.oauth2Token = authInfo.accessToken
         try{
             let team = await this.userTeamList()
             if (team.teams)
                 console.log("team", team, team.teams[0])
         }catch(e){
-            this.core.loginEco()
+            // this.core.loginEco()
         }
  
     }
@@ -82,7 +82,7 @@ class EcoService{
     }
     // type 1 debug 2 prod
     createCert(name, type, csr){
-        let uri = "connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/add"
+        let uri = "https://connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/add"
         let params = {"csr":csr,"certName":name,"certType":type}
         return this.base(uri, params, {})
     }

@@ -87,7 +87,6 @@ const branchItems = ref([]);
 const form = reactive({
   github: "",
   appName: "",
-  filelist:[],
   packageName: "",
   branch: "",
 });

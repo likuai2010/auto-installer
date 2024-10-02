@@ -227,7 +227,7 @@ class CoreService {
     }
     try {
       let authInfo = this.dh.readFileToObj("ds-authInfo.json");
-      await this.eco.initCookie(authInfo.accessToken);
+      await this.eco.initCookie(authInfo);
     } catch (e) {
       console.error("ds-authInfo.json 不存在 \n", e);
     }
@@ -274,9 +274,10 @@ class CoreService {
       )
     });
 
-    
+    this.commonInfo
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      this.build.checkEcoAccount(commonInfo);
+      this.commonInfo = commonInfo
+      this.build.checkEcoAccount(this.commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
     });
@@ -358,7 +359,9 @@ class CoreService {
       if (authInfo) {
         const decoded = decodeURIComponent(authInfo);
         this.dh.writeObjToFile("ds-authInfo.json", JSON.parse(decoded));
+        await this.eco.initCookie(JSON.parse(decoded));
         childWindow.close();
+        this.build.checkEcoAccount(this.commonInfo);
       }
     });
   }
