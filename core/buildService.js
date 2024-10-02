@@ -270,16 +270,12 @@ class BuildService {
       },
       "失败"
     );
-    if (!result) {
-      this.core.loginEco()
-      return;
-    }
     const packageName = commonInfo?.packageName || "com.xiaobai.app";
 
     // debugCert
     await this.startStep(
       "accountInfo",
-      3,
+      1,
       async (i) => {
         if (this.ecoConfig.debugCert.path) {
           return {
@@ -300,7 +296,7 @@ class BuildService {
     // debug profile
     await this.startStep(
       "accountInfo",
-      4,
+      2,
       async (i) => {
         if (this.ecoConfig.debugProfile.path) {
           return {

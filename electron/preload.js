@@ -11,6 +11,15 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.send("getEnvInfo");
     });
   },
+  uploadHap:(file)=>{
+    console.log("uploadHap", file)
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on("onUploadHap", (event, data) => {
+        resolve(data);
+      });
+      ipcRenderer.send("uploadHap");
+    });
+  },
   getAccountInfo: () => {
     return new Promise((resolve, reject) => {
       ipcRenderer.on("onAccountInfo", (event, data) => {

@@ -5,6 +5,8 @@ const {
   session,
   globalShortcut,
 } = require("electron");
+const http = require('http');
+
 const path = require("node:path");
 const { CoreService } = require("../core/services");
 
@@ -45,7 +47,19 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
+  server.closeAllConnections()
+  server.close()
   if (process.platform !== "darwin") {
     app.quit();
   }
+
+});
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World\n');
+});
+ 
+server.listen(33333, () => {
+  console.log('服务器运行在 http://localhost:33333/');
 });

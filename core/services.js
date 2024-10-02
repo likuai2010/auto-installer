@@ -35,7 +35,7 @@ class buildStep {
 class buildInfo {
   steps = [];
 }
-const { BrowserWindow, ipcMain } = require("electron");
+const { BrowserWindow, ipcMain, app } = require("electron");
 const { BuildService } = require("./buildService");
 const git = simpleGit();
 class CoreService {
@@ -228,7 +228,6 @@ class CoreService {
     try {
       let authInfo = this.dh.readFileToObj("ds-authInfo.json");
       await this.eco.initCookie(authInfo.accessToken);
-      await this.eco.autoCreateProile()
     } catch (e) {
       console.error("ds-authInfo.json 不存在 \n", e);
     }
@@ -265,8 +264,19 @@ class CoreService {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
     });
+    ipcMain.on("uploadHap", (_) => {
+      main.webContents.send("onUploadHap", {
+        packageName:"com.xiaobai.testGo",
+        appName: "testgo",
+        hapPath:"./unsign.app",
+        icon: ""
+      }
+      )
+    });
+
+    
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      this.build.checkAccount(commonInfo);
+      this.build.checkEcoAccount(commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
     });
@@ -275,14 +285,14 @@ class CoreService {
       let info = this.getBuildInfo();
       main.webContents.send("onCheckAccount", info);
     });
-    setInterval(() => {
-      try {
-        let cookies = this.dh.readFileToObj("hw_cookies.json");
-        this.agc.initCookie(cookies);
-      } catch (e) {
-        console.error("hw_cookies.json 不存在 \n");
-      }
-    }, 10000);
+    // setInterval(() => {
+    //   try {
+    //     let cookies = this.dh.readFileToObj("hw_cookies.json");
+    //     this.agc.initCookie(cookies);
+    //   } catch (e) {
+    //     console.error("hw_cookies.json 不存在 \n");
+    //   }
+    // }, 10000);
   }
   childWindow = {};
 

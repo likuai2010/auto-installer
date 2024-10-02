@@ -13,9 +13,9 @@ class EcoService{
             method: method,
             headers:{
                 "content-type": "application/json",
-                "oauth2Token": this.oauth2Token,
-                teamId: this.agcteamid,
-                uid: this.userId,
+                "oauth2Token": this.oauth2Token || '',
+                teamId: this.agcteamid || '',
+                uid: this.userId || '',
                 ...headers
             },
         })

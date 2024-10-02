@@ -2,8 +2,8 @@
   <div class="page-home">
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
-        <el-form-item label="GitHub地址：" :prop="['github', 'branch']">
-          <el-input v-model="form.github" @input="getGitHub(value)">
+        <el-form-item label="GitHub地址："  :prop="['github', 'branch']">
+          <el-input v-model="form.github" :disabled="true" @input="getGitHub(value)">
             <template #append>
               <el-select
                 :loading="loading"
@@ -27,6 +27,18 @@
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
         </el-form-item>
+        <el-upload
+            drag
+            action="#"
+            :auto-upload="false"
+            :on-change="changeFile"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              将文件拖放到此处或<em>单击上传</em>
+            </div>
+          </el-upload>
+
         <div class="btns-content">
           <el-button
             type="primary"
@@ -57,18 +69,7 @@
           </el-form-item>
         </template>
         <!-- <template v-if="status.active === 1 && status.installHup"> -->
-        <template v-if="status.active === 1">
-          <el-upload
-            drag
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            multiple
-          >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              将文件拖放到此处或<em>单击上传</em>
-            </div>
-          </el-upload>
-        </template>
+       
       </el-form>
     </div>
   </div>
@@ -86,6 +87,7 @@ const branchItems = ref([]);
 const form = reactive({
   github: "",
   appName: "",
+  filelist:[],
   packageName: "",
   branch: "",
 });
@@ -93,7 +95,7 @@ const form = reactive({
 const status = reactive({
   icon: "success",
   active: -1,
-  types: 0,
+  types: 1,
   loading: false,
   disabled: false,
   installHup: false,
@@ -129,7 +131,13 @@ const getGitHub = (url) => {
     loading.value = false;
   });
 };
-
+const changeFile = async (file, fileList)=>{
+  let hapInfo = await window.CoreApi.uploadHap(file.raw)
+  form.appName = hapInfo.appName
+  form.packageName = hapInfo.packageName
+  form.hapPath = hapInfo.hapPath
+  console.log("hapInfo", hapInfo)
+}
 const submitForm = async () => {
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {

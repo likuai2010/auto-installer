@@ -3,9 +3,11 @@ const path = require('node:path')
 const fs = require('node:fs')
 
 class CmdService{
+    hdc = "tools/toolchains/hdc"
     constructor(){
         this.JavaHome = "tools/jbr/Contents/Home"
         this.SdkHome = "/Users/likuai/Library/Huawei/Sdk/openharmony/9/toolchains/"
+        this.hdc = this.SdkHome + "hdc"
     }
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
@@ -18,7 +20,7 @@ class CmdService{
             });
         })
     }
-    hdc = "G:/git/auto-publish-harmonyos/tools/toolchains/hdc"
+    
     async deviceList(){
         let result =  await this.exeCmd(`${this.hdc} list targets `)
         if (result == "[Empty]"){
@@ -129,8 +131,16 @@ class CmdService{
         }
     }
 
-    unpack(){
-        //java -jar app_unpacking_tool.jar --mode hap --hap-path D:\entry-default-unsigned.hap --out-path D:\out3 --force true
+    async unpackHap(hapFilePath, outPath){
+        let javaPath = this.JavaHome + "/bin/java"
+        let unpackTool = "app_unpacking_tool.jar"
+        let cmd = `${javaPath} -jar ${unpackTool} --mode hap --hap-path ${hapFilePath} --out-path ${outPath} --force true`
+        await this.exeCmd(cmd)
+    }
+    packHap(hapFilePath){
+        let javaPath = this.JavaHome + "/bin/java"
+        let unpackTool = "app_unpacking_tool.jar"
+        let cmd = `${javaPath} -jar ${unpackTool} --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap`
         //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
     }
 }
@@ -151,9 +161,9 @@ async function  test(){
     // await cmd.buildApp()
     try{
         // await cmd.createKeystore("store/xiaobai.p12")
-        await cmd.ceraeteCsr("store/xiaobai.p12", "store/xioabi.csr")
-        const csr = await cmd.readcsr("store/xioabi.csr")
-        console.log(csr)
+        // await cmd.ceraeteCsr("store/xiaobai.p12", "store/xioabi.csr")
+        // const csr = await cmd.readcsr("store/xioabi.csr")
+        // console.log(csr)
     }catch(e){
         console.error("error", e.message || e, e.stack)
     }
