@@ -266,9 +266,9 @@ class CoreService {
     });
     ipcMain.on("uploadHap", (_) => {
       main.webContents.send("onUploadHap", {
-        packageName:"com.xiaobai.testGo",
+        packageName:"com.xiaobai.testgo",
         appName: "testgo",
-        hapPath:"./unsign.app",
+        hapPath:"./entry-default-unsigned.app",
         icon: ""
       }
       )

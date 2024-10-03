@@ -13,20 +13,26 @@
   },
   "main": "electron/main.js",
   "build": {
-    "appId": "com.example.app",
-    "productName": "MyElectronApp",
+    "appId": "com.xiaobai.installer",
+    "productName": "AutoInstaller",
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "tools/**/*"
+      "core/**/*",
+      "tools/**/*",
+      "entry-default-unsigned.hap"
     ],
     "extraResources": [
       {
         "from": "tools",
-        "to": "../tools",
+        "to": "tools",
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "entry-default-unsigned.hap",
+        "to": "entry-default-unsigned.hap"
       }
     ],
     "directories": {

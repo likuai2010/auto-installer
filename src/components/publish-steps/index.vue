@@ -90,7 +90,7 @@ const form = reactive({
   active: 0,
   finish: "process",
   status: "process",
-  installHup: false,
+  installHap: false,
   statusItems: [],
 });
 
@@ -136,22 +136,18 @@ const initPublishSteps = (active) => {
   timer = setInterval(() => {
     if (form.active === 0) {
       window.CoreApi.getEnvInfo().then((data) => {
-        form.installHup = false;
+        form.installHap = true;
         form.statusItems = data.steps || [];
       });
     } else if (form.active === 1) {
       window.CoreApi.getAccountInfo().then((data) => {
         form.statusItems = data.steps || [];
-        form.installHup = data.installHup || false;
+        form.installHap = data.installHap || true;
       });
     } else if (form.active === 2) {
       window.CoreApi.getBuildInfo(form.types).then((data) => {
-        form.installHup = false;
-        if (form.types === 0) {
-          form.statusItems = data.steps || [];
-        } else {
-          form.statusItems = data.install || [];
-        }
+        form.installHap = true;
+        form.statusItems = data.steps || [];
       });
     } else {
       console.error(`未识别类型`);

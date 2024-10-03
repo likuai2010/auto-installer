@@ -2,7 +2,6 @@ const {
   app,
   BrowserWindow,
   Menu,
-  session,
   globalShortcut,
 } = require("electron");
 const http = require('http');
@@ -33,7 +32,7 @@ function createWindow() {
     // 打开开发者工具
     win.webContents.openDevTools();
   });
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
@@ -49,10 +48,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   server.closeAllConnections()
   server.close()
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-
+  app.quit();
 });
 const server = http.createServer((req, res) => {
   res.statusCode = 200;

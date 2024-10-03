@@ -6,9 +6,9 @@ class CmdService{
     hdc = "tools/toolchains/hdc"
     constructor(){
         this.JavaHome = "tools/jbr/Contents/Home"
-        this.SdkHome = "/Users/likuai/Library/Huawei/Sdk/openharmony/9/toolchains/"
-        this.hdc = this.SdkHome + "hdc"
-        this.sginJar = this.SdkHome + "lib/hap-sign-tool.jar"
+        this.SdkHome = "tools/toolchains"
+        this.hdc = this.SdkHome + "/hdc"
+        this.sginJar = this.SdkHome + "/lib/hap-sign-tool.jar"
     }
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
