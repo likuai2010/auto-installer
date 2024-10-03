@@ -24,7 +24,7 @@ class CmdService{
     
     async deviceList(){
         let result =  await this.exeCmd(`${this.hdc} list targets `)
-        if (result == "[Empty]"){
+        if (result.indexOf("[Empty]") > -1){
             return []
         } else {
             return result.split("\n").filter(d=>d != '')
@@ -40,9 +40,13 @@ class CmdService{
         console.log(udid)
         return udid
     }
-    async sendAndInstall(device, filePath){
-        await this.sendFile(device, filePath)
-        await this.installHap(device)
+    async sendAndInstall( filePath){
+        const devices = await this.deviceList()
+        if (devices.length == 0)
+            throw Error("请连接手机,并开启开发者模式")
+        console.debug("devices", devices)
+        await this.sendFile(devices[0], filePath)
+        await this.installHap(devices[0])
     }
     async sendFile(device = '127.0.0.1:5557', filePath = "entry-default-unsigned.hap",){
         let deviceT = ""
@@ -51,11 +55,11 @@ class CmdService{
         }
         await this.exeCmd(`${this.hdc} ${deviceT} shell mkdir -p data/local/tmp/hap`)
         let result =  await this.exeCmd(`${this.hdc} ${deviceT} file send ${filePath} data/local/tmp/hap/`)
-        console.log("sendFile",result)
+        
         if(result.indexOf("finish") > -1)
             return true
         else 
-            return false
+            throw Error("安装失败: " + result)
     }
     async installHap(device = '127.0.0.1:5557'){
         let deviceT = ""
@@ -66,7 +70,7 @@ class CmdService{
         if(result.indexOf("successfully") > -1)
             return true
         else 
-            return false
+            throw Error("安装失败: " + result)
     }
     
     async signHap(signConfig = {
@@ -139,16 +143,17 @@ class CmdService{
 
     async unpackHap(hapFilePath, outPath){
         let javaPath = this.JavaHome + "/bin/java"
-        let unpackTool = "app_unpacking_tool.jar"
+        let unpackTool = this.SdkHome + "/lib/app_unpacking_tool.jar"
         let cmd = `${javaPath} -jar ${unpackTool} --mode hap --hap-path ${hapFilePath} --out-path ${outPath} --force true`
         await this.exeCmd(cmd)
     }
     packHap(hapFilePath){
         let javaPath = this.JavaHome + "/bin/java"
-        let unpackTool = "app_unpacking_tool.jar"
+        let unpackTool = this.SdkHome + "/lib/app_packing_tool.jar"
         let cmd = `${javaPath} -jar ${unpackTool} --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap`
         //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
     }
+    
 }
 
 

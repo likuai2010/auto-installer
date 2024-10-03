@@ -2,6 +2,8 @@ const { AgcService } = require("./agcService");
 const { EcoService } = require("./ecoService");
 const { CmdService } = require("./cmdService");
 const { DownloadHelper } = require("./downloadHelper");
+const path = require('node:path')
+const fs = require('node:fs')
 const simpleGit = require("simple-git");
 
 class EnvStep {
@@ -264,14 +266,9 @@ class CoreService {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
     });
-    ipcMain.on("uploadHap", (_) => {
-      main.webContents.send("onUploadHap", {
-        packageName:"com.xiaobai.testgo",
-        appName: "testgo",
-        hapPath:"./entry-default-unsigned.app",
-        icon: ""
-      }
-      )
+    ipcMain.on("uploadHap", async (_, file) => {
+      let hapInfo = await this.saveFileToLocal(file)
+      main.webContents.send("onUploadHap", hapInfo)
     });
 
     this.commonInfo
@@ -308,6 +305,31 @@ class CoreService {
         }
       });
     });
+  }
+
+  async saveFileToLocal(buffer){
+    console.log("saveHap", buffer.length)
+    const filePath = path.join(this.dh.configDir, "unsigned.hap");
+    const outPath = path.join(this.dh.configDir, "unsigned_out");
+    await new Promise((resolve, reject)=>{
+        fs.writeFile(filePath, buffer, (err) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve()
+            }
+        });
+    })
+    this.cmd.unpackHap(filePath, outPath)
+    const moduleInfo = this.dh.readFileToObj("unsigned_out/module.json")
+    console.debug("moduleInfo", moduleInfo)
+    return {
+        packageName: moduleInfo?.app?.bundleName || "com.xiaobai.testgo",
+        appName:  moduleInfo?.app?.vendor || moduleInfo?.app?.label,
+        versionName:  moduleInfo?.app?.versionName,
+        hapPath: filePath,
+        icon: ""
+      }
   }
 
   openChildWindiow(

@@ -11,13 +11,16 @@ contextBridge.exposeInMainWorld("CoreApi", {
       ipcRenderer.send("getEnvInfo");
     });
   },
+ 
   uploadHap:(file)=>{
     console.log("uploadHap", file)
     return new Promise((resolve, reject) => {
       ipcRenderer.on("onUploadHap", (event, data) => {
         resolve(data);
       });
-      ipcRenderer.send("uploadHap");
+      fileToBuffer(file.raw).then((buffer)=>{
+        ipcRenderer.send("uploadHap", buffer);
+      })
     });
   },
   getAccountInfo: () => {
@@ -77,6 +80,18 @@ contextBridge.exposeInMainWorld("CoreApi", {
     );
   },
 });
+function fileToBuffer(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+   
+    reader.onload = () => {
+      let buffer = Buffer.from(reader.result);
+      resolve(buffer);
+    }
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
+}
 function downloadFile(fileUrl, onProgress) {
   ipcRenderer.on("download-progress", (event, progress) => {
     if (onProgress) onProgress(progress);

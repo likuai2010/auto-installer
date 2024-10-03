@@ -4,6 +4,7 @@ const fs = require('node:fs')
 const https = require('https');
 const simpleGit = require("simple-git");
 const git = simpleGit();
+
 class DownloadHelper{
     configDir = ""
     codeDir = ""
@@ -74,7 +75,6 @@ class DownloadHelper{
             console.error(`Error: ${stderr}`);
         });
     }
-
     writeObjToFile(filename, obj){
         const jsonData = JSON.stringify(obj, null, 2)
         const filePath = path.join(this.configDir, filename);
@@ -96,6 +96,26 @@ class DownloadHelper{
         }
         return {}
     }
+    async saveFileToLocal(buffer){
+        console.log("saveHap", buffer.length)
+        const filePath = path.join(this.configDir, "unsigned.hap");
+        await new Promise((resolve, reject)=>{
+            fs.writeFile(filePath, buffer, (err) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve()
+                }
+            });
+        })
+        return {
+            packageName:"com.xiaobai.testgo",
+            appName: "testgo",
+            hapPath: filePath,
+            icon: ""
+          }
+    }
+
     async cloneGit(repoUrl, branch = "master") {
         const repoName = path.basename(repoUrl, '.git');
         let destination = this.codeDir +"/"+ repoName

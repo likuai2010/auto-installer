@@ -149,7 +149,7 @@ class EcoService{
             outFile: "./singned.hap"        
         })
        
-        await this.cmd.sendAndInstall(null, "./singned.hap")
+        await this.cmd.sendAndInstall("./singned.hap")
         
     }
 

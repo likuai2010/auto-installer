@@ -131,7 +131,7 @@ const getGitHub = (url) => {
   });
 };
 const changeFile = async (file, fileList)=>{
-  let hapInfo = await window.CoreApi.uploadHap(file.raw)
+  let hapInfo = await window.CoreApi.uploadHap(file)
   form.appName = hapInfo.appName
   form.packageName = hapInfo.packageName
   form.hapPath = hapInfo.hapPath

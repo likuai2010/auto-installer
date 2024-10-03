@@ -330,35 +330,34 @@ class BuildService {
       name: "签名应用",
       finish: false,
       value: "",
-      loading: false,
-      message: "签名失败",
+      loading: true,
+      message: "",
     },
     {
       name: "安装应用",
       finish: false,
       value: "",
-      loading: false,
-      message: "上传失败",
+      loading: true,
+      message: "",
     },
    ]
    
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
-        this.ecoConfig.outFile = "./signed.hap"
-
+        this.ecoConfig.outFile = "signed.hap"
         await this.cmd.signHap({
           keystoreFile: this.ecoConfig.keystore,
           keystorePwd: this.ecoConfig.storepass,
           keyAlias: this.ecoConfig.keyAlias,
           certFile: this.ecoConfig.debugCert.path,
           profilFile: this.ecoConfig.debugProfile.path,
-          inFile: commonInfo.hapPath || "entry-default-unsigned.hap",
+          inFile: commonInfo.hapPath,
           outFile: this.ecoConfig.outFile        
         })
         await this.cmd.verifyApp(this.ecoConfig.outFile)
         return {
-          value: ``,
+          value: `签名成功`,
           message: "完成",
         };
       },
@@ -367,9 +366,9 @@ class BuildService {
     await this.startStep(
       "buildInfo", 1,
       async (i) => {
-        await this.cmd.sendAndInstall(null, this.ecoConfig.outFile)
+        await this.cmd.sendAndInstall(this.ecoConfig.outFile)
         return {
-          value: ``,
+          value: `安装完成`,
           message: "完成",
         };
       },
@@ -511,10 +510,10 @@ class BuildService {
     }
     let result = await this.eco.deviceList()
     let deviceIds = result.list.map(d=>d.id)
-    if(deviceIds.length == 0){
+    if (deviceIds.length == 0){
       let device = this.cmd.deviceList()
       if (device.length == 0) {
-        throw new Error("请连接手机")
+        throw new Error("请连接手机, 并开启开发者模式")
       }
       const udid = await this.cmd.getUdid(null)
       result = await this.eco.createDevice("xiaobai-device", udid)
