@@ -27,7 +27,7 @@
         v-for="(status, index) in form.statusItems"
       />
       <div class="build-types">
-        <el-radio-group v-model="form.types" size="small">
+        <el-radio-group v-model="form.types" size="small" :disabled="true">
           <el-radio-button label="分发" :value="0" />
           <el-radio-button label="本地安装" :value="1" />
         </el-radio-group>
@@ -46,7 +46,7 @@
         @reload="handleReload"
         v-for="(status, index) in form.statusItems"
       />
-      <div class="logs-content">
+      <!-- <div class="logs-content">
         <el-collapse>
           <el-collapse-item title="构建日志" name="1">
             <div>
@@ -56,7 +56,7 @@
             </div>
           </el-collapse-item>
         </el-collapse>
-      </div>
+      </div> -->
     </template>
   </div>
 </template>

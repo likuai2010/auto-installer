@@ -13,6 +13,11 @@ class CmdService{
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
             exec(cmd,  {  ...opt }, (error, stdout, stderr) => {
+                console.error(stderr)
+                if (stderr) {
+                    reject(stderr)
+                    return;
+                }
                 if (error) {
                     reject(error)
                 }else{

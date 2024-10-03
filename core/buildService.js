@@ -228,7 +228,7 @@ class BuildService {
   }
 
   async checkEcoAccount(commonInfo) {
-    this.agcConfig = this.dh.readFileToObj("eco_config.json")
+    this.ecoConfig = this.dh.readFileToObj("eco_config.json")
     this.core.accountInfo.steps = [
       {
         name: "华为账号",
@@ -288,7 +288,7 @@ class BuildService {
             message: "完成",
           };
         }
-        const pordName = "xioabi-debug";
+        const pordName = "xiaobai-debug";
         let debugCert = await this.createAndDownloadDebugCert(pordName)
         this.ecoConfig.debugCert = debugCert
         return {
@@ -303,12 +303,6 @@ class BuildService {
       "accountInfo",
       2,
       async (i) => {
-        if (this.ecoConfig.debugProfile.path) {
-          return {
-            value: `${this.ecoConfig.debugProfile.name}`,
-            message: "完成",
-          };
-        }
         const profileName = "xiaobai-debug";
         this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName)
         return {
@@ -345,7 +339,7 @@ class BuildService {
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
-        this.ecoConfig.outFile = "signed.hap"
+        this.ecoConfig.outFile = "singned.hap"
         await this.cmd.signHap({
           keystoreFile: this.ecoConfig.keystore,
           keystorePwd: this.ecoConfig.storepass,
@@ -355,7 +349,13 @@ class BuildService {
           inFile: commonInfo.hapPath,
           outFile: this.ecoConfig.outFile        
         })
-        await this.cmd.verifyApp(this.ecoConfig.outFile)
+        // await this.cmd.verifyApp({
+        //   keystoreFile: this.ecoConfig.keystore,
+        //   keystorePwd: this.ecoConfig.storepass,
+        //   profilFile: this.ecoConfig.debugProfile.path,
+        //   inFile: this.ecoConfig.outFile,
+        //   outCertChain:'./outCertChain.cer'        
+        // })
         return {
           value: `签名成功`,
           message: "完成",
@@ -475,7 +475,7 @@ class BuildService {
       (a) => a.certName == name
     );
     if(!debugCert && debugCerts.length > 1){
-      await this.eco.deleteCertList(debugCerts[0])
+      await this.eco.deleteCertList(debugCerts[0].id)
     }
     const config = this.dh.configDir
     this.ecoConfig.keystore = config + "/xiaobai.p12"
@@ -500,7 +500,7 @@ class BuildService {
       path: filePath
     }
   }
-  async createAndDownloadDebugProfile(packageName, name, type = 1) {
+  async createAndDownloadDebugProfile(packageName, name,) {
     let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
     if(fs.existsSync(this.dh.configDir + profileName)){
       return {

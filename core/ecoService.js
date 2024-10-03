@@ -118,8 +118,8 @@ class EcoService{
         let result = await this.getCertList()
         let debugCert = result.certList.filter(d=>d.certType == 1)[0]
         if(!debugCert){
-            await cmd.ceraeteCsr("store/xiaobai.p12", "store/xioabi.csr")
-            const csr = await cmd.readcsr("store/xioabi.csr")
+            await cmd.ceraeteCsr("store/xiaobai.p12", "store/xiaobai.csr")
+            const csr = await cmd.readcsr("store/xiaobai.csr")
             this.createCert("xiaobai-debug", 1, csr)
         }
         result = await this.downloadObj(debugCert.certObjectId)

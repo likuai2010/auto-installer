@@ -100,7 +100,7 @@ const status = reactive({
   installHup: false,
   statusItems: [],
   subTitle: "正在进行机器审核中",
-  dowloadUrl: "www.baidu.com",
+  dowloadUrl: "",
 });
 
 const formRules = reactive({
@@ -135,6 +135,7 @@ const changeFile = async (file, fileList)=>{
   form.appName = hapInfo.appName
   form.packageName = hapInfo.packageName
   form.hapPath = hapInfo.hapPath
+  status.disabled = false;
   console.log("hapInfo", hapInfo)
 }
 const submitForm = async () => {
