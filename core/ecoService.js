@@ -24,13 +24,16 @@ class EcoService{
                 response.on('data', (chunk) => {
                     try{
                         let data = JSON.parse(chunk.toString())
-                        if (data.ret.code != 0){
+                        if (data.ret?.code == 0){
+                            resolve(data)
+                        } else if(data.ret) {
                             reject(new Error(data.ret.msg))
-                        } else {
+                        }else{
                             resolve(data)
                         }
                     }catch(e){
-                        console.log('baseGet response', e.mesage)
+                        console.error('baseGet response', e.message || e)
+                        resolve(chunk.toString())
                     }
                    
                 })
@@ -54,19 +57,28 @@ class EcoService{
         })
     }
     oauth2Token = ""
-    agcteamid = "2850086000506643987"
-    userId = "2850086000506643987"
+    agcteamid = ""
+    userId = ""
+    nickName = ""
     async initCookie(authInfo){
         this.oauth2Token = authInfo.accessToken
-        try{
-            let team = await this.userTeamList()
-            if (team.teams)
-                console.log("team", team, team.teams[0])
-        }catch(e){
-            // this.core.loginEco()
-        }
- 
+        this.userId = authInfo.userId
+        this.agcteamid = authInfo.userId
+        this.nickName = authInfo.nickName
+        console.log("authInfo", authInfo)
     }
+    async getTokenBytempToken(tempToken){
+        let token = tempToken.split("&").find(p=>p.indexOf("tempToken=") > -1)
+        token = token.replace("tempToken=","")
+        let uri = `https://cn.devecostudio.huawei.com/authrouter/auth/api/temptoken/check?site=CN&tempToken=${token}&appid=1007&version=0.0.0`
+        let result = await this.base(uri, {}, {}, "GET")
+        let jwtToken = result
+        uri = `https://cn.devecostudio.huawei.com/authrouter/auth/api/jwToken/check`
+        result = await this.base(uri, {},{refresh:false, jwtToken: jwtToken}, "GET")
+        console.debug("userInfo", result.userInfo)
+        return result.userInfo
+    }
+
     userTeamList(){
         let uri = "https://connect-api.cloud.huawei.com/api/ups/user-permission-service/v1/user-team-list"
         return this.base(uri, {}, {}, "GET")

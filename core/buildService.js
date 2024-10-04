@@ -257,16 +257,11 @@ class BuildService {
       "accountInfo",
       0,
       async (i) => {
-        if (this.agcConfig.teamId) {
-          return {
-            value: "未登录",
-            message: "完成",
-          };
-        }
+       
         let result = await this.eco.userTeamList();
         let userTeam = result.teams[0];
         return {
-          value: userTeam.name,
+          value: userTeam?.name || this.nickName,
           message: "登录成功",
         };
       },
@@ -282,7 +277,7 @@ class BuildService {
       "accountInfo",
       1,
       async (i) => {
-        if (this.ecoConfig.debugCert.path) {
+        if (this.ecoConfig.debugCert?.path) {
           return {
             value: `${this.ecoConfig.debugCert.name}`,
             message: "完成",

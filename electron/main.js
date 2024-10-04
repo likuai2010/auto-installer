@@ -8,7 +8,7 @@ const http = require('http');
 
 const path = require("node:path");
 const { CoreService } = require("../core/services");
-
+const core = new CoreService();
 const preload = path.join(__dirname, "preload.js");
 const indexHtml = path.join(__dirname, "../dist/index.html");
 
@@ -22,7 +22,7 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-  const core = new CoreService();
+ 
   core.registerIpc(win);
   Menu.setApplicationMenu(null);
 
@@ -51,11 +51,29 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+  console.debug("request",req.method, req.url, req.params)
+  if(req.url == "/callback" && req.method == "POST"){
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString(); // 将Buffer转换为字符串并拼接
+    });
+    req.on('end', async () => {
+      console.log(body); // 打印POST请求的数据
+      let uesrInfo = await core.eco.getTokenBytempToken(body)
+      core.dh.writeObjToFile("ds-authInfo.json", uesrInfo);
+      await core.eco.initCookie(uesrInfo)
+      core.build.checkEcoAccount(core.commonInfo);
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain');
+      res.end('login success\n' + body);
+      core.closeLoginEco()
+    });
+  }else{
+    res.end('hello word\n');
+  }
+  
 });
  
-server.listen(33333, () => {
-  console.log('服务器运行在 http://localhost:33333/');
+server.listen(3333, () => {
+  console.log('服务器运行在 http://localhost:3333/');
 });

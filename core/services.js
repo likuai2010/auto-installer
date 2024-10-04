@@ -221,6 +221,7 @@ class CoreService {
     return this.buildInfo;
   }
   async registerIpc(main) {
+    this.loginEco()
     try {
       let cookies = this.dh.readFileToObj("hw_cookies.json");
       this.agc.initCookie(cookies);
@@ -240,7 +241,7 @@ class CoreService {
     ipcMain.on("open-window", (_, fileUrl) => {
       // this.cloneGit("https://github.com/likuai2010/ClashMeta.git")
       // this.repoBrank("https://github.com/likuai2010/ClashMeta.git");
-      this.openChildWindiow(fileUrl);
+      this.loginAgc(fileUrl);
       // this.loginEco()
     });
 
@@ -332,7 +333,7 @@ class CoreService {
       }
   }
 
-  openChildWindiow(
+  loginAgc(
     url = "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/"
   ) {
     const childWindow = new BrowserWindow({
@@ -358,11 +359,11 @@ class CoreService {
       }
     });
   }
-
+  childWindow = {}
   loginEco(
-    url = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=8866&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc"
+    url = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=3333&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc"
   ) {
-    const childWindow = new BrowserWindow({
+    this.childWindow = new BrowserWindow({
       width: 800,
       height: 600,
       webPreferences: {
@@ -371,21 +372,21 @@ class CoreService {
         nodeIntegration: false,
       },
     });
-    childWindow.loadURL(url);
-    childWindow.webContents.on("did-finish-load", async () => {
-      const cookies = await childWindow.webContents.session.cookies.get({
+    this.childWindow.loadURL(url);
+    this.childWindow.webContents.on("did-finish-load", async () => {
+      const cookies = await this.childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
    
       const authInfo = this.agc.findCookieValue(cookies, "ds-authInfo");
       if (authInfo) {
         const decoded = decodeURIComponent(authInfo);
-        this.dh.writeObjToFile("ds-authInfo.json", JSON.parse(decoded));
         await this.eco.initCookie(JSON.parse(decoded));
-        childWindow.close();
-        this.build.checkEcoAccount(this.commonInfo);
       }
     });
+  }
+  closeLoginEco(){
+    this.childWindow.close();
   }
 }
 
