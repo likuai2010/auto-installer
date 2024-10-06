@@ -24,7 +24,7 @@ class BuildService {
   ecoConfig = {
     teamId: "",
     uid: "",
-    keystore: "store/xiaobai.p12",
+    keystore: "",
     storepass:"xiaobai123",
     keyAlias:"xiaobai",
     outPath:"",
@@ -34,7 +34,7 @@ class BuildService {
 
   async checkAgcAccount(commonInfo) {
     this.agcConfig = this.dh.readFileToObj("agc_config.json")
-    
+  
     if (this.running) return;
     this.running = true;
 
@@ -229,6 +229,8 @@ class BuildService {
 
   async checkEcoAccount(commonInfo) {
     this.ecoConfig = this.dh.readFileToObj("eco_config.json")
+    this.ecoConfig.storepass = this.ecoConfig.storepass || "xiaobai123"
+    this.ecoConfig.keyAlias = this.ecoConfig.keyAlias || "xiaobai"
     this.core.accountInfo.steps = [
       {
         name: "华为账号",
@@ -261,7 +263,7 @@ class BuildService {
         let result = await this.eco.userTeamList();
         let userTeam = result.teams[0];
         return {
-          value: userTeam?.name || this.nickName,
+          value: userTeam?.name || this.eco.nickName,
           message: "登录成功",
         };
       },

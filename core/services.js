@@ -221,7 +221,6 @@ class CoreService {
     return this.buildInfo;
   }
   async registerIpc(main) {
-    this.loginEco()
     try {
       let cookies = this.dh.readFileToObj("hw_cookies.json");
       this.agc.initCookie(cookies);
@@ -321,11 +320,11 @@ class CoreService {
             }
         });
     })
-    this.cmd.unpackHap(filePath, outPath)
+    await this.cmd.unpackHap(filePath, outPath)
     const moduleInfo = this.dh.readFileToObj("unsigned_out/module.json")
     console.debug("moduleInfo", moduleInfo)
     return {
-        packageName: moduleInfo?.app?.bundleName || "com.xiaobai.testgo",
+        packageName: moduleInfo?.app?.bundleName || "",
         appName:  moduleInfo?.app?.vendor || moduleInfo?.app?.label,
         versionName:  moduleInfo?.app?.versionName,
         hapPath: filePath,
