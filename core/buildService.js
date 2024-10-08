@@ -1,6 +1,6 @@
 const { CmdService } = require("./cmdService");
 const fs = require('node:fs')
-
+const path = require('node:path')
 
 class BuildService {
   constructor(core) {
@@ -336,7 +336,8 @@ class BuildService {
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
-        this.ecoConfig.outFile = "singned.hap"
+        this.ecoConfig.outFile = path.join(this.dh.configDir, "singned.hap")
+        
         await this.cmd.signHap({
           keystoreFile: this.ecoConfig.keystore,
           keystorePwd: this.ecoConfig.storepass,

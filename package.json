@@ -19,20 +19,15 @@
       "dist/**/*",
       "electron/**/*",
       "core/**/*",
-      "tools/**/*",
-      "entry-default-unsigned.hap"
+      "tools/**/*"
     ],
     "extraResources": [
       {
         "from": "tools",
-        "to": "tools",
+        "to": "../tools",
         "filter": [
           "**/*"
         ]
-      },
-      {
-        "from": "entry-default-unsigned.hap",
-        "to": "entry-default-unsigned.hap"
       }
     ],
     "directories": {

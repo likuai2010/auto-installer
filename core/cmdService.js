@@ -1,12 +1,15 @@
 const { exec } = require('child_process');
 const path = require('node:path')
 const fs = require('node:fs')
+const { app } = require('electron');
+
 
 class CmdService{
     hdc = "tools/toolchains/hdc"
     constructor(){
-        this.JavaHome = "tools/jbr/Contents/Home"
-        this.SdkHome = "tools/toolchains"
+
+        this.JavaHome = path.dirname(app.getPath('exe')) + "/../tools/jbr/Contents/Home"
+        this.SdkHome = path.dirname(app.getPath('exe'))  + "/../tools/toolchains"
         this.hdc = this.SdkHome + "/hdc"
         this.sginJar = this.SdkHome + "/lib/hap-sign-tool.jar"
     }
