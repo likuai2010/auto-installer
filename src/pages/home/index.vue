@@ -1,5 +1,6 @@
 <template>
   <div class="page-home">
+    
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
         <el-form-item label="GitHub地址："  :prop="['github', 'branch']">
@@ -72,12 +73,14 @@
        
       </el-form>
     </div>
+    <PacketPhone></PacketPhone>
   </div>
 </template>
 
 <script setup name="HomePage">
 import { ref, reactive } from "vue";
 import PublishSteps from "@/components/publish-steps/index.vue";
+import PacketPhone from "@/components/packet-phone/index.vue";
 import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
 
 const formEl = ref(null);

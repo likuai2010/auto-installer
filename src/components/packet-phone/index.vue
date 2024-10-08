@@ -5,17 +5,24 @@
         <img src="../../assets/images/packet.png" @click="visible = true" />
       </div>
     </el-tooltip>
-    <el-tooltip effect="light" content="联系我们" placement="top">
+    <!-- <el-tooltip effect="light" content="联系我们" placement="top">
       <div class="items-content phone">
         <img src="../../assets/images/phone.png" @click="visible = true" />
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
     <el-dialog
-      top="25%"
       width="40%"
       v-model="visible"
       :close-on-click-modal="false"
     >
+    <div>
+      <img class="weixin" src="../../assets/images/weixin.png" @click="visible = true" />
+    <img class="alipay" src="../../assets/images/alipay.png" @click="visible = true" />
+    </div>
+    <div>
+      打赏支持作者，助力移植更多开源应用。您的每一份支持，都是对开源精神的传承，共同推动技术创新与共享！
+    </div>
+  
     </el-dialog>
   </div>
 </template>
@@ -42,6 +49,14 @@ const visible = ref(false);
       cursor: pointer;
       margin: 0px 6px;
     }
+  }
+  .weixin{
+    width: 150px;
+    height: 150px;
+  }
+  .alipay{
+    height: 150px;
+    height: 150px;
   }
 }
 </style>

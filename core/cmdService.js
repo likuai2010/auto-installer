@@ -7,8 +7,6 @@ const { app } = require('electron');
 class CmdService{
     hdc = "tools/toolchains/hdc"
     constructor(){
-     
-    
         if( process.platform !== "darwin"){
             this.JavaHome = path.join(path.dirname(app.getPath('exe')), "tools/jbr")
             this.SdkHome = path.join(path.dirname(app.getPath('exe')), "tools/toolchains")

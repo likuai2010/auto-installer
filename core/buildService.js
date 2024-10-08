@@ -481,7 +481,7 @@ class BuildService {
     if (!debugCert) {
        // 如果debug过多清空debug证书
       if(debugCerts.length > 1){
-        await this.eco.deleteCertList(debugCerts.maps(d=>d.id))
+        await this.eco.deleteCertList(debugCerts.map(d=>d.id))
       }
       const csr = await this.cmd.readcsr(csrPath)
       result = await this.eco.createCert(name, type, csr);
@@ -491,7 +491,7 @@ class BuildService {
       const cerPath = path.join(config,  name + ".cer")
       if(!fs.existsSync(cerPath)){
         if(debugCerts.length > 1){
-          await this.eco.deleteCertList(debugCerts.maps(d=>d.id))
+          await this.eco.deleteCertList(debugCerts.map(d=>d.id))
         }
         const csr = await this.cmd.readcsr(csrPath)
         result = await this.eco.createCert(name, type, csr);
