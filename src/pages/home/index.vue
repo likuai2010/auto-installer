@@ -1,10 +1,13 @@
 <template>
   <div class="page-home">
-    
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
-        <el-form-item label="GitHub地址："  :prop="['github', 'branch']">
-          <el-input v-model="form.github" :disabled="true" @input="getGitHub(value)">
+        <el-form-item label="GitHub地址：" :prop="['github', 'branch']">
+          <el-input
+            v-model="form.github"
+            :disabled="true"
+            @input="getGitHub(value)"
+          >
             <template #append>
               <el-select
                 :loading="loading"
@@ -28,7 +31,8 @@
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
         </el-form-item>
-        <el-upload
+        <div class="upload-content">
+          <el-upload
             drag
             action="#"
             :auto-upload="false"
@@ -39,6 +43,11 @@
               将文件拖放到此处或<em>单击上传</em>
             </div>
           </el-upload>
+          <LoadComp
+            v-if="status.upload"
+            :customStyle="{ position: 'absolute' }"
+          />
+        </div>
 
         <div class="btns-content">
           <el-button
@@ -70,7 +79,6 @@
           </el-form-item>
         </template>
         <!-- <template v-if="status.active === 1 && status.installHup"> -->
-       
       </el-form>
     </div>
     <PacketPhone></PacketPhone>
@@ -79,6 +87,7 @@
 
 <script setup name="HomePage">
 import { ref, reactive } from "vue";
+import LoadComp from "@/components/loading/index.vue";
 import PublishSteps from "@/components/publish-steps/index.vue";
 import PacketPhone from "@/components/packet-phone/index.vue";
 import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
@@ -86,6 +95,7 @@ import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
 const formEl = ref(null);
 const stepsEl = ref(null);
 const loading = ref(false);
+const uploadLoading = ref(false);
 const branchItems = ref([]);
 const form = reactive({
   github: "",
@@ -98,6 +108,7 @@ const status = reactive({
   icon: "success",
   active: -1,
   types: 1,
+  upload: false,
   loading: false,
   disabled: false,
   installHup: false,
@@ -133,14 +144,16 @@ const getGitHub = (url) => {
     loading.value = false;
   });
 };
-const changeFile = async (file, fileList)=>{
-  let hapInfo = await window.CoreApi.uploadHap(file)
-  form.appName = hapInfo.appName
-  form.packageName = hapInfo.packageName
-  form.hapPath = hapInfo.hapPath
+const changeFile = async (file, fileList) => {
+  status.upload = true;
+  let hapInfo = await window.CoreApi.uploadHap(file);
+  form.appName = hapInfo.appName;
+  form.packageName = hapInfo.packageName;
+  form.hapPath = hapInfo.hapPath;
+  status.upload = false;
   status.disabled = false;
-  console.log("hapInfo", hapInfo)
-}
+  console.log("hapInfo", hapInfo);
+};
 const submitForm = async () => {
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {
@@ -185,6 +198,9 @@ const handleUpdate = (form) => {
         display: flex;
         align-items: center;
         justify-content: flex-end;
+      }
+      .upload-content {
+        position: relative;
       }
     }
   }

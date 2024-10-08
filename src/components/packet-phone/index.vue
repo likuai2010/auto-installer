@@ -10,19 +10,14 @@
         <img src="../../assets/images/phone.png" @click="visible = true" />
       </div>
     </el-tooltip> -->
-    <el-dialog
-      width="40%"
-      v-model="visible"
-      :close-on-click-modal="false"
-    >
-    <div>
-      <img class="weixin" src="../../assets/images/weixin.png" @click="visible = true" />
-    <img class="alipay" src="../../assets/images/alipay.png" @click="visible = true" />
-    </div>
-    <div>
-      打赏支持作者，助力移植更多开源应用。您的每一份支持，都是对开源精神的传承，共同推动技术创新与共享！
-    </div>
-  
+    <el-dialog width="360px" v-model="visible" :close-on-click-modal="false">
+      <div class="weixin-alipay-items">
+        <img class="weixin" src="../../assets/images/weixin.png" />
+        <img class="alipay" src="../../assets/images/alipay.png" />
+      </div>
+      <div>
+        打赏支持作者，助力移植更多开源应用。您的每一份支持，都是对开源精神的传承，共同推动技术创新与共享！
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -43,6 +38,7 @@ const visible = ref(false);
   .items-content {
     display: flex;
     align-items: center;
+    justify-content: center;
     img {
       width: 32px;
       height: 32px;
@@ -50,13 +46,20 @@ const visible = ref(false);
       margin: 0px 6px;
     }
   }
-  .weixin{
-    width: 150px;
-    height: 150px;
-  }
-  .alipay{
-    height: 150px;
-    height: 150px;
+
+  .weixin-alipay-items {
+    display: flex;
+    max-width: 320px;
+    align-items: center;
+    justify-content: space-around;
+    .weixin {
+      width: 150px;
+      height: 150px;
+    }
+    .alipay {
+      height: 150px;
+      height: 150px;
+    }
   }
 }
 </style>
