@@ -1,6 +1,5 @@
 <template>
   <div class="page-home">
-    
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
         <el-form-item label="GitHub地址："  :prop="['github', 'branch']">
