@@ -110,7 +110,7 @@ const status = reactive({
   types: 1,
   upload: false,
   loading: false,
-  disabled: false,
+  disabled: true,
   installHup: false,
   statusItems: [],
   subTitle: "正在进行机器审核中",
@@ -146,6 +146,7 @@ const getGitHub = (url) => {
 };
 const changeFile = async (file, fileList) => {
   status.upload = true;
+  status.disabled = true;
   let hapInfo = await window.CoreApi.uploadHap(file);
   form.appName = hapInfo.appName;
   form.packageName = hapInfo.packageName;
