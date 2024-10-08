@@ -1,2 +1,2 @@
-# auto-installer
-HarmonyOS Next Hap installer
+小白鸿蒙开源自助餐:
+仅需登陆华为账号, 开启手机开发者模式，即可安装任意hap应用
