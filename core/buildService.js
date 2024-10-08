@@ -472,23 +472,34 @@ class BuildService {
     let debugCert= result.certList.find(
       (a) => a.certName == name
     );
-    if(!debugCert && debugCerts.length > 1){
-      await this.eco.deleteCertList(debugCerts[0].id)
-    }
     const config = this.dh.configDir
     this.ecoConfig.keystore = config + "/xiaobai.p12"
     await this.cmd.createKeystore(this.ecoConfig.keystore)
     const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
     this.ecoConfig.csrPath = csrPath
+  
     if (!debugCert) {
+       // 如果debug过多清空debug证书
+      if(debugCerts.length > 1){
+        await this.eco.deleteCertList(debugCerts.maps(d=>d.id))
+      }
       const csr = await this.cmd.readcsr(csrPath)
       result = await this.eco.createCert(name, type, csr);
       debugCert = result.harmonyCert;
+    }else{
+      // 本地没有文件需要重新生成
+      const cerPath = path.join(config,  name + ".cer")
+      if(!fs.existsSync(cerPath)){
+        if(debugCerts.length > 1){
+          await this.eco.deleteCertList(debugCerts.maps(d=>d.id))
+        }
+        const csr = await this.cmd.readcsr(csrPath)
+        result = await this.eco.createCert(name, type, csr);
+        debugCert = result.harmonyCert;
+      }
     }
-    console.log("debug cert", debugCert)
     result = await this.eco.downloadObj(debugCert.certObjectId)
     const debugCertUrl = result.urlsInfo[0].newUrl
-    console.log("url", debugCertUrl)
     const filePath = await this.dh.downloadFile(debugCertUrl, name + ".cer")
     return {
       id: debugCert.id,
@@ -506,19 +517,19 @@ class BuildService {
         path: this.dh.configDir + profileName
       }
     }
+    let device = await this.cmd.deviceList()
+    if (device.length == 0) {
+      throw new Error("请连接手机, 并开启开发者模式")
+    }
+    const udid = (await this.cmd.getUdid(device[0].trim())).trim()
     let result = await this.eco.deviceList()
-    let deviceIds = result.list.map(d=>d.id)
-    if (deviceIds.length == 0){
-      let device = this.cmd.deviceList()
-      if (device.length == 0) {
-        throw new Error("请连接手机, 并开启开发者模式")
-      }
-      const udid = await this.cmd.getUdid(null)
+    let deviceList = result.list
+    if (deviceList.filter(d=> d.udid == udid).length == 0){
       result = await this.eco.createDevice("xiaobai-device", udid)
       result = await this.eco.deviceList()
-      deviceIds = result.list.map(d=>d.id)
+      deviceList = result.list
     }
-    
+    const deviceIds = deviceList.map(d => d.id)
     result = await this.eco.createProfile(name, this.ecoConfig.debugCert.id, packageName, deviceIds)
     const profilePath = await this.dh.downloadFile(result.provisionFileUrl, profileName)
     console.log("profile", result)

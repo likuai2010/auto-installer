@@ -88,9 +88,9 @@ class EcoService{
         return this.base(uri, {}, {
         }, "GET")
     }
-    deleteCertList(certId){
+    deleteCertList(certIds){
         let uri = "https://connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/delete"
-        return this.base(uri, {"certIds":[certId]}, {}, "DELETE")
+        return this.base(uri, {"certIds":certIds}, {}, "DELETE")
     }
     // type 1 debug 2 prod
     createCert(name, type, csr){

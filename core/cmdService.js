@@ -7,20 +7,22 @@ const { app } = require('electron');
 class CmdService{
     hdc = "tools/toolchains/hdc"
     constructor(){
-
-        this.JavaHome = path.dirname(app.getPath('exe')) + "/../tools/jbr/Contents/Home"
-        this.SdkHome = path.dirname(app.getPath('exe'))  + "/../tools/toolchains"
+     
+    
+        if( process.platform !== "darwin"){
+            this.JavaHome = path.join(path.dirname(app.getPath('exe')), "tools/jbr")
+            this.SdkHome = path.join(path.dirname(app.getPath('exe')), "tools/toolchains")
+        }else{
+            this.JavaHome = path.dirname(app.getPath('exe')) + "/../tools/jbr/Contents/Home"
+            this.SdkHome = path.dirname(app.getPath('exe'))  + "/../tools/toolchains"
+        }
         this.hdc = this.SdkHome + "/hdc"
         this.sginJar = this.SdkHome + "/lib/hap-sign-tool.jar"
     }
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
             exec(cmd,  {  ...opt }, (error, stdout, stderr) => {
-                console.error(stderr)
-                if (stderr) {
-                    reject(stderr)
-                    return;
-                }
+                console.error(stderr, stdout)
                 if (error) {
                     reject(error)
                 }else{
@@ -90,7 +92,7 @@ class CmdService{
         inFile: "D:/pack.hap",
         outFile: "./singned.hap"        
     }){
-        let javaPath = this.JavaHome + "/bin/java"
+        let javaPath = path.join(this.JavaHome, "/bin/java")
         let signParam = `-mode "localSign" -keyAlias "${signConfig.keyAlias}" -appCertFile "${signConfig.certFile}" -profileFile "${signConfig.profilFile}" -inFile "${signConfig.inFile}" -signAlg "SHA256withECDSA"   -keystoreFile  "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "${signConfig.outFile}" -signCode "1"`
         let cmd = `${javaPath} -jar ${this.sginJar}  sign-app ${signParam}`
         let result =  await this.exeCmd(cmd)
@@ -100,6 +102,7 @@ class CmdService{
         if (fs.existsSync(csrpath))
             return csrpath
         let keytool = this.JavaHome + "/bin/keytool"
+
         let prams = `${keytool} -certreq -alias ${alias} -keystore ${keystore} -storetype pkcs12 -file ${csrpath} -storepass ${storepass}`
         await this.exeCmd(prams)
         return csrpath
