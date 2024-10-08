@@ -279,12 +279,6 @@ class BuildService {
       "accountInfo",
       1,
       async (i) => {
-        if (this.ecoConfig.debugCert?.path) {
-          return {
-            value: `${this.ecoConfig.debugCert.name}`,
-            message: "完成",
-          };
-        }
         const pordName = "xiaobai-debug";
         let debugCert = await this.createAndDownloadDebugCert(pordName)
         this.ecoConfig.debugCert = debugCert
@@ -469,34 +463,21 @@ class BuildService {
     let debugCerts= result.certList.filter(
       (a) => a.certType == 1
     );
-    let debugCert= result.certList.find(
-      (a) => a.certName == name
-    );
+    // 创建密钥库
     const config = this.dh.configDir
     this.ecoConfig.keystore = config + "/xiaobai.p12"
     await this.cmd.createKeystore(this.ecoConfig.keystore)
     const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
     this.ecoConfig.csrPath = csrPath
-  
+
+    let debugCert= result.certList.find((a) => a.certName == name);
     if (!debugCert) {
        // 如果debug过多清空debug证书
-      if(debugCerts.length > 1){
-        await this.eco.deleteCertList(debugCerts.map(d=>d.id))
-      }
+      if(debugCerts.length > 0)
+        await this.eco.deleteCertList(debugCerts.map(d => d.id))
       const csr = await this.cmd.readcsr(csrPath)
       result = await this.eco.createCert(name, type, csr);
       debugCert = result.harmonyCert;
-    }else{
-      // 本地没有文件需要重新生成
-      const cerPath = path.join(config,  name + ".cer")
-      if(!fs.existsSync(cerPath)){
-        if(debugCerts.length > 1){
-          await this.eco.deleteCertList(debugCerts.map(d=>d.id))
-        }
-        const csr = await this.cmd.readcsr(csrPath)
-        result = await this.eco.createCert(name, type, csr);
-        debugCert = result.harmonyCert;
-      }
     }
     result = await this.eco.downloadObj(debugCert.certObjectId)
     const debugCertUrl = result.urlsInfo[0].newUrl
@@ -504,7 +485,6 @@ class BuildService {
     return {
       id: debugCert.id,
       name,
-      objId: debugCert.certObjectId,
       url: debugCertUrl,
       path: filePath
     }
@@ -525,7 +505,7 @@ class BuildService {
     let result = await this.eco.deviceList()
     let deviceList = result.list
     if (deviceList.filter(d=> d.udid == udid).length == 0){
-      result = await this.eco.createDevice("xiaobai-device", udid)
+      result = await this.eco.createDevice("xiaobai-device-"+ udid.substring(0,10), udid)
       result = await this.eco.deviceList()
       deviceList = result.list
     }
