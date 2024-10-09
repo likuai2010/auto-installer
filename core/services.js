@@ -266,8 +266,8 @@ class CoreService {
       let info = this.getBuildInfo();
       main.webContents.send("onBuildInfo", info);
     });
-    ipcMain.on("uploadHap", async (_, file) => {
-      let hapInfo = await this.saveFileToLocal(file)
+    ipcMain.on("uploadHap", async (_, file, fileName) => {
+      let hapInfo = await this.saveFileToLocal(file, fileName)
       main.webContents.send("onUploadHap", hapInfo)
     });
 
@@ -307,10 +307,11 @@ class CoreService {
     });
   }
 
-  async saveFileToLocal(buffer){
-    console.log("saveHap", buffer.length)
-    const filePath = path.join(this.dh.configDir, "unsigned.hap");
-    const outPath = path.join(this.dh.configDir, "unsigned_out");
+  async saveFileToLocal(buffer, filename){
+    console.log("saveHap", filename, buffer.length)
+    let filePath = path.join(this.dh.hapDir, filename);
+    const outPath = path.join(this.dh.hapDir, "hap_unpack_out");
+    const appOutPath = path.join(this.dh.hapDir, "app_unpack_out");
     await new Promise((resolve, reject)=>{
         fs.writeFile(filePath, buffer, (err) => {
             if (err) {
@@ -320,18 +321,45 @@ class CoreService {
             }
         });
     })
-    await this.cmd.unpackHap(filePath, outPath)
-    const moduleInfo = this.dh.readFileToObj("unsigned_out/module.json")
+    let moduleInfo = {}
+    if(filename.endsWith(".app")){
+      await this.cmd.unpackApp(filePath, appOutPath)
+      await this.cmd.unpackHap(this.dh.hapDir + "/app_unpack_out/entry-default.hap", outPath)
+      moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
+      moduleInfo.app.debug = true
+      this.dh.writeObjToFile("hap_unpack_out/module.json", moduleInfo, this.dh.hapDir)
+      await this.cmd.packHap(this.dh.hapDir + "/hap_unpack_out", this.dh.hapDir + `${filename.replace(".app", ".hap")}`)
+      filePath = this.dh.hapDir + `${filename.replace(".app", ".hap")}`
+    }else{
+      await this.cmd.unpackHap(filePath, outPath)
+      moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
+    }
     console.debug("moduleInfo", moduleInfo)
     return {
         packageName: moduleInfo?.app?.bundleName || "",
         appName:  moduleInfo?.app?.vendor || moduleInfo?.app?.label,
         versionName:  moduleInfo?.app?.versionName,
         hapPath: filePath,
-        icon: ""
+        icon: this.parseIcon(moduleInfo, outPath)
       }
   }
-
+  parseIcon(moduleInfo, outPath){
+    const icon = moduleInfo.app.icon
+    const iconPath = path.join(outPath, "/resources/base/media/" + icon.replace("$media:", ""))
+    let filePath = ""
+    if(fs.existsSync(iconPath + ".json")){
+      iconJson = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
+      // TODO
+      filePath = iconJson["layered-image"].foreground + ".png"
+    }else{
+      if(fs.existsSync(iconPath +".png")){
+        filePath = iconPath + ".png"
+      }
+    }
+    const iconraw = this.dh.readPng(filePath)
+    console.log("iconPath", filePath)
+    return `data:image/png;base64,${iconraw}`;
+  }
   loginAgc(
     url = "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/"
   ) {

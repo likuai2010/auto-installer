@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
         resolve(data);
       });
       fileToBuffer(file.raw).then((buffer)=>{
-        ipcRenderer.send("uploadHap", buffer);
+        ipcRenderer.send("uploadHap", buffer, file.name);
       })
     });
   },

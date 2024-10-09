@@ -7,9 +7,16 @@ const { app } = require('electron');
 class CmdService{
     hdc = "tools/toolchains/hdc"
     constructor(){
-        if( process.platform !== "darwin"){
-            this.JavaHome = path.join(path.dirname(app.getPath('exe')), "tools/jbr")
-            this.SdkHome = path.join(path.dirname(app.getPath('exe')), "tools/toolchains")
+        if(process.platform !== "darwin"){
+            let dev = app.isPackaged
+            if(dev){
+                this.JavaHome = path.join(path.dirname(app.getPath('exe')), "tools/jbr")
+                this.SdkHome = path.join(path.dirname(app.getPath('exe')), "tools/toolchains")
+            }else{
+                this.JavaHome =  path.join(path.dirname(__dirname), "tools/jbr")
+                this.SdkHome = path.join(path.dirname(__dirname), "tools/toolchains")
+            }
+           
         }else{
             this.JavaHome = path.dirname(app.getPath('exe')) + "/../tools/jbr/Contents/Home"
             this.SdkHome = path.dirname(app.getPath('exe'))  + "/../tools/toolchains"
@@ -149,18 +156,51 @@ class CmdService{
             console.error("buildApp", e.message || e, )
         }
     }
-
+    async unpackApp(hapFilePath, outPath){
+        let javaPath = this.JavaHome + "/bin/java"
+        let unpackTool = this.SdkHome + "/lib/app_unpacking_tool.jar"
+        let cmd = `${javaPath} -jar ${unpackTool} --mode app --app-path ${hapFilePath} --out-path ${outPath} --force true`
+        await this.exeCmd(cmd)
+    }
     async unpackHap(hapFilePath, outPath){
         let javaPath = this.JavaHome + "/bin/java"
         let unpackTool = this.SdkHome + "/lib/app_unpacking_tool.jar"
         let cmd = `${javaPath} -jar ${unpackTool} --mode hap --hap-path ${hapFilePath} --out-path ${outPath} --force true`
         await this.exeCmd(cmd)
     }
-    packHap(hapFilePath){
+    //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
+
+    async packHap(hapFilePath, outpath = "pack.hap"){
         let javaPath = this.JavaHome + "/bin/java"
         let unpackTool = this.SdkHome + "/lib/app_packing_tool.jar"
-        let cmd = `${javaPath} -jar ${unpackTool} --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap`
-        //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
+        let params = await new Promise((resolve, reject)=>{
+            let params = ""
+            fs.readdir(hapFilePath, (err, files) => {
+                if (err) throw err;
+                files.forEach(file => {
+                    const fullPath = path.join(hapFilePath, file);
+                    if(file == "resources.index"){
+                        params += ` --index-path ${fullPath}`
+                    }
+                    else if(file == "pack.info"){
+                        params += ` --pack-info-path ${fullPath}`
+                    }
+                    else if(file == "module.json"){
+                        params += ` --json-path ${fullPath}`
+                    }
+                    else if (file == "libs"){
+                        params += ` --lib-path ${fullPath}`
+                    }
+                    else{
+                        params += ` --${file}-path ${fullPath}`
+                    }
+                });
+                resolve(params)
+            });
+        })
+        let cmd = `${javaPath} -jar ${unpackTool} --mode hap  ${params} --force true --out-path  ${outpath}`
+        console.debug("packHap params", params)
+        await this.exeCmd(cmd)
     }
     
 }

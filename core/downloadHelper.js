@@ -8,11 +8,14 @@ const git = simpleGit();
 class DownloadHelper{
     configDir = ""
     codeDir = ""
+    hapDir = ""
     constructor(){
         this.configDir =  path.join(app.getPath('home'), ".autoPublisher/config")
         this.codeDir = path.join(app.getPath('home'), ".autoPublisher/code")
+        this.hapDir = path.join(app.getPath('home'), ".autoPublisher/haps")
         fs.mkdirSync(this.configDir, {recursive: true})
         fs.mkdirSync(this.codeDir, {recursive: true})
+        fs.mkdirSync(this.hapDir, {recursive: true})
     }
 
     downloadFile(fileUrl, fileName) {
@@ -75,9 +78,9 @@ class DownloadHelper{
             console.error(`Error: ${stderr}`);
         });
     }
-    writeObjToFile(filename, obj){
+    writeObjToFile(filename, obj, basePath=undefined){
         const jsonData = JSON.stringify(obj, null, 2)
-        const filePath = path.join(this.configDir, filename);
+        const filePath = path.join(basePath || this.configDir, filename);
         fs.writeFile(filePath, jsonData, (err) => {
             if (err) {
                 console.error('save file fail:', err);
@@ -86,9 +89,9 @@ class DownloadHelper{
             }
         });
     }
-    readFileToObj(filename){
+    readFileToObj(filename, basePath=undefined){
         try {
-            const filePath = path.join(this.configDir, filename);
+            const filePath = path.join(basePath || this.configDir, filename);
             const data = fs.readFileSync(filePath, 'utf8');
             return JSON.parse(data)
         } catch(e) {
@@ -96,24 +99,15 @@ class DownloadHelper{
         }
         return {}
     }
-    async saveFileToLocal(buffer){
-        console.log("saveHap", buffer.length)
-        const filePath = path.join(this.configDir, "unsigned.hap");
-        await new Promise((resolve, reject)=>{
-            fs.writeFile(filePath, buffer, (err) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve()
-                }
-            });
-        })
-        return {
-            packageName:"com.xiaobai.testgo",
-            appName: "testgo",
-            hapPath: filePath,
-            icon: ""
-          }
+    readPng(filePath){
+        try {
+            const data = fs.readFileSync(filePath);
+            const base64Image = data.toString('base64');
+            return base64Image
+        } catch(e) {
+            console.error("readPng", e.message || e)
+        }
+        return ''
     }
 
     async cloneGit(repoUrl, branch = "master") {
