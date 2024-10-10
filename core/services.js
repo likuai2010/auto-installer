@@ -328,8 +328,8 @@ class CoreService {
       moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
       moduleInfo.app.debug = true
       this.dh.writeObjToFile("hap_unpack_out/module.json", moduleInfo, this.dh.hapDir)
-      await this.cmd.packHap(this.dh.hapDir + "/hap_unpack_out", this.dh.hapDir + `${filename.replace(".app", ".hap")}`)
-      filePath = this.dh.hapDir + `${filename.replace(".app", ".hap")}`
+      await this.cmd.packHap(this.dh.hapDir + "/hap_unpack_out", this.dh.hapDir + `/${filename.replace(".app", ".hap")}`)
+      filePath = this.dh.hapDir + `/${filename.replace(".app", ".hap")}`
     }else{
       await this.cmd.unpackHap(filePath, outPath)
       moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
