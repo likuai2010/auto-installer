@@ -54,6 +54,7 @@ class CoreService {
     github: "https://github.com/likuai2010/ClashMeta.git",
     branch: "master",
     downloadUrl: "https://xxx",
+    deviceIp: "",
     type: 0,
   };
   envInfo = {

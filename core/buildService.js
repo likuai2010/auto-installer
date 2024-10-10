@@ -295,7 +295,7 @@ class BuildService {
       2,
       async (i) => {
         const profileName = "xiaobai-debug";
-        this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName)
+        this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName, commonInfo)
         return {
           value: `${this.ecoConfig.debugProfile.name}`,
           message: "完成",
@@ -358,7 +358,7 @@ class BuildService {
     await this.startStep(
       "buildInfo", 1,
       async (i) => {
-        await this.cmd.sendAndInstall(this.ecoConfig.outFile)
+        await this.cmd.sendAndInstall(this.ecoConfig.outFile, commonInfo.deviceIp)
         return {
           value: `安装完成`,
           message: "完成",
@@ -367,64 +367,7 @@ class BuildService {
       "失败"
     );
   }
-  async buildAndInstaller(commonInfo) {
-    // git clone 
-    // await this.startStep(
-    //   "buildInfo", 0,
-    //   async (i) => {
-    //     await this.dh.cloneGit(commonInfo.github, commonInfo.branch)
-    //     return {
-    //       value: `下载完成`,
-    //       message: "完成",
-    //     };
-    //   },
-    //   "失败"
-    // );
-    // build
-    await this.startStep(
-      "buildInfo", 1,
-      async (i) => {
-        this.cmd.buildApp()
-        return {
-          value: ``,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-
-    // // signApp
-    // await this.startStep(
-    //   "buildInfo", 2,
-    //   async (i) => {
-    //     await this.cmd.signHap()
-    //     await this.cmd.verifyApp()
-    //     return {
-    //       value: `签名成功(debug)`,
-    //       message: "完成",
-    //     };
-    //   },
-    //   "失败"
-    // );
-    // // installApp
-    // await this.startStep(
-    //   "buildInfo", 3,
-    //   async (i) => {
-    //     let devices = this.cmd.deviceList()
-    //     if(devices == 0){
-    //       throw new Error("请开启手机开发者模式,并连接手机到电脑上")
-    //     }
-    //     let deviceId = devices[0]
-    //     await this.cmd.sendFile(deviceId, "./singned.hap")
-    //     await this.cmd.installHap(deviceId)
-    //     return {
-    //       value: `安装完成`,
-    //       message: "完成",
-    //     };
-    //   },
-    //   "失败"
-    // );
-  }
+ 
 
   async checkPackageName(packageName) {
     try {
@@ -458,7 +401,7 @@ class BuildService {
       return false;
     }
   }
-  async createAndDownloadDebugCert(name, type = 1) {
+  async createAndDownloadDebugCert(name, commonInfo) {
     let result = await this.eco.getCertList();
     let debugCerts= result.certList.filter(
       (a) => a.certType == 1
@@ -489,7 +432,7 @@ class BuildService {
       path: filePath
     }
   }
-  async createAndDownloadDebugProfile(packageName, name,) {
+  async createAndDownloadDebugProfile(packageName, name, commonInfo) {
     let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
     if(fs.existsSync(this.dh.configDir + profileName)){
       return {
@@ -497,15 +440,20 @@ class BuildService {
         path: this.dh.configDir + profileName
       }
     }
-    let device = await this.cmd.deviceList()
-    if (device.length == 0) {
-      throw new Error("请连接手机, 并开启开发者模式")
+    let devicekey = ""
+    if (commonInfo.deviceIp && commonInfo.deviceIp !== "") 
+      devicekey = commonInfo.deviceIp
+    else {
+      let device = await this.cmd.deviceList()
+      if (device.length == 0) 
+        throw new Error("请连接手机, 并开启开发者模式和usb调试!")
+      devicekey = device[0].trim()
     }
-    const udid = (await this.cmd.getUdid(device[0].trim())).trim()
+    const udid = (await this.cmd.getUdid(devicekey)).trim()
     let result = await this.eco.deviceList()
     let deviceList = result.list
     if (deviceList.filter(d=> d.udid == udid).length == 0){
-      result = await this.eco.createDevice("xiaobai-device-"+ udid.substring(0,10), udid)
+      result = await this.eco.createDevice("xiaobai-device-" + udid.substring(0,10), udid)
       result = await this.eco.deviceList()
       deviceList = result.list
     }
