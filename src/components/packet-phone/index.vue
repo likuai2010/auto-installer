@@ -1,9 +1,9 @@
 <template>
   <div class="packet-phone">
-    <el-tooltip effect="light" content="成为赞助商" placement="top">
+    <el-tooltip effect="light" content="支持作者" placement="top">
       <div class="items-content packet">
         <img src="../../assets/images/packet.png" @click="visible = true" />
-        <div class="desc" @click="visible = true">赞助</div>
+        <div class="desc" @click="visible = true">支持</div>
       </div>
     </el-tooltip>
     <!-- <el-tooltip effect="light" content="联系我们" placement="top">

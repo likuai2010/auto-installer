@@ -29,8 +29,8 @@
           <el-input v-model="form.appName" />
         </el-form-item> -->
 
-        <el-form-item label="设备IP："  :prop="['deviceIp']">
-          <el-input v-model="form.deviceIp" placeholder="请开启手机无线调试功能" />
+        <el-form-item label="无线安装："  :prop="['deviceIp']">
+          <el-input v-model="form.deviceIp" placeholder="输入ip地址(请开启手机无线调试功能)" />
         </el-form-item>
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
@@ -137,7 +137,7 @@ const form = reactive({
   packageName: "", //包名称
   deviceIp: "", //设备IP
   hapPath: "", //包路
-  buildType: 0, //构建方式 0:分发,1:本地
+  buildType: 1, //构建方式 0:分发,1:本地
 });
 
 const status = reactive({
@@ -197,7 +197,12 @@ const changeFile = async (file) => {
     form: { ...form },
     packageName: hapInfo.packageName,
   };
-  hapInfoItems.value.push(status.selected);
+  const hapindex = hapInfoItems.value.findIndex(f=>f.packageName == hapInfo.packageName)
+  if(hapindex > -1){
+    hapInfoItems.value[hapindex] = status.selected;
+  }else{
+    hapInfoItems.value.push(status.selected);
+  }
 };
 
 const submitForm = async () => {
