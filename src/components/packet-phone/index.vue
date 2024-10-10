@@ -1,8 +1,9 @@
 <template>
   <div class="packet-phone">
-    <el-tooltip effect="light" content="打赏" placement="top">
+    <el-tooltip effect="light" content="成为赞助商" placement="top">
       <div class="items-content packet">
         <img src="../../assets/images/packet.png" @click="visible = true" />
+        <div class="desc" @click="visible = true">赞助</div>
       </div>
     </el-tooltip>
     <!-- <el-tooltip effect="light" content="联系我们" placement="top">
@@ -36,14 +37,23 @@ const visible = ref(false);
   align-items: center;
   justify-content: center;
   .items-content {
+    padding: 5px;
     display: flex;
+    cursor: pointer;
+    border-radius: 5px;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    background: rgba(200, 200, 200, 0.6);
     img {
       width: 32px;
       height: 32px;
       cursor: pointer;
       margin: 0px 6px;
+    }
+    .desc {
+      font-size: 12px;
+      margin-top: 5px;
     }
   }
 
