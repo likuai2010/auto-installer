@@ -35,6 +35,13 @@
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
         </el-form-item>
+
+        <el-form-item label="构建方式：" :prop="['buildType']">
+          <el-radio-group v-model="form.buildType">
+            <el-radio :value="0">分发</el-radio>
+            <el-radio :value="1">本地</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <div class="upload-content">
           <el-upload
             drag
@@ -49,17 +56,20 @@
             </div>
           </el-upload>
           <div class="upload-file-list">
-            <div class="file-items">
-              <img class="logo" src="" />
-              <span class="package-name"></span>
-            </div>
+            <FileItems
+              :key="index"
+              :data="items"
+              @delete="handleDeleteFile"
+              @selected="handleSelectedFile"
+              :active="status?.selected?.packageName"
+              v-for="(items, index) in hapInfoItems"
+            />
           </div>
           <LoadComp
             v-if="status.upload"
             :customStyle="{ position: 'absolute' }"
           />
         </div>
-
         <div class="btns-content">
           <el-button
             type="primary"
@@ -73,7 +83,12 @@
     </div>
     <el-divider />
     <div class="page-home-steps">
-      <PublishSteps ref="stepsEl" :formData="form" @update="handleUpdate" />
+      <PublishSteps
+        ref="stepsEl"
+        :formData="form"
+        @update="handleUpdate"
+        :buildType="form.buildType"
+      />
     </div>
     <el-divider />
     <div class="page-home-status">
@@ -97,15 +112,23 @@
 
 <script setup name="HomePage">
 import { ref, reactive } from "vue";
+import { ElNotification } from "element-plus";
 import LoadComp from "@/components/loading/index.vue";
+import FileItems from "@/components/file-items/index.vue";
 import PublishSteps from "@/components/publish-steps/index.vue";
 import PacketPhone from "@/components/packet-phone/index.vue";
-import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
+import {
+  CopyDocument,
+  UploadFilled,
+  CircleCloseFilled,
+} from "@element-plus/icons-vue";
 
-const formEl = ref(null);
-const stepsEl = ref(null);
-const loading = ref(false);
-const branchItems = ref([]);
+const formEl = ref(null); //form表单Dom
+const stepsEl = ref(null); //构建步骤Dom
+const loading = ref(false); //获取git分支loading状态
+const branchItems = ref([]); //获取git分支集合
+const hapInfoItems = ref([]); //上传文件List
+
 const form = reactive({
   github: "", //github地址
   branch: "", //git分支
@@ -113,18 +136,17 @@ const form = reactive({
   packageName: "", //包名称
   deviceIp: "", //设备IP
   hapPath: "", //包路
+  buildType: 0, //构建方式 0:分发,1:本地
 });
 
 const status = reactive({
-  types: 1, //
-  active: -1,
-  upload: false,
-  loading: false,
-  disabled: true,
-  dowloadUrl: "",
-  installHup: false,
-  statusItems: [],
-  subTitle: "正在进行机器审核中",
+  active: -1, //构建步骤
+  upload: false, //文件上传loading状态
+  loading: false, //开始构建loading状态
+  disabled: true, //开始构建disabled状态
+  dowloadUrl: "", //编译打包完下载地址
+  statusItems: [], //构建步骤完成子状态
+  selected: null, //当前选择上传文件
 });
 
 const formRules = reactive({
@@ -132,10 +154,14 @@ const formRules = reactive({
   branch: [{ required: true, message: "分支名称不允许为空", trigger: "blur" }],
   appName: [{ required: true, message: "应用名称不允许为空", trigger: "blur" }],
   deviceIp: [{ required: false, message: "设备IP不允许为空", trigger: "blur" }],
+  buildType: [
+    { required: true, message: "构建方式不允许为空", trigger: "change" },
+  ],
   packageName: [
     { required: true, message: "应用包名不允许为空", trigger: "blur" },
   ],
 });
+
 const getGitHub = (url) => {
   loading.value = true;
   url = "https://github.com/likuai2010/testgo.git";
@@ -156,7 +182,7 @@ const getGitHub = (url) => {
   });
 };
 
-const changeFile = async (file, fileList) => {
+const changeFile = async (file) => {
   status.upload = true;
   status.disabled = true;
   let hapInfo = await window.CoreApi.uploadHap(file);
@@ -165,7 +191,14 @@ const changeFile = async (file, fileList) => {
   form.packageName = hapInfo.packageName; // 包名称
   status.upload = false;
   status.disabled = false;
+  status.selected = {
+    hapInfo,
+    form: { ...form },
+    packageName: hapInfo.packageName,
+  };
+  hapInfoItems.value.push(status.selected);
 };
+
 const submitForm = async () => {
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {
@@ -183,10 +216,33 @@ const submitForm = async () => {
 };
 
 const handleUpdate = (form) => {
-  status.types = form.types;
   status.active = form.active;
-  status.installHup = form.installHup;
   status.statusItems = form.statusItems;
+};
+
+const handleDeleteFile = (data) => {
+  if (status.selected.packageName === data.packageName) {
+    ElNotification({
+      title: "提示",
+      type: "warning",
+      message: "当前包已选中无法删除!",
+    });
+  } else {
+    hapInfoItems.value = hapInfoItems.value.filter(
+      (items) => items.packageName !== data.packageName
+    );
+  }
+};
+
+const handleSelectedFile = (data) => {
+  status.selected = data;
+  form.github = data.github || ""; //github地址
+  form.branch = data.branch || ""; //git分支
+  form.appName = data.appName || ""; //应用名称
+  form.packageName = data.packageName || ""; //包名称
+  form.deviceIp = data.deviceIp || ""; //设备IP
+  form.hapPath = data.hapPath || ""; //包路
+  form.buildType = data.buildType || 0; //构建方式 0:分发,1:本地
 };
 </script>
 
@@ -213,6 +269,13 @@ const handleUpdate = (form) => {
       }
       .upload-content {
         position: relative;
+        .upload-file-list {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          margin: 10px 0px;
+          justify-content: flex-start;
+        }
       }
     }
   }

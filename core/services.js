@@ -2,8 +2,8 @@ const { AgcService } = require("./agcService");
 const { EcoService } = require("./ecoService");
 const { CmdService } = require("./cmdService");
 const { DownloadHelper } = require("./downloadHelper");
-const path = require('node:path')
-const fs = require('node:fs')
+const path = require("node:path");
+const fs = require("node:fs");
 const simpleGit = require("simple-git");
 
 class EnvStep {
@@ -43,10 +43,9 @@ const git = simpleGit();
 class CoreService {
   dh = new DownloadHelper();
   agc = new AgcService();
-  cmd = new CmdService()
+  cmd = new CmdService();
   eco = new EcoService(this);
   build = new BuildService(this);
-  
 
   commonInfo = {
     packageName: "com.xx.xx",
@@ -61,17 +60,17 @@ class CoreService {
     steps: [
       {
         name: "安装docker",
-        finish: false,
+        finish: true,
         value: "未检查到docker环境",
         url: "",
-        message: "未安装",
+        message: "通过",
       },
       {
         name: "安装命令行工具",
         finish: true,
         value: "命令行工具已安装",
         url: "",
-        message: "已安装",
+        message: "通过",
       },
     ],
   };
@@ -246,12 +245,12 @@ class CoreService {
     });
 
     ipcMain.on("getEnvInfo", (_) => {
-        let info = this.getEnvInfo();
-        main.webContents.send("onEnvInfo", info);
+      let info = this.getEnvInfo();
+      main.webContents.send("onEnvInfo", info);
     });
     ipcMain.on("getAccountInfo", (_) => {
-        let info = this.getAccountInfo();
-        main.webContents.send("onAccountInfo", info);
+      let info = this.getAccountInfo();
+      main.webContents.send("onAccountInfo", info);
     });
     ipcMain.on("githubBranchs", (_, url) => {
       this.repoBranch(url)
@@ -268,13 +267,13 @@ class CoreService {
       main.webContents.send("onBuildInfo", info);
     });
     ipcMain.on("uploadHap", async (_, file, fileName) => {
-      let hapInfo = await this.saveFileToLocal(file, fileName)
-      main.webContents.send("onUploadHap", hapInfo)
+      let hapInfo = await this.saveFileToLocal(file, fileName);
+      main.webContents.send("onUploadHap", hapInfo);
     });
 
-    this.commonInfo
+    this.commonInfo;
     ipcMain.on("checkAccount", (_, commonInfo) => {
-      this.commonInfo = commonInfo
+      this.commonInfo = commonInfo;
       this.build.checkEcoAccount(this.commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
@@ -308,57 +307,79 @@ class CoreService {
     });
   }
 
-  async saveFileToLocal(buffer, filename){
-    console.log("saveHap", filename, buffer.length)
+  async saveFileToLocal(buffer, filename) {
+    console.log("saveHap", filename, buffer.length);
     let filePath = path.join(this.dh.hapDir, filename);
     const outPath = path.join(this.dh.hapDir, "hap_unpack_out");
     const appOutPath = path.join(this.dh.hapDir, "app_unpack_out");
-    await new Promise((resolve, reject)=>{
-        fs.writeFile(filePath, buffer, (err) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve()
-            }
-        });
-    })
-    let moduleInfo = {}
-    if(filename.endsWith(".app")){
-      await this.cmd.unpackApp(filePath, appOutPath)
-      await this.cmd.unpackHap(this.dh.hapDir + "/app_unpack_out/entry-default.hap", outPath)
-      moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
-      moduleInfo.app.debug = true
-      this.dh.writeObjToFile("hap_unpack_out/module.json", moduleInfo, this.dh.hapDir)
-      await this.cmd.packHap(this.dh.hapDir + "/hap_unpack_out", this.dh.hapDir + `/${filename.replace(".app", ".hap")}`)
-      filePath = this.dh.hapDir + `/${filename.replace(".app", ".hap")}`
-    }else{
-      await this.cmd.unpackHap(filePath, outPath)
-      moduleInfo = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
+    await new Promise((resolve, reject) => {
+      fs.writeFile(filePath, buffer, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+    let moduleInfo = {};
+    if (filename.endsWith(".app")) {
+      await this.cmd.unpackApp(filePath, appOutPath);
+      await this.cmd.unpackHap(
+        this.dh.hapDir + "/app_unpack_out/entry-default.hap",
+        outPath
+      );
+      moduleInfo = this.dh.readFileToObj(
+        "hap_unpack_out/module.json",
+        this.dh.hapDir
+      );
+      moduleInfo.app.debug = true;
+      this.dh.writeObjToFile(
+        "hap_unpack_out/module.json",
+        moduleInfo,
+        this.dh.hapDir
+      );
+      await this.cmd.packHap(
+        this.dh.hapDir + "/hap_unpack_out",
+        this.dh.hapDir + `/${filename.replace(".app", ".hap")}`
+      );
+      filePath = this.dh.hapDir + `/${filename.replace(".app", ".hap")}`;
+    } else {
+      await this.cmd.unpackHap(filePath, outPath);
+      moduleInfo = this.dh.readFileToObj(
+        "hap_unpack_out/module.json",
+        this.dh.hapDir
+      );
     }
-    console.debug("moduleInfo", moduleInfo)
+    console.debug("moduleInfo", moduleInfo);
     return {
-        packageName: moduleInfo?.app?.bundleName || "",
-        appName:  moduleInfo?.app?.vendor || moduleInfo?.app?.label,
-        versionName:  moduleInfo?.app?.versionName,
-        hapPath: filePath,
-        icon: this.parseIcon(moduleInfo, outPath)
-      }
+      packageName: moduleInfo?.app?.bundleName || "",
+      appName: moduleInfo?.app?.vendor || moduleInfo?.app?.label,
+      versionName: moduleInfo?.app?.versionName,
+      hapPath: filePath,
+      icon: this.parseIcon(moduleInfo, outPath),
+    };
   }
-  parseIcon(moduleInfo, outPath){
-    const icon = moduleInfo.app.icon
-    const iconPath = path.join(outPath, "/resources/base/media/" + icon.replace("$media:", ""))
-    let filePath = ""
-    if(fs.existsSync(iconPath + ".json")){
-      iconJson = this.dh.readFileToObj("hap_unpack_out/module.json", this.dh.hapDir)
+  parseIcon(moduleInfo, outPath) {
+    const icon = moduleInfo.app.icon;
+    const iconPath = path.join(
+      outPath,
+      "/resources/base/media/" + icon.replace("$media:", "")
+    );
+    let filePath = "";
+    if (fs.existsSync(iconPath + ".json")) {
+      iconJson = this.dh.readFileToObj(
+        "hap_unpack_out/module.json",
+        this.dh.hapDir
+      );
       // TODO
-      filePath = iconJson["layered-image"].foreground + ".png"
-    }else{
-      if(fs.existsSync(iconPath +".png")){
-        filePath = iconPath + ".png"
+      filePath = iconJson["layered-image"].foreground + ".png";
+    } else {
+      if (fs.existsSync(iconPath + ".png")) {
+        filePath = iconPath + ".png";
       }
     }
-    const iconraw = this.dh.readPng(filePath)
-    console.log("iconPath", filePath)
+    const iconraw = this.dh.readPng(filePath);
+    console.log("iconPath", filePath);
     return `data:image/png;base64,${iconraw}`;
   }
   loginAgc(
@@ -377,7 +398,7 @@ class CoreService {
       const cookies = await childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-      console.log("cookie", cookies)
+      console.log("cookie", cookies);
       const authInfo = this.agc.findCookieValue(cookies, "authInfo");
       if (authInfo) {
         this.agc.initCookie(cookies);
@@ -387,7 +408,7 @@ class CoreService {
       }
     });
   }
-  childWindow = {}
+  childWindow = {};
   loginEco(
     url = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=3333&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc"
   ) {
@@ -405,7 +426,7 @@ class CoreService {
       const cookies = await this.childWindow.webContents.session.cookies.get({
         url: "https://developer.huawei.com",
       });
-   
+
       const authInfo = this.agc.findCookieValue(cookies, "ds-authInfo");
       if (authInfo) {
         const decoded = decodeURIComponent(authInfo);
@@ -413,7 +434,7 @@ class CoreService {
       }
     });
   }
-  closeLoginEco(){
+  closeLoginEco() {
     this.childWindow.close();
   }
 }
