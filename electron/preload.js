@@ -63,7 +63,7 @@ contextBridge.exposeInMainWorld("CoreApi", {
   },
   async startBuild(commonInfo) {
     return new Promise((resolve, reject) => {
-      ipcRenderer.on("startBuild", (event, data) => {
+      ipcRenderer.on("onStartBuild", (event, data) => {
         resolve(data);
       });
       ipcRenderer.send("startBuild", commonInfo);

@@ -56,6 +56,7 @@
 </template>
 
 <script setup name="PublishSteps">
+
 import {
   reactive,
   computed,
@@ -85,7 +86,8 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["update"]);
+const emits = defineEmits(["update", 'onStateChange']);
+
 
 const form = reactive({
   active: 0,
@@ -117,11 +119,16 @@ const handleNext = (active) => {
   const params = Object.assign({}, props.formData);
   if (active === 1) {
     //调用登录检查
-    window.CoreApi.checkAccountInfo(params);
+    window.CoreApi.checkAccountInfo(params).then((data)=>{
+      const failure = data.steps.find(d=> !d.finish)
+      emits("onStateChange", failure == undefined);
+    });
     // 注册登录检查完成回调
   } else if (active === 2) {
     // 开始构建
-    window.CoreApi.startBuild(params);
+    window.CoreApi.startBuild(params).then(()=>{
+      emits("onStateChange", false);
+    });;
   }
 };
 
