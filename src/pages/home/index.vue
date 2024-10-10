@@ -30,7 +30,7 @@
         </el-form-item> -->
 
         <el-form-item label="无线安装："  :prop="['deviceIp']">
-          <el-input v-model="form.deviceIp" placeholder="输入ip地址(请开启手机无线调试功能)" />
+          <el-input v-model="form.deviceIp" placeholder="输入ip地址(请开启手机无线调试功能，并在同一局域网)" />
         </el-form-item>
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
