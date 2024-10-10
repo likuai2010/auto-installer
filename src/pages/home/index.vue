@@ -2,7 +2,7 @@
   <div class="page-home">
     <div class="page-home-form">
       <el-form ref="formEl" :model="form" :rules="formRules" label-width="auto">
-        <el-form-item label="GitHub地址：" :prop="['github', 'branch']">
+        <!-- <el-form-item label="GitHub地址：" :prop="['github', 'branch']">
           <el-input
             v-model="form.github"
             :disabled="true"
@@ -27,6 +27,10 @@
         </el-form-item>
         <el-form-item label="应用名称：" :prop="['appName']">
           <el-input v-model="form.appName" />
+        </el-form-item> -->
+
+        <el-form-item label="设备IP：" :prop="['deviceIp']">
+          <el-input v-model="form.deviceIp" />
         </el-form-item>
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
@@ -34,8 +38,9 @@
         <div class="upload-content">
           <el-upload
             drag
-            action="#"
+            accept=".hap, .app"
             :auto-upload="false"
+            :show-file-list="false"
             :on-change="changeFile"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -43,6 +48,12 @@
               将文件拖放到此处或<em>单击上传</em>
             </div>
           </el-upload>
+          <div class="upload-file-list">
+            <div class="file-items">
+              <img class="logo" src="" />
+              <span class="package-name"></span>
+            </div>
+          </div>
           <LoadComp
             v-if="status.upload"
             :customStyle="{ position: 'absolute' }"
@@ -78,7 +89,6 @@
             </el-input>
           </el-form-item>
         </template>
-        <!-- <template v-if="status.active === 1 && status.installHup"> -->
       </el-form>
     </div>
     <PacketPhone></PacketPhone>
@@ -95,32 +105,33 @@ import { CopyDocument, UploadFilled } from "@element-plus/icons-vue";
 const formEl = ref(null);
 const stepsEl = ref(null);
 const loading = ref(false);
-const uploadLoading = ref(false);
 const branchItems = ref([]);
 const form = reactive({
-  github: "",
-  appName: "",
-  packageName: "",
-  branch: "",
+  github: "", //github地址
+  branch: "", //git分支
+  appName: "", //应用名称
+  packageName: "", //包名称
+  deviceIp: "", //设备IP
+  hapPath: "", //包路
 });
 
 const status = reactive({
-  icon: "success",
+  types: 1, //
   active: -1,
-  types: 1,
   upload: false,
   loading: false,
   disabled: true,
+  dowloadUrl: "",
   installHup: false,
   statusItems: [],
   subTitle: "正在进行机器审核中",
-  dowloadUrl: "",
 });
 
 const formRules = reactive({
   github: [{ required: true, message: "Git地址不允许为空", trigger: "blur" }],
   branch: [{ required: true, message: "分支名称不允许为空", trigger: "blur" }],
   appName: [{ required: true, message: "应用名称不允许为空", trigger: "blur" }],
+  deviceIp: [{ required: false, message: "设备IP不允许为空", trigger: "blur" }],
   packageName: [
     { required: true, message: "应用包名不允许为空", trigger: "blur" },
   ],
@@ -144,16 +155,16 @@ const getGitHub = (url) => {
     loading.value = false;
   });
 };
+
 const changeFile = async (file, fileList) => {
   status.upload = true;
   status.disabled = true;
   let hapInfo = await window.CoreApi.uploadHap(file);
-  form.appName = hapInfo.appName;
-  form.packageName = hapInfo.packageName;
-  form.hapPath = hapInfo.hapPath;
+  form.appName = hapInfo.appName; //app名称
+  form.hapPath = hapInfo.hapPath; //包文件路径
+  form.packageName = hapInfo.packageName; // 包名称
   status.upload = false;
   status.disabled = false;
-  console.log("hapInfo", hapInfo);
 };
 const submitForm = async () => {
   if (!formEl.value) return;

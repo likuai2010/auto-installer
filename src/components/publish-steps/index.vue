@@ -26,12 +26,6 @@
         @reload="handleReload"
         v-for="(status, index) in form.statusItems"
       />
-      <div class="build-types">
-        <el-radio-group v-model="form.types" size="small" :disabled="true">
-          <el-radio-button label="分发" :value="0" />
-          <el-radio-button label="本地安装" :value="1" />
-        </el-radio-group>
-      </div>
       <div class="handle-btns">
         <el-button :disabled="disabled" type="primary" @click="handleNext(2)"
           >下一步</el-button
@@ -75,6 +69,14 @@ import InstallStatus from "./components/install-status.vue";
 
 let timer = null;
 const props = defineProps({
+  // 0:分发,1:本地
+  buildType: {
+    type: Number,
+    default: () => {
+      return 0;
+    },
+  },
+  // 包应用信息
   formData: {
     type: Object,
     default: () => {
@@ -86,7 +88,6 @@ const props = defineProps({
 const emits = defineEmits(["update"]);
 
 const form = reactive({
-  types: 1, // 0:分发,1:本地
   active: 0,
   finish: "process",
   status: "process",
@@ -113,7 +114,7 @@ const clearTimer = () => {
 // 下一步
 const handleNext = (active) => {
   form.active = active;
-  const params = Object.assign({}, props.formData )
+  const params = Object.assign({}, props.formData);
   if (active === 1) {
     //调用登录检查
     window.CoreApi.checkAccountInfo(params);
@@ -145,7 +146,7 @@ const initPublishSteps = (active) => {
         form.installHap = data.installHap || true;
       });
     } else if (form.active === 2) {
-      window.CoreApi.getBuildInfo(form.types).then((data) => {
+      window.CoreApi.getBuildInfo(props.buildType).then((data) => {
         form.installHap = true;
         form.statusItems = data.steps || [];
       });

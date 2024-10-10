@@ -39,7 +39,7 @@ const props = defineProps({
   },
   steps: {
     type: Array,
-    default: () => ["安装环境", "登录检查", "编译打包"],
+    default: () => ["环境检查", "登录检查", "编译打包"],
   },
   finish: {
     type: String,
