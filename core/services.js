@@ -272,16 +272,16 @@ class CoreService {
     });
 
     this.commonInfo;
-    ipcMain.on("checkAccount", (_, commonInfo) => {
+    ipcMain.on("checkAccount", async (_, commonInfo) => {
       this.commonInfo = commonInfo;
-      this.build.checkEcoAccount(this.commonInfo);
+      await this.build.checkEcoAccount(this.commonInfo);
       let info = this.getAccountInfo();
       main.webContents.send("onCheckAccount", info);
     });
-    ipcMain.on("startBuild", (_, commonInfo) => {
-      this.build.startBuild(commonInfo);
+    ipcMain.on("startBuild", async  (_, commonInfo) => {
+      await this.build.startBuild(commonInfo);
       let info = this.getBuildInfo();
-      main.webContents.send("onCheckAccount", info);
+      main.webContents.send("onStartBuild", info);
     });
     // setInterval(() => {
     //   try {

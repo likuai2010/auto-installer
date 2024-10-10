@@ -307,7 +307,7 @@ class BuildService {
   }
 
   async startBuild(commonInfo) {
-    this.sginAndInstall(commonInfo)
+    await this.sginAndInstall(commonInfo)
   }
   async sginAndInstall(commonInfo) {
    this.core.buildInfo.steps=[

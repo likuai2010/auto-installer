@@ -29,15 +29,15 @@
           <el-input v-model="form.appName" />
         </el-form-item> -->
 
-        <el-form-item label="设备IP：" :prop="['deviceIp']">
-          <el-input v-model="form.deviceIp" />
+        <el-form-item label="设备IP："  :prop="['deviceIp']">
+          <el-input v-model="form.deviceIp" placeholder="请开启手机无线调试功能" />
         </el-form-item>
         <el-form-item label="应用包名：" :prop="['packageName']">
           <el-input v-model="form.packageName" />
         </el-form-item>
 
         <el-form-item label="构建方式：" :prop="['buildType']">
-          <el-radio-group v-model="form.buildType">
+          <el-radio-group v-model="form.buildType" :disabled="true">
             <el-radio :value="0">分发</el-radio>
             <el-radio :value="1">本地</el-radio>
           </el-radio-group>
@@ -87,6 +87,7 @@
         ref="stepsEl"
         :formData="form"
         @update="handleUpdate"
+        @on-state-change="onStateChange"
         :buildType="form.buildType"
       />
     </div>
@@ -219,6 +220,10 @@ const handleUpdate = (form) => {
   status.active = form.active;
   status.statusItems = form.statusItems;
 };
+const onStateChange = (result) =>{
+  debugger
+  status.disabled = result;
+}
 
 const handleDeleteFile = (data) => {
   if (status.selected.packageName === data.packageName) {
@@ -236,13 +241,13 @@ const handleDeleteFile = (data) => {
 
 const handleSelectedFile = (data) => {
   status.selected = data;
-  form.github = data.github || ""; //github地址
-  form.branch = data.branch || ""; //git分支
-  form.appName = data.appName || ""; //应用名称
-  form.packageName = data.packageName || ""; //包名称
-  form.deviceIp = data.deviceIp || ""; //设备IP
-  form.hapPath = data.hapPath || ""; //包路
-  form.buildType = data.buildType || 0; //构建方式 0:分发,1:本地
+  form.github = data.form?.github || ""; //github地址
+  form.branch = data.form?.branch || ""; //git分支
+  form.appName = data.form?.appName || ""; //应用名称
+  form.packageName = data?.form.packageName || ""; //包名称
+  form.deviceIp = data.form?.deviceIp || ""; //设备IP
+  form.hapPath = data.form?.hapPath || ""; //包路
+  form.buildType = data.form?.buildType || 0; //构建方式 0:分发,1:本地
 };
 </script>
 
