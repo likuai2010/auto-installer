@@ -55,13 +55,18 @@ class CmdService{
         console.log(udid)
         return udid
     }
-    async sendAndInstall( filePath){
-        const devices = await this.deviceList()
-        if (devices.length == 0)
-            throw Error("请连接手机,并开启开发者模式")
-        console.debug("devices", devices)
-        await this.sendFile(devices[0], filePath)
-        await this.installHap(devices[0])
+    async sendAndInstall( filePath, deviceIp){
+        let devicekey = ""
+        if (deviceIp && deviceIp !== "") 
+            devicekey = deviceIp
+        else {
+            let device = await this.deviceList()
+            if (device.length == 0) 
+                throw new Error("请连接手机, 并开启开发者模式和usb调试!")
+            devicekey = device[0].trim()
+        }
+        await this.sendFile(devicekey, filePath)
+        await this.installHap(devicekey)
     }
     async sendFile(device = '127.0.0.1:5557', filePath = "entry-default-unsigned.hap",){
         let deviceT = ""
