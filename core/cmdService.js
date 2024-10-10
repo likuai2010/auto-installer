@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 const path = require('node:path')
 const fs = require('node:fs')
 const { app } = require('electron');
+const { error } = require('console');
 
 
 class CmdService{
@@ -27,7 +28,7 @@ class CmdService{
     exeCmd(cmd, opt={}){
         return new Promise((resolve, reject)=>{
             exec(cmd,  {  ...opt }, (error, stdout, stderr) => {
-                console.error(stderr, stdout)
+                console.error("cmd", stderr, stdout)
                 if (error) {
                     reject(error)
                 }else{
@@ -51,6 +52,9 @@ class CmdService{
             deviceT = "-t " + device
         }
         let result =  await this.exeCmd(`${this.hdc} ${deviceT} shell bm get --udid`)
+        if(result.indexOf("Not match target founded") >-1){
+            throw Error("未发现设备:" + device)
+        }
         let udid = result.split("\n")[1]
         console.log(udid)
         return udid

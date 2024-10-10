@@ -401,7 +401,7 @@ class BuildService {
       return false;
     }
   }
-  async createAndDownloadDebugCert(name, commonInfo) {
+  async createAndDownloadDebugCert(name) {
     let result = await this.eco.getCertList();
     let debugCerts= result.certList.filter(
       (a) => a.certType == 1
@@ -419,7 +419,7 @@ class BuildService {
       if(debugCerts.length > 0)
         await this.eco.deleteCertList(debugCerts.map(d => d.id))
       const csr = await this.cmd.readcsr(csrPath)
-      result = await this.eco.createCert(name, type, csr);
+      result = await this.eco.createCert(name, 1, csr);
       debugCert = result.harmonyCert;
     }
     result = await this.eco.downloadObj(debugCert.certObjectId)
