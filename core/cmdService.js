@@ -46,6 +46,14 @@ class CmdService{
             return result.split("\n").filter(d=>d != '')
         }
     }
+    async connectDevice(device){
+        let result = await this.exeCmd(`${this.hdc} tconn ${device} `)
+        if (result == "" || result.indexOf("Connect failed") > -1){
+            throw new Error("连接失败，请检查地址" + device)
+        }else{
+            console.debug("connectDevice:" + device, result)
+        }
+    }
     async getUdid(device = '127.0.0.1:5557'){
         let deviceT = ""
         if (device) {
@@ -61,8 +69,10 @@ class CmdService{
     }
     async sendAndInstall( filePath, deviceIp){
         let devicekey = ""
-        if (deviceIp && deviceIp !== "") 
+        if (deviceIp && deviceIp !== ""){
             devicekey = deviceIp
+            await this.connectDevice(devicekey)
+        }
         else {
             let device = await this.deviceList()
             if (device.length == 0) 

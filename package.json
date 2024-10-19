@@ -1,7 +1,7 @@
 {
   "name": "auto-installer-harmonyos",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "小白鸿蒙开源自助餐",
   "scripts": {
     "dev": "vite",

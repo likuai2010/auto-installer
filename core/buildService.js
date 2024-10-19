@@ -402,29 +402,28 @@ class BuildService {
     }
   }
   async createAndDownloadDebugCert(name) {
-    let result = await this.eco.getCertList();
-    let debugCerts= result.certList.filter(
-      (a) => a.certType == 1
-    );
+   
     // 创建密钥库
     const config = this.dh.configDir
     this.ecoConfig.keystore = config + "/xiaobai.p12"
+    const noP12 = !fs.existsSync(this.ecoConfig.keystore)
     await this.cmd.createKeystore(this.ecoConfig.keystore)
     const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
     this.ecoConfig.csrPath = csrPath
 
-    let debugCert= result.certList.find((a) => a.certName == name);
-    if (!debugCert) {
-       // 如果debug过多清空debug证书
-      if(debugCerts.length > 0)
-        await this.eco.deleteCertList(debugCerts.map(d => d.id))
-      const csr = await this.cmd.readcsr(csrPath)
-      result = await this.eco.createCert(name, 1, csr);
-      debugCert = result.harmonyCert;
-    }
+    let result = await this.eco.getCertList();
+    let debugCerts= result.certList.filter(
+      (a) => a.certType == 1
+    );
+    let debugCert = result.certList.find((a) => a.certName == name);
+    let debugCertPath = name + ".cer"
+    await this.eco.deleteCertList(debugCerts.filter(d=>d.certName == name).map(d => d.id))
+    const csr = await this.cmd.readcsr(csrPath)
+    result = await this.eco.createCert(name, 1, csr);
+    debugCert = result.harmonyCert;
     result = await this.eco.downloadObj(debugCert.certObjectId)
     const debugCertUrl = result.urlsInfo[0].newUrl
-    const filePath = await this.dh.downloadFile(debugCertUrl, name + ".cer")
+    const filePath = await this.dh.downloadFile(debugCertUrl, debugCertPath)
     return {
       id: debugCert.id,
       name,
@@ -441,8 +440,10 @@ class BuildService {
       }
     }
     let devicekey = ""
-    if (commonInfo.deviceIp && commonInfo.deviceIp !== "") 
+    if (commonInfo.deviceIp && commonInfo.deviceIp !== ""){
       devicekey = commonInfo.deviceIp
+      await this.cmd.connectDevice(devicekey)
+    }
     else {
       let device = await this.cmd.deviceList()
       if (device.length == 0) 
@@ -497,38 +498,12 @@ class BuildService {
       (a) => a.packageName == packageName && a.provisionType == type
     );
     if (!profile) {
-      // debug 需要注册设备
-      if (type == 1) {
-        result = await this.agc.deviceList("xiaobai-device")
-        let deviceList = result.list || []
-        if (deviceList.length == 0) {
-          let device = this.cmd.deviceList()
-          if (device.length == 0) {
-            throw new Error("请连接手机")
-          }
-          const udid = await this.cmd.getUdid(null)
-
-          await this.agc.createDevice("xiaobai-device", deviceUdid)
-          result = await this.agc.deviceList("xiaobai-device")
-          console.debug("devicelist", result);
-          deviceList = result.list
-        }
-        result = await this.agc.createProfile(
-          name,
-          this.agcConfig.debugCert.id,
-          this.agcConfig.appId,
-          type,
-          deviceList.map((d) => d.id)
-        );
-
-      } else {
-        result = await this.agc.createProfile(
-          name,
-          this.agcConfig.prodCert.id,
-          this.agcConfig.appId,
-          type,
-        );
-      }
+      result = await this.agc.createProfile(
+        name,
+        this.agcConfig.prodCert.id,
+        this.agcConfig.appId,
+        type,
+      );
       profile = result.provisionInfo;
     }
     console.debug("profile ", profile);

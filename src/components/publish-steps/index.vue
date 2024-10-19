@@ -114,21 +114,26 @@ const clearTimer = () => {
 };
 
 // 下一步
-const handleNext = (active) => {
+const handleNext = async (active) => {
   form.active = active;
   const params = Object.assign({}, props.formData);
   if (active === 1) {
     //调用登录检查
-    window.CoreApi.checkAccountInfo(params).then((data)=>{
-      const failure = data.steps.find(d=> !d.finish)
-      emits("onStateChange", failure == undefined);
-    });
+    let data = await window.CoreApi.getAccountInfo()
+    form.statusItems = data.steps || [];
+    data = await window.CoreApi.checkAccountInfo(params);
+    const failure = data.steps.find(d=> !d.finish)
+    emits("onStateChange", failure == undefined);
     // 注册登录检查完成回调
   } else if (active === 2) {
     // 开始构建
-    window.CoreApi.startBuild(params).then(()=>{
-      emits("onStateChange", false);
-    });;
+    let data = await window.CoreApi.getBuildInfo(props.buildType)
+    form.statusItems = data.steps || [];
+    data = await window.CoreApi.startBuild(params)
+    emits("onStateChange", false);
+  }else{
+    const data = await window.CoreApi.getEnvInfo()
+    form.statusItems = data.steps || [];
   }
 };
 

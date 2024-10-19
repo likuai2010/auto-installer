@@ -103,7 +103,7 @@ class EcoService{
         let uri = "https://connect-api.cloud.huawei.com/api/cps/provision-manage/v1/ide/test/provision/add"
         let params = {
             "provisionName": name,
-            "aclPermissionList": [],
+            "aclPermissionList": ["ohos.permission.READ_PASTEBOARD"],
             "deviceList": deviceIds,
             "certList": [certId],
             "packageName": packageName
