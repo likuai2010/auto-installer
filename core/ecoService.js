@@ -19,6 +19,7 @@ class EcoService{
                 ...headers
             },
         })
+        console.error('baseGet url is ', url)
     return new Promise((resolve, reject)=>{
             request.on('response', (response) => {
                 response.on('data', (chunk) => {
@@ -126,44 +127,6 @@ class EcoService{
     }
 
   
-    async autoCreateProile(packageName){
-        let result = await this.getCertList()
-        let debugCert = result.certList.filter(d=>d.certType == 1)[0]
-        if(!debugCert){
-            await cmd.ceraeteCsr("store/xiaobai.p12", "store/xiaobai.csr")
-            const csr = await cmd.readcsr("store/xiaobai.csr")
-            this.createCert("xiaobai-debug", 1, csr)
-        }
-        result = await this.downloadObj(debugCert.certObjectId)
-        const debugCertUrl = result.urlsInfo[0].newUrl
-        const certPath = await this.dh.downloadFile(debugCertUrl, "xiabai-debug.cer")
-        console.log("url", result.urlsInfo[0].newUrl)
-        result = await this.deviceList()
-        let deviceIds = result.list.map(d=>d.id)
-        if(deviceIds.length == 0){
-            let device = this.cmd.deviceList()
-            if (device.length == 0) {
-              throw new Error("请连接手机")
-            }
-            const udid = await this.cmd.getUdid(null)
-            result = await this.createDevice("xiaobai-device", udid)
-        }
-        result = await this.createProfile("xiaobai-debug", debugCert.id, packageName, deviceIds)
-        const profilePath = await this.dh.downloadFile(result.provisionFileUrl, "xiabai-debug.p7b")
-        console.log("profile", result.provisionFileUrl)
-        await this.cmd.signHap({
-            keystoreFile:"store/xiaobai.p12",
-            keystorePwd: "xiaobai123",
-            keyAlias:"xiaobai",
-            certFile: certPath,
-            profilFile: profilePath,
-            inFile: "entry-default-unsigned.hap",
-            outFile: "./singned.hap"        
-        })
-       
-        await this.cmd.sendAndInstall("./singned.hap")
-        
-    }
 
 }
 

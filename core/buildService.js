@@ -32,200 +32,200 @@ class BuildService {
     debugProfile:{}
   };
 
-  async checkAgcAccount(commonInfo) {
-    this.agcConfig = this.dh.readFileToObj("agc_config.json")
+  // async checkAgcAccount(commonInfo) {
+  //   this.agcConfig = this.dh.readFileToObj("agc_config.json")
   
-    if (this.running) return;
-    this.running = true;
+  //   if (this.running) return;
+  //   this.running = true;
 
-    this.core.accountInfo.steps = [
-      {
-        name: "华为账号",
-        finish: false,
-        value: "17611576573",
-        loading: false,
-        message: "未登录",
-      },
-      {
-        name: "创建应用",
-        finish: false,
-        value: "",
-        loading: false,
-        message: "",
-      },
-      {
-        name: "ClientApi",
-        finish: false,
-        value: "",
-        loading: false,
-        message: "",
-      },
-      {
-        name: "证书(发布)",
-        finish: false,
-        value: "",
-        loading: false,
-        message: "",
-      },
-      {
-        name: "Profile(发布)",
-        finish: false,
-        value: "",
-        loading: false,
-        message: "",
-      },
-    ]
-    // 已经登录
-    let result = await this.startStep(
-      "accountInfo",
-      0,
-      async (i) => {
-        if (this.agcConfig.teamId) {
-          return {
-            value: "未登录",
-            message: "完成",
-          };
-        }
-        let result = await this.agc.userTeamList();
-        let userTeam = result.teams.find((i) => i.userType == 1);
-        this.agcConfig.teamId = userTeam.id;
-        this.agc.agcteamid = userTeam.id;
-        let userInfo = (await this.agc.userInfo()).body.getDetailInfo;
-        return {
-          value: userTeam.name || userInfo.baseInfo.nickName,
-          message: "登录成功",
-        };
-      },
-      "失败"
-    );
-    if (!result) {
-      this.running = false;
-      this.core.openChildWindiow();
-      return;
-    }
+  //   this.core.accountInfo.steps = [
+  //     {
+  //       name: "华为账号",
+  //       finish: false,
+  //       value: "17611576573",
+  //       loading: false,
+  //       message: "未登录",
+  //     },
+  //     {
+  //       name: "创建应用",
+  //       finish: false,
+  //       value: "",
+  //       loading: false,
+  //       message: "",
+  //     },
+  //     {
+  //       name: "ClientApi",
+  //       finish: false,
+  //       value: "",
+  //       loading: false,
+  //       message: "",
+  //     },
+  //     {
+  //       name: "证书(发布)",
+  //       finish: false,
+  //       value: "",
+  //       loading: false,
+  //       message: "",
+  //     },
+  //     {
+  //       name: "Profile(发布)",
+  //       finish: false,
+  //       value: "",
+  //       loading: false,
+  //       message: "",
+  //     },
+  //   ]
+  //   // 已经登录
+  //   let result = await this.startStep(
+  //     "accountInfo",
+  //     0,
+  //     async (i) => {
+  //       if (this.agcConfig.teamId) {
+  //         return {
+  //           value: "未登录",
+  //           message: "完成",
+  //         };
+  //       }
+  //       let result = await this.agc.userTeamList();
+  //       let userTeam = result.teams.find((i) => i.userType == 1);
+  //       this.agcConfig.teamId = userTeam.id;
+  //       this.agc.agcteamid = userTeam.id;
+  //       let userInfo = (await this.agc.userInfo()).body.getDetailInfo;
+  //       return {
+  //         value: userTeam.name || userInfo.baseInfo.nickName,
+  //         message: "登录成功",
+  //       };
+  //     },
+  //     "失败"
+  //   );
+  //   if (!result) {
+  //     this.running = false;
+  //     this.core.openChildWindiow();
+  //     return;
+  //   }
 
-    const appName = commonInfo?.appName || "xiaobai-app";
-    const packageName = commonInfo?.packageName || "com.xiaobai.app";
+  //   const appName = commonInfo?.appName || "xiaobai-app";
+  //   const packageName = commonInfo?.packageName || "com.xiaobai.app";
 
-    await this.startStep(
-      "accountInfo",
-      1,
-      async (i) => {
-        if (this.agcConfig.appId && this.agcConfig.appName) {
-          return {
-            value: this.agcConfig.appName + `(${packageName})`,
-            message: "完成",
-          };
-        }
-        let projectName = "xiaobai-project";
-        let result = await this.agc.projectList(projectName);
-        let project = {};
-        let projectId = "";
-        if (result.projectList.length > 0) {
-          project = result.projectList[0];
-          projectId = project.projectId;
-        } else {
-          result = await this.agc.createProject(projectName);
-          projectId = result.mapping.projectId;
-        }
-        this.agcConfig.projectId = projectId;
-        result = await this.agc.appList();
-        const appList = result.appList || [];
-        let app = appList.find((a) => a.packageName == packageName);
-        if (!app) {
-          let result = await this.agc.createApp(
-            appName,
-            packageName,
-            projectId
-          );
-          const appId = result.appId;
-          await this.agc.orderApp(projectId, appId);
-          result = await this.agc.appList();
-          app = result.appList.find((a) => a.appId == appId);
-          console.debug("new app", app);
-        }
-        this.agcConfig.appId = app.appId;
-        this.agcConfig.appName = app.appName
-        return {
-          value: app.appName + `(${packageName})`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    // clientApi
-    await this.startStep(
-      "accountInfo",
-      2,
-      async (i) => {
-        if (this.agcConfig.clientId && this.agcConfig.clientKey) {
-          return {
-            value: `${this.agcConfig.clientId}(${this.agcConfig.clientKey.substring(0, 8)}...)`,
-            message: "完成",
-          };
-        }
-        let clientName = "xiaobai-api";
-        let result = await this.agc.clientApiList();
-        const api = result.clients.find((a) => a.name == clientName);
-        if (!api) {
-          result = await this.agc.createApi(clientName);
-          const clientId = result.clientId;
-          result = await this.agc.clientApiList();
-          api = result.clients.find((a) => a.clientId == clientId);
-        }
-        this.agcConfig.clientId = api.clientId;
-        this.agcConfig.clientKey = api.secrets[0].name;
-        return {
-          value: `${api.clientId}(${api.secrets[0].name.substring(0, 8)}...)`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    // prodCert
-    await this.startStep(
-      "accountInfo",
-      3,
-      async (i) => {
-        if (this.agcConfig.prodCert.path) {
-          return {
-            value: `${this.agcConfig.prodCert.name}`,
-            message: "完成",
-          };
-        }
-        const pordName = "moonlight-prod";
-        let prodCert = await this.createAndDownloadCert(pordName, 2)
-        this.agcConfig.prodCert = prodCert
-        return {
-          value: `${pordName}`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    // prod profile
-    await this.startStep(
-      "accountInfo",
-      4,
-      async (i) => {
-        if (this.agcConfig.prodProfile.path) {
-          return {
-            value: `${this.agcConfig.prodProfile.name}`,
-            message: "完成",
-          };
-        }
-        const profileName = "xiaobai-prod";
-        this.agcConfig.prodProfile = await this.createAndDownloadProfile(packageName, profileName, 2)
-        return {
-          value: `${profileName}`,
-          message: "完成",
-        };
-      },
-      "失败"
-    );
-    this.dh.writeObjToFile("agc_config.json", this.agcConfig)
-    this.running = false;
-  }
+  //   await this.startStep(
+  //     "accountInfo",
+  //     1,
+  //     async (i) => {
+  //       if (this.agcConfig.appId && this.agcConfig.appName) {
+  //         return {
+  //           value: this.agcConfig.appName + `(${packageName})`,
+  //           message: "完成",
+  //         };
+  //       }
+  //       let projectName = "xiaobai-project";
+  //       let result = await this.agc.projectList(projectName);
+  //       let project = {};
+  //       let projectId = "";
+  //       if (result.projectList.length > 0) {
+  //         project = result.projectList[0];
+  //         projectId = project.projectId;
+  //       } else {
+  //         result = await this.agc.createProject(projectName);
+  //         projectId = result.mapping.projectId;
+  //       }
+  //       this.agcConfig.projectId = projectId;
+  //       result = await this.agc.appList();
+  //       const appList = result.appList || [];
+  //       let app = appList.find((a) => a.packageName == packageName);
+  //       if (!app) {
+  //         let result = await this.agc.createApp(
+  //           appName,
+  //           packageName,
+  //           projectId
+  //         );
+  //         const appId = result.appId;
+  //         await this.agc.orderApp(projectId, appId);
+  //         result = await this.agc.appList();
+  //         app = result.appList.find((a) => a.appId == appId);
+  //         console.debug("new app", app);
+  //       }
+  //       this.agcConfig.appId = app.appId;
+  //       this.agcConfig.appName = app.appName
+  //       return {
+  //         value: app.appName + `(${packageName})`,
+  //         message: "完成",
+  //       };
+  //     },
+  //     "失败"
+  //   );
+  //   // clientApi
+  //   await this.startStep(
+  //     "accountInfo",
+  //     2,
+  //     async (i) => {
+  //       if (this.agcConfig.clientId && this.agcConfig.clientKey) {
+  //         return {
+  //           value: `${this.agcConfig.clientId}(${this.agcConfig.clientKey.substring(0, 8)}...)`,
+  //           message: "完成",
+  //         };
+  //       }
+  //       let clientName = "xiaobai-api";
+  //       let result = await this.agc.clientApiList();
+  //       const api = result.clients.find((a) => a.name == clientName);
+  //       if (!api) {
+  //         result = await this.agc.createApi(clientName);
+  //         const clientId = result.clientId;
+  //         result = await this.agc.clientApiList();
+  //         api = result.clients.find((a) => a.clientId == clientId);
+  //       }
+  //       this.agcConfig.clientId = api.clientId;
+  //       this.agcConfig.clientKey = api.secrets[0].name;
+  //       return {
+  //         value: `${api.clientId}(${api.secrets[0].name.substring(0, 8)}...)`,
+  //         message: "完成",
+  //       };
+  //     },
+  //     "失败"
+  //   );
+  //   // prodCert
+  //   await this.startStep(
+  //     "accountInfo",
+  //     3,
+  //     async (i) => {
+  //       if (this.agcConfig.prodCert.path) {
+  //         return {
+  //           value: `${this.agcConfig.prodCert.name}`,
+  //           message: "完成",
+  //         };
+  //       }
+  //       const pordName = "moonlight-prod";
+  //       let prodCert = await this.createAndDownloadCert(pordName, 2)
+  //       this.agcConfig.prodCert = prodCert
+  //       return {
+  //         value: `${pordName}`,
+  //         message: "完成",
+  //       };
+  //     },
+  //     "失败"
+  //   );
+  //   // prod profile
+  //   await this.startStep(
+  //     "accountInfo",
+  //     4,
+  //     async (i) => {
+  //       if (this.agcConfig.prodProfile.path) {
+  //         return {
+  //           value: `${this.agcConfig.prodProfile.name}`,
+  //           message: "完成",
+  //         };
+  //       }
+  //       const profileName = "xiaobai-prod";
+  //       this.agcConfig.prodProfile = await this.createAndDownloadProfile(packageName, profileName, 2)
+  //       return {
+  //         value: `${profileName}`,
+  //         message: "完成",
+  //       };
+  //     },
+  //     "失败"
+  //   );
+  //   this.dh.writeObjToFile("agc_config.json", this.agcConfig)
+  //   this.running = false;
+  // }
 
   async checkEcoAccount(commonInfo) {
     this.ecoConfig = this.dh.readFileToObj("eco_config.json")
@@ -280,8 +280,11 @@ class BuildService {
       1,
       async (i) => {
         const pordName = "xiaobai-debug";
-        let debugCert = await this.createAndDownloadDebugCert(pordName)
-        this.ecoConfig.debugCert = debugCert
+        let debugCert = await this.createAndDownloadDebugCert(pordName, this.ecoConfig?.debugCert?.id)
+        this.ecoConfig.debugCert  = {
+          ...this.ecoConfig.debugCert,
+          ...debugCert
+        }
         return {
           value: `${pordName}`,
           message: "完成",
@@ -401,23 +404,33 @@ class BuildService {
       return false;
     }
   }
-  async createAndDownloadDebugCert(name) {
-   
+  async createAndDownloadDebugCert(name, id) {
+    let result = await this.eco.getCertList();
+    let debugCerts = result.certList.filter(
+      (a) => a.certType == 1
+    );
+    let debugCert = debugCerts.find(d=>d.certName == name)
+    let debugCertPath = name + ".cer"
+    let file = path.join(this.dh.configDir, debugCertPath)
+    if(fs.existsSync(file) && debugCert?.id == id){
+      return {
+        name: debugCertPath,
+        path: file
+      }
+    }
+
     // 创建密钥库
     const config = this.dh.configDir
     this.ecoConfig.keystore = config + "/xiaobai.p12"
-    const noP12 = !fs.existsSync(this.ecoConfig.keystore)
     await this.cmd.createKeystore(this.ecoConfig.keystore)
     const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
     this.ecoConfig.csrPath = csrPath
 
-    let result = await this.eco.getCertList();
-    let debugCerts= result.certList.filter(
-      (a) => a.certType == 1
-    );
-    let debugCert = result.certList.find((a) => a.certName == name);
-    let debugCertPath = name + ".cer"
-    await this.eco.deleteCertList(debugCerts.filter(d=>d.certName == name).map(d => d.id))
+  
+    let needDelete = debugCerts.filter(d=>d.certName == name).map(d => d.id)
+    if(needDelete.length >0){
+      await this.eco.deleteCertList(needDelete)
+    }
     const csr = await this.cmd.readcsr(csrPath)
     result = await this.eco.createCert(name, 1, csr);
     debugCert = result.harmonyCert;
@@ -427,16 +440,16 @@ class BuildService {
     return {
       id: debugCert.id,
       name,
-      url: debugCertUrl,
       path: filePath
     }
   }
   async createAndDownloadDebugProfile(packageName, name, commonInfo) {
     let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
-    if(fs.existsSync(this.dh.configDir + profileName)){
+    let file = path.join(this.dh.configDir, profileName)
+    if(fs.existsSync(file)){
       return {
         name: profileName,
-        path: this.dh.configDir + profileName
+        path: file
       }
     }
     let devicekey = ""
