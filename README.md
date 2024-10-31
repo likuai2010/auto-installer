@@ -37,6 +37,7 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
 <img alt="支付宝" height="300" src="alipay.png" width="300" title="支付宝"/>
 <img alt="微信" height="300" src="weixin.jpg" width="300" title="微信" />
 - 如果你觉得这个项目帮助到了你，你可以帮作者买一杯果汁表示鼓励 🍹
+  
 ## 联系方式
 如果您对Auto-Installer有任何建议、反馈或合作意向，欢迎通过以下方式联系我们：
 
