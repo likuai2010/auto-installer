@@ -127,7 +127,7 @@ class CmdService{
             return csrpath
         let keytool = this.JavaHome + "/bin/keytool"
 
-        let prams = `${keytool} -certreq -alias ${alias} -keystore ${keystore} -storetype pkcs12 -file ${csrpath} -storepass ${storepass}`
+        let prams = `${keytool} -certreq -alias ${alias} -keystore "${keystore}" -storetype pkcs12 -file "${csrpath}" -storepass ${storepass}`
         await this.exeCmd(prams)
         return csrpath
     }
@@ -140,7 +140,7 @@ class CmdService{
         if (fs.existsSync(keystore))
             return true
         let keytool = this.JavaHome + "/bin/keytool"
-        let prams = `${keytool} -genkeypair -alias ${alias} -keyalg EC -sigalg SHA256withECDSA -dname "C=CN,O=HUAWEI,OU=HUAWEI IDE,CN=${cn}"  -keystore ${keystore} -storetype pkcs12 -validity 9125 -storepass ${storepass} -keypass ${storepass}`
+        let prams = `${keytool} -genkeypair -alias ${alias} -keyalg EC -sigalg SHA256withECDSA -dname "C=CN,O=HUAWEI,OU=HUAWEI IDE,CN=${cn}"  -keystore "${keystore}" -storetype pkcs12 -validity 9125 -storepass ${storepass} -keypass ${storepass}`
         await this.exeCmd(prams)
     }
 
@@ -178,13 +178,13 @@ class CmdService{
     async unpackApp(hapFilePath, outPath){
         let javaPath = this.JavaHome + "/bin/java"
         let unpackTool = this.SdkHome + "/lib/app_unpacking_tool.jar"
-        let cmd = `${javaPath} -jar ${unpackTool} --mode app --app-path ${hapFilePath} --out-path ${outPath} --force true`
+        let cmd = `${javaPath} -jar ${unpackTool} --mode app --app-path "${hapFilePath}" --out-path "${outPath}" --force true`
         await this.exeCmd(cmd)
     }
     async unpackHap(hapFilePath, outPath){
         let javaPath = this.JavaHome + "/bin/java"
         let unpackTool = this.SdkHome + "/lib/app_unpacking_tool.jar"
-        let cmd = `${javaPath} -jar ${unpackTool} --mode hap --hap-path ${hapFilePath} --out-path ${outPath} --force true`
+        let cmd = `${javaPath} -jar ${unpackTool} --mode hap --hap-path "${hapFilePath}" --out-path "${outPath}" --force true`
         await this.exeCmd(cmd)
     }
     //java -jar app_packing_tool.jar --mode hap  --json-path D:\out3\module.json --lib-path  D:\out3\libs --resources-path d:\out3\resources --ets-path d:\out3\ets --pack-info-path D:\out3\pack.info --index-path D:\out3\resources.index --force true --out-path D:\pack.hap
