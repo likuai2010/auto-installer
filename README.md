@@ -10,7 +10,7 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
 
 ## 主要特点
 
-- **电脑版：** （小白鸿蒙自助餐）采用和DevEco的签名方式。支持USB，和无线调试
+- **电脑版：** （小白鸿蒙自助餐）采用和DevEco的签名方式。支持USB，和无线调试 tip（ mac 版调用 sudo spctl --master-disable 来关闭签名验证）
 - **手机版：** （鸿蒙调试助手）仅支持无线调试。
 
 ## 目标和愿景
@@ -18,6 +18,8 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
 我们的目标是丰富HarmonyOS开源生态。加快开源项目移植鸿蒙的效率，丰富HarmonyOS的多样性
 ## 演示进展
 - [[bilibili](https://www.bilibili.com/video/BV1h5411y79y/?spm_id_from=pageDriver&vd_source=a57591f50ada2248ca93e7f3a05e6fe8)]
+
+- 小白鸿蒙移植交流群：693903194
 ## 最新进展
 **2024年11月进展：**
   
@@ -29,7 +31,7 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
   
  .hap应用无线安装 (完成)
   
-支持.app格式文件 (完成)
+  支持.app格式文件 (完成)
   
 ## 打赏
 <img alt="支付宝" height="300" src="alipay.png" width="300" title="支付宝"/>
