@@ -41,7 +41,14 @@ contextBridge.exposeInMainWorld("CoreApi", {
   },
   onLoginFinish(callback){
   },
-
+  openBigHap(){
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on("onOpenBigHap", (event, data) => {
+        resolve(data);
+      });
+      ipcRenderer.send("openBigHap");
+    });
+  },
   githubBranchs(url){
     return new Promise((resolve, reject) => {
       ipcRenderer.on("onGithubBranchs", (event, data) => {

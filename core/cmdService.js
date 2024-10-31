@@ -88,7 +88,7 @@ class CmdService{
             deviceT = "-t " + device
         }
         await this.exeCmd(`${this.hdc} ${deviceT} shell mkdir -p data/local/tmp/hap`)
-        let result =  await this.exeCmd(`${this.hdc} ${deviceT} file send ${filePath} data/local/tmp/hap/`)
+        let result =  await this.exeCmd(`${this.hdc} ${deviceT} file send "${filePath}" data/local/tmp/hap/`)
         
         if(result.indexOf("finish") > -1)
             return true
@@ -199,25 +199,25 @@ class CmdService{
                 files.forEach(file => {
                     const fullPath = path.join(hapFilePath, file);
                     if(file == "resources.index"){
-                        params += ` --index-path ${fullPath}`
+                        params += ` --index-path "${fullPath}"`
                     }
                     else if(file == "pack.info"){
-                        params += ` --pack-info-path ${fullPath}`
+                        params += ` --pack-info-path "${fullPath}"`
                     }
                     else if(file == "module.json"){
-                        params += ` --json-path ${fullPath}`
+                        params += ` --json-path "${fullPath}"`
                     }
                     else if (file == "libs"){
-                        params += ` --lib-path ${fullPath}`
+                        params += ` --lib-path "${fullPath}"`
                     }
                     else{
-                        params += ` --${file}-path ${fullPath}`
+                        params += ` --${file}-path "${fullPath}"`
                     }
                 });
                 resolve(params)
             });
         })
-        let cmd = `${javaPath} -jar ${unpackTool} --mode hap  ${params} --force true --out-path  ${outpath}`
+        let cmd = `${javaPath} -jar ${unpackTool} --mode hap  ${params} --force true --out-path  "${outpath}"`
         console.debug("packHap params", params)
         await this.exeCmd(cmd)
     }

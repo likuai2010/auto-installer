@@ -94,17 +94,15 @@
     <el-divider />
     <div class="page-home-status">
       <el-form :model="form" label-width="auto">
-        <template v-if="status.active === 2">
-          <el-form-item label="下载地址：">
+        <el-form-item label="超大hap文件">
             <el-input v-model="status.dowloadUrl">
               <template #append>
-                <el-tooltip effect="light" placement="top" content="复制">
-                  <el-button :icon="CopyDocument" />
+                <el-tooltip effect="light" placement="top" content="点击选择文件">
+                  <el-button :icon="CopyDocument"  @click="openBigHap"/>
                 </el-tooltip>
               </template>
             </el-input>
           </el-form-item>
-        </template>
       </el-form>
     </div>
     <PacketPhone></PacketPhone>
@@ -145,7 +143,7 @@ const status = reactive({
   upload: false, //文件上传loading状态
   loading: false, //开始构建loading状态
   disabled: true, //开始构建disabled状态
-  dowloadUrl: "", //编译打包完下载地址
+  dowloadUrl: "", //bighapfilePath
   statusItems: [], //构建步骤完成子状态
   selected: null, //当前选择上传文件
 });
@@ -182,7 +180,27 @@ const getGitHub = (url) => {
     loading.value = false;
   });
 };
-
+const openBigHap = () =>{
+  window.CoreApi.openBigHap().then(( hapInfo)=>{
+    status.dowloadUrl = hapInfo.hapPath
+    form.appName = hapInfo.appName; //app名称
+    form.hapPath = hapInfo.hapPath; //包文件路径
+    form.packageName = hapInfo.packageName; // 包名称
+    status.upload = false;
+    status.disabled = false;
+    status.selected = {
+      hapInfo,
+      form: { ...form },
+      packageName: hapInfo.packageName,
+    };
+    const hapindex = hapInfoItems.value.findIndex(f=>f.packageName == hapInfo.packageName)
+    if(hapindex > -1){
+      hapInfoItems.value[hapindex] = status.selected;
+    }else{
+      hapInfoItems.value.push(status.selected);
+    }
+  })
+}
 const changeFile = async (file) => {
   status.upload = true;
   status.disabled = true;

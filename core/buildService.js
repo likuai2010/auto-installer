@@ -1,7 +1,7 @@
 const { CmdService } = require("./cmdService");
 const fs = require('node:fs')
 const path = require('node:path')
-
+const {  app } = require("electron");
 class BuildService {
   constructor(core) {
     this.agc = core.agc;
@@ -298,7 +298,7 @@ class BuildService {
       2,
       async (i) => {
         const profileName = "xiaobai-debug";
-        this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName, commonInfo)
+        this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName, commonInfo, this.ecoConfig.debugCert.newCert)
         return {
           value: `${this.ecoConfig.debugProfile.name}`,
           message: "完成",
@@ -404,6 +404,10 @@ class BuildService {
       return false;
     }
   }
+  async clearCerts(){
+    let file = path.join(this.dh.configDir, "xiaobai-debug.cer")
+    fs.unlinkSync(file)
+  }
   async createAndDownloadDebugCert(name, id) {
     let result = await this.eco.getCertList();
     let debugCerts = result.certList.filter(
@@ -414,6 +418,7 @@ class BuildService {
     let file = path.join(this.dh.configDir, debugCertPath)
     if(fs.existsSync(file) && debugCert?.id == id){
       return {
+        newCert: false,
         name: debugCertPath,
         path: file
       }
@@ -421,32 +426,50 @@ class BuildService {
 
     // 创建密钥库
     const config = this.dh.configDir
-    this.ecoConfig.keystore = config + "/xiaobai.p12"
-    await this.cmd.createKeystore(this.ecoConfig.keystore)
-    const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
-    this.ecoConfig.csrPath = csrPath
-
+    let resources =  path.join(app.getAppPath(), 'resources')
+    if(!app.isPackaged){
+      resources = app.getAppPath()
+    }
+    const p12FilePath = path.join(resources, 'store', 'xiaobai.p12');
+    const csrFilePath = path.join(resources, 'store', 'xiaobai.csr');
+    if(fs.existsSync(p12FilePath)){
+      console.info("p12 exist store")
+      this.ecoConfig.keystore = p12FilePath
+    }else{
+      console.info("p12 not exist store", p12FilePath)
+      this.ecoConfig.keystore = config + "/xiaobai.p12"
+      await this.cmd.createKeystore(this.ecoConfig.keystore)
+    }
+    if(fs.existsSync(csrFilePath)){
+      console.info("p12 exist store")
+      this.ecoConfig.csrPath = csrFilePath
+    }else{
+      console.info("csr not exist store", csrFilePath)
+      const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
+      this.ecoConfig.csrPath = csrPath
+    }
   
     let needDelete = debugCerts.filter(d=>d.certName == name).map(d => d.id)
     if(needDelete.length >0){
       await this.eco.deleteCertList(needDelete)
     }
-    const csr = await this.cmd.readcsr(csrPath)
+    const csr = await this.cmd.readcsr(this.ecoConfig.csrPath)
     result = await this.eco.createCert(name, 1, csr);
     debugCert = result.harmonyCert;
     result = await this.eco.downloadObj(debugCert.certObjectId)
     const debugCertUrl = result.urlsInfo[0].newUrl
     const filePath = await this.dh.downloadFile(debugCertUrl, debugCertPath)
     return {
+      newCert: true,
       id: debugCert.id,
       name,
       path: filePath
     }
   }
-  async createAndDownloadDebugProfile(packageName, name, commonInfo) {
+  async createAndDownloadDebugProfile(packageName, name, commonInfo, newCert) {
     let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
     let file = path.join(this.dh.configDir, profileName)
-    if(fs.existsSync(file)){
+    if(fs.existsSync(file) && !newCert){
       return {
         name: profileName,
         path: file

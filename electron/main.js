@@ -6,6 +6,37 @@ const { CoreService } = require("../core/services");
 const core = new CoreService();
 const preload = path.join(__dirname, "preload.js");
 const indexHtml = path.join(__dirname, "../dist/index.html");
+const createMenu = () => {
+  const menuTemplate = [
+      {
+          label: '选项',
+          submenu: [
+              {
+                  label: '清理本地证书',
+                  click: () => {
+                      // 打开文件的逻辑
+                      console.log('打开文件');
+                      core.clearCerts();
+                  },
+              },
+          ],
+      },
+      {
+          label: '帮助',
+          submenu: [
+              {
+                  label: '关于',
+                  click: () => {
+                  },
+              },
+          ],
+      },
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+};
+
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -17,9 +48,8 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-
+  createMenu()
   core.registerIpc(win);
-  Menu.setApplicationMenu(null);
 
   win.loadURL(process.env.VITE_DEV_SERVER_URL || `file://${indexHtml}`);
 
@@ -60,7 +90,7 @@ const server = http.createServer((req, res) => {
       core.build.checkEcoAccount(core.commonInfo);
       res.statusCode = 200;
       res.setHeader("Content-Type", "text/plain");
-      res.end("login success\n" + body);
+      res.end("登录成功，请返回");
       core.closeLoginEco();
     });
   } else {

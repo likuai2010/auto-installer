@@ -1,7 +1,7 @@
 {
   "name": "auto-installer-harmonyos",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "小白鸿蒙开源自助餐",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,7 @@
     "productName": "AutoInstaller",
     "files": [
       "dist/**/*",
+      "store/**/*",
       "electron/**/*",
       "core/**/*",
       "tools/**/*"
@@ -28,6 +29,13 @@
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "store",
+        "to": "store",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "directories": {
@@ -35,6 +43,7 @@
     }
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
     "element-plus": "^2.8.3",
