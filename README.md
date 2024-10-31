@@ -17,7 +17,7 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
 
 我们的目标是丰富HarmonyOS开源生态。加快开源项目移植鸿蒙的效率，丰富HarmonyOS的多样性
 ## 演示进展
-- [[bilibili](https://www.bilibili.com/video/BV1h5411y79y/?spm_id_from=pageDriver&vd_source=a57591f50ada2248ca93e7f3a05e6fe8)]
+- [[bilibili](https://b23.tv/HnJaqV2)]
 
 - 小白鸿蒙移植交流群：693903194
 ## 最新进展
