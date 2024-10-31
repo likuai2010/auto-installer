@@ -37,6 +37,6 @@ Auto-Installer是基于开源OpenHarmony项目的Hdc工具。该项目致力于�
 如果您对Auto-Installer有任何建议、反馈或合作意向，欢迎通过以下方式联系我们：
 
 - 电子邮件：[likuai2010@live.com]
-- GitHub仓库：[[Moonlight-HarmonyOS GitHub链接](https://github.com/likuai2010/Auto-Installer/)]
+- GitHub仓库：[[auto-installer GitHub链接](https://github.com/likuai2010/auto-installer/)]
 
 感谢您对Auto-Installer项目的关注！
