@@ -15,7 +15,7 @@ const createMenu = () => {
                   label: '清理本地证书',
                   click: () => {
                       // 打开文件的逻辑
-                      console.log('打开文件');
+                      console.log('删除文件');
                       core.clearCerts();
                   },
               },

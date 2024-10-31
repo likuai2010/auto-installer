@@ -405,10 +405,32 @@ class BuildService {
     }
   }
   async clearCerts(){
+    const directoryPath = this.dh.configDir
     let file = path.join(this.dh.configDir, "xiaobai-debug.cer")
     fs.unlinkSync(file)
+    fs.readdir(directoryPath, (err, files) => {
+      if (err) {
+          console.error('读取目录时出错:', err);
+          return;
+      }
+      // 遍历文件并删除 .p7b 文件
+      files.forEach(file => {
+          if (path.extname(file) === '.p7b') {
+              const filePath = path.join(directoryPath, file);
+              fs.unlink(filePath, (err) => {
+                  if (err) {
+                      console.error(`删除文件 ${file} 时出错:`, err);
+                  } else {
+                      console.log(`成功删除文件: ${file}`);
+                  }
+              });
+          }
+      });
+  });
   }
   async createAndDownloadDebugCert(name, id) {
+    let appPath = path.dirname(app.getAppPath())
+    console.info("appPath", appPath)
     let result = await this.eco.getCertList();
     let debugCerts = result.certList.filter(
       (a) => a.certType == 1
@@ -426,7 +448,7 @@ class BuildService {
 
     // 创建密钥库
     const config = this.dh.configDir
-    let resources =  path.join(app.getAppPath(), 'resources')
+    let resources = appPath
     if(!app.isPackaged){
       resources = app.getAppPath()
     }
