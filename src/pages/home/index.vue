@@ -45,7 +45,7 @@
         <div class="upload-content">
           <el-upload
             drag
-            accept=".hap, .app"
+            accept=".hap, .app, .hsp"
             :auto-upload="false"
             :show-file-list="false"
             :on-change="changeFile"
@@ -61,7 +61,7 @@
               :data="items"
               @delete="handleDeleteFile"
               @selected="handleSelectedFile"
-              :active="status?.selected?.packageName"
+              :active="status?.selected?.hapInfo.hapPath"
               v-for="(items, index) in hapInfoItems"
             />
           </div>
@@ -182,7 +182,18 @@ const getGitHub = (url) => {
 };
 const openBigHap = () =>{
   window.CoreApi.openBigHap().then(( hapInfo)=>{
-    status.dowloadUrl = hapInfo.hapPath
+    addOrUpdatahap(haps)
+  })
+}
+const changeFile = async (file) => {
+  status.upload = true;
+  status.disabled = true;
+  let haps = await window.CoreApi.uploadHap(file, );
+  addOrUpdatahap(haps)
+};
+const addOrUpdatahap = (haps)=>
+{
+  haps.forEach(hapInfo => {
     form.appName = hapInfo.appName; //app名称
     form.hapPath = hapInfo.hapPath; //包文件路径
     form.packageName = hapInfo.packageName; // 包名称
@@ -193,36 +204,14 @@ const openBigHap = () =>{
       form: { ...form },
       packageName: hapInfo.packageName,
     };
-    const hapindex = hapInfoItems.value.findIndex(f=>f.packageName == hapInfo.packageName)
+    const hapindex = hapInfoItems.value.findIndex(f=>f.hapPath == hapInfo.hapPath)
     if(hapindex > -1){
       hapInfoItems.value[hapindex] = status.selected;
     }else{
       hapInfoItems.value.push(status.selected);
     }
-  })
+  });
 }
-const changeFile = async (file) => {
-  status.upload = true;
-  status.disabled = true;
-  let hapInfo = await window.CoreApi.uploadHap(file);
-  form.appName = hapInfo.appName; //app名称
-  form.hapPath = hapInfo.hapPath; //包文件路径
-  form.packageName = hapInfo.packageName; // 包名称
-  status.upload = false;
-  status.disabled = false;
-  status.selected = {
-    hapInfo,
-    form: { ...form },
-    packageName: hapInfo.packageName,
-  };
-  const hapindex = hapInfoItems.value.findIndex(f=>f.packageName == hapInfo.packageName)
-  if(hapindex > -1){
-    hapInfoItems.value[hapindex] = status.selected;
-  }else{
-    hapInfoItems.value.push(status.selected);
-  }
-};
-
 const submitForm = async () => {
   if (!formEl.value) return;
   await formEl.value.validate((valid, fields) => {
@@ -244,12 +233,11 @@ const handleUpdate = (form) => {
   status.statusItems = form.statusItems;
 };
 const onStateChange = (result) =>{
-  debugger
   status.disabled = result;
 }
 
 const handleDeleteFile = (data) => {
-  if (status.selected.packageName === data.packageName) {
+  if (status.selected.hapInfo.hapPath === data.hapInfo.hapPath) {
     ElNotification({
       title: "提示",
       type: "warning",
@@ -257,7 +245,7 @@ const handleDeleteFile = (data) => {
     });
   } else {
     hapInfoItems.value = hapInfoItems.value.filter(
-      (items) => items.packageName !== data.packageName
+      (items) => items.hapInfo.hapPath !== data.hapInfo.hapPath
     );
   }
 };

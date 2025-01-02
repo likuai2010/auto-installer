@@ -4,7 +4,7 @@
   "version": "1.2.4",
   "description": "小白鸿蒙开源自助餐",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "start": " electron .",

@@ -1,7 +1,7 @@
 const { CmdService } = require("./cmdService");
 const fs = require('node:fs')
 const path = require('node:path')
-const {  app } = require("electron");
+const { app } = require("electron");
 class BuildService {
   constructor(core) {
     this.agc = core.agc;
@@ -19,22 +19,22 @@ class BuildService {
     projectId: "",
     appId: "",
     prodCert: {},
-    prodProfile:{}
+    prodProfile: {}
   };
   ecoConfig = {
     teamId: "",
     uid: "",
     keystore: "",
-    storepass:"xiaobai123",
-    keyAlias:"xiaobai",
-    outPath:"",
+    storepass: "xiaobai123",
+    keyAlias: "xiaobai",
+    outPath: "",
     debugCert: {},
-    debugProfile:{}
+    debugProfile: {}
   };
 
   // async checkAgcAccount(commonInfo) {
   //   this.agcConfig = this.dh.readFileToObj("agc_config.json")
-  
+
   //   if (this.running) return;
   //   this.running = true;
 
@@ -226,11 +226,17 @@ class BuildService {
   //   this.dh.writeObjToFile("agc_config.json", this.agcConfig)
   //   this.running = false;
   // }
-
+  moduleJson = {}
   async checkEcoAccount(commonInfo) {
     this.ecoConfig = this.dh.readFileToObj("eco_config.json")
     this.ecoConfig.storepass = this.ecoConfig.storepass || "xiaobai123"
     this.ecoConfig.keyAlias = this.ecoConfig.keyAlias || "xiaobai"
+    try {
+      this.moduleJson = await this.cmd.loadModuleJson(commonInfo.hapPath)
+    } catch (e) {
+      console.error("load json failure")
+    }
+
     this.core.accountInfo.steps = [
       {
         name: "华为账号",
@@ -259,7 +265,7 @@ class BuildService {
       "accountInfo",
       0,
       async (i) => {
-       
+
         let result = await this.eco.userTeamList();
         let userTeam = result.teams[0];
         return {
@@ -269,7 +275,7 @@ class BuildService {
       },
       "失败"
     );
-    if(!result){
+    if (!result) {
       this.core.loginEco()
     }
     const packageName = commonInfo?.packageName || "com.xiaobai.app";
@@ -281,7 +287,7 @@ class BuildService {
       async (i) => {
         const pordName = "xiaobai-debug";
         let debugCert = await this.createAndDownloadDebugCert(pordName, this.ecoConfig?.debugCert?.id)
-        this.ecoConfig.debugCert  = {
+        this.ecoConfig.debugCert = {
           ...this.ecoConfig.debugCert,
           ...debugCert
         }
@@ -298,6 +304,7 @@ class BuildService {
       2,
       async (i) => {
         const profileName = "xiaobai-debug";
+
         this.ecoConfig.debugProfile = await this.createAndDownloadDebugProfile(packageName, profileName, commonInfo, this.ecoConfig.debugCert.newCert)
         return {
           value: `${this.ecoConfig.debugProfile.name}`,
@@ -313,28 +320,29 @@ class BuildService {
     await this.sginAndInstall(commonInfo)
   }
   async sginAndInstall(commonInfo) {
-   this.core.buildInfo.steps=[
-    {
-      name: "签名应用",
-      finish: false,
-      value: "",
-      loading: true,
-      message: "",
-    },
-    {
-      name: "安装应用",
-      finish: false,
-      value: "",
-      loading: true,
-      message: "",
-    },
-   ]
-   
+    this.core.buildInfo.steps = [
+      {
+        name: "签名应用",
+        finish: false,
+        value: "",
+        loading: true,
+        message: "",
+      },
+      {
+        name: "安装应用",
+        finish: false,
+        value: "",
+        loading: true,
+        message: "",
+      },
+    ]
+
     await this.startStep(
       "buildInfo", 0,
       async (i) => {
-        this.ecoConfig.outFile = path.join(this.dh.configDir, "singned.hap")
-        
+
+        this.ecoConfig.outFile = path.join(this.dh.signedDir, path.basename(commonInfo.hapPath))
+
         await this.cmd.signHap({
           keystoreFile: this.ecoConfig.keystore,
           keystorePwd: this.ecoConfig.storepass,
@@ -342,7 +350,7 @@ class BuildService {
           certFile: this.ecoConfig.debugCert.path,
           profilFile: this.ecoConfig.debugProfile.path,
           inFile: commonInfo.hapPath,
-          outFile: this.ecoConfig.outFile        
+          outFile: this.ecoConfig.outFile
         })
         // await this.cmd.verifyApp({
         //   keystoreFile: this.ecoConfig.keystore,
@@ -370,7 +378,7 @@ class BuildService {
       "失败"
     );
   }
- 
+
 
   async checkPackageName(packageName) {
     try {
@@ -404,29 +412,29 @@ class BuildService {
       return false;
     }
   }
-  async clearCerts(){
+  async clearCerts() {
     const directoryPath = this.dh.configDir
     let file = path.join(this.dh.configDir, "xiaobai-debug.cer")
     fs.unlinkSync(file)
     fs.readdir(directoryPath, (err, files) => {
       if (err) {
-          console.error('读取目录时出错:', err);
-          return;
+        console.error('读取目录时出错:', err);
+        return;
       }
       // 遍历文件并删除 .p7b 文件
       files.forEach(file => {
-          if (path.extname(file) === '.p7b') {
-              const filePath = path.join(directoryPath, file);
-              fs.unlink(filePath, (err) => {
-                  if (err) {
-                      console.error(`删除文件 ${file} 时出错:`, err);
-                  } else {
-                      console.log(`成功删除文件: ${file}`);
-                  }
-              });
-          }
+        if (path.extname(file) === '.p7b') {
+          const filePath = path.join(directoryPath, file);
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error(`删除文件 ${file} 时出错:`, err);
+            } else {
+              console.log(`成功删除文件: ${file}`);
+            }
+          });
+        }
       });
-  });
+    });
   }
   async createAndDownloadDebugCert(name, id) {
     let appPath = path.dirname(app.getAppPath())
@@ -435,10 +443,10 @@ class BuildService {
     let debugCerts = result.certList.filter(
       (a) => a.certType == 1
     );
-    let debugCert = debugCerts.find(d=>d.certName == name)
+    let debugCert = debugCerts.find(d => d.certName == name)
     let debugCertPath = name + ".cer"
     let file = path.join(this.dh.configDir, debugCertPath)
-    if(fs.existsSync(file) && debugCert?.id == id){
+    if (fs.existsSync(file) && debugCert?.id == id) {
       return {
         newCert: false,
         name: debugCertPath,
@@ -449,30 +457,30 @@ class BuildService {
     // 创建密钥库
     const config = this.dh.configDir
     let resources = appPath
-    if(!app.isPackaged){
+    if (!app.isPackaged) {
       resources = app.getAppPath()
     }
     const p12FilePath = path.join(resources, 'store', 'xiaobai.p12');
     const csrFilePath = path.join(resources, 'store', 'xiaobai.csr');
-    if(fs.existsSync(p12FilePath)){
+    if (fs.existsSync(p12FilePath)) {
       console.info("p12 exist store")
       this.ecoConfig.keystore = p12FilePath
-    }else{
+    } else {
       console.info("p12 not exist store", p12FilePath)
       this.ecoConfig.keystore = config + "/xiaobai.p12"
       await this.cmd.createKeystore(this.ecoConfig.keystore)
     }
-    if(fs.existsSync(csrFilePath)){
+    if (fs.existsSync(csrFilePath)) {
       console.info("p12 exist store")
       this.ecoConfig.csrPath = csrFilePath
-    }else{
+    } else {
       console.info("csr not exist store", csrFilePath)
       const csrPath = await this.cmd.createCsr(this.ecoConfig.keystore, config + "/xiaobai.csr")
       this.ecoConfig.csrPath = csrPath
     }
-  
-    let needDelete = debugCerts.filter(d=>d.certName == name).map(d => d.id)
-    if(needDelete.length >0){
+
+    let needDelete = debugCerts.filter(d => d.certName == name).map(d => d.id)
+    if (needDelete.length > 0) {
       await this.eco.deleteCertList(needDelete)
     }
     const csr = await this.cmd.readcsr(this.ecoConfig.csrPath)
@@ -489,35 +497,35 @@ class BuildService {
     }
   }
   async createAndDownloadDebugProfile(packageName, name, commonInfo, newCert) {
-    let profileName =  name +"_"+ packageName.replace(".","_") + ".p7b"
+    let profileName = name + "_" + packageName.replace(".", "_") + ".p7b"
     let file = path.join(this.dh.configDir, profileName)
-    if(fs.existsSync(file) && !newCert){
+    if (fs.existsSync(file) && !newCert) {
       return {
         name: profileName,
         path: file
       }
     }
     let devicekey = ""
-    if (commonInfo.deviceIp && commonInfo.deviceIp !== ""){
+    if (commonInfo.deviceIp && commonInfo.deviceIp !== "") {
       devicekey = commonInfo.deviceIp
       await this.cmd.connectDevice(devicekey)
     }
     else {
       let device = await this.cmd.deviceList()
-      if (device.length == 0) 
+      if (device.length == 0)
         throw new Error("请连接手机, 并开启开发者模式和usb调试!")
       devicekey = device[0].trim()
     }
     const udid = (await this.cmd.getUdid(devicekey)).trim()
     let result = await this.eco.deviceList()
     let deviceList = result.list
-    if (deviceList.filter(d=> d.udid == udid).length == 0){
-      result = await this.eco.createDevice("xiaobai-device-" + udid.substring(0,10), udid)
+    if (deviceList.filter(d => d.udid == udid).length == 0) {
+      result = await this.eco.createDevice("xiaobai-device-" + udid.substring(0, 10), udid)
       result = await this.eco.deviceList()
       deviceList = result.list
     }
     const deviceIds = deviceList.map(d => d.id)
-    result = await this.eco.createProfile(name, this.ecoConfig.debugCert.id, packageName, deviceIds)
+    result = await this.eco.createProfile(name, this.ecoConfig.debugCert.id, packageName, deviceIds, this.moduleJson)
     const profilePath = await this.dh.downloadFile(result.provisionFileUrl, profileName)
     console.log("profile", result)
     return {
