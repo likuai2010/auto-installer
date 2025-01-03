@@ -428,11 +428,12 @@ class CoreService {
     await this.build.clearCerts()
   }
   childWindow = {};
+  port = 0
   loginEco(
-    url = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=3333&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc"
-  ) {
-    shell.openExternal(url)
 
+  ) {
+    const url = `https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=${this.port}&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc`
+    shell.openExternal(url)
     // this.childWindow = new BrowserWindow({
     //   width: 800,
     //   height: 600,

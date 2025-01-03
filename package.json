@@ -1,8 +1,8 @@
 {
   "name": "auto-installer-harmonyos",
   "private": true,
-  "version": "1.2.5",
-  "description": "小白鸿蒙开源自助餐",
+  "version": "1.3.0",
+  "description": "小白鸿蒙调试工具",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
@@ -20,7 +20,8 @@
       "store/**/*",
       "electron/**/*",
       "core/**/*",
-      "tools/**/*"
+      "tools/**/*",
+      "assets/**/*"
     ],
     "extraResources": [
       {
@@ -47,6 +48,7 @@
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
     "element-plus": "^2.8.3",
+    "mammoth": "^1.9.0",
     "normalize.css": "^8.0.1",
     "qs": "^6.13.0",
     "simple-git": "^3.27.0",

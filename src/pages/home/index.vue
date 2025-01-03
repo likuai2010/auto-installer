@@ -23,13 +23,13 @@
                 />
               </el-select>
             </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="应用名称：" :prop="['appName']">
-          <el-input v-model="form.appName" />
-        </el-form-item> -->
+</el-input>
+</el-form-item>
+<el-form-item label="应用名称：" :prop="['appName']">
+  <el-input v-model="form.appName" />
+</el-form-item> -->
 
-        <el-form-item label="无线安装："  :prop="['deviceIp']">
+        <el-form-item label="无线安装：" :prop="['deviceIp']">
           <el-input v-model="form.deviceIp" placeholder="输入ip地址和端口(请在开发者选项里开启手机无线调试功能，并在同一局域网)" />
         </el-form-item>
         <el-form-item label="应用包名：" :prop="['packageName']">
@@ -42,67 +42,45 @@
             <el-radio :value="1">本地</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-alert title="tip: 1.默认usb调试安装；2.安装失败: 请点击左上角的清理本地证书,并重试；3: 常见问题在帮助里" type="success">
+        </el-alert>
         <div class="upload-content">
-          <el-upload
-            drag
-            accept=".hap, .app, .hsp"
-            :auto-upload="false"
-            :show-file-list="false"
-            :on-change="changeFile"
-          >
+          <el-upload drag accept=".hap, .app, .hsp" :auto-upload="false" :show-file-list="false"
+            :on-change="changeFile">
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
               将文件拖放到此处或<em>单击上传</em>
             </div>
           </el-upload>
           <div class="upload-file-list">
-            <FileItems
-              :key="index"
-              :data="items"
-              @delete="handleDeleteFile"
-              @selected="handleSelectedFile"
-              :active="status?.selected?.hapInfo.hapPath"
-              v-for="(items, index) in hapInfoItems"
-            />
+            <FileItems :key="index" :data="items" @delete="handleDeleteFile" @selected="handleSelectedFile"
+              :active="status?.selected?.hapInfo.hapPath" v-for="(items, index) in hapInfoItems" />
           </div>
-          <LoadComp
-            v-if="status.upload"
-            :customStyle="{ position: 'absolute' }"
-          />
+          <LoadComp v-if="status.upload" :customStyle="{ position: 'absolute' }" />
         </div>
         <div class="btns-content">
-          <el-button
-            type="primary"
-            @click="submitForm"
-            :loading="status.loading"
-            :disabled="status.disabled"
-            >开始构建</el-button
-          >
+          <el-button type="primary" @click="submitForm" :loading="status.loading"
+            :disabled="status.disabled">开始构建</el-button>
         </div>
       </el-form>
     </div>
     <el-divider />
     <div class="page-home-steps">
-      <PublishSteps
-        ref="stepsEl"
-        :formData="form"
-        @update="handleUpdate"
-        @on-state-change="onStateChange"
-        :buildType="form.buildType"
-      />
+      <PublishSteps ref="stepsEl" :formData="form" @update="handleUpdate" @on-state-change="onStateChange"
+        :buildType="form.buildType" />
     </div>
     <el-divider />
     <div class="page-home-status">
       <el-form :model="form" label-width="auto">
         <el-form-item label="超大hap文件">
-            <el-input v-model="status.dowloadUrl">
-              <template #append>
-                <el-tooltip effect="light" placement="top" content="点击选择文件">
-                  <el-button :icon="CopyDocument"  @click="openBigHap"/>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
+          <el-input v-model="status.dowloadUrl">
+            <template #append>
+              <el-tooltip effect="light" placement="top" content="点击选择文件">
+                <el-button :icon="CopyDocument" @click="openBigHap" />
+              </el-tooltip>
+            </template>
+          </el-input>
+        </el-form-item>
       </el-form>
     </div>
     <PacketPhone></PacketPhone>
@@ -180,19 +158,18 @@ const getGitHub = (url) => {
     loading.value = false;
   });
 };
-const openBigHap = () =>{
-  window.CoreApi.openBigHap().then(( hapInfo)=>{
+const openBigHap = () => {
+  window.CoreApi.openBigHap().then((hapInfo) => {
     addOrUpdatahap(haps)
   })
 }
 const changeFile = async (file) => {
   status.upload = true;
   status.disabled = true;
-  let haps = await window.CoreApi.uploadHap(file, );
+  let haps = await window.CoreApi.uploadHap(file,);
   addOrUpdatahap(haps)
 };
-const addOrUpdatahap = (haps)=>
-{
+const addOrUpdatahap = (haps) => {
   haps.forEach(hapInfo => {
     form.appName = hapInfo.appName; //app名称
     form.hapPath = hapInfo.hapPath; //包文件路径
@@ -204,10 +181,10 @@ const addOrUpdatahap = (haps)=>
       form: { ...form },
       packageName: hapInfo.packageName,
     };
-    const hapindex = hapInfoItems.value.findIndex(f=>f.hapPath == hapInfo.hapPath)
-    if(hapindex > -1){
+    const hapindex = hapInfoItems.value.findIndex(f => f.hapPath == hapInfo.hapPath)
+    if (hapindex > -1) {
       hapInfoItems.value[hapindex] = status.selected;
-    }else{
+    } else {
       hapInfoItems.value.push(status.selected);
     }
   });
@@ -232,7 +209,7 @@ const handleUpdate = (form) => {
   status.active = form.active;
   status.statusItems = form.statusItems;
 };
-const onStateChange = (result) =>{
+const onStateChange = (result) => {
   status.disabled = result;
 }
 
@@ -275,16 +252,20 @@ const handleSelectedFile = (data) => {
   .page-home-steps,
   .page-home-status {
     width: 80%;
+
     :deep(.el-form),
     :deep(.el-result__extra) {
       width: 100%;
+
       .btns-content {
         display: flex;
         align-items: center;
         justify-content: flex-end;
       }
+
       .upload-content {
         position: relative;
+
         .upload-file-list {
           width: 100%;
           display: flex;
