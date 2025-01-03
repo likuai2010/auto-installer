@@ -300,22 +300,7 @@ class CoreService {
       icon: defaultIcon,
     };
   }
-  async loadModuleJson(filePath) {
-    const zip = new AdmZip(filePath);
-    const fileNameToExtract = "module.json"
-    let moduleInfo = {}
-    if (zip.getEntries().some(entry => entry.entryName === fileNameToExtract)) {
-      // 读取指定文件内容
-      const fileEntry = zip.getEntry(fileNameToExtract);
-      const fileContent = fileEntry.getData().toString('utf8');
-      moduleInfo = JSON.parse(fileContent)
-      console.log('File content:', fileContent);
-      return moduleInfo
-    } else {
-      console.log(`File "${fileNameToExtract}" not found in the ZIP archive.`);
-      return null
-    }
-  }
+
   async saveFileToLocal(buffer, filename) {
     console.log("saveHap", filename, buffer.length);
     let filePath = path.join(this.dh.hapDir, filename);
