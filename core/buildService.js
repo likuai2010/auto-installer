@@ -510,8 +510,8 @@ class BuildService {
     }
     const udid = (await this.cmd.getUdid(devicekey)).trim()
     let result = await this.eco.deviceList()
-    let deviceList = result.list
-    if (deviceList.filter(d=> d.udid == udid).length == 0){
+    let deviceList = result.list.filter(d => d.status == 0)
+    if (deviceList.filter(d => d.udid == udid).length == 0){
       result = await this.eco.createDevice("xiaobai-device-" + udid.substring(0,10), udid)
       result = await this.eco.deviceList()
       deviceList = result.list
