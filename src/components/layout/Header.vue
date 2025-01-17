@@ -8,7 +8,7 @@
     </div>
     <div class="header-right">
       <!-- 用户信息 -->
-      <el-dropdown class="user-name" @command="handleCommand">
+      <!-- <el-dropdown class="user-name" @command="handleCommand">
         <span class="el-dropdown-link">
           <el-icon>
             <user-filled />
@@ -23,7 +23,7 @@
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
-      </el-dropdown>
+</el-dropdown> -->
     </div>
   </el-header>
 </template>
@@ -68,14 +68,17 @@ const onLogin = () => {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 4px 10px #4e59690f;
+
   .header-left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
     img {
       width: 28px;
       height: 28px;
     }
+
     .title {
       font-size: 24px;
       margin-left: 8px;
@@ -85,10 +88,12 @@ const onLogin = () => {
 
   .header-right {
     margin-right: 10px;
+
     .user-name {
       display: flex;
       align-items: center;
       justify-content: flex-end;
+
       .el-dropdown-link {
         display: flex;
         cursor: pointer;

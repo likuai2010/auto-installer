@@ -9,13 +9,16 @@ class DownloadHelper{
     configDir = ""
     codeDir = ""
     hapDir = ""
+    signedDir = ""
     constructor(){
         this.configDir =  path.join(app.getPath('home'), ".autoPublisher/config")
         this.codeDir = path.join(app.getPath('home'), ".autoPublisher/code")
         this.hapDir = path.join(app.getPath('home'), ".autoPublisher/haps")
+        this.signedDir = path.join(app.getPath('home'), ".autoPublisher/signeds")
         fs.mkdirSync(this.configDir, {recursive: true})
         fs.mkdirSync(this.codeDir, {recursive: true})
         fs.mkdirSync(this.hapDir, {recursive: true})
+        fs.mkdirSync(this.signedDir, {recursive: true})
     }
 
     downloadFile(fileUrl, fileName) {

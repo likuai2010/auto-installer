@@ -5,10 +5,13 @@
     @mouseenter.stop="hover = true"
     @mouseleave.stop="hover = false"
   >
+   
     <img
       :src="data.hapInfo.icon"
-      :class="['logo', active === data.packageName ? 'active' : '']"
+      :class="['logo', active === data.hapInfo.hapPath ? 'active' : '']"
     />
+    <span class="label">{{ getfileName(data.hapInfo.hapPath)}}</span>
+    <span class="label">{{ getfileName(data.hapInfo.versionName)}}</span>
     <span v-if="hover" class="delete">
       <el-icon size="16" color="#000000" @click.stop="deleteFile"
         ><CircleCloseFilled
@@ -41,7 +44,9 @@ const emits = defineEmits(["delete", "selected"]);
 const deleteFile = () => {
   emits("delete", props.data);
 };
-
+const getfileName= (filePath) =>{
+  return filePath.split('\\').pop()
+}
 const selectedFile = () => {
   emits("selected", props.data);
 };
@@ -50,6 +55,9 @@ const selectedFile = () => {
 <style lang="scss" scoped>
 .file-items {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   .logo {
     margin: 8px;
     width: 96px;
