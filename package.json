@@ -16,11 +16,12 @@
     "appId": "com.xiaobai.installer",
     "productName": "AutoInstaller",
     "files": [
-      "dist/**/*",
+      "dist/assets/*",
+      "dist/index.html",
+      "dist/favicon.png",
       "store/**/*",
       "electron/**/*",
       "core/**/*",
-      "tools/**/*",
       "assets/**/*"
     ],
     "extraResources": [
