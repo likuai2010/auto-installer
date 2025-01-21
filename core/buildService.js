@@ -265,8 +265,10 @@ class BuildService {
       "accountInfo",
       0,
       async (i) => {
-
         let result = await this.eco.userTeamList();
+        if (!result.teams) {
+          throw new Error("华为账号团队信息获取失败, 请确保ip在国内")
+        }
         let userTeam = result.teams[0];
         return {
           value: userTeam?.name || this.eco.nickName,
