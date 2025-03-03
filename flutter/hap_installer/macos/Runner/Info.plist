@@ -28,5 +28,24 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	<!-- 允许 HTTP 请求（如果需要） -->
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	</dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	<key>NSExceptionDomains</key>
+	<dict>
+		<key>cn.devecostudio.huawei.com</key>
+		<dict>
+		<key>NSExceptionAllowsInsecureHTTPLoads</key>
+		<true/>
+		<key>NSIncludesSubdomains</key>
+		<true/>
+		</dict>
+	</dict>
+	</dict>
 </dict>
 </plist>

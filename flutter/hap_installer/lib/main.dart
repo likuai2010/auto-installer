@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:core/loginhuawei.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:hap_installer/hdc/loginhuawei.dart';
 
+final server = LoginHuawei();
 void main() {
-  var server = Server();
-  server.start();
-
+  server.startListening();
   runApp(const MyApp());
 }
 
@@ -64,19 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() async {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      selectFile();
+
       _counter++;
+      selectFile();
     });
   }
 
   selectFile() async {
-    await launchUrl(Uri.parse('https://flutter.cn'));
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    server.openUrl();
+    //FilePickerResult? result = await FilePicker.platform.pickFiles();
   }
 
   @override

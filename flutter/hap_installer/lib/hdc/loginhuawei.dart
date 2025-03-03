@@ -1,16 +1,37 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
+import 'package:hap_installer/hdc/EcoServices.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class Server {
-  Future<void> start() async {
-    var port = 8888;
+const String EcoUrl = "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=8888&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc";
+
+
+class LoginHuawei {
+  int port;
+  LoginHuawei(): port = 3333 + Random().nextInt(1000);
+
+  Future<void> openUrl() async{
+    await launchUrl(Uri.parse(EcoUrl.replaceAll("8888","$port")));
+  }
+  Future<void> startListening() async {
     var server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
     print('Listening on localhost:${port}');
     await for (var request in server) {
-      if (request.uri.path == '/hello') {
+      if (request.uri.path == '/callback') {
+        final content = await utf8.decoder.bind(request).join();
+        try
+        {
+          var authInfo =  await eco.getAuthInfoBytempToken(content);
+          print("authInfo: " + jsonEncode(authInfo.toJson()));
+        }catch(e){
+
+        }
+     
         request.response
           ..statusCode = HttpStatus.ok
-          ..write('Hello, Flutter HTTP Server!')
+          ..write('登录成功！请返回')
           ..close();
       } else {
         // 如果路径不匹配，返回 404
