@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 part 'generated/SignConfig.freezed.dart';
 part 'generated/SignConfig.g.dart';
 
-@freezed
+@unfreezed
 abstract class SignConfig with _$SignConfig {
-  const factory SignConfig({
+  factory SignConfig({
     @Default("") String packageName,
     @Default("") String udid,
     @Default("") String csrPath,

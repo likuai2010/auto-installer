@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SignConfig implements DiagnosticableTreeMixin {
 
- String get packageName; String get udid; String get csrPath; String get certPath; String get certId; String get profilePath; String get keystoreFile; String get keystorePwd; String get keyAlias;
+ String get packageName; set packageName(String value); String get udid; set udid(String value); String get csrPath; set csrPath(String value); String get certPath; set certPath(String value); String get certId; set certId(String value); String get profilePath; set profilePath(String value); String get keystoreFile; set keystoreFile(String value); String get keystorePwd; set keystorePwd(String value); String get keyAlias; set keyAlias(String value);
 /// Create a copy of SignConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -33,14 +33,7 @@ void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udid', udid))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
 }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignConfig&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.udid, udid) || other.udid == udid)&&(identical(other.csrPath, csrPath) || other.csrPath == csrPath)&&(identical(other.certPath, certPath) || other.certPath == certPath)&&(identical(other.certId, certId) || other.certId == certId)&&(identical(other.profilePath, profilePath) || other.profilePath == profilePath)&&(identical(other.keystoreFile, keystoreFile) || other.keystoreFile == keystoreFile)&&(identical(other.keystorePwd, keystorePwd) || other.keystorePwd == keystorePwd)&&(identical(other.keyAlias, keyAlias) || other.keyAlias == keyAlias));
-}
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,packageName,udid,csrPath,certPath,certId,profilePath,keystoreFile,keystorePwd,keyAlias);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
@@ -94,18 +87,18 @@ as String,
 @JsonSerializable()
 
 class _SignConfig with DiagnosticableTreeMixin implements SignConfig {
-  const _SignConfig({this.packageName = "", this.udid = "", this.csrPath = "", this.certPath = "", this.certId = "", this.profilePath = "", this.keystoreFile = "", this.keystorePwd = "", this.keyAlias = ""});
+   _SignConfig({this.packageName = "", this.udid = "", this.csrPath = "", this.certPath = "", this.certId = "", this.profilePath = "", this.keystoreFile = "", this.keystorePwd = "", this.keyAlias = ""});
   factory _SignConfig.fromJson(Map<String, dynamic> json) => _$SignConfigFromJson(json);
 
-@override@JsonKey() final  String packageName;
-@override@JsonKey() final  String udid;
-@override@JsonKey() final  String csrPath;
-@override@JsonKey() final  String certPath;
-@override@JsonKey() final  String certId;
-@override@JsonKey() final  String profilePath;
-@override@JsonKey() final  String keystoreFile;
-@override@JsonKey() final  String keystorePwd;
-@override@JsonKey() final  String keyAlias;
+@override@JsonKey()  String packageName;
+@override@JsonKey()  String udid;
+@override@JsonKey()  String csrPath;
+@override@JsonKey()  String certPath;
+@override@JsonKey()  String certId;
+@override@JsonKey()  String profilePath;
+@override@JsonKey()  String keystoreFile;
+@override@JsonKey()  String keystorePwd;
+@override@JsonKey()  String keyAlias;
 
 /// Create a copy of SignConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -124,14 +117,7 @@ void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udid', udid))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
 }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignConfig&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.udid, udid) || other.udid == udid)&&(identical(other.csrPath, csrPath) || other.csrPath == csrPath)&&(identical(other.certPath, certPath) || other.certPath == certPath)&&(identical(other.certId, certId) || other.certId == certId)&&(identical(other.profilePath, profilePath) || other.profilePath == profilePath)&&(identical(other.keystoreFile, keystoreFile) || other.keystoreFile == keystoreFile)&&(identical(other.keystorePwd, keystorePwd) || other.keystorePwd == keystorePwd)&&(identical(other.keyAlias, keyAlias) || other.keyAlias == keyAlias));
-}
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,packageName,udid,csrPath,certPath,certId,profilePath,keystoreFile,keystorePwd,keyAlias);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {

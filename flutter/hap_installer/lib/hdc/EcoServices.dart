@@ -231,7 +231,7 @@ class EcoService {
       if (!await File(config.certPath).exists()) {
         await downloadFile(urlsInfo.first.newUrl, config.certPath);
       }
-      // config.certId = debugCert.id
+      config.certId = debugCert.id;
     } else {
       print("testTag EcoService cert 存在");
     }
