@@ -1,9 +1,6 @@
-
 import 'package:json_annotation/json_annotation.dart';
 
-//part 'generated/AuthInfo.freezed.dart';
 part 'generated/AuthInfo.g.dart';
-
 
 @JsonSerializable()
 class AuthInfo {
@@ -11,10 +8,12 @@ class AuthInfo {
   String? userId;
   String? teamId;
   String? nickName;
-  AuthInfo({required this.accessToken, required this.userId}): teamId = userId;
+  AuthInfo({required this.accessToken, required this.userId}) : teamId = userId;
   changeTeamId(String teamId) {
     this.teamId = teamId;
   }
-  factory AuthInfo.fromJson(Map<String, dynamic> json) => _$AuthInfoFromJson(json);
+
+  factory AuthInfo.fromJson(Map<String, dynamic> json) =>
+      _$AuthInfoFromJson(json);
   Map<String, dynamic> toJson() => _$AuthInfoToJson(this);
 }
