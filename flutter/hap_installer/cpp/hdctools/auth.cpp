@@ -246,7 +246,7 @@ bool ReadKey(const char *file, list<void *> *listPrivateKey)
     return ret;
 }
 
-int GetUserKeyPath(string &path)
+bool GetUserKeyPath(string &path)
 {
     struct stat status;
     const char harmoneyPath[] = ".harmony";
@@ -254,6 +254,7 @@ int GetUserKeyPath(string &path)
     char buf[BUF_SIZE_DEFAULT];
     size_t len = BUF_SIZE_DEFAULT;
     // $home
+    // mobile no support home
     if (uv_os_tmpdir(buf, &len) < 0)
         return false;
     string dir = string(buf) + Base::GetPathSep() + string(harmoneyPath) + Base::GetPathSep();
@@ -765,7 +766,7 @@ static bool MakeRsaSign(EVP_PKEY_CTX *ctx, string &result, unsigned char *digest
         return false;
     }
 
-    WRITE_LOG(LOG_INFO, "sign success, and EVP_EncodeBlock is %s", result.c_str());
+    WRITE_LOG(LOG_INFO, "sign success");
     return true;
 }
 

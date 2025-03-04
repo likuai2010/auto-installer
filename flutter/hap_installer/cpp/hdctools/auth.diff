@@ -1,0 +1,5 @@
+257,258c257
+<     // mobile no support home
+<     if (uv_os_tmpdir(buf, &len) < 0)
+---
+>     if (uv_os_homedir(buf, &len) < 0)

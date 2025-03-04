@@ -26,6 +26,7 @@ HdcServer::HdcServer(bool serverOrDaemonIn)
     clsUARTClt = nullptr;
 #endif
     clsServerForClient = nullptr;
+    lastErrorNum = 0;
     uv_rwlock_init(&daemonAdmin);
     uv_rwlock_init(&forwardAdmin);
 }
@@ -43,13 +44,16 @@ void HdcServer::ClearInstanceResource()
     Base::TryCloseLoop(&loopMain, "HdcServer::~HdcServer");
     if (clsTCPClt) {
         delete clsTCPClt;
+        clsTCPClt = nullptr;
     }
     if (clsUSBClt) {
         delete clsUSBClt;
+        clsUSBClt = nullptr;
     }
 #ifdef HDC_SUPPORT_UART
     if (clsUARTClt) {
         delete clsUARTClt;
+        clsUARTClt = nullptr;
     }
 #endif
     if (clsServerForClient) {
@@ -80,42 +84,51 @@ void HdcServer::TryStopInstance()
 
 bool HdcServer::Initial(const char *listenString)
 {
+    bool ret = false;
     if (Base::ProgramMutex(SERVER_NAME.c_str(), false) != 0) {
         WRITE_LOG(LOG_FATAL, "Other instance already running, program mutex failed");
         return false;
     }
     Base::RemoveLogFile();
-    clsServerForClient = new HdcServerForClient(true, listenString, this, &loopMain);
-    int rc = (static_cast<HdcServerForClient *>(clsServerForClient))->Initial();
-    if (rc != RET_SUCCESS) {
-        WRITE_LOG(LOG_FATAL, "clsServerForClient Initial failed");
-        return false;
-    }
-    clsUSBClt->InitLogging(ctxUSB);
-    clsTCPClt = new HdcHostTCP(true, this);
-    clsUSBClt = new HdcHostUSB(true, this, ctxUSB);
-//     if (clsUSBClt->Initial() != RET_SUCCESS) {
-//         WRITE_LOG(LOG_FATAL, "clsUSBClt Initial failed");
-//         return false;
-//     }
-    // || !clsUSBClt
-    if (!clsServerForClient || !clsTCPClt ) {
-        WRITE_LOG(LOG_FATAL, "Class init failed");
-        return false;
-    }
-
-#ifdef HDC_SUPPORT_UART
-    clsUARTClt = new HdcHostUART(*this);
-    if (!clsUARTClt) {
-        WRITE_LOG(LOG_FATAL, "Class init failed");
-        return false;
-    }
-    if (clsUARTClt->Initial() != RET_SUCCESS) {
-        WRITE_LOG(LOG_FATAL, "clsUARTClt Class init failed.");
-        return false;
-    }
+    do {
+        clsServerForClient = new HdcServerForClient(true, listenString, this, &loopMain);
+        int rc = (static_cast<HdcServerForClient *>(clsServerForClient))->Initial();
+        if (rc != RET_SUCCESS) {
+            WRITE_LOG(LOG_FATAL, "clsServerForClient Initial failed");
+            break;
+        }
+        clsUSBClt->InitLogging(ctxUSB);
+        clsTCPClt = new HdcHostTCP(true, this);
+        clsUSBClt = new HdcHostUSB(true, this, ctxUSB);
+#ifdef HDC_SUPPORT_USB        
+        if (clsUSBClt->Initial() != RET_SUCCESS) {
+            WRITE_LOG(LOG_FATAL, "clsUSBClt Initial failed");
+            break;
+        }
+        if (!clsServerForClient || !clsTCPClt || !clsUSBClt) {
+#else
+        if (!clsServerForClient || !clsTCPClt) {
 #endif
-    return true;
+            WRITE_LOG(LOG_FATAL, "Class init failed");
+            break;
+        }
+#ifdef HDC_SUPPORT_UART
+        clsUARTClt = new HdcHostUART(*this);
+        if (!clsUARTClt) {
+            WRITE_LOG(LOG_FATAL, "Class init failed");
+            break;
+        }
+        if (clsUARTClt->Initial() != RET_SUCCESS) {
+            WRITE_LOG(LOG_FATAL, "clsUARTClt Class init failed.");
+            break;
+        }
+#endif
+        ret = true;
+    } while (0);
+    if (!ret) {
+        ClearInstanceResource();
+    }
+    return ret;
 }
 
 bool HdcServer::PullupServerWin32(const char *path, const char *listenString)
@@ -176,7 +189,9 @@ bool HdcServer::PullupServer(const char *listenString)
         WRITE_LOG(LOG_WARN, "uvexepath ret:%d error:%s", ret, buf);
         return false;
     }
+#ifdef FEATURE_HOST_LOG_COMPRESS
     Base::CreateLogDir();
+#endif
 
 #ifdef _WIN32
     if (!PullupServerWin32(path, listenString)) {
@@ -187,13 +202,8 @@ bool HdcServer::PullupServer(const char *listenString)
     if (pc < 0) {
         return false;
     } else if (!pc) {
-        int i;
-        const int maxFD = 1024;
-        for (i = 0; i < maxFD; ++i) {
-            // close file pipe
-            int fd = i;
-            Base::CloseFd(fd);
-        }
+        Base::CloseOpenFd();
+        Base::g_isBackgroundServer = true;
         execl(path, "hdc", "-m", "-s", listenString, nullptr);
         exit(0);
         return true;
@@ -348,7 +358,11 @@ string HdcServer::AdminDaemonMap(uint8_t opType, const string &connectKey, HDaem
         case OP_REMOVE: {
             uv_rwlock_wrlock(&daemonAdmin);
             if (mapDaemon.count(connectKey)) {
+                HDaemonInfo hDaemonInfo = mapDaemon[connectKey];
                 mapDaemon.erase(connectKey);
+                if (hDaemonInfo != nullptr) {
+                    delete hDaemonInfo;
+                }
             }
             uv_rwlock_wrunlock(&daemonAdmin);
             break;
@@ -404,6 +418,7 @@ void HdcServer::NotifyInstanceSessionFree(HSession hSession, bool freeOrClear)
         // update
         HdcDaemonInformation diNew = *hdiOld;
         diNew.connStatus = STATUS_OFFLINE;
+        diNew.hSession = nullptr;
         HDaemonInfo hdiNew = &diNew;
         AdminDaemonMap(OP_UPDATE, hSession->connectKey, hdiNew);
         CleanForwardMap(hSession->sessionId);
@@ -457,6 +472,7 @@ bool HdcServer::HandServerAuth(HSession hSession, SessionHandShake &handshake)
             GetDaemonAuthType(hSession, handshake);
             if (!HdcAuth::GetPublicKeyinfo(handshake.buf)) {
                 WRITE_LOG(LOG_FATAL, "load public key failed");
+                lastErrorNum = 0x000005; // E000005: load public key failed
                 return false;
             }
             handshake.authType = AUTH_PUBLICKEY;
@@ -486,10 +502,14 @@ bool HdcServer::HandServerAuth(HSession hSession, SessionHandShake &handshake)
     }
 }
 
-void HdcServer::UpdateHdiInfo(Hdc::HdcSessionBase::SessionHandShake &handshake, const string &connectKey)
+void HdcServer::UpdateHdiInfo(Hdc::HdcSessionBase::SessionHandShake &handshake, HSession &hSession)
 {
     HDaemonInfo hdiOld = nullptr;
-    AdminDaemonMap(OP_QUERY, connectKey, hdiOld);
+    if (hSession == nullptr) {
+        WRITE_LOG(LOG_FATAL, "Invalid paramter, hSession is null");
+        return;
+    }
+    AdminDaemonMap(OP_QUERY, hSession->connectKey, hdiOld);
     if (!hdiOld) {
         return;
     }
@@ -518,12 +538,17 @@ void HdcServer::UpdateHdiInfo(Hdc::HdcSessionBase::SessionHandShake &handshake, 
                 hdiNew->daemonAuthStatus = tlvmap[TAG_DAEOMN_AUTHSTATUS];
                 WRITE_LOG(LOG_INFO, "daemonauthstatus = %s", hdiNew->daemonAuthStatus.c_str());
             }
+            if (tlvmap.find(TAG_FEATURE_SHELL_OPT) != tlvmap.end()) {
+                hdiNew->daemonFeature[TAG_FEATURE_SHELL_OPT] = tlvmap[TAG_FEATURE_SHELL_OPT];
+                WRITE_LOG(LOG_INFO, "shellOpt = %s", hdiNew->daemonFeature[TAG_FEATURE_SHELL_OPT].c_str());
+            }
+            ParsePeerSupportFeatures(hSession, tlvmap);
         } else {
             WRITE_LOG(LOG_FATAL, "TlvToStringMap failed");
         }
     }
     hdiNew->version = handshake.version;
-    AdminDaemonMap(OP_UPDATE, connectKey, hdiNew);
+    AdminDaemonMap(OP_UPDATE, hSession->connectKey, hdiNew);
 }
 
 bool HdcServer::ServerSessionHandshake(HSession hSession, uint8_t *payload, int payloadSize)
@@ -553,7 +578,7 @@ bool HdcServer::ServerSessionHandshake(HSession hSession, uint8_t *payload, int 
         return true;
     }
     // handshake auth OK
-    UpdateHdiInfo(handshake, hSession->connectKey);
+    UpdateHdiInfo(handshake, hSession);
     hSession->handshakeOK = true;
     return true;
 }
@@ -566,8 +591,14 @@ bool HdcServer::FetchCommand(HSession hSession, const uint32_t channelId, const 
     HdcServerForClient *sfc = static_cast<HdcServerForClient *>(clsServerForClient);
     if (command == CMD_KERNEL_HANDSHAKE) {
         ret = ServerSessionHandshake(hSession, payload, payloadSize);
-        WRITE_LOG(LOG_DEBUG, "Session handshake %s connType:%d", ret ? "successful" : "failed",
-                  hSession->connType);
+        WRITE_LOG(LOG_INFO, "Session handshake %s connType:%d sid:%u", ret ? "successful" : "failed",
+                  hSession->connType, hSession->sessionId);
+        return ret;
+    }
+    if (command == CMD_HEARTBEAT_MSG) {
+        // heartbeat msg
+        std::string str = hSession->heartbeat.HandleRecvHeartbeatMsg(payload, payloadSize);
+        WRITE_LOG(LOG_INFO, "recv %s for session %u", str.c_str(), hSession->sessionId);
         return ret;
     }
     // When you first initialize, ChannelID may be 0
@@ -599,11 +630,12 @@ bool HdcServer::FetchCommand(HSession hSession, const uint32_t channelId, const 
             MessageLevel level = static_cast<MessageLevel>(*payload);
             string s(reinterpret_cast<char *>(payload + 1), payloadSize - 1);
             sfc->EchoClient(hChannel, level, s.c_str());
-            WRITE_LOG(LOG_INFO, "CMD_KERNEL_ECHO size:%d channelId:%u", payloadSize - 1, channelId);
+            WRITE_LOG(LOG_INFO, "CMD_KERNEL_ECHO size:%d cid:%u sid:%u", payloadSize - 1, channelId,
+                hSession->sessionId);
             break;
         }
         case CMD_KERNEL_CHANNEL_CLOSE: {
-            WRITE_LOG(LOG_DEBUG, "CMD_KERNEL_CHANNEL_CLOSE channelid:%u", channelId);
+            WRITE_LOG(LOG_INFO, "CMD_KERNEL_CHANNEL_CLOSE cid:%u sid:%u", channelId, hSession->sessionId);
             // Forcibly closing the tcp handle here may result in incomplete data reception on the client side
             ClearOwnTasks(hSession, channelId);
             // crossthread free
@@ -713,7 +745,11 @@ string HdcServer::AdminForwardMap(uint8_t opType, const string &taskString, HFor
         case OP_REMOVE: {
             uv_rwlock_wrlock(&forwardAdmin);
             if (mapForward.count(taskString)) {
+                HForwardInfo hForwardInfo = mapForward[taskString];
                 mapForward.erase(taskString);
+                if (hForwardInfo != nullptr) {
+                    delete hForwardInfo;
+                }
             }
             uv_rwlock_wrunlock(&forwardAdmin);
             break;
@@ -747,6 +783,7 @@ void HdcServer::UsbPreConnect(uv_timer_t *handle)
     HSession hSession = (HSession)handle->data;
     bool stopLoop = false;
     HdcServer *hdcServer = (HdcServer *)hSession->classInstance;
+    CALLSTAT_GUARD(hdcServer->loopMainStatus, handle->loop, "HdcServer::UsbPreConnect");
     while (true) {
         WRITE_LOG(LOG_DEBUG, "HdcServer::UsbPreConnect");
         HDaemonInfo pDi = nullptr;
@@ -874,7 +911,7 @@ int HdcServer::CreateConnect(const string &connectKey, bool isCheck)
         }
         uv_timer_init(&loopMain, waitTimeDoCmd);
         waitTimeDoCmd->data = hSession;
-        uv_timer_start(waitTimeDoCmd, UsbPreConnect, 500, 500);
+        uv_timer_start(waitTimeDoCmd, UsbPreConnect, 5000, 5000);
     }
     if (!hSession) {
         WRITE_LOG(LOG_FATAL, "CreateConnect hSession nullptr");
@@ -902,6 +939,7 @@ void HdcServer::AttachChannel(HSession hSession, const uint32_t channelId)
     }
     uv_tcp_init(&hSession->childLoop, &hChannel->hChildWorkTCP);
     hChannel->hChildWorkTCP.data = hChannel;
+    hChannel->loopStatus = &hSession->childLoopStatus;
     hChannel->targetSessionId = hSession->sessionId;
     if ((ret = uv_tcp_open((uv_tcp_t *)&hChannel->hChildWorkTCP, hChannel->fdChildWorkTCP)) < 0) {
         constexpr int bufSize = 1024;

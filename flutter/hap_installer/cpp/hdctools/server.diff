@@ -1,0 +1,10 @@
+103d102
+< #ifdef HDC_SUPPORT_USB        
+109,111d107
+< #else
+<         if (!clsServerForClient || !clsTCPClt) {
+< #endif
+914c910
+<         uv_timer_start(waitTimeDoCmd, UsbPreConnect, 5000, 5000);
+---
+>         uv_timer_start(waitTimeDoCmd, UsbPreConnect, UV_TIMEOUT, UV_REPEAT);

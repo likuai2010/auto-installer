@@ -1,0 +1,44 @@
+1d0
+< 
+551,590d549
+< 
+< 
+< 
+< #include "hdc.h"
+< 
+< int cmd(int argc, const char *argv[]){
+<     FILE* sout = freopen("/data/storage/el2/base/haps/entry/temp/hdc_out.txt", "w", stdout);
+<     FILE* serr = freopen("/data/storage/el2/base/haps/entry/temp/hdc_err.txt", "w", stderr);
+<     string options;
+<     string commands;
+<     Hdc::SplitOptionAndCommand(argc, argv, options, commands);
+<     uv_setup_args(argc, const_cast<char **>(argv));
+<     int optArgc = 0;
+<     char **optArgv = Base::SplitCommandToArgs(options.c_str(), &optArgc);
+<     bool cmdOptionResult;
+<     cmdOptionResult = GetCommandlineOptions(optArgc, const_cast<const char **>(optArgv));
+<     delete[](reinterpret_cast<char*>(optArgv));
+<     if (cmdOptionResult) {
+<         return 0;
+<     }
+<     Base::SetLogLevel(LOG_OFF);
+<     string g_serverListenString = "127.0.0.1:18710";
+<     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
+<     Hdc::Base::RemoveLogCache();
+<     if (sout != nullptr) { 
+<         WRITE_LOG(LOG_DEBUG, "open stdout");
+<         fclose(sout);
+<         fclose(serr);
+<     }else{
+<         WRITE_LOG(LOG_DEBUG, "open stdout fail");
+<     }
+<     return 0;
+< }
+< 
+< 
+< int server(){
+<     string dd = "::ffff:127.0.0.1:18710";
+<     RunServerMode(dd);
+<     return 0;
+< }
+\ No newline at end of file

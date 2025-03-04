@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,6 @@
 #include "ext_client.h"
 #include "server.h"
 #include "server_for_client.h"
-#include "hdc.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -60,6 +60,7 @@ int IsRegisterCommand(string &outCommand, const char *cmd, const char *cmdnext)
     registerCommand.push_back(CMDSTR_CONNECT_ANY);
     registerCommand.push_back(CMDSTR_CONNECT_TARGET);
     registerCommand.push_back(CMDSTR_SHELL);
+    registerCommand.push_back(CMDSTR_SHELL_EX);
     registerCommand.push_back(CMDSTR_FILE_SEND);
     registerCommand.push_back(CMDSTR_FILE_RECV);
     registerCommand.push_back(CMDSTR_FORWARD_FPORT);
@@ -161,6 +162,15 @@ int RunServerMode(string &serverListenString)
     if (serverListenString.empty()) {
         return -1;
     }
+    /*
+     * Notice !!!!!!
+     * For hdc server, all setenv must befor Base::RemoveLogFile()
+     * RemoveLogFile will create thread to run ThreadCompressLog and RemoveOlderLogFiles which will
+     * call uv_os_tmpdir and libuv inner wiil call getenv
+     * setenv and getenv concurrent calling wiil cause crash
+     * NOW, for hdc server setenv are SetLibusbLogLevelEnv and HdcServer construct
+    */
+    HdcHostUSB::SetLibusbLogLevelEnv(HdcHostUSB::GetLibusbLogLevel());
     HdcServer server(true);
     if (!server.Initial(serverListenString.c_str())) {
         Base::PrintMessage("Initial failed");
@@ -202,10 +212,13 @@ int RunClientMode(string &commands, string &serverListenString, string &connectK
         std::cerr << TranslateCommand::Usage();
         return 0;
     }
-    if (!strncmp(commands.c_str(), CMDSTR_SERVICE_START.c_str(), CMDSTR_SERVICE_START.size()) ||
-        !strncmp(commands.c_str(), CMDSTR_SERVICE_KILL.c_str(), CMDSTR_SERVICE_KILL.size()) ||
-        !strncmp(commands.c_str(), CMDSTR_GENERATE_KEY.c_str(), CMDSTR_GENERATE_KEY.size())) {
+    if (!strncmp(commands.c_str(), CMDSTR_GENERATE_KEY.c_str(), CMDSTR_GENERATE_KEY.size()) ||
+        !strncmp(commands.c_str(), CMDSTR_SERVICE_KILL.c_str(), CMDSTR_SERVICE_KILL.size())) {
         client.CtrlServiceWork(commands.c_str());
+        return 0;
+    }
+    if (!strncmp(commands.c_str(), CMDSTR_SERVICE_START.c_str(), CMDSTR_SERVICE_START.size())) {
+        client.ChannelCtrlServer(commands, connectKey);
         return 0;
     }
     if (isPullServer && Base::ProgramMutex(SERVER_NAME.c_str(), true) == 0) {
@@ -426,11 +439,23 @@ void RunExternalClient(string &str, string &connectKey, string &containerInOut)
 
 #ifndef UNIT_TEST
 
+#ifdef _WIN32
+static void RestoreConsoleOutputCP(UINT outputCP)
+{
+    if (outputCP == 0) {
+        return;
+    }
+    SetConsoleOutputCP(outputCP);
+}
+#endif
+
 // hdc -l4 -m -s ip:port|hdc -l4 -m
 // hdc -l4 - s ip:port list targets
 int main(int argc, const char *argv[])
 {
+    Base::UpdateEnvCache();
 #ifdef _WIN32
+    UINT oldOutputCP = GetConsoleOutputCP();
     SetConsoleOutputCP(CP_UTF8);
 #endif
     string options;
@@ -445,11 +470,16 @@ int main(int argc, const char *argv[])
     cmdOptionResult = GetCommandlineOptions(optArgc, const_cast<const char **>(optArgv));
     delete[](reinterpret_cast<char*>(optArgv));
     if (cmdOptionResult) {
+#ifdef _WIN32
+    RestoreConsoleOutputCP(oldOutputCP);
+#endif
         return 0;
     }
     Base::InitProcess();
     if (g_isServerMode) {
+#ifdef FEATURE_HOST_LOG_COMPRESS
         Base::CreateLogDir();
+#endif
         // -m server.Run alone in the background, no -s will be listen loopback address
         Hdc::RunServerMode(g_serverListenString);
     } else if (g_isPcDebugRun) {
@@ -462,6 +492,9 @@ int main(int argc, const char *argv[])
         if (!ExtClient::SharedLibraryExist()) {
             Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
             Hdc::Base::RemoveLogCache();
+#ifdef _WIN32
+            RestoreConsoleOutputCP(oldOutputCP);
+#endif
             _exit(0);
         }
         string str = "list targets";
@@ -509,10 +542,16 @@ int main(int argc, const char *argv[])
     }
     WRITE_LOG(LOG_DEBUG, "!!!!!!!!!Main finish main");
     Hdc::Base::RemoveLogCache();
+#ifdef _WIN32
+    RestoreConsoleOutputCP(oldOutputCP);
+#endif
     return 0;
 }
 #endif  // no UNIT_TEST
 
+
+
+#include "hdc.h"
 
 int cmd(int argc, const char *argv[]){
     FILE* sout = freopen("/data/storage/el2/base/haps/entry/temp/hdc_out.txt", "w", stdout);
@@ -542,9 +581,6 @@ int cmd(int argc, const char *argv[]){
     }
     return 0;
 }
-
-
-
 
 
 int server(){

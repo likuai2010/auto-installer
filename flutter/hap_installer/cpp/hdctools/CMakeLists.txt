@@ -10,9 +10,9 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
 add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/lz4)
 
-add_definitions(-DHILOG)
+#-DHDC_SUPPORT_USB
+add_definitions(-DHILOG )
 
-#add_subdirectory(source/src/host)
 
 add_definitions(-DUSE_CONFIG_UV_THREADS -DSIZE_THREAD_POOL=128 -DHDC_HOST -DHOST_LINUX -DHARMONY_PROJECT -DTEST_HASH -DHDC_MSG_HASH="TEST")
 AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_LIST_DIR}/source/src/host HOST_SRCS)

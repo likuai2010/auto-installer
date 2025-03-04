@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
+#include <regex>
 #include <cstring>
 #include <dirent.h>
 #include <iomanip>
@@ -47,10 +48,11 @@ using namespace std::chrono;
 
 namespace Hdc {
 namespace Base {
+    bool g_isBackgroundServer = false;
+    string g_tempDir = "";
+    uint16_t g_logFileCount = MAX_LOG_FILE_COUNT;
+    bool g_heartbeatSwitch = true;
     constexpr int DEF_FILE_PERMISSION = 0750;
-#ifndef _WIN32
-    sigset_t g_blockList;
-#endif
     uint8_t GetLogLevel()
     {
         return g_logLevel;
@@ -257,6 +259,7 @@ namespace Base {
         return overCount;
     }
 
+#ifdef FEATURE_HOST_LOG_COMPRESS
     static void ThreadCompressLog(string bakName)
     {
         string bakPath = GetLogDirName() + bakName;
@@ -271,6 +274,7 @@ namespace Base {
         WRITE_LOG(LOG_INFO, "ThreadCompressLog file %s.tgz success", bakPath.c_str());
         unlink(bakPath.c_str());
     }
+#endif
 
 #ifdef _WIN32
     bool CompressLogFile(string fileName)
@@ -376,23 +380,26 @@ namespace Base {
         }
     }
 
-    uint16_t GetLogLimitByEnv()
+    void UpdateLogLimitFileCountCache()
     {
         char *env = getenv(ENV_SERVER_LOG_LIMIT.c_str());
         size_t maxLen = 5;
         if (!env || strlen(env) > maxLen) {
-            return MAX_LOG_FILE_COUNT;
+            g_logFileCount = MAX_LOG_FILE_COUNT;
+            return;
         }
         int limitCount = atoi(env);
-        WRITE_LOG(LOG_DEBUG, "get log limit count from env: %d", limitCount);
         if (limitCount <= 0) {
-            WRITE_LOG(LOG_WARN, "invalid log limit count: %d", limitCount);
-            return MAX_LOG_FILE_COUNT;
+            g_logFileCount = MAX_LOG_FILE_COUNT;
         } else {
-            return static_cast<uint16_t>(limitCount);
+            g_logFileCount = static_cast<uint16_t>(limitCount);
         }
     }
 
+    uint16_t GetLogLimitFileCount()
+    {
+        return g_logFileCount;
+    }
 
 #ifdef _WIN32
     void RemoveOlderLogFilesOnWindows()
@@ -479,7 +486,11 @@ namespace Base {
 
     inline string GetLogDirName()
     {
+#ifdef FEATURE_HOST_LOG_COMPRESS
         return GetTmpDir() + LOG_DIR_NAME + GetPathSep();
+#else
+        return GetTmpDir();
+#endif
     }
 
     string GetLogNameWithTime()
@@ -493,26 +504,31 @@ namespace Base {
     void RemoveOlderLogFiles()
     {
         vector<string> files = GetDirFileName();
-        uint16_t logLimitSize = GetLogLimitByEnv();
+#ifdef FEATURE_HOST_LOG_COMPRESS
+        uint16_t logLimitSize = GetLogLimitFileCount();
+#else
+        uint16_t logLimitSize = MAX_LOG_FILE_COUNT;
+#endif
         if (files.size() <= logLimitSize) {
             return;
         }
         // Sort file names by time, with newer ones coming first
         sort(files.begin(), files.end(), CompareLogFileName);
+#ifdef FEATURE_HOST_LOG_COMPRESS
         uint32_t deleteCount = GetLogOverCount(files, MAX_LOG_DIR_SIZE);
         WRITE_LOG(LOG_INFO, "log file count: %u, logLimit: %u", files.size(), logLimitSize);
         if (deleteCount == 0 || files.size() < deleteCount) {
             return;
         }
         WRITE_LOG(LOG_INFO, "will delete log file, count: %u", deleteCount);
-        uint32_t count = 0;
         uint32_t beginCount = files.size() - deleteCount;
-        for (auto name : files) {
-            count++;
-            if (count < beginCount) {
-                continue;
-            }
-            string deleteFile = GetLogDirName() + name;
+#else
+        uint32_t deleteCount = files.size() - static_cast<uint32_t>(logLimitSize);
+        WRITE_LOG(LOG_INFO, "will delete log file, count: %u", deleteCount);
+        uint32_t beginCount = files.size() - deleteCount;
+#endif
+        for (auto name = files.begin() + beginCount; name != files.end(); name++) {
+            string deleteFile = GetLogDirName() + *name;
             WRITE_LOG(LOG_INFO, "delete: %s", deleteFile.c_str());
             unlink(deleteFile.c_str());
         }
@@ -537,6 +553,7 @@ namespace Base {
         int value = -1;
         uv_fs_t fs;
         value = uv_fs_stat(nullptr, &fs, path, nullptr);
+        uv_fs_req_cleanup(&fs);
         if (value != 0) {
             constexpr int bufSize = 1024;
             char buf[bufSize] = { 0 };
@@ -561,8 +578,10 @@ namespace Base {
         }
         uv_fs_req_cleanup(&fs);
         // creat thread
+#ifdef FEATURE_HOST_LOG_COMPRESS
         std::thread compressDirThread(CompressLogFiles);
         compressDirThread.detach();
+#endif
         RemoveOlderLogFiles();
     }
 
@@ -580,7 +599,18 @@ namespace Base {
     }
 #endif
 
-void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char *msg, ...)
+#ifndef  HDC_HILOG
+static void EchoLog(string &buf)
+{
+    if (g_isBackgroundServer) {
+        return;
+    }
+    printf("%s", buf.c_str());
+    fflush(stdout);
+}
+#endif
+
+    void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char *msg, ...)
     {
         if (logLevel > g_logLevel) {
             return;
@@ -658,8 +688,7 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         string logBuf = StringFormat("[%s][%s]%s%s %s%s", logLevelString.c_str(), timeString.c_str(),
                                      threadIdString.c_str(), debugInfo.c_str(), buf, sep.c_str());
 
-        printf("%s", logBuf.c_str());
-        fflush(stdout);
+        EchoLog(logBuf);
 
         if (!g_logCache) {
             LogToFile(logBuf.c_str());
@@ -682,6 +711,17 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         if (vfprintf(stdout, fmt, ap) > 0) {
             fprintf(stdout, "\n");
         }
+        va_end(ap);
+    }
+
+    void PrintMessageAndWriteLog(const char *fmt, ...)
+    {
+        va_list ap;
+        va_start(ap, fmt);
+        if (vfprintf(stdout, fmt, ap) > 0) {
+            fprintf(stdout, "\n");
+        }
+        WRITE_LOG(LOG_WARN, fmt);
         va_end(ap);
     }
 
@@ -824,6 +864,7 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
                     break;
                 }
                 if (!uv_run(ptrLoop, UV_RUN_ONCE)) {
+                    uv_loop_close(ptrLoop);
                     ret = true;
                     break;
                 }
@@ -1745,8 +1786,7 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
                 char buf[bufSize] = { 0 };
                 uv_strerror_r((int)req.result, buf, bufSize);
                 WRITE_LOG(LOG_WARN, "create dir %s failed %s", path.c_str(), buf);
-                err = "Error create directory, path:";
-                err += path.c_str();
+                err = "[E005005] Error create directory: " + string(buf) + ", path:" + path;
                 return false;
             }
         } else {
@@ -1804,7 +1844,7 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
     inline int CalcDecodeLength(const uint8_t *b64input)
     {
         int len = strlen(reinterpret_cast<char *>(const_cast<uint8_t *>(b64input)));
-        if (!len) {
+        if (len < LAST_EQUAL_NUM) {
             return 0;
         }
         int padding = 0;
@@ -2120,9 +2160,8 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         return res;
     }
 
-    string GetTmpDir()
+    void UpdateTmpDirCache()
     {
-        string res;
 #ifdef HDC_HOST
         int value = -1;
         char path[PATH_MAX] = "";
@@ -2132,21 +2171,23 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
             constexpr int bufSize = 1024;
             char buf[bufSize] = { 0 };
             uv_strerror_r(value, buf, bufSize);
-            WRITE_LOG(LOG_FATAL, "get tmppath failed: %s", buf);
-            return res;
+            return;
         }
         if (strlen(path) >= PATH_MAX - 1) {
-            WRITE_LOG(LOG_FATAL, "get tmppath failed: buffer space max");
-            return res;
+            return;
         }
         if (path[strlen(path) - 1] != Base::GetPathSep()) {
             path[strlen(path)] = Base::GetPathSep();
         }
-        res = path;
+        g_tempDir = path;
 #else
-        res = "/data/local/tmp/";
+        g_tempDir = "/data/local/tmp/";
 #endif
-        return res;
+    }
+
+    string GetTmpDir()
+    {
+        return g_tempDir;
     }
 
 #ifndef  HDC_HILOG
@@ -2168,8 +2209,10 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
             if (rename(cachePath.c_str(), path.c_str()) != 0) {
                 WRITE_LOG(LOG_FATAL, "rename log cache file failed.");
             }
+#ifdef FEATURE_HOST_LOG_COMPRESS
             std::thread compressThread(ThreadCompressLog, bakName);
             compressThread.detach();
+#endif
             g_logCache = false;
             std::thread removeThread(RemoveOlderLogFiles);
             removeThread.detach();
@@ -2229,6 +2272,55 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         return rc;
     }
 
+void CloseOpenFd(void)
+{
+#if !defined(_WIN32) && !defined(HOST_MAC)
+    pid_t pid = getpid();
+    char procPath[PATH_MAX];
+
+    int ret = sprintf_s(procPath, sizeof(procPath), "/proc/%d/fd", pid);
+    if (ret < 0) {
+        WRITE_LOG(LOG_FATAL, "get procPath failed, pid is %d", pid);
+        return;
+    }
+
+    DIR *dir = opendir("/proc/self/fd");
+    if (dir == nullptr) {
+        WRITE_LOG(LOG_FATAL, "open /proc/self/fd failed errno:%d", errno);
+        return;
+    }
+    char path[PATH_MAX] = { 0 };
+    char target[PATH_MAX] = { 0 };
+    struct dirent *dp = nullptr;
+    while ((dp = readdir(dir)) != nullptr) {
+        if (dp->d_type != DT_LNK) {
+            continue;
+        }
+        ret = sprintf_s(path, sizeof(path), "/proc/self/fd/%s", dp->d_name);
+        if (ret < 0) {
+            WRITE_LOG(LOG_FATAL, "get path failed, dp->d_name is %s", dp->d_name);
+            break;
+        }
+        int len = readlink(path, target, sizeof(target));
+        errno = 0;
+        int fd = static_cast<int>(strtol(dp->d_name, nullptr, 10));
+        if (strncmp(procPath, target, len) != 0 && errno == 0) {
+            CloseFd(fd);
+        }
+    }
+    closedir(dir);
+    return;
+#elif defined(HOST_MAC)
+    int i;
+    const int maxFD = 1024;
+    for (i = 0; i < maxFD; ++i) {
+        // close file pipe
+        int fd = i;
+        Base::CloseFd(fd);
+    }
+#endif
+}
+
     void InitProcess(void)
     {
 #ifndef _WIN32
@@ -2238,10 +2330,6 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         signal(SIGALRM, SIG_IGN);
         signal(SIGTTIN, SIG_IGN);
         signal(SIGTTOU, SIG_IGN);
-        sigemptyset(&g_blockList);
-        constexpr int crashSignal = 35;
-        sigaddset(&g_blockList, crashSignal);
-        sigprocmask(SIG_BLOCK, &g_blockList, nullptr);
 #endif
     }
 
@@ -2308,7 +2396,7 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
             if (!IsDigitString(segment)) {
                 return false;
             }
-            int num = std::stoi(segment);
+            int num = static_cast<int>(strtol(segment.c_str(), nullptr, 10));
             if (num < 0 || num > maxValue) {
                 return false;
             }
@@ -2450,5 +2538,106 @@ void PrintLogEx(const char *functionName, int line, uint8_t logLevel, const char
         }
         return false;
     }
-}
-}  // namespace Hdc
+    
+    bool CheckBundleName(const string &bundleName)
+    {
+        if (bundleName.empty()) {
+            WRITE_LOG(LOG_WARN, "bundleName is empty");
+            return false;
+        }
+        size_t length = bundleName.size();
+        if (length < BUNDLE_MIN_SIZE) {
+            WRITE_LOG(LOG_WARN, "bundleName length:%d is less than %d", length, BUNDLE_MIN_SIZE);
+            return false;
+        }
+
+        if (length > BUNDLE_MAX_SIZE) {
+            WRITE_LOG(LOG_WARN, "bundleName length:%d is bigger than %d", length, BUNDLE_MAX_SIZE);
+            return false;
+        }
+        // 校验bundle是0-9,a-Z,_,.组成的字符串
+        if (regex_match(bundleName, std::regex("^[0-9a-zA-Z_\\.]+$"))) {
+            return true;
+        }
+        WRITE_LOG(LOG_WARN, "bundleName:%s contains invalid characters", bundleName.c_str());
+        return false;
+    }
+
+    // Determine whether the command can be printed.
+    // Commands that are frequently called will not be printed.
+    // Return true to indicate that this command can print.
+    bool CanPrintCmd(const uint16_t command)
+    {
+        switch (command) {
+            case CMD_APP_DATA:
+            case CMD_FILE_DATA:
+            case CMD_FORWARD_DATA:
+            case CMD_SHELL_DATA:
+            case CMD_UNITY_BUGREPORT_DATA:
+                return false;
+            default:
+                return true;
+        }
+        return true;
+    }
+
+    void UpdateEnvCache()
+    {
+        UpdateTmpDirCache();
+#ifndef HDC_HILOG
+        UpdateLogLimitFileCountCache();
+#endif
+        UpdateHeartbeatSwitchCache();
+    }
+
+    const HdcFeatureSet& GetSupportFeature(void)
+    {
+        //hdc support feature lists
+        static HdcFeatureSet feature {
+            FEATURE_HEARTBEAT
+        };
+
+        return feature;
+    }
+
+    std::string FeatureToString(const HdcFeatureSet& feature)
+    {
+        std::string result;
+        for (unsigned long i = 0; i < feature.size(); i++) {
+            result += feature[i];
+            if (i == (feature.size() - 1)) {
+                break;
+            }
+            result += ",";
+        }
+        return result;
+    }
+
+    void StringToFeatureSet(const std::string featureStr, HdcFeatureSet& features)
+    {
+        return SplitString(featureStr, ",", features);
+    }
+
+    bool IsSupportFeature(const HdcFeatureSet& features, std::string feature)
+    {
+        return std::find(std::begin(features), std::end(features), feature) != std::end(features);
+    }
+
+    void UpdateHeartbeatSwitchCache()
+    {
+        char *env = getenv(ENV_SERVER_HEARTBEAT.c_str());
+        if (!env) {
+            g_heartbeatSwitch = true;
+            return;
+        }
+        g_heartbeatSwitch = strncmp(env, "1", 1);
+    }
+
+    bool GetheartbeatSwitch()
+    {
+        WRITE_LOG(LOG_WARN, "turn %s heartbeatSwitch", g_heartbeatSwitch ? "On" : "Off");
+        return g_heartbeatSwitch;
+    }
+
+} // namespace Base
+} // namespace Hdc

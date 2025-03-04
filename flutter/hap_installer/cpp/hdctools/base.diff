@@ -1,0 +1,31 @@
+35,37d34
+< #ifdef HILOG
+< #include "hilog/log.h"
+< #endif
+627,650d623
+< #ifdef HILOG
+<       string tmpPath = functionName;
+<         string filePath = GetFileNameAny(tmpPath);
+<         switch (static_cast<int>(logLevel)) {
+<             case static_cast<int>(LOG_DEBUG):
+<                 // Info level log can be printed default in hilog, debug can't
+<                 OH_LOG_Print(LOG_APP, static_cast<LogLevel>(3), LOG_DOMAIN, "c-hdc", "[%{public}s:%{public}d] %{public}s",
+<                           filePath.c_str(), line, buf);
+<                 break;
+<             case static_cast<int>(LOG_INFO):
+<                 OH_LOG_Print(LOG_APP,  static_cast<LogLevel>(4), LOG_DOMAIN, "c-hdc", "[%{public}s:%{public}d] %{public}s",
+<                          filePath.c_str(), line, buf);
+<                 break;
+<             case static_cast<int>(LOG_WARN):
+<                 OH_LOG_Print(LOG_APP,  static_cast<LogLevel>(5), LOG_DOMAIN, "c-hdc","[%{public}s:%{public}d] %{public}s",
+<                          filePath.c_str(), line, buf);
+<                 break;
+<             case static_cast<int>(LOG_FATAL):
+<                 OH_LOG_Print(LOG_APP,  static_cast<LogLevel>(7), LOG_DOMAIN, "c-hdc", "[%{public}s:%{public}d] %{public}s",
+<                           filePath.c_str(), line, buf);
+<                 break;
+<             default:
+<                 break;
+<         }
+652d624
+< #endif
