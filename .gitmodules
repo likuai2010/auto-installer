@@ -1,9 +1,6 @@
 [submodule "flutter/hap_installer/cpp/third_party/bounds_checking_function"]
 	path = flutter/hap_installer/cpp/third_party/bounds_checking_function
 	url = https://gitee.com/openharmony/third_party_bounds_checking_function.git
-[submodule "flutter/hap_installer/cpp/third_party/libusb"]
-	path = flutter/hap_installer/cpp/third_party/libusb
-	url = https://gitee.com/openharmony/third_party_libusb.git
 [submodule "flutter/hap_installer/cpp/third_party/zlib/source"]
 	path = flutter/hap_installer/cpp/third_party/zlib/source
 	url = https://gitee.com/openharmony/third_party_zlib.git

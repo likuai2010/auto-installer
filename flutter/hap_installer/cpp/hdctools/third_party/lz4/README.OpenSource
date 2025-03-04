@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "lz4",
+    "License": "BSD 2-Clause License",
+    "License File": "LICENSE",
+    "Version Number": "1.9.4",
+    "Owner": "chennaidong@huawei.com",
+    "Upstream URL": "https://github.com/lz4/lz4",
+    "Description": "This package provides a streaming interface to LZ4 data streams as well as low level compress and uncompress functions for LZ4 data blocks. The implementation is based on the reference C one."
+  }
+]

@@ -1,0 +1,37 @@
+{
+    "name": "@ohos/lz4",
+    "description": "This package provides a streaming interface to LZ4 data streams as well as low level compress and uncompress functions for LZ4 data blocks. The implementation is based on the reference C one.",
+    "version": "3.1",
+    "license": "BSD 2-Clause",
+    "publishAs": "code-segment",
+    "segment": {
+        "destPath": "third_party/lz4"
+    },
+    "dirs": {},
+    "scripts": {},
+    "component": {
+        "name": "lz4",
+        "subsystem": "thirdparty",
+        "syscap": [],
+        "features": [],
+        "adapted_system_type": [ "standard" ],
+        "rom": "",
+        "ram": "",
+        "deps": {
+            "components": [],
+            "third_party": []
+        },
+        "build": {
+            "sub_component": [],
+            "inner_kits": [
+                {
+                    "name": "//third_party/lz4:liblz4_static"
+                },
+                {
+                    "name": "//third_party/lz4:liblz4_shared"
+                }
+            ],
+            "test": []
+        }
+    }
+}
