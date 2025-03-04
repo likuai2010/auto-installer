@@ -13,3 +13,6 @@
 [submodule "flutter/hap_installer/cpp/hdctools/third_party/libusb/source"]
 	path = flutter/hap_installer/cpp/hdctools/third_party/libusb/source
 	url = https://gitee.com/openharmony/third_party_libusb.git
+[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv"]
+	path = flutter/hap_installer/cpp/hdctools/third_party/libuv
+	url = https://gitee.com/openharmony/third_party_libuv.git
