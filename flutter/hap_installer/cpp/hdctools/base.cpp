@@ -453,7 +453,7 @@ namespace Base {
         HANDLE hFind = FindFirstFile((GetLogDirName() + "/*").c_str(), &findData);
         if (hFind == INVALID_HANDLE_VALUE) {
             WRITE_LOG(LOG_WARN, "Failed to open log dir");
-            return;
+            return files;
         }
 
         do {

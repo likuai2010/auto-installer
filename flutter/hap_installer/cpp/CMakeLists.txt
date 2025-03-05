@@ -29,14 +29,14 @@ set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENS
 endif()
 
 
+add_subdirectory(third_party/bounds_checking_function)
+
 include_directories(include
 ${OPENSSL_INCLUDE_DIR}
 hdctools/
 third_party/bounds_checking_function/include
 )
 
-add_subdirectory(third_party/bounds_checking_function)
 
 
 add_subdirectory(hdctools)
-
