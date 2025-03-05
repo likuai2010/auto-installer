@@ -13,13 +13,15 @@ set(outputs
 set(include_dirs
 ${target_gen_dir}/lib
 )
-
-set(cflags
-"-Wno-incompatible-pointer-types"
-#"-Werror"
-#"-Wimplicit-function-declaration"
-)
-
+set(cflags)
+if(MSVC)
+    # MSVC 不支持 /Wno-* 选项，所以可以选择使用其他 MSVC 选项
+    add_compile_options(/W4)
+    list(APPEND cflags /W4)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    # 对于 GCC 和 Clang，使用 /Wno-incompatible-pointer-types
+    list(APPEND cflags "-Wno-incompatible-pointer-types")
+endif()
 
 include_directories(${include_dirs})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
