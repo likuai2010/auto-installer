@@ -25,7 +25,9 @@ endif()
 
 include_directories(${include_dirs})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
+if(OHOS)
 set(LD_FLAGS "-fPIC -s -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all")
+endif()
 
 add_library(lz4 STATIC ${outputs})
 target_link_libraries(lz4 PRIVATE ${LD_FLAGS})
