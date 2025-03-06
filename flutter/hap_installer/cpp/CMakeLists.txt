@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(autoInstaller)
 
+set(DANDROID_PLATFORM=android-24)
+
 set(NATIVERENDER_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIBS_DIR ${NATIVERENDER_ROOT_PATH}/third_party)
@@ -13,7 +15,6 @@ if(OHOS)
 add_library(libssl STATIC IMPORTED)
 set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/ohos/${CMAKE_OHOS_ARCH_ABI}/libssl.a)
 set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-
 # 导入静态库
 add_library(libcrypto STATIC IMPORTED)
 set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/ohos/${CMAKE_OHOS_ARCH_ABI}/libcrypto.a)
@@ -25,6 +26,11 @@ set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/da
 set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 add_library(libcrypto STATIC IMPORTED)
 set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64-arm64/libcrypto.a)
+set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+endif()
+if(ANDROID)
+add_library(libcrypto STATIC IMPORTED)
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android-arm64/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 endif()
 

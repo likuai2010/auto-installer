@@ -16,11 +16,21 @@
 # ./Configure darwin64-arm64-cc --prefix=/opt/openssl --openssldir=/opt/openssl no-shared
 # make -j$(nproc)
 
-export CROSS_COMPILE=aarch64-linux-gnu-
+# export CROSS_COMPILE=aarch64-linux-gnu-
+# pushd source
+# ./Configure linux-aarch64 --cross-compile-prefix=${CROSS_COMPILE} --prefix=/path/to/output no-shared \
+#     no-dso \
+#     no-async 
+# make -j
+# popd
+export ANDROID_NDK_ROOT=G:/android/sdk/ndk/27.0.12077973
+export TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/windows-x86_64
+export SYSROOT=$TOOLCHAIN/sysroot
+export CC=$TOOLCHAIN/bin/aarch64-linux-android27-clang
+export PATH=$TOOLCHAIN/bin:$PATH
 pushd source
-./Configure linux-aarch64 --cross-compile-prefix=${CROSS_COMPILE} --prefix=/path/to/output no-shared \
+./Configure android-arm64  --prefix=/openssl   no-shared \
     no-dso \
     no-async 
 make -j
 popd
-
