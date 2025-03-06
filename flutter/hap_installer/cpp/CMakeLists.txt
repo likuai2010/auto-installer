@@ -40,3 +40,5 @@ third_party/bounds_checking_function/include
 
 
 add_subdirectory(hdctools)
+
+add_executable(demo main.cpp)
