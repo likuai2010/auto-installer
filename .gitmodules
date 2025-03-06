@@ -13,9 +13,7 @@
 [submodule "flutter/hap_installer/cpp/hdctools/third_party/libusb/source"]
 	path = flutter/hap_installer/cpp/hdctools/third_party/libusb/source
 	url = https://gitee.com/openharmony/third_party_libusb.git
-[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv/source"]
-	path = flutter/hap_installer/cpp/hdctools/third_party/libuv/source
-	url = https://gitee.com/openharmony/third_party_libuv.git
+
 [submodule "flutter/hap_installer/cpp/third_party/openssl/source"]
 	path = flutter/hap_installer/cpp/third_party/openssl/source
 	url = https://gitee.com/openharmony/third_party_openssl.git
@@ -28,3 +26,6 @@
 [submodule "flutter/hap_installer/cpp/hapsigner/third_party/json/source"]
 	path = flutter/hap_installer/cpp/hapsigner/third_party/json/source
 	url = https://gitee.com/openharmony/third_party_json.git
+[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv/source"]
+	path = flutter/hap_installer/cpp/hdctools/third_party/libuv/source
+	url = https://gitee.com/openharmony/third_party_libuv.git
