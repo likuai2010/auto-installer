@@ -19,8 +19,8 @@
 [submodule "flutter/hap_installer/cpp/third_party/openssl/source"]
 	path = flutter/hap_installer/cpp/third_party/openssl/source
 	url = https://gitee.com/openharmony/third_party_openssl.git
-[submodule "flutter/hap_installer/cpp/hapsigner/third_party/zlib/source"]
-	path = flutter/hap_installer/cpp/hapsigner/third_party/zlib/source
+[submodule "flutter/hap_installer/cpp/hapsigner/third_party/zlib2/source"]
+	path = flutter/hap_installer/cpp/hapsigner/third_party/zlib2/source
 	url = https://gitee.com/openharmony/third_party_zlib.git
 [submodule "flutter/hap_installer/cpp/hapsigner/third_party/bzip/source"]
 	path = flutter/hap_installer/cpp/hapsigner/third_party/bzip/source
