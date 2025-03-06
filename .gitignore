@@ -23,3 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 tools/
+*.obj
+*.cmake
+*.bin
+flutter/hap_installer/cpp/CMakeFiles/
+flutter/hap_installer/cpp/build.ninja
+flutter/hap_installer/cpp/.ninja_log
+*.ninja_deps

@@ -1,5 +1,5 @@
-[submodule "flutter/hap_installer/cpp/third_party/bounds_checking_function"]
-	path = flutter/hap_installer/cpp/third_party/bounds_checking_function
+[submodule "flutter/hap_installer/cpp/third_party/bounds_checking_function/source"]
+	path = flutter/hap_installer/cpp/third_party/bounds_checking_function/source
 	url = https://gitee.com/openharmony/third_party_bounds_checking_function.git
 [submodule "flutter/hap_installer/cpp/third_party/zlib/source"]
 	path = flutter/hap_installer/cpp/third_party/zlib/source
@@ -13,8 +13,8 @@
 [submodule "flutter/hap_installer/cpp/hdctools/third_party/libusb/source"]
 	path = flutter/hap_installer/cpp/hdctools/third_party/libusb/source
 	url = https://gitee.com/openharmony/third_party_libusb.git
-[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv"]
-	path = flutter/hap_installer/cpp/hdctools/third_party/libuv
+[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv/source"]
+	path = flutter/hap_installer/cpp/hdctools/third_party/libuv/source
 	url = https://gitee.com/openharmony/third_party_libuv.git
 [submodule "flutter/hap_installer/cpp/third_party/openssl/source"]
 	path = flutter/hap_installer/cpp/third_party/openssl/source
