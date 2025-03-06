@@ -6,6 +6,7 @@ project(libusb C)
 include_directories(include)
 set(target_gen_dir ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(LIBUSB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
+set(libs)
 set(outputs
     "${target_gen_dir}/libusb-1.0.26/libusb/core.c"
     "${target_gen_dir}/libusb-1.0.26/libusb/descriptor.c"
@@ -20,6 +21,7 @@ list(APPEND outputs
     "${target_gen_dir}/libusb-1.0.26/libusb/os/events_posix.c"
     "${target_gen_dir}/libusb-1.0.26/libusb/os/threads_posix.c"
 )
+
 elseif(MINGW OR WIN32)
 list(APPEND outputs
     "${target_gen_dir}/libusb-1.0.26/libusb/os/events_windows.c"
@@ -28,7 +30,7 @@ list(APPEND outputs
      "${target_gen_dir}/libusb-1.0.26/libusb/os/windows_usbdk.c"
      "${target_gen_dir}/libusb-1.0.26/libusb/os/windows_winusb.c"
 )
-elseif(UNIX AND NOT APPLE)
+elseif(UNIX OR OHOS)
 list(APPEND outputs
     "${target_gen_dir}/libusb-1.0.26/libusb/os/events_posix.c"
     "${target_gen_dir}/libusb-1.0.26/libusb/os/linux_netlink.c"
@@ -43,7 +45,12 @@ ${target_gen_dir}/libusb-1.0.26/libusb/os
 )
 
 set(cflags
-"-U__ANDROID__"
+    "-U__ANDROID__"
+    #"-UUSE_UDEV"
+    # "-Wno-#warnings"
+    # "-Wno-error=sign-compare"
+    # "-Wno-error=switch"
+    # "-Wno-error=pragma-pack"
 )
 if((UNIX AND NOT APPLE))
     list(APPEND include_dirs "${LIBUSB_DIR}/linux")
@@ -57,21 +64,25 @@ elseif(MINGW OR WIN32)
     list(APPEND include_dirs "${LIBUSB_DIR}/windows")
 elseif(APPLE)
    list(APPEND cflags
-        "-Wno-unused-parameter",
-        "-Wno-deprecated-declarations",
+        # "-Wno-unused-parameter"
+        # "-Wno-deprecated-declarations"
    )
    list(APPEND include_dirs "${LIBUSB_DIR}/darwin")
+   list(APPEND libs 
+   objc 
+   "-framework CoreFoundation"
+    "-framework IOKit"
+    "-framework Security")
 endif()
 
 
 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
-set(LD_FLAGS "")
 
 add_library(usb STATIC ${outputs})
 include_directories(${include_dirs})
 target_include_directories(usb PUBLIC ${include_dirs})
-target_link_libraries(usb PRIVATE ${LD_FLAGS})
+target_link_libraries(usb PRIVATE ${libs})
 
 

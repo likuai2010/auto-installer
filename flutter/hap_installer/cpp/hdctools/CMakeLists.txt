@@ -5,7 +5,7 @@ include_directories(include
     third_party/libusb/source/libusb/include
     third_party/libusb/source/libusb-1.0.26
     third_party/lz4/lib
-    third_party/libuv/include
+    third_party/libuv/source/include
 )
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
 add_subdirectory(third_party/libusb)
