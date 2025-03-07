@@ -12,7 +12,13 @@ popd
 fi
 #windows  use MSYS2 build
 if [ "$1" = "windows" ]; then
-cmake --build . 
+cmake  -G Ninja \
+  -DCMAKE_BUILD_TYPE=DEBUG \
+  -B build_windows \
+  -S .
+pushd build_windows
+ninja 
+popd
 fi
 
 #android

@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.5.0)
 
 project(hapsigner C)
+set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(third_party/zlib)
 add_subdirectory(third_party/bzip2)
@@ -153,18 +154,26 @@ endif()
 #多线程有问题， 容易崩溃，限制线程数1
 #source/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h
 
-include_directories(${include_dirs} ${CMAKE_CURRENT_SOURCE_DIR}/hap_signer_tool.h)
+include_directories(${include_dirs} ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
 # musl 不支持 -pg 缺少 _mcount
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
-set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all")
+
 if(OHOS)
+set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all"
+ libace_napi.z.so
+ hilog_ndk.z
+)
 list(APPEND outputs hap_signer_tool.cpp)
+endif()
+if(WIN32)
+set(LD_FLAGS ws2_32)
 endif()
 
 #add_library(signtool SHARED  ${outputs})
+
 add_executable(signtool ${outputs})
 
 target_include_directories(signtool PUBLIC ${include_dirs})
@@ -174,8 +183,7 @@ target_link_libraries(signtool PRIVATE
  boundscheck
  bzip2
  zlib
- #libace_napi.z.so
- #hilog_ndk.z
+
 )
 
 
