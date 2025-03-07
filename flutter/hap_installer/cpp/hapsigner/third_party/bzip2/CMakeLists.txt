@@ -1,0 +1,29 @@
+# the minimum version of CMake.
+cmake_minimum_required(VERSION 3.5.0)
+
+project(bzip2 C)
+
+set(target_gen_dir ${CMAKE_CURRENT_SOURCE_DIR}/source)
+set(outputs
+"${target_gen_dir}/blocksort.c"
+"${target_gen_dir}/bzlib.c"
+"${target_gen_dir}/compress.c"
+"${target_gen_dir}/crctable.c"
+"${target_gen_dir}/decompress.c"
+"${target_gen_dir}/huffman.c"
+"${target_gen_dir}/randtable.c"
+)
+
+set(include_dirs
+${target_gen_dir}
+)
+
+
+include_directories(${include_dirs})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
+set(LD_FLAGS "-fPIC -s -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all")
+
+add_library(bzip2 STATIC ${outputs})
+target_link_libraries(bzip2 PRIVATE ${LD_FLAGS})
+
+

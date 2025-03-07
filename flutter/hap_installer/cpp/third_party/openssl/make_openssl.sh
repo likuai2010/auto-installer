@@ -23,8 +23,9 @@
 #     no-async 
 # make -j
 # popd
-export ANDROID_NDK_ROOT=G:/android/sdk/ndk/27.0.12077973
-export TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/windows-x86_64
+#export ANDROID_NDK_ROOT=G:/android/sdk/ndk/27.0.12077973
+export ANDROID_NDK_ROOT=/Users/fiber/Library/Android/sdk/ndk/23.1.7779620
+export TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/darwin-x86_64
 export SYSROOT=$TOOLCHAIN/sysroot
 export CC=$TOOLCHAIN/bin/aarch64-linux-android27-clang
 export PATH=$TOOLCHAIN/bin:$PATH
