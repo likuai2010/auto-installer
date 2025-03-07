@@ -26,3 +26,6 @@
 [submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv/source"]
 	path = flutter/hap_installer/cpp/hdctools/third_party/libuv/source
 	url = https://gitee.com/openharmony/third_party_libuv.git
+[submodule "flutter/hap_installer/cpp/hapsigner/third_party/bzip2/source"]
+	path = flutter/hap_installer/cpp/hapsigner/third_party/bzip2/source
+	url = https://gitee.com/openharmony/third_party_bzip2.git
