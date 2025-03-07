@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(autoInstaller)
 
-set(DANDROID_PLATFORM=android-24)
+
 
 set(NATIVERENDER_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -43,9 +43,11 @@ hdctools/
 third_party/bounds_checking_function/include
 )
 
-
+if(ANDROID)
+add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
+endif()
 
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 
-add_executable(demo main.cpp)
+#add_executable(demo main.cpp)

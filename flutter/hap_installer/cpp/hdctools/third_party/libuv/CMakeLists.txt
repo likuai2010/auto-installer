@@ -163,7 +163,6 @@ list(APPEND common_source
   "source/src/unix/trace_unix.c"
 )
 endif()
-message(2222 ${ANDROID} ${LINUX})
 add_library(uv STATIC ${common_source})
 target_link_libraries(uv PRIVATE ${LD_FLAGS} ${libs})
 
