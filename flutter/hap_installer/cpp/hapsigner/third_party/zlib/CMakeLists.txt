@@ -52,7 +52,11 @@ set(cflags
 
 include_directories(${include_dirs})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
-set(LD_FLAGS "-fPIC -s -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all")
+set(LD_FLAGS "-fPIC -fstack-protector-all")
+
+if(OHOS)
+list(APPEND LD_FLAGS "-s -Wl,-z,relro,-z,now,-z, noexecstack")
+endif()
 
 add_library(zlib STATIC ${outputs})
 target_link_libraries(zlib PRIVATE ${LD_FLAGS})

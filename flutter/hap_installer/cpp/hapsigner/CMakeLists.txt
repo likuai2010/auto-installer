@@ -20,7 +20,6 @@ set(signature_tools_signer ${rootDir}/signer)
 
 set(outputs
     "${rootDir}/main.cpp"
-    "${signature_tools_api}/src/localization_adapter.cpp"
     "${signature_tools_api}/src/sign_tool_service_impl.cpp"
     "${signature_tools_api}/src/cert_tools.cpp"
     "${signature_tools_signer}/src/signer_factory.cpp"
@@ -55,7 +54,6 @@ list(APPEND include_dirs
 list(APPEND outputs
 "${signature_tools_cmd}/src/cmd_util.cpp"
 "${signature_tools_cmd}/src/params_run_tool.cpp"
-"${signature_tools_cmd}/src/options.cpp"
 "${signature_tools_cmd}/src/params_trust_list.cpp"
 "${signature_tools_cmd}/src/params.cpp"
 
@@ -88,6 +86,9 @@ list(APPEND outputs
 "${signature_tools_common}/src/file_data_source.cpp"
 "${signature_tools_common}/src/random_access_file.cpp"
 "${signature_tools_common}/src/digest_parameter.cpp"
+"${signature_tools_common}/src/digest_common.cpp"
+"${signature_tools_common}/src/localization_adapter.cpp"
+"${signature_tools_common}/src/options.cpp"
 
 "${signature_tools_hap}/verify/src/verify_hap.cpp"
 "${signature_tools_hap}/verify/src/verify_bin.cpp"
@@ -111,6 +112,7 @@ list(APPEND outputs
 "${signature_tools_hap}/sign/src/sign_bin.cpp"
 "${signature_tools_hap}/sign/src/sign_elf.cpp"
 "${signature_tools_hap}/utils/src/hap_utils.cpp"
+"${signature_tools_hap}/utils/src/dynamic_lib_handle.cpp"
 "${signature_tools_hap}/sign/src/bc_pkcs7_generator.cpp"
 
 "${signature_tools_profile}/src/profile_info.cpp"
@@ -145,29 +147,37 @@ set(cflags
 "-fno-rtti"
 "-Wno-c++20-extensions"
 )
+if(OHOS)
 add_definitions(-DHILOG )
+endif()
 #多线程有问题， 容易崩溃，限制线程数1
 #source/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h
 
-include_directories(${include_dirs})
+include_directories(${include_dirs} ${CMAKE_CURRENT_SOURCE_DIR}/hap_signer_tool.h)
 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
 # musl 不支持 -pg 缺少 _mcount
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
-set(LD_FLAGS "-fPIC -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all")
+set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all")
+if(OHOS)
+list(APPEND outputs hap_signer_tool.cpp)
+endif()
 
-add_library(signtool SHARED hap_signer_tool.cpp ${outputs})
+#add_library(signtool SHARED  ${outputs})
+add_executable(signtool ${outputs})
+
 target_include_directories(signtool PUBLIC ${include_dirs})
 target_link_libraries(signtool PRIVATE
  ${LD_FLAGS}
- libace_napi.z.so
  libcrypto
  boundscheck
  bzip2
  zlib
- hilog_ndk.z
+ #libace_napi.z.so
+ #hilog_ndk.z
 )
+
 
 
 

@@ -30,7 +30,7 @@ set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENS
 endif()
 if(ANDROID)
 add_library(libcrypto STATIC IMPORTED)
-set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android-arm64/libcrypto.a)
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android/arm64-v8a/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 endif()
 
@@ -46,5 +46,6 @@ third_party/bounds_checking_function/include
 
 
 add_subdirectory(hdctools)
+add_subdirectory(hapsigner)
 
 add_executable(demo main.cpp)
