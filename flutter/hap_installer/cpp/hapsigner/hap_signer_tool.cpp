@@ -22,13 +22,11 @@ static const char **split(char *input, int &size)
     }
     return paramsArray;
 }
-bool signHap(char *params)
+int signHap(int argc, char *args[])
 {
-    int count;
-    const char **params = split(params, count);
-    return ParamsRunTool::ProcessCmd((char **)params, count) ? 0 : -1;
+    return ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
 }
-void unzip(const char *source, const char *fileName, const char *destination)
+char *unzip(const char *source, const char *fileName, const char *destination)
 {
     unzFile zipfile = unzOpen(source);
     if (zipfile == NULL)
@@ -69,4 +67,5 @@ void unzip(const char *source, const char *fileName, const char *destination)
     unzCloseCurrentFile(zipfile);
     unzClose(zipfile);
     printf("成功提取: %s\n", destination);
+    return ""
 }

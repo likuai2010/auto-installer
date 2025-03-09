@@ -21,5 +21,5 @@
 #define le64toh(x) (x)
 #endif
 
-bool signHap(char *params);
-void unzip(const char *source, const char *fileName, const char *destination);
+char *signHap(int argc, const char *argv[]);
+char *unzip(const char *source, const char *fileName, const char *destination);

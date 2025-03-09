@@ -2,10 +2,45 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
+import 'package:ffi/ffi.dart';
 
 import 'native_core_bindings_generated.dart';
 
-int sum(int a, int b) => _bindings.sum(a, b);
+Future<String> hdcCmd(String args) async {
+  final params = args
+      .split(" ")
+      .map((p) => p.toNativeUtf8().cast<Pointer<Char>>());
+  final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
+  final result = _bindings.hdcCmd(params.length, charArray);
+  final dartString = result.cast<Utf8>().toDartString();
+  calloc.free(result);
+  calloc.free(charArray);
+  return dartString;
+}
+
+Future<String> sginCmd(String args) async {
+  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
+  final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
+  for (int i = 0; i < params.length; i++) {
+    // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
+    charArray[i] = params[i].cast();
+  }
+  final result = _bindings.hdcCmd(params.length, charArray);
+  final dartString = result.cast<Utf8>().toDartString();
+  calloc.free(result);
+  calloc.free(charArray);
+  return dartString;
+}
+
+Future<String> unHap(String hapPath, String inFileName, String outPath) async {
+  final result = _bindings.uzip(
+    hapPath.toNativeUtf8().cast(),
+    inFileName.toNativeUtf8().cast(),
+    outPath.toNativeUtf8().cast(),
+  );
+  final dartString = result.cast<Utf8>().toDartString();
+  return dartString;
+}
 
 Future<int> sumAsync(int a, int b) async {
   final SendPort helperIsolateSendPort = await _helperIsolateSendPort;

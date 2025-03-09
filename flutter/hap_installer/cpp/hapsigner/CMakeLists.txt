@@ -182,7 +182,7 @@ link_libraries(
  zlib
 )
 
-add_library(signtool SHARED ${outputs})
+add_library(signtool STATIC ${outputs})
 add_executable(signtools ${outputs})
 
 

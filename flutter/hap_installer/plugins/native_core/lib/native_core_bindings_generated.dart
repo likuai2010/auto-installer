@@ -15,55 +15,89 @@ import 'dart:ffi' as ffi;
 class NativeCoreBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
   NativeCoreBindings(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+    : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   NativeCoreBindings.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
-      : _lookup = lookup;
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
 
-  /// A very short-lived native function.
-  ///
-  /// For very short-lived functions, it is fine to call them on the main isolate.
-  /// They will block the Dart execution while running the native function, so
-  /// only do this for native functions which are guaranteed to be short-lived.
-  int sum(
-    int a,
-    int b,
+  ffi.Pointer<ffi.Char> hdcCmd(
+    int argc,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
   ) {
-    return _sum(
-      a,
-      b,
-    );
+    return _hdcCmd(argc, args);
   }
 
-  late final _sumPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Int)>>('sum');
-  late final _sum = _sumPtr.asFunction<int Function(int, int)>();
+  late final _hdcCmdPtr = _lookup<
+    ffi.NativeFunction<
+      ffi.Pointer<ffi.Char> Function(
+        ffi.Int,
+        ffi.Pointer<ffi.Pointer<ffi.Char>>,
+      )
+    >
+  >('hdcCmd');
+  late final _hdcCmd =
+      _hdcCmdPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(
+              int,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+            )
+          >();
 
-  /// A longer lived native function, which occupies the thread calling it.
-  ///
-  /// Do not call these kind of native functions in the main isolate. They will
-  /// block Dart execution. This will cause dropped frames in Flutter applications.
-  /// Instead, call these native functions on a separate isolate.
-  int sum_long_running(
-    int a,
-    int b,
+  ffi.Pointer<ffi.Char> signCmd(
+    int argc,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
   ) {
-    return _sum_long_running(
-      a,
-      b,
-    );
+    return _signCmd(argc, args);
   }
 
-  late final _sum_long_runningPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Int)>>(
-          'sum_long_running');
-  late final _sum_long_running =
-      _sum_long_runningPtr.asFunction<int Function(int, int)>();
+  late final _signCmdPtr = _lookup<
+    ffi.NativeFunction<
+      ffi.Pointer<ffi.Char> Function(
+        ffi.Int,
+        ffi.Pointer<ffi.Pointer<ffi.Char>>,
+      )
+    >
+  >('signCmd');
+  late final _signCmd =
+      _signCmdPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(
+              int,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+            )
+          >();
+
+  ffi.Pointer<ffi.Char> uzip(
+    ffi.Pointer<ffi.Char> source,
+    ffi.Pointer<ffi.Char> fileName,
+    ffi.Pointer<ffi.Char> destination,
+  ) {
+    return _uzip(source, fileName, destination);
+  }
+
+  late final _uzipPtr = _lookup<
+    ffi.NativeFunction<
+      ffi.Pointer<ffi.Char> Function(
+        ffi.Pointer<ffi.Char>,
+        ffi.Pointer<ffi.Char>,
+        ffi.Pointer<ffi.Char>,
+      )
+    >
+  >('uzip');
+  late final _uzip =
+      _uzipPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+            )
+          >();
 }

@@ -44,6 +44,6 @@ link_libraries(
     uv
     usb
 )
-add_library(hdc_z SHARED  base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
+add_library(hdc_z STATIC  base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
 
 add_executable(hdc main.cpp base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS})

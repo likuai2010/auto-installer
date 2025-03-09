@@ -9,22 +9,35 @@ project(native_core_library VERSION 0.0.1 LANGUAGES C)
 set(libPath ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
 if(ANDROID)
 add_library(hdc STATIC IMPORTED)
-set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/android/arm64-v8a/libhdc.so)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/android/arm64-v8a/libhdc_z.a)
 set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+add_library(signtool STATIC IMPORTED)
+set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
+set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
 elseif(WIN32)
 add_library(hdc STATIC IMPORTED)
-set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libhdc_z.dll.a)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libhdc_z.a)
 set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+add_library(signtool STATIC IMPORTED)
+set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
+set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
 elseif(APPLE)
 add_library(hdc STATIC IMPORTED)
-set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/macos/arm64-v8a/libhdc.a)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/macos/arm64-v8a/libhdc_z.a)
 set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+add_library(signtool STATIC IMPORTED)
+set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
+set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
 else()
 add_library(hdc STATIC IMPORTED)
-set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/linux/arm64-v8a/libhdc.a)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/linux/arm64-v8a/libhdc_z.a)
 set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+add_library(signtool STATIC IMPORTED)
+set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
+set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
 endif()
 include_directories(${libPath}/include)
+
 
 add_library(native_core SHARED
   "native_core.c"
@@ -35,10 +48,8 @@ set_target_properties(native_core PROPERTIES
   OUTPUT_NAME "native_core"
 )
 
-target_compile_definitions(native_core PUBLIC )
-
-target_link_libraries(native_core PRIVATE hdc)
-
+target_compile_definitions(native_core PUBLIC DART_SHARED_LIB)
+target_link_libraries(native_core PRIVATE hdc signtool)
 if (ANDROID)
   # Support Android 15 16k page size
   target_link_options(native_core PRIVATE "-Wl,-z,max-page-size=16384")

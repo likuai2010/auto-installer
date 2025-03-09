@@ -30,3 +30,4 @@ flutter/hap_installer/cpp/CMakeFiles/
 flutter/hap_installer/cpp/build.ninja
 flutter/hap_installer/cpp/.ninja_log
 *.ninja_deps
+flutter/hap_installer/cpp/build_windows/
