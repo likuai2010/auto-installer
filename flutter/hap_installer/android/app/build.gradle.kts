@@ -30,6 +30,7 @@ android {
         versionName = flutter.versionName
         externalNativeBuild{
             cmake {
+                abiFilters("arm64-v8a")
                 arguments("-DANDROID_PLATFORM=android-24",)
             }
         }

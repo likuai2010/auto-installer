@@ -172,19 +172,19 @@ if(WIN32)
 set(LD_FLAGS ws2_32)
 endif()
 
-#add_library(signtool SHARED  ${outputs})
 
-add_executable(signtool ${outputs})
-
-target_include_directories(signtool PUBLIC ${include_dirs})
-target_link_libraries(signtool PRIVATE
+include_directories(${include_dirs})
+link_libraries(
  ${LD_FLAGS}
  libcrypto
  boundscheck
  bzip2
  zlib
-
 )
+
+add_library(signtool SHARED ${outputs})
+add_executable(signtools ${outputs})
+
 
 
 

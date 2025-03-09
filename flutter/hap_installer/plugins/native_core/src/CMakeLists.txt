@@ -1,0 +1,45 @@
+# The Flutter tooling requires that developers have CMake 3.10 or later
+# installed. You should not increase this version, as doing so will cause
+# the plugin to fail to compile for some customers of the plugin.
+cmake_minimum_required(VERSION 3.10)
+
+project(native_core_library VERSION 0.0.1 LANGUAGES C)
+
+
+set(libPath ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
+if(ANDROID)
+add_library(hdc STATIC IMPORTED)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/android/arm64-v8a/libhdc.so)
+set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+elseif(WIN32)
+add_library(hdc STATIC IMPORTED)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libhdc_z.dll.a)
+set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+elseif(APPLE)
+add_library(hdc STATIC IMPORTED)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/macos/arm64-v8a/libhdc.a)
+set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+else()
+add_library(hdc STATIC IMPORTED)
+set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/linux/arm64-v8a/libhdc.a)
+set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+endif()
+include_directories(${libPath}/include)
+
+add_library(native_core SHARED
+  "native_core.c"
+)
+
+set_target_properties(native_core PROPERTIES
+  PUBLIC_HEADER native_core.h
+  OUTPUT_NAME "native_core"
+)
+
+target_compile_definitions(native_core PUBLIC )
+
+target_link_libraries(native_core PRIVATE hdc)
+
+if (ANDROID)
+  # Support Android 15 16k page size
+  target_link_options(native_core PRIVATE "-Wl,-z,max-page-size=16384")
+endif()
