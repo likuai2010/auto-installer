@@ -26,53 +26,40 @@ class NativeCoreBindings {
     ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
   ) : _lookup = lookup;
 
-  ffi.Pointer<ffi.Char> hdcCmd(
-    int argc,
-    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
-  ) {
+  int hdcCmd(int argc, ffi.Pointer<ffi.Pointer<ffi.Char>> args) {
     return _hdcCmd(argc, args);
   }
 
   late final _hdcCmdPtr = _lookup<
     ffi.NativeFunction<
-      ffi.Pointer<ffi.Char> Function(
-        ffi.Int,
-        ffi.Pointer<ffi.Pointer<ffi.Char>>,
-      )
+      ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>)
     >
   >('hdcCmd');
   late final _hdcCmd =
       _hdcCmdPtr
-          .asFunction<
-            ffi.Pointer<ffi.Char> Function(
-              int,
-              ffi.Pointer<ffi.Pointer<ffi.Char>>,
-            )
-          >();
+          .asFunction<int Function(int, ffi.Pointer<ffi.Pointer<ffi.Char>>)>();
 
-  ffi.Pointer<ffi.Char> signCmd(
-    int argc,
-    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
-  ) {
+  void hdcServer() {
+    return _hdcServer();
+  }
+
+  late final _hdcServerPtr = _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+    'hdcServer',
+  );
+  late final _hdcServer = _hdcServerPtr.asFunction<void Function()>();
+
+  int signCmd(int argc, ffi.Pointer<ffi.Pointer<ffi.Char>> args) {
     return _signCmd(argc, args);
   }
 
   late final _signCmdPtr = _lookup<
     ffi.NativeFunction<
-      ffi.Pointer<ffi.Char> Function(
-        ffi.Int,
-        ffi.Pointer<ffi.Pointer<ffi.Char>>,
-      )
+      ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>)
     >
   >('signCmd');
   late final _signCmd =
       _signCmdPtr
-          .asFunction<
-            ffi.Pointer<ffi.Char> Function(
-              int,
-              ffi.Pointer<ffi.Pointer<ffi.Char>>,
-            )
-          >();
+          .asFunction<int Function(int, ffi.Pointer<ffi.Pointer<ffi.Char>>)>();
 
   ffi.Pointer<ffi.Char> uzip(
     ffi.Pointer<ffi.Char> source,

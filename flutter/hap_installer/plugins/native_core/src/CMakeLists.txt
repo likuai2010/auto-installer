@@ -36,11 +36,12 @@ add_library(signtool STATIC IMPORTED)
 set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
 set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
 endif()
+
 include_directories(${libPath}/include)
 
 
 add_library(native_core SHARED
-  "native_core.c"
+  "native_core.cpp"
 )
 
 set_target_properties(native_core PROPERTIES

@@ -15,7 +15,7 @@
 #define FFI_PLUGIN_EXPORT
 #endif
 
-FFI_PLUGIN_EXPORT int hdcCmd(int argc, char *args[]);
+FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[]);
 FFI_PLUGIN_EXPORT void hdcServer();
-FFI_PLUGIN_EXPORT int signCmd(int argc, char *args[]);
+FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[]);
 FFI_PLUGIN_EXPORT char *uzip(const char *source, const char *fileName, const char *destination);
