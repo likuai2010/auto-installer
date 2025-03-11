@@ -6,10 +6,8 @@ import 'package:ffi/ffi.dart';
 
 import 'native_core_bindings_generated.dart';
 
-Future<int> hdcCmd(String args) async {
-  final params = args
-      .split(" ")
-      .map((p) => p.toNativeUtf8()).toList();
+Future<String> hdcCmd(String args) async {
+  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
@@ -18,10 +16,10 @@ Future<int> hdcCmd(String args) async {
   final result = _bindings.hdcCmd(params.length, charArray);
   final dartString = result;
   calloc.free(charArray);
-  return dartString;
+  return "dartString";
 }
 
-Future<int> sginCmd(String args) async {
+Future<String> signCmd(String args) async {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
@@ -30,7 +28,7 @@ Future<int> sginCmd(String args) async {
   }
   final result = _bindings.hdcCmd(params.length, charArray);
   calloc.free(charArray);
-  return result;
+  return "";
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {

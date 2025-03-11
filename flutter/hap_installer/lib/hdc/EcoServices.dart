@@ -91,8 +91,9 @@ class EcoService {
     }
   }
 
-  initUserInfo(AuthInfo authInfo) async {
+  initUserInfo(AuthInfo? authInfo) async {
     this.authInfo = authInfo;
+    if (authInfo == null) return;
     print("authInfo" + jsonEncode(authInfo.toJson()));
   }
 

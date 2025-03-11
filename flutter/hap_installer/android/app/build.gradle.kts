@@ -28,12 +28,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        externalNativeBuild{
-            cmake {
-                abiFilters("arm64-v8a")
-                arguments("-DANDROID_PLATFORM=android-24",)
-            }
-        }
     }
 
     buildTypes {
@@ -41,11 +35,6 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
-        }
-    }
-    externalNativeBuild{
-        cmake {
-            path = file("../../cpp/CMakeLists.txt")
         }
     }
 }

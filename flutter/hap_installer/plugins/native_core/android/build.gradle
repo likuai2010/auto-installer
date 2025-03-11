@@ -36,7 +36,14 @@ android {
     // Replace it with a version number if this plugin requires a specific NDK version.
     // (e.g. ndkVersion "23.1.7779620")
     ndkVersion = android.ndkVersion
-
+    defaultConfig {
+         externalNativeBuild{
+            cmake {
+                abiFilters("arm64-v8a")
+                arguments("-DANDROID_PLATFORM=android-24",)
+            }
+        }
+    }
     // Invoke the shared CMake build with the Android Gradle Plugin.
     externalNativeBuild {
         cmake {
