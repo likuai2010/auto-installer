@@ -1,4 +1,3 @@
-set(CMAKE_BUILD_TYPE Debug)
 include_directories(include
     source/src/common
     source/src/host
@@ -37,13 +36,15 @@ list(REMOVE_ITEM HOST_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/host/main.cpp")
 list(REMOVE_ITEM HOST_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/host/server.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/base.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/auth.cpp")
-link_libraries(
+
+add_library(hdc_z SHARED main.cpp hdc.h base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
+target_link_libraries(
+    hdc_z
     libcrypto
     lz4
     boundscheck
     uv
     usb
 )
-add_library(hdc_z STATIC  base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
 
-add_executable(hdc main.cpp base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS})
+#add_executable(hdc main.cpp base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS})

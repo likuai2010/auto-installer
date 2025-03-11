@@ -22,11 +22,20 @@ set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENS
 endif()
 if(APPLE)
 add_library(libssl STATIC IMPORTED)
-set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64-arm64/libssl.a)
-set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 add_library(libcrypto STATIC IMPORTED)
-set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64-arm64/libcrypto.a)
+if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/x86-64/libssl.a)
+set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/x86-64/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+else()
+set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/arm64-v8a/libssl.a)
+set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/arm64-v8a/libcrypto.a)
+set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+endif()
+
+
 endif()
 if(ANDROID)
 add_library(libcrypto STATIC IMPORTED)
@@ -50,4 +59,17 @@ endif()
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 
-#add_executable(demo main.cpp)
+if(APPLE)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+set(CMAKE_OSX_ARCHITECTURES "arm64")
+add_library(hdc_core STATIC
+    hdc_core.cpp
+    hdc_core.h
+)
+target_link_libraries(hdc_core hdc_z)
+target_include_directories(hdc_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(hdc_core PROPERTIES
+    OUTPUT_NAME "hdc_core"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/output"
+)
+endif()

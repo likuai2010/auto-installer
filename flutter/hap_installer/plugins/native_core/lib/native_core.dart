@@ -6,19 +6,22 @@ import 'package:ffi/ffi.dart';
 
 import 'native_core_bindings_generated.dart';
 
-Future<String> hdcCmd(String args) async {
+Future<int> hdcCmd(String args) async {
   final params = args
       .split(" ")
-      .map((p) => p.toNativeUtf8().cast<Pointer<Char>>());
+      .map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
+  for (int i = 0; i < params.length; i++) {
+    // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
+    charArray[i] = params[i].cast();
+  }
   final result = _bindings.hdcCmd(params.length, charArray);
-  final dartString = result.cast<Utf8>().toDartString();
-  calloc.free(result);
+  final dartString = result;
   calloc.free(charArray);
   return dartString;
 }
 
-Future<String> sginCmd(String args) async {
+Future<int> sginCmd(String args) async {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
@@ -26,10 +29,8 @@ Future<String> sginCmd(String args) async {
     charArray[i] = params[i].cast();
   }
   final result = _bindings.hdcCmd(params.length, charArray);
-  final dartString = result.cast<Utf8>().toDartString();
-  calloc.free(result);
   calloc.free(charArray);
-  return dartString;
+  return result;
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {
@@ -131,9 +132,9 @@ Future<SendPort> _helperIsolateSendPort = () async {
         ReceivePort()..listen((dynamic data) {
           // On the helper isolate listen to requests and respond to them.
           if (data is _SumRequest) {
-            final int result = _bindings.sum_long_running(data.a, data.b);
-            final _SumResponse response = _SumResponse(data.id, result);
-            sendPort.send(response);
+            //inal int result = _bindings.sum_long_running(data.a, data.b);
+            //final _SumResponse response = _SumResponse(data.id, result);
+            //sendPort.send(response);
             return;
           }
           throw UnsupportedError(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:file_picker/file_picker.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
+import 'package:native_core/native_core.dart';
 
 final server = LoginHuawei();
 void main() {
@@ -61,9 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    selectFile();
+    hdcCmd("hdc -h");
     setState(() {
-      _counter++;
+      _counter +=  1;
     });
   }
 

@@ -650,6 +650,9 @@ int main(int argc, const char *argv[])
 
 #include "hdc.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 int cmd(int argc, const char *argv[])
 {
     FILE *sout = freopen("/data/storage/el2/base/haps/entry/temp/hdc_out.txt", "w", stdout);
@@ -690,3 +693,7 @@ int server()
     RunServerMode(server);
     return 0;
 }
+#ifdef __cplusplus
+}
+#endif
+
