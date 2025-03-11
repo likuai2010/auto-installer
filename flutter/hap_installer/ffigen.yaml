@@ -1,0 +1,16 @@
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: NativeCoreBindings
+description: |
+  Bindings for `src/native_core.h`.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+output: 'lib/native/hdc_ffi_generated.dart'
+headers:
+  entry-points:
+    - 'cpp/hdctools/hdc.h'
+  include-directives:
+    - 'cpp/hdctools/hdc.h'
+preamble: |
+comments:
+  style: any
+  length: full
