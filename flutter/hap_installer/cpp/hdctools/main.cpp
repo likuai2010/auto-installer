@@ -653,10 +653,10 @@ int main(int argc, const char *argv[])
 #ifdef __cplusplus
 extern "C" {
 #endif
-int cmd(int argc, const char *argv[])
+int cmd(int argc, const char *argv[], const char tempPath)
 {
-    FILE *sout = freopen("/data/storage/el2/base/haps/entry/temp/hdc_out.txt", "w", stdout);
-    FILE *serr = freopen("/data/storage/el2/base/haps/entry/temp/hdc_err.txt", "w", stderr);
+    FILE *sout = freopen(tempPath + "/hdc_out.txt", "w", stdout);
+    FILE *serr = freopen(tempPath + "/hdc_err.txt", "w", stderr);
     string options;
     string commands;
     Hdc::SplitOptionAndCommand(argc, argv, options, commands);
@@ -668,8 +668,11 @@ int cmd(int argc, const char *argv[])
     delete[] (reinterpret_cast<char *>(optArgv));
     if (cmdOptionResult)
     {
+        fclose(sout);
+        fclose(serr);
         return 0;
     }
+
     Base::SetLogLevel(LOG_OFF);
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);

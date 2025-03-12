@@ -26,40 +26,68 @@ class NativeCoreBindings {
     ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
   ) : _lookup = lookup;
 
-  int hdcCmd(int argc, ffi.Pointer<ffi.Pointer<ffi.Char>> args) {
-    return _hdcCmd(argc, args);
+  int hdcCmd(
+    int argc,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
+    ffi.Pointer<ffi.Char> tempDir,
+  ) {
+    return _hdcCmd(argc, args, tempDir);
   }
 
   late final _hdcCmdPtr = _lookup<
     ffi.NativeFunction<
-      ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>)
+      ffi.Int Function(
+        ffi.Int,
+        ffi.Pointer<ffi.Pointer<ffi.Char>>,
+        ffi.Pointer<ffi.Char>,
+      )
     >
   >('hdcCmd');
   late final _hdcCmd =
       _hdcCmdPtr
-          .asFunction<int Function(int, ffi.Pointer<ffi.Pointer<ffi.Char>>)>();
+          .asFunction<
+            int Function(
+              int,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Pointer<ffi.Char>,
+            )
+          >();
 
-  void hdcServer() {
+  int hdcServer() {
     return _hdcServer();
   }
 
-  late final _hdcServerPtr = _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+  late final _hdcServerPtr = _lookup<ffi.NativeFunction<ffi.Int Function()>>(
     'hdcServer',
   );
-  late final _hdcServer = _hdcServerPtr.asFunction<void Function()>();
+  late final _hdcServer = _hdcServerPtr.asFunction<int Function()>();
 
-  int signCmd(int argc, ffi.Pointer<ffi.Pointer<ffi.Char>> args) {
-    return _signCmd(argc, args);
+  int signCmd(
+    int argc,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
+    ffi.Pointer<ffi.Char> tempDir,
+  ) {
+    return _signCmd(argc, args, tempDir);
   }
 
   late final _signCmdPtr = _lookup<
     ffi.NativeFunction<
-      ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>)
+      ffi.Int Function(
+        ffi.Int,
+        ffi.Pointer<ffi.Pointer<ffi.Char>>,
+        ffi.Pointer<ffi.Char>,
+      )
     >
   >('signCmd');
   late final _signCmd =
       _signCmdPtr
-          .asFunction<int Function(int, ffi.Pointer<ffi.Pointer<ffi.Char>>)>();
+          .asFunction<
+            int Function(
+              int,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Pointer<ffi.Char>,
+            )
+          >();
 
   ffi.Pointer<ffi.Char> uzip(
     ffi.Pointer<ffi.Char> source,

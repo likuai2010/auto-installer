@@ -2,17 +2,17 @@
 #include "hdc.h"
 #include "hap_signer_tool.h"
 
-FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[])
+FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {
-  return cmd(argc, args);
+  return cmd(argc, args, tempDir);
 }
 FFI_PLUGIN_EXPORT int hdcServer(void)
 {
   return hdcServer();
 }
-FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[])
+FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 {
-  return signCmd(argc, args);
+  return signCmd(argc, args, tempDir);
 }
 FFI_PLUGIN_EXPORT char *uzip(const char *source, const char *fileName, const char *destination)
 {

@@ -4,6 +4,9 @@ PODS:
   - FlutterMacOS (1.0.0)
   - native_core (0.0.1):
     - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - url_launcher_macos (0.0.1):
     - FlutterMacOS
 
@@ -11,6 +14,7 @@ DEPENDENCIES:
   - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - native_core (from `Flutter/ephemeral/.symlinks/plugins/native_core/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
 
 EXTERNAL SOURCES:
@@ -20,6 +24,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   native_core:
     :path: Flutter/ephemeral/.symlinks/plugins/native_core/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
   url_launcher_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
 
@@ -27,6 +33,7 @@ SPEC CHECKSUMS:
   file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   native_core: 007cf8dbac69628c704a22ac18f60a1b81657bef
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   url_launcher_macos: 0fba8ddabfc33ce0a9afe7c5fef5aab3d8d2d673
 
 PODFILE CHECKSUM: 0ec53f71116de21f7a9cf1b3f82c4923c234806c

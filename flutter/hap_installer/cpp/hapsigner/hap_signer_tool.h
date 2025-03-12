@@ -5,7 +5,7 @@ extern "C"
 {
 #endif
 
-    int signHap(int argc, const char *argv[]);
+    int signHap(int argc, const char *argv[], const char tempPath);
     char *unzip(const char *source, const char *fileName, const char *destination);
 
 #ifdef __cplusplus

@@ -6,27 +6,30 @@ import 'package:ffi/ffi.dart';
 
 import 'native_core_bindings_generated.dart';
 
-Future<String> hdcCmd(String args) async {
-  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
-  final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
-  for (int i = 0; i < params.length; i++) {
-    // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
-    charArray[i] = params[i].cast();
-  }
-  final result = _bindings.hdcCmd(params.length, charArray);
-  final dartString = result;
-  calloc.free(charArray);
+Future<String> hdcCmd(String args, String tempDir) async {
+ _hdcCmd(args, tempDir);
   return "dartString";
 }
-
-Future<String> signCmd(String args) async {
+int _hdcCmd(String args, String tempDir)  {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
     charArray[i] = params[i].cast();
   }
-  final result = _bindings.hdcCmd(params.length, charArray);
+  final result =  _bindings.hdcCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
+  calloc.free(charArray);
+  return result;
+}
+
+Future<String> signCmd(String args, String tempDir) async {
+  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
+  final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
+  for (int i = 0; i < params.length; i++) {
+    // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
+    charArray[i] = params[i].cast();
+  }
+  final result = _bindings.hdcCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
   calloc.free(charArray);
   return "";
 }
@@ -37,6 +40,7 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
     inFileName.toNativeUtf8().cast(),
     outPath.toNativeUtf8().cast(),
   );
+  calloc.free(result);
   final dartString = result.cast<Utf8>().toDartString();
   return dartString;
 }

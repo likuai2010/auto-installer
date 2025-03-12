@@ -55,21 +55,12 @@ third_party/bounds_checking_function/include
 if(ANDROID)
 add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
 endif()
+if(APPLE)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+set(CMAKE_OSX_ARCHITECTURES "arm64")
+endif()
 
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 
-if(APPLE)
-set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-set(CMAKE_OSX_ARCHITECTURES "arm64")
-add_library(hdc_core STATIC
-    hdc_core.cpp
-    hdc_core.h
-)
-target_link_libraries(hdc_core hdc_z)
-target_include_directories(hdc_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(hdc_core PROPERTIES
-    OUTPUT_NAME "hdc_core"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/output"
-)
-endif()
+

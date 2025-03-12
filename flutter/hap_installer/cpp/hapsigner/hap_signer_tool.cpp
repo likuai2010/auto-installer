@@ -22,9 +22,15 @@ static const char **split(char *input, int &size)
     }
     return paramsArray;
 }
-int signHap(int argc, char *args[])
+int signHap(int argc, char *args[], const char tempPath)
 {
-    return ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
+    FILE *sout = freopen(tempPath + "/sign_out.txt", "w", stdout);
+    FILE *serr = freopen(tempPath + "/sign_err.txt", "w", stderr);
+    int ret = ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
+    fclose(sout);
+    fclose(serr);
+    return ret;
+
 }
 char *unzip(const char *source, const char *fileName, const char *destination)
 {

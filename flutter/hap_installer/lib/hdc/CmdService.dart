@@ -67,7 +67,7 @@ class CmdService {
     }
     final cmd =
         "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig!.certPath} -profileFile ${signConfig.profilePath} -inFile ${inFile} -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile ${outFile} -signCode 1";
-    final error = await signCmd(cmd);
+    final error = await signCmd(cmd, await getTempDir());
     if (error == "") {
       return "签名成功";
     } else {
@@ -77,7 +77,7 @@ class CmdService {
 
   Future<String> installHap(String? filePath) async {
     final outFile = filePath ?? "${await getTempDir()}/signed.hap";
-    final result = await hdcCmd("hdc install $outFile");
+    final result = await baseCmd("hdc install $outFile");
     if (result == "") {
       return "调试成功";
     } else {
@@ -90,17 +90,17 @@ class CmdService {
       url = "127.0.0.1:${url}";
     }
     final cmd = "hdc tconn $url";
-    return await hdcCmd(cmd);
+    return await baseCmd(cmd);
   }
 
   Future<String> targetList() async {
     final cmd = "hdc list targets";
-    return await hdcCmd(cmd);
+    return await baseCmd(cmd);
   }
 
   Future<String> getUdid() async {
     final cmd = "hdc shell bm get --udid";
-    final result = await hdcCmd(cmd);
+    final result = await baseCmd(cmd);
     final udid = result.split(":")[1];
     if (udid != "") {
       return udid.trim();
@@ -111,7 +111,10 @@ class CmdService {
 
   Future<String> openApp(String packageName) async {
     final cmd = "hdc shell aa start -a EntryAbility -b $packageName";
-    return await hdcCmd(cmd);
+    return await baseCmd(cmd);
+  }
+  Future<String> baseCmd(cmd) async {
+    return await hdcCmd(cmd, await getTempDir());
   }
 
   test() {}

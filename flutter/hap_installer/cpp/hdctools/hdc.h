@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-int cmd(int argc, const char *argv[]);
+int cmd(int argc, const char *argv[], const char tempPath);
 int server(void);
 
 #ifdef __cplusplus
