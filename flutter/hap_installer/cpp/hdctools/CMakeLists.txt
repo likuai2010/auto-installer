@@ -37,7 +37,7 @@ list(REMOVE_ITEM HOST_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/host/server.cpp
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/base.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/auth.cpp")
 
-add_library(hdc_z SHARED main.cpp hdc.h base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
+add_library(hdc_z STATIC main.cpp hdc.h base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS} )
 target_link_libraries(
     hdc_z
     libcrypto

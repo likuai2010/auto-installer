@@ -5,7 +5,6 @@ import 'package:hap_installer/hdc/loginhuawei.dart';
 final server = LoginHuawei();
 void main() {
   server.startListening();
-  viewmodel.connectDevice();
   runApp(const MyApp());
 }
 

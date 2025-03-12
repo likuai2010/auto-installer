@@ -653,7 +653,7 @@ int main(int argc, const char *argv[])
 #ifdef __cplusplus
 extern "C" {
 #endif
-int cmd(int argc, const char *argv[], const char tempPath)
+int cmd(int argc, const char *argv[], const char* tempPath)
 {
     string options;
     string commands;
@@ -668,7 +668,7 @@ int cmd(int argc, const char *argv[], const char tempPath)
     {
         return 0;
     }
-
+    
     Base::SetLogLevel(LOG_OFF);
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);

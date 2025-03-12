@@ -4,11 +4,17 @@
 
 FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {
+  
   FILE *sout = freopen(tempDir, "w", stdout);
   FILE *serr = freopen(tempDir, "w", stderr);
   int ret = cmd(argc, args, tempDir);
   fclose(sout);
   fclose(serr);
+  #ifdef _WIN32
+    freopen("CON", "w", stdout);
+  #else
+    freopen("/dev/tty", "w", stdout);
+  #endif
   return ret;
 }
 FFI_PLUGIN_EXPORT int hdcServer(void)

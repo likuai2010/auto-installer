@@ -31,8 +31,11 @@ class EcoViewModel {
       isLogin = false;
     }
   }
-  connectDevice(){
-    cmd.connectHdc("192.168.0.126:34851");
+  connectDevice() async {
+    print("connectDevice: ");
+
+    var result = await cmd.connectHdc("192.168.0.126:34851");
+    print("connectDevice: "+ result);
   }
   checkDevices() async {
     final result = await cmd.targetList();

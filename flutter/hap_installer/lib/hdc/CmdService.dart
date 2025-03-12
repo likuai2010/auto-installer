@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
@@ -89,7 +88,7 @@ class CmdService {
     if (url.length <= 5) {
       url = "127.0.0.1:${url}";
     }
-    final cmd = "hdc 111";
+    final cmd = "hdc tconn $url";
     return await baseCmd(cmd);
   }
 

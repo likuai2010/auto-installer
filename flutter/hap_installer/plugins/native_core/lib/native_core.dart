@@ -7,11 +7,15 @@ import 'package:ffi/ffi.dart';
 import 'native_core_bindings_generated.dart';
 
 Future<String> hdcCmd(String args, String tempDir) async {
-    print("${tempDir}/out.log");
-  _hdcCmd(args, "${tempDir}/hdc_out.log");
-  return "dartString";
+    return await Isolate.run(() {
+        final logPath = "$tempDir/hdc_out.log";
+        _hdcCmd(args, logPath);
+        return File(logPath).readAsString();
+    });
 }
 int _hdcCmd(String args, String tempDir)  {
+  final ReceivePort receivePort = ReceivePort();
+
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
