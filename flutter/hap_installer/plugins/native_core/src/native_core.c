@@ -23,9 +23,19 @@ FFI_PLUGIN_EXPORT int hdcServer(void)
 }
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 {
-  return signCmd(argc, args, tempDir);
+  FILE *sout = freopen(tempDir, "w", stdout);
+  FILE *serr = freopen(tempDir, "w", stderr);
+  int ret = sign_hap(argc, args);
+  fclose(sout);
+  fclose(serr);
+  #ifdef _WIN32
+    freopen("CON", "w", stdout);
+  #else
+    freopen("/dev/tty", "w", stdout);
+  #endif
+  return ret;
 }
 FFI_PLUGIN_EXPORT char *uzip(const char *source, const char *fileName, const char *destination)
 {
-  return uzip(source, fileName, destination);
+  return unzip(source, fileName, destination);
 }

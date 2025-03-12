@@ -162,16 +162,16 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
 
 if(OHOS)
-set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all"
- libace_napi.z.so
- hilog_ndk.z
-)
-list(APPEND outputs hap_signer_tool.cpp)
+    set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all"
+    libace_napi.z.so
+    hilog_ndk.z
+    )
 endif()
 if(WIN32)
 set(LD_FLAGS ws2_32)
 endif()
 
+list(APPEND outputs hap_signer_tool.cpp )
 
 include_directories(${include_dirs})
 link_libraries(

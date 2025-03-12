@@ -5,61 +5,44 @@
 
 using namespace OHOS::SignatureTools;
 
-static const char **split(char *input, int &size)
-{
-    std::vector<const char *> params;
-    char *temp = strtok(input, " ");
-    while (temp != nullptr)
-    {
-        params.push_back(temp);
-        temp = strtok(nullptr, " ");
-    }
-    size = params.size();
-    const char **paramsArray = new const char *[params.size() + 1]; // +1 为了存储 nullptr
-    for (size_t i = 0; i < params.size(); ++i)
-    {
-        paramsArray[i] = const_cast<char *>(params[i]); // 转换 const char* 为 char*
-    }
-    return paramsArray;
-}
-int signHap(int argc, char *args[], const char tempPath)
-{
-    FILE *sout = freopen(tempPath + "/sign_out.txt", "w", stdout);
-    FILE *serr = freopen(tempPath + "/sign_err.txt", "w", stderr);
-    int ret = ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
-    fclose(sout);
-    fclose(serr);
-    return ret;
 
+extern "C" int sign_hap(int argc, char *args[])
+{
+    return ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
 }
-char *unzip(const char *source, const char *fileName, const char *destination)
+
+
+const char *unzip(const char *source, const char *fileName, const char *destination)
 {
     unzFile zipfile = unzOpen(source);
+    std::string message = "";
+
     if (zipfile == NULL)
     {
-        printf("无法打开 ZIP 文件: %s\n", source);
-        return;
+        message = message + "无法打开 ZIP 文件: " + source;
+        return message.c_str();
     }
 
     if (unzLocateFile(zipfile, fileName, 1) != UNZ_OK)
     {
-        printf("未找到文件: %s\n", destination);
         unzClose(zipfile);
-        return;
+        message = message + "未找到文件: " + destination;
+        return message.c_str();
     }
     if (unzOpenCurrentFile(zipfile) != UNZ_OK)
     {
-        printf("无法打开文件: %s\n", destination);
+        message = message + "无法打开文件: " + destination;
         unzClose(zipfile);
-        return;
+        return message.c_str();
     }
     FILE *dest_file = fopen(destination, "wb");
     if (dest_file == NULL)
     {
         printf("无法创建目标文件: %s\n", destination);
+        message = message + "无法创建目标文件: " + destination;
         unzCloseCurrentFile(zipfile);
         unzClose(zipfile);
-        return;
+        return message.c_str();
     }
     // 从 ZIP 文件中读取数据并写入目标文件
     char buffer[4096];
@@ -68,10 +51,8 @@ char *unzip(const char *source, const char *fileName, const char *destination)
     {
         fwrite(buffer, 1, bytes_read, dest_file);
     }
-
     fclose(dest_file);
     unzCloseCurrentFile(zipfile);
     unzClose(zipfile);
-    printf("成功提取: %s\n", destination);
-    return ""
+    return "提取成功";
 }
