@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "native_core.h": "c",
+        "hdc_core.h": "c",
+        "hdc.h": "c",
+        "stdio.h": "c",
+        "unistd.h": "c",
+        "string": "cpp",
+        "hap_signer_tool.h": "c",
+        "stdint.h": "c"
+    },
+    "cmake.sourceDirectory": "/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/cpp"
+}

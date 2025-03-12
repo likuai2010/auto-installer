@@ -7,7 +7,8 @@ cmake  -G Ninja \
   -B build_macos \
   -S .
 pushd build_macos
-ninja 
+ninja
+cp -f hdctools/libhdc_z.a ../../plugins/native_core/macos/Classes/libs/libhdc_z.a
 popd
 fi
 #windows  use MSYS2 build

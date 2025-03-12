@@ -7,6 +7,7 @@ import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:native_core/native_core.dart';
 
 class EcoViewModel {
   bool isLogin = false;
@@ -14,6 +15,10 @@ class EcoViewModel {
   List<String> deviceList = [];
   String currentDevice = "";
   SignConfig? signConfig;
+  EcoViewModel(){
+    startHdcServer();
+  }
+
   loadUserInfo() async {
     final userInfo = await readUserInfoFromFile(
       "${await getAppDir()}/userInfo.json",
@@ -26,7 +31,9 @@ class EcoViewModel {
       isLogin = false;
     }
   }
-
+  connectDevice(){
+    cmd.connectHdc("192.168.0.126:34851");
+  }
   checkDevices() async {
     final result = await cmd.targetList();
     deviceList = result.split("\n").where((d) => d != '').toList();
@@ -129,3 +136,5 @@ class EcoViewModel {
     return true;
   }
 }
+
+final viewmodel = EcoViewModel();

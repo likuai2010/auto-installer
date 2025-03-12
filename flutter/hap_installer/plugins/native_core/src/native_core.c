@@ -4,11 +4,16 @@
 
 FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {
-  return cmd(argc, args, tempDir);
+  FILE *sout = freopen(tempDir, "w", stdout);
+  FILE *serr = freopen(tempDir, "w", stderr);
+  int ret = cmd(argc, args, tempDir);
+  fclose(sout);
+  fclose(serr);
+  return ret;
 }
 FFI_PLUGIN_EXPORT int hdcServer(void)
 {
-  return hdcServer();
+  return server();
 }
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 {

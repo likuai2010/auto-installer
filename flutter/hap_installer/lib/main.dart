@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/hdc/CmdService.dart';
+import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
 
 final server = LoginHuawei();
 void main() {
   server.startListening();
+  viewmodel.connectDevice();
   runApp(const MyApp());
 }
 
@@ -61,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
+    viewmodel.connectDevice();
     setState(() {
       _counter += 1;
     });

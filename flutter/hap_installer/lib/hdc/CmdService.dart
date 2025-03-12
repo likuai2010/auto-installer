@@ -89,7 +89,7 @@ class CmdService {
     if (url.length <= 5) {
       url = "127.0.0.1:${url}";
     }
-    final cmd = "hdc tconn $url";
+    final cmd = "hdc 111";
     return await baseCmd(cmd);
   }
 

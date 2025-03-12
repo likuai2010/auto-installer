@@ -7,7 +7,8 @@ import 'package:ffi/ffi.dart';
 import 'native_core_bindings_generated.dart';
 
 Future<String> hdcCmd(String args, String tempDir) async {
- _hdcCmd(args, tempDir);
+    print("${tempDir}/out.log");
+  _hdcCmd(args, "${tempDir}/hdc_out.log");
   return "dartString";
 }
 int _hdcCmd(String args, String tempDir)  {
@@ -20,6 +21,13 @@ int _hdcCmd(String args, String tempDir)  {
   final result =  _bindings.hdcCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
   calloc.free(charArray);
   return result;
+}
+Future startHdcServer() async {
+  final ReceivePort receivePort = ReceivePort();
+  await Isolate.spawn((SendPort sendPort) async {
+        _bindings.hdcServer();
+        sendPort.send("");
+  }, receivePort.sendPort);
 }
 
 Future<String> signCmd(String args, String tempDir) async {

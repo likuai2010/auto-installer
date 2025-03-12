@@ -655,8 +655,6 @@ extern "C" {
 #endif
 int cmd(int argc, const char *argv[], const char tempPath)
 {
-    FILE *sout = freopen(tempPath + "/hdc_out.txt", "w", stdout);
-    FILE *serr = freopen(tempPath + "/hdc_err.txt", "w", stderr);
     string options;
     string commands;
     Hdc::SplitOptionAndCommand(argc, argv, options, commands);
@@ -668,8 +666,6 @@ int cmd(int argc, const char *argv[], const char tempPath)
     delete[] (reinterpret_cast<char *>(optArgv));
     if (cmdOptionResult)
     {
-        fclose(sout);
-        fclose(serr);
         return 0;
     }
 
@@ -677,16 +673,6 @@ int cmd(int argc, const char *argv[], const char tempPath)
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
     Hdc::Base::RemoveLogCache();
-    if (sout != nullptr)
-    {
-        WRITE_LOG(LOG_DEBUG, "open stdout");
-        fclose(sout);
-        fclose(serr);
-    }
-    else
-    {
-        WRITE_LOG(LOG_DEBUG, "open stdout fail");
-    }
     return 0;
 }
 

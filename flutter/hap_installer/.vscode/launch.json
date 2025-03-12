@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "LLDB macos",
+            "type": "lldb",
+            "request": "attach",
+            "pid": "${command:pickProcess}",
+        },
+        {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
