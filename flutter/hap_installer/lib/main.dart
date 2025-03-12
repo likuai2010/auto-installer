@@ -6,6 +6,7 @@ final server = LoginHuawei();
 void main() {
   server.startListening();
   runApp(const MyApp());
+  viewmodel.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    viewmodel.connectDevice();
+    viewmodel.testSignHap();
     setState(() {
       _counter += 1;
     });
@@ -113,6 +114,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            TextButton(
+              child: Text("测试连接"),
+              onPressed: () => {viewmodel.connectDevice()},
             ),
           ],
         ),

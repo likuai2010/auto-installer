@@ -182,7 +182,11 @@ link_libraries(
  zlib
 )
 
+if(APPLE)
 add_library(signtool STATIC ${outputs})
+else()
+add_library(signtool SHARED ${outputs})
+endif()
 add_executable(signtools ${outputs})
 
 

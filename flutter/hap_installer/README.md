@@ -18,4 +18,9 @@ samples, guidance on mobile development, and a full API reference.
 ```
 export PUB_HOSTED_URL=https://mirrors.tuna.tsinghua.edu.cn/dart-pub;
 export FLUTTER_STORAGE_BASE_URL=https://mirrors.tuna.tsinghua.edu.cn/flutter
+
+dart run ffigen --config ffigen.yaml
+dart1 run build_runner build
+
 ```
+

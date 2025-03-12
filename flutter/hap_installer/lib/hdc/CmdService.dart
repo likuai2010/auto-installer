@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:native_core/native_core.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 Future<SignConfig?> readSignConfigFromFile(String filePath) async {
   if (!await File(filePath).exists()) return null;
@@ -22,17 +24,26 @@ Future<AuthInfo?> readUserInfoFromFile(String filePath) async {
 
 Future saveJsonToFile(String json, String filePath) async {
   final file = File(filePath);
-  file.writeAsString(json);
+  await file.writeAsString(json, flush: true);
 }
 
 Future<String> getTempDir() async {
   final temp = await getTemporaryDirectory();
-  return temp.path;
+
+  final appDir = Directory(path.join(temp.path, "hap_installer"));
+  if (!await appDir.exists()) {
+    appDir.create(recursive: true);
+  }
+  return appDir.path;
 }
 
 Future<String> getAppDir() async {
   final temp = await getApplicationDocumentsDirectory();
-  return temp.path;
+  final appDir = Directory(path.join(temp.path, 'hap_installer'));
+  if (!await appDir.exists()) {
+    appDir.create(recursive: true);
+  }
+  return appDir.path;
 }
 
 class CmdService {
@@ -44,28 +55,22 @@ class CmdService {
     return ModuleInfo.fromJson(jsonDecode(json));
   }
 
-  Future<String> signHapDefault() async {
-    final inFile = "${await getTempDir()}/unsigned.hap";
-    return signHap(inFile, null);
+  Future<String> getOutPath(String inPath) async {
+    final outFile = path.join(
+      await getTempDir(),
+      "${path.basenameWithoutExtension(inPath)}_signed${path.extension(inPath)}",
+    );
+    return outFile;
   }
 
-  Future<String> signHap(String inFile, SignConfig? signConfig) async {
-    if (!await File(inFile).exists()) {
+  Future<String> signHap(String inPath, SignConfig signConfig) async {
+    if (!await File(inPath).exists()) {
       return "hap文件不存在";
     }
-    if (signConfig == null) {
-      final storeDir = "${await getTempDir()}/store";
-      signConfig = await readSignConfigFromFile("$storeDir/signConfig.json");
-    }
-    if (signConfig == null) {
-      return "签名配置不存在";
-    }
-    final outFile = "${await getTempDir()}/signed.hap";
-    if (await File(outFile).exists()) {
-      await File(outFile).delete();
-    }
+    final outPath = await getOutPath(inPath);
     final cmd =
-        "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig!.certPath} -profileFile ${signConfig.profilePath} -inFile ${inFile} -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile ${outFile} -signCode 1";
+        "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1";
+    print("signCmd: $cmd");
     final error = await signCmd(cmd, await getTempDir());
     if (error == "") {
       return "签名成功";
@@ -74,13 +79,15 @@ class CmdService {
     }
   }
 
-  Future<String> installHap(String? filePath) async {
-    final outFile = filePath ?? "${await getTempDir()}/signed.hap";
-    final result = await baseCmd("hdc install $outFile");
+  Future<String> installHap(String filePath) async {
+    if (!File(filePath).existsSync()) {
+      return "文件不存在";
+    }
+    final result = await baseCmd("hdc install $filePath");
     if (result == "") {
       return "调试成功";
     } else {
-      return "调试失败";
+      return "调试失败: ${result}";
     }
   }
 
@@ -112,6 +119,7 @@ class CmdService {
     final cmd = "hdc shell aa start -a EntryAbility -b $packageName";
     return await baseCmd(cmd);
   }
+
   Future<String> baseCmd(cmd) async {
     return await hdcCmd(cmd, await getTempDir());
   }

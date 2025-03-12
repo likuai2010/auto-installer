@@ -8,7 +8,7 @@ part 'generated/SignConfig.g.dart';
 abstract class SignConfig with _$SignConfig {
   factory SignConfig({
     @Default("") String packageName,
-    @Default("") String udid,
+    @Default([]) List<String> udids,
     @Default("") String csrPath,
     @Default("") String certPath,
     @Default("") String certId,

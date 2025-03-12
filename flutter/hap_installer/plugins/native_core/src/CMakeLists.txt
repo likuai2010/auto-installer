@@ -18,9 +18,9 @@ hdc_z
 signtool
 )
 elseif(WIN32)
-set(CMAKE_CXX_COMPILER "G:/msys64/mingw64/bin/g++.exe")
 list(APPEND LIBRARY_PATHS
 ${libPath}/windows/x86-64/libhdc_z.dll.a
+${libPath}/windows/x86-64/libsigntool.dll.a
 )
 elseif(APPLE)
 else()

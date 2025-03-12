@@ -651,38 +651,39 @@ int main(int argc, const char *argv[])
 #include "hdc.h"
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-int cmd(int argc, const char *argv[], const char* tempPath)
+extern "C"
 {
-    string options;
-    string commands;
-    Hdc::SplitOptionAndCommand(argc, argv, options, commands);
-    uv_setup_args(argc, const_cast<char **>(argv));
-    int optArgc = 0;
-    char **optArgv = Base::SplitCommandToArgs(options.c_str(), &optArgc);
-    bool cmdOptionResult;
-    cmdOptionResult = GetCommandlineOptions(optArgc, const_cast<const char **>(optArgv));
-    delete[] (reinterpret_cast<char *>(optArgv));
-    if (cmdOptionResult)
+#endif
+    int cmd(int argc, const char *argv[], const char *tempPath)
     {
+        string options;
+        string commands;
+        Base::SetTempDir(tempPath);
+        Hdc::SplitOptionAndCommand(argc, argv, options, commands);
+        uv_setup_args(argc, const_cast<char **>(argv));
+        int optArgc = 0;
+        char **optArgv = Base::SplitCommandToArgs(options.c_str(), &optArgc);
+        bool cmdOptionResult;
+        cmdOptionResult = GetCommandlineOptions(optArgc, const_cast<const char **>(optArgv));
+        delete[] (reinterpret_cast<char *>(optArgv));
+        if (cmdOptionResult)
+        {
+            return 0;
+        }
+
+        Base::SetLogLevel(LOG_DEBUG);
+        string g_serverListenString = "127.0.0.1:18710";
+        Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
+        Hdc::Base::RemoveLogCache();
         return 0;
     }
-    
-    Base::SetLogLevel(LOG_OFF);
-    string g_serverListenString = "127.0.0.1:18710";
-    Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
-    Hdc::Base::RemoveLogCache();
-    return 0;
-}
 
-int server()
-{
-    string server = "::ffff:127.0.0.1:18710";
-    RunServerMode(server);
-    return 0;
-}
+    int server()
+    {
+        string server = "::ffff:127.0.0.1:18710";
+        RunServerMode(server);
+        return 0;
+    }
 #ifdef __cplusplus
 }
 #endif
-

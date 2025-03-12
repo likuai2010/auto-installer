@@ -39,6 +39,7 @@ dependencies:
   json_annotation: ^4.9.0
   freezed_annotation: ^3.0.0
   path_provider: ^2.1.5
+  path: ^1.8.0
   native_core:
     path: plugins/native_core
 

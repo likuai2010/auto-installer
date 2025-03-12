@@ -236,8 +236,8 @@ class EcoService {
     } else {
       print("testTag EcoService cert 存在");
     }
-    var udid = config.udid.trim();
-    if (udid != "") {
+    var udid = config.udids.first;
+    if (udid.isNotEmpty) {
       if (unLogin()) return false;
       var deviceList = await this.deviceList();
       if (deviceList.where((d) => d.udid == udid).isEmpty) {

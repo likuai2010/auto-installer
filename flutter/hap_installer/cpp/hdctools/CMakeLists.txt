@@ -19,7 +19,9 @@ endif()
 
 #//-DHOST_LINUX
 add_definitions(-DUSE_CONFIG_UV_THREADS -DSIZE_THREAD_POOL=128 -DHDC_HOST  -DHARMONY_PROJECT -DTEST_HASH -DHDC_MSG_HASH="TEST")
-
+if(LINUX OR ANDROID)
+    add_definitions(-DHOST_LINUX)
+endif()
 if(APPLE)
     add_definitions(-DHOST_MAC) 
 endif()

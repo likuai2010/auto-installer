@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SignConfig implements DiagnosticableTreeMixin {
 
- String get packageName; set packageName(String value); String get udid; set udid(String value); String get csrPath; set csrPath(String value); String get certPath; set certPath(String value); String get certId; set certId(String value); String get profilePath; set profilePath(String value); String get keystoreFile; set keystoreFile(String value); String get keystorePwd; set keystorePwd(String value); String get keyAlias; set keyAlias(String value);
+ String get packageName; set packageName(String value); List<String> get udids; set udids(List<String> value); String get csrPath; set csrPath(String value); String get certPath; set certPath(String value); String get certId; set certId(String value); String get profilePath; set profilePath(String value); String get keystoreFile; set keystoreFile(String value); String get keystorePwd; set keystorePwd(String value); String get keyAlias; set keyAlias(String value);
 /// Create a copy of SignConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,14 +30,14 @@ $SignConfigCopyWith<SignConfig> get copyWith => _$SignConfigCopyWithImpl<SignCon
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'SignConfig'))
-    ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udid', udid))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
+    ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udids', udids))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
 }
 
 
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SignConfig(packageName: $packageName, udid: $udid, csrPath: $csrPath, certPath: $certPath, certId: $certId, profilePath: $profilePath, keystoreFile: $keystoreFile, keystorePwd: $keystorePwd, keyAlias: $keyAlias)';
+  return 'SignConfig(packageName: $packageName, udids: $udids, csrPath: $csrPath, certPath: $certPath, certId: $certId, profilePath: $profilePath, keystoreFile: $keystoreFile, keystorePwd: $keystorePwd, keyAlias: $keyAlias)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SignConfigCopyWith<$Res>  {
   factory $SignConfigCopyWith(SignConfig value, $Res Function(SignConfig) _then) = _$SignConfigCopyWithImpl;
 @useResult
 $Res call({
- String packageName, String udid, String csrPath, String certPath, String certId, String profilePath, String keystoreFile, String keystorePwd, String keyAlias
+ String packageName, List<String> udids, String csrPath, String certPath, String certId, String profilePath, String keystoreFile, String keystorePwd, String keyAlias
 });
 
 
@@ -65,11 +65,11 @@ class _$SignConfigCopyWithImpl<$Res>
 
 /// Create a copy of SignConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? packageName = null,Object? udid = null,Object? csrPath = null,Object? certPath = null,Object? certId = null,Object? profilePath = null,Object? keystoreFile = null,Object? keystorePwd = null,Object? keyAlias = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? packageName = null,Object? udids = null,Object? csrPath = null,Object? certPath = null,Object? certId = null,Object? profilePath = null,Object? keystoreFile = null,Object? keystorePwd = null,Object? keyAlias = null,}) {
   return _then(_self.copyWith(
 packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
-as String,udid: null == udid ? _self.udid : udid // ignore: cast_nullable_to_non_nullable
-as String,csrPath: null == csrPath ? _self.csrPath : csrPath // ignore: cast_nullable_to_non_nullable
+as String,udids: null == udids ? _self.udids : udids // ignore: cast_nullable_to_non_nullable
+as List<String>,csrPath: null == csrPath ? _self.csrPath : csrPath // ignore: cast_nullable_to_non_nullable
 as String,certPath: null == certPath ? _self.certPath : certPath // ignore: cast_nullable_to_non_nullable
 as String,certId: null == certId ? _self.certId : certId // ignore: cast_nullable_to_non_nullable
 as String,profilePath: null == profilePath ? _self.profilePath : profilePath // ignore: cast_nullable_to_non_nullable
@@ -87,11 +87,11 @@ as String,
 @JsonSerializable()
 
 class _SignConfig with DiagnosticableTreeMixin implements SignConfig {
-   _SignConfig({this.packageName = "", this.udid = "", this.csrPath = "", this.certPath = "", this.certId = "", this.profilePath = "", this.keystoreFile = "", this.keystorePwd = "", this.keyAlias = ""});
+   _SignConfig({this.packageName = "", this.udids = const [], this.csrPath = "", this.certPath = "", this.certId = "", this.profilePath = "", this.keystoreFile = "", this.keystorePwd = "", this.keyAlias = ""});
   factory _SignConfig.fromJson(Map<String, dynamic> json) => _$SignConfigFromJson(json);
 
 @override@JsonKey()  String packageName;
-@override@JsonKey()  String udid;
+@override@JsonKey()  List<String> udids;
 @override@JsonKey()  String csrPath;
 @override@JsonKey()  String certPath;
 @override@JsonKey()  String certId;
@@ -114,14 +114,14 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'SignConfig'))
-    ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udid', udid))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
+    ..add(DiagnosticsProperty('packageName', packageName))..add(DiagnosticsProperty('udids', udids))..add(DiagnosticsProperty('csrPath', csrPath))..add(DiagnosticsProperty('certPath', certPath))..add(DiagnosticsProperty('certId', certId))..add(DiagnosticsProperty('profilePath', profilePath))..add(DiagnosticsProperty('keystoreFile', keystoreFile))..add(DiagnosticsProperty('keystorePwd', keystorePwd))..add(DiagnosticsProperty('keyAlias', keyAlias));
 }
 
 
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SignConfig(packageName: $packageName, udid: $udid, csrPath: $csrPath, certPath: $certPath, certId: $certId, profilePath: $profilePath, keystoreFile: $keystoreFile, keystorePwd: $keystorePwd, keyAlias: $keyAlias)';
+  return 'SignConfig(packageName: $packageName, udids: $udids, csrPath: $csrPath, certPath: $certPath, certId: $certId, profilePath: $profilePath, keystoreFile: $keystoreFile, keystorePwd: $keystorePwd, keyAlias: $keyAlias)';
 }
 
 
@@ -132,7 +132,7 @@ abstract mixin class _$SignConfigCopyWith<$Res> implements $SignConfigCopyWith<$
   factory _$SignConfigCopyWith(_SignConfig value, $Res Function(_SignConfig) _then) = __$SignConfigCopyWithImpl;
 @override @useResult
 $Res call({
- String packageName, String udid, String csrPath, String certPath, String certId, String profilePath, String keystoreFile, String keystorePwd, String keyAlias
+ String packageName, List<String> udids, String csrPath, String certPath, String certId, String profilePath, String keystoreFile, String keystorePwd, String keyAlias
 });
 
 
@@ -149,11 +149,11 @@ class __$SignConfigCopyWithImpl<$Res>
 
 /// Create a copy of SignConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? packageName = null,Object? udid = null,Object? csrPath = null,Object? certPath = null,Object? certId = null,Object? profilePath = null,Object? keystoreFile = null,Object? keystorePwd = null,Object? keyAlias = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? packageName = null,Object? udids = null,Object? csrPath = null,Object? certPath = null,Object? certId = null,Object? profilePath = null,Object? keystoreFile = null,Object? keystorePwd = null,Object? keyAlias = null,}) {
   return _then(_SignConfig(
 packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
-as String,udid: null == udid ? _self.udid : udid // ignore: cast_nullable_to_non_nullable
-as String,csrPath: null == csrPath ? _self.csrPath : csrPath // ignore: cast_nullable_to_non_nullable
+as String,udids: null == udids ? _self.udids : udids // ignore: cast_nullable_to_non_nullable
+as List<String>,csrPath: null == csrPath ? _self.csrPath : csrPath // ignore: cast_nullable_to_non_nullable
 as String,certPath: null == certPath ? _self.certPath : certPath // ignore: cast_nullable_to_non_nullable
 as String,certId: null == certId ? _self.certId : certId // ignore: cast_nullable_to_non_nullable
 as String,profilePath: null == profilePath ? _self.profilePath : profilePath // ignore: cast_nullable_to_non_nullable

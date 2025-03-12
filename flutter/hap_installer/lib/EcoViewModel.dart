@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/models/EcoResult.dart';
@@ -8,6 +9,7 @@ import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:native_core/native_core.dart';
+import 'package:path/path.dart' as path;
 
 class EcoViewModel {
   bool isLogin = false;
@@ -15,13 +17,23 @@ class EcoViewModel {
   List<String> deviceList = [];
   String currentDevice = "";
   SignConfig? signConfig;
-  EcoViewModel(){
+  String storeDir = "";
+  EcoViewModel() {}
+  init() async {
     startHdcServer();
+    final storeDir = Directory(path.join(await getAppDir(), "store"));
+    if (!await storeDir.exists()) {
+      storeDir.create(recursive: true);
+    }
+    this.storeDir = storeDir.path;
+    tarnsformAssert();
+    initSignConfig();
+    loadUserInfo();
   }
 
   loadUserInfo() async {
     final userInfo = await readUserInfoFromFile(
-      "${await getAppDir()}/userInfo.json",
+      path.join(await getAppDir(), "userInfo.json"),
     );
     try {
       await eco.initUserInfo(userInfo);
@@ -31,12 +43,13 @@ class EcoViewModel {
       isLogin = false;
     }
   }
-  connectDevice() async {
-    print("connectDevice: ");
 
-    var result = await cmd.connectHdc("192.168.0.126:34851");
-    print("connectDevice: "+ result);
+  connectDevice() async {
+    print("connectDevice: ${await getTempDir()}");
+    var result = await cmd.connectHdc("192.168.3.47:44315");
+    print("connectDevice: " + result);
   }
+
   checkDevices() async {
     final result = await cmd.targetList();
     deviceList = result.split("\n").where((d) => d != '').toList();
@@ -58,14 +71,59 @@ class EcoViewModel {
     );
   }
 
+  tarnsformAssert() async {
+    await copyAssert("xiaobai.csr");
+    await copyAssert("xiaobai.p12");
+    // debug test
+    await copyAssert("unsigned.hap");
+    await copyAssert("xiaobai-debug.cer");
+    await copyAssert("xiaobai-debug.p7b");
+  }
+
+  copyAssert(String fileName) async {
+    final bytes = await rootBundle.load('assets/store/$fileName');
+    File file = File(path.join(storeDir, fileName));
+    if (!await file.exists()) {
+      file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+    }
+  }
+
+  initSignConfig() async {
+    final configPath = path.join(await getAppDir(), "signConfig.json");
+    final defaultConfig = SignConfig(
+      udids: List.empty(),
+      certId: "",
+      csrPath: path.join(storeDir, "xiaobai.csr"),
+      keystoreFile: path.join(storeDir, "xiaobai.p12"),
+      keystorePwd: "xiaobai123",
+      keyAlias: "xiaobai",
+      profilePath: path.join(storeDir, "xiaobai-debug.p7b"),
+      certPath: path.join(storeDir, "xiaobai-debug.cer"),
+    );
+    try {
+      signConfig = await readSignConfigFromFile(configPath) ?? defaultConfig;
+    } catch (e) {
+      signConfig = defaultConfig;
+    }
+    await saveJsonToFile(jsonEncode(signConfig!.toJson()), configPath);
+  }
+
+  testSignHap() async {
+    String filePath = path.join(storeDir, "unsigned.hap");
+    var error = await cmd.signHap(filePath, signConfig!);
+    print("SignHap $error");
+    error = await cmd.installHap(await cmd.getOutPath(filePath));
+    print("installHap: $error");
+  }
+
   installHap(HapInfo hap) async {
     if (signConfig != null) {
       signConfig!.packageName = hap.packageName;
       if (currentDevice != "") {
-        signConfig!.udid = await cmd.getUdid();
+        signConfig!.udids.add(await cmd.getUdid());
       }
       signConfig!.profilePath =
-          "${getAppDir()}/xiaobai-debug_${hap.packageName.replaceAll(".", "_")}.p7b";
+          "${await getAppDir()}/xiaobai-debug_${hap.packageName.replaceAll(".", "_")}.p7b";
       try {
         // onUpdate("请求签名...")
         final module = await _loadModule(hap.filePath);
@@ -84,10 +142,10 @@ class EcoViewModel {
           "${getAppDir()}/signConfig.json",
         );
         //onUpdate("正在签名...")
-        var error = await cmd.signHap(hap.filePath, signConfig);
+        var error = await cmd.signHap(hap.filePath, signConfig!);
         if (error == "签名成功") {
           //onUpdate("正在安装...")
-          await cmd.installHap(null);
+          await cmd.installHap(await cmd.getOutPath(hap.filePath));
           // return ""
         } else {
           //return "签名失败"

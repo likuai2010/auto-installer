@@ -3,65 +3,72 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:ffi/ffi.dart';
+import 'package:path/path.dart' as path;
 
 import 'native_core_bindings_generated.dart';
 
 Future<String> hdcCmd(String args, String tempDir) async {
-    return await Isolate.run(() {
-        final logPath = "$tempDir/hdc_out.log";
-        _hdcCmd(args, logPath);
-        return File(logPath).readAsString();
-    });
+  return await Isolate.run(() {
+    final logPath = path.join(tempDir, "hdc_out.log");
+    _hdcCmd(args, logPath);
+    return File(logPath).readAsString();
+  });
 }
-int _hdcCmd(String args, String tempDir)  {
+
+int _hdcCmd(String args, String tempDir) {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
     charArray[i] = params[i].cast();
   }
-  final result =  _bindings.hdcCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
+  final result = _bindings.hdcCmd(
+    params.length,
+    charArray,
+    tempDir.toNativeUtf8().cast(),
+  );
   calloc.free(charArray);
   return result;
 }
+
 Future startHdcServer() async {
   final ReceivePort receivePort = ReceivePort();
   await Isolate.spawn((SendPort sendPort) async {
-        _bindings.hdcServer();
-        sendPort.send("");
+    _bindings.hdcServer();
+    sendPort.send("");
   }, receivePort.sendPort);
 }
 
 Future<String> signCmd(String args, String tempDir) async {
-   return await Isolate.run(() {
-      final logPath = "$tempDir/sign_out.log";
-      _signCmd(args, logPath);
-      return File(logPath).readAsString();
-   });
+  return await Isolate.run(() {
+    final logPath = path.join(tempDir, "sign_out.log");
+    _signCmd(args, logPath);
+    return File(logPath).readAsString();
+  });
 }
+
 _signCmd(String args, String tempDir) async {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     charArray[i] = params[i].cast();
   }
-  _bindings.hdcCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
+  _bindings.signCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
   calloc.free(charArray);
   return;
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {
-   return await Isolate.run(() {
-      final result = _bindings.uzip(
-        hapPath.toNativeUtf8().cast(),
-        inFileName.toNativeUtf8().cast(),
-        outPath.toNativeUtf8().cast(),
-      );
-      calloc.free(result);
-      final dartString = result.cast<Utf8>().toDartString();
-      return dartString;
-
-   });
+  return await Isolate.run(() {
+    final result = _bindings.uzip(
+      hapPath.toNativeUtf8().cast(),
+      inFileName.toNativeUtf8().cast(),
+      outPath.toNativeUtf8().cast(),
+    );
+    calloc.free(result);
+    final dartString = result.cast<Utf8>().toDartString();
+    return dartString;
+  });
 }
 
 Future<int> sumAsync(int a, int b) async {
