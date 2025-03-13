@@ -9,6 +9,18 @@ void main() {
   viewmodel.init();
 }
 
+void showMaterialToast(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 2), // 显示时间
+      behavior: SnackBarBehavior.fixed, // 悬浮显示
+      backgroundColor: Colors.black87,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+  );
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -117,7 +129,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             TextButton(
               child: Text("测试连接"),
-              onPressed: () => {viewmodel.connectDevice()},
+              onPressed:  () {
+                showMaterialToast(context, "这是一个 Material Toast");
+              },
             ),
           ],
         ),
