@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
+import 'package:hap_installer/hdc/loginhuawei.dart';
+import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
@@ -11,14 +15,26 @@ import 'package:hap_installer/models/SignConfig.dart';
 import 'package:native_core/native_core.dart';
 import 'package:path/path.dart' as path;
 
-class EcoViewModel {
+void toask(BuildContext context, [String message = ""]) {
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.showSnackBar(SnackBar(content: Text(message)));
+}
+
+class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
-  String currentDevice = "";
+  AuthInfo? userInfo;
+  HapInfo? hapInfo;
+  String? currentDevice;
   SignConfig? signConfig;
   String storeDir = "";
+  bool loading = false;
+  String ip = "192.168.3.47";
+  String port = "44315";
+
   EcoViewModel() {}
+
   init() async {
     startHdcServer();
     final storeDir = Directory(path.join(await getAppDir(), "store"));
@@ -28,26 +44,60 @@ class EcoViewModel {
     this.storeDir = storeDir.path;
     tarnsformAssert();
     initSignConfig();
-    loadUserInfo();
+    checkDevices();
   }
 
-  loadUserInfo() async {
-    final userInfo = await readUserInfoFromFile(
-      path.join(await getAppDir(), "userInfo.json"),
-    );
+  Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
+    final configPath = path.join(await getAppDir(), "userInfo.json");
+    if (authInfo != null) {
+      saveJsonToFile(jsonEncode(authInfo.toJson()), configPath);
+    }
+    userInfo = await readUserInfoFromFile(configPath);
+    if (userInfo == null) return;
     try {
       await eco.initUserInfo(userInfo);
-      teamList = await eco.getUserTeamList();
+      final list = await eco.getUserTeamList();
+      if (list != null) {
+        teamList = list;
+      } else {
+        toask(context, '登录信息无效(tip: 请关闭代理软件, ip必须在国内!)');
+      }
       isLogin = true;
     } catch (e) {
       isLogin = false;
     }
   }
 
-  connectDevice() async {
-    print("connectDevice: ${await getTempDir()}");
-    var result = await cmd.connectHdc("192.168.3.47:44315");
-    print("connectDevice: " + result);
+  toLogin(BuildContext context) async {
+    if (loading) {
+      return;
+    }
+    loading = true;
+    notifyListeners();
+    final huawei = LoginHuawei();
+    huawei.openUrl();
+    final authInfo = await huawei.getAuthInfo();
+    loading = false;
+    await loadUserInfo(context, authInfo);
+    notifyListeners();
+  }
+
+  toSelectFile(BuildContext context) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    var file = result?.files.first;
+    toask(context, "${file?.path}");
+    if (file?.path != null) {
+      hapInfo = await _loadHap(context, file!.path!);
+      notifyListeners();
+    }
+  }
+
+  connectDevice(BuildContext context, String ip, String port) async {
+    this.ip = ip;
+    this.port = port;
+    var result = await cmd.connectHdc("$ip:$port");
+    toask(context, result);
+    checkDevices();
   }
 
   checkDevices() async {
@@ -60,13 +110,14 @@ class EcoViewModel {
     }
   }
 
-  Future<HapInfo> loadHap(String hapPath) async {
-    final hapFile = File("${getTempDir()}/unsigned.hap");
-    if (await hapFile.exists()) await hapFile.delete();
-    print('testTag copy finish: ${hapFile.path}');
-    final moduleInfo = await _loadModule(hapFile.path);
+  Future<HapInfo> _loadHap(BuildContext context, String hapPath) async {
+    final hapFile = File(hapPath);
+    final tempFile = File("${await getTempDir()}/unsigned.hap");
+    tempFile.writeAsBytes(hapFile.readAsBytesSync(), flush: true);
+    if (!await tempFile.exists()) new Exception("文件不存在");
+    final moduleInfo = await _loadModule(tempFile.path);
     return HapInfo(
-      packageName: moduleInfo?.app?.bundleName ?? "位置",
+      packageName: moduleInfo?.app?.bundleName ?? "未知",
       filePath: hapFile.path,
     );
   }
@@ -168,11 +219,11 @@ class EcoViewModel {
       if (result.contains("Connect OK")) {
         return;
       } else {
-        if (currentDevice.contains("Unauthorized")) {
-          // "请等待授权弹框!"
-        } else {
-          // promptAction.showToast({message: result})
-        }
+        // if (currentDevice?.contains("Unauthorized")) {
+        //   // "请等待授权弹框!"
+        // } else {
+        //   // promptAction.showToast({message: result})
+        // }
         return;
       }
     }
@@ -182,7 +233,7 @@ class EcoViewModel {
     try {
       return await cmd.readModuleInfo(hapPath);
     } catch (e) {
-      //promptAction.showToast({message:"未读取到module.json"})
+      print("loadModule: $e");
     }
     return null;
   }

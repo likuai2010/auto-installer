@@ -38,6 +38,7 @@ class EcoService {
       request.headers.set("oauth2Token", authInfo?.accessToken ?? "");
       request.headers.set("teamId", authInfo?.teamId ?? authInfo?.teamId ?? "");
       request.headers.set("uid", authInfo?.userId ?? "");
+      print("header: ${request.headers}");
       if (headers != null) {
         for (var key in headers.keys) {
           request.headers.set(key, headers[key] ?? "");
@@ -49,8 +50,8 @@ class EcoService {
         request.add(body);
       }
       final response = await request.close();
+      final strResult = await response.transform(utf8.decoder).join();
       if (response.statusCode == 200) {
-        final strResult = await response.transform(utf8.decoder).join();
         try {
           return EcoResult.fromJson(jsonDecode(strResult));
         } catch (e) {
@@ -58,10 +59,11 @@ class EcoService {
           return EcoResult(code: 0, msg: strResult);
         }
       } else if (response.statusCode == 401) {
-        throw Exception("登陆失效");
+        throw Exception("登陆失效, ${strResult}");
       }
     } catch (e) {
       print('Error: $e');
+      return EcoResult(code: 401, msg: "");
     } finally {
       httpClient.close();
     }
@@ -94,7 +96,7 @@ class EcoService {
   initUserInfo(AuthInfo? authInfo) async {
     this.authInfo = authInfo;
     if (authInfo == null) return;
-    print("authInfo" + jsonEncode(authInfo.toJson()));
+    print("authInfo" + jsonEncode(authInfo?.toJson()));
   }
 
   Future<AuthInfo?> getAuthInfoBytempToken(String tokenUrl) async {
@@ -115,14 +117,17 @@ class EcoService {
     if (result?.userInfo == null) {
       throw Exception("登陆失败");
     }
-    initUserInfo(result!.userInfo!);
-    return result.userInfo;
+    return result?.userInfo;
   }
 
-  Future<List<TeamInfo>> getUserTeamList() async {
+  Future<List<TeamInfo>?> getUserTeamList() async {
     final uri =
         "https://connect-api.cloud.huawei.com/api/ups/user-permission-service/v1/user-team-list";
     final result = await base(uri, {}, {}, "GET");
+    // 没有权限获取
+    if (result?.code == 401) {
+      return null;
+    }
     return result?.teams ?? List.empty();
   }
 

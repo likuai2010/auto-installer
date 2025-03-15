@@ -1,103 +1,190 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/main.dart';
+import 'package:hap_installer/pages/cert_page.dart';
+import 'package:hap_installer/pages/index_page.dart';
+import 'package:hap_installer/pages/more_page.dart';
+import 'package:hap_installer/pages/navigation_transition.dart';
+import 'package:hap_installer/pages/common.dart';
+import 'package:hap_installer/pages/constants.dart';
+
+const double mediumWidthBreakpoint = 1000;
+const double largeWidthBreakpoint = 1500;
 
 class Home extends StatefulWidget {
-  const Home({
-    super.key, 
-    required this.title,
-    required this.useLightMode,
-  });
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  const Home({super.key, required this.title, required this.useLightMode});
 
   final String title;
   final bool useLightMode;
 
   @override
-  State<Home> createState() => _MyHomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _MyHomePageState extends State<Home> {
-  int _counter = 0;
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  late final AnimationController controller;
+  bool controllerInitialized = false;
+  bool showMediumSizeLayout = false;
+  bool showLargeSizeLayout = false;
+  int screenIndex = PageSelected.home.value;
 
-  void _incrementCounter() async {
-    viewmodel.testSignHap();
-    setState(() {
-      _counter += 1;
-    });
+  @override
+  initState() {
+    super.initState();
+    controller = AnimationController(
+      duration: Duration(milliseconds: 1000),
+      value: 0,
+      vsync: this,
+    );
   }
 
-  selectFile() async {
-    server.openUrl();
-    //FilePickerResult? result = await FilePicker.platform.pickFiles();
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final double width = MediaQuery.of(context).size.width;
+    final AnimationStatus status = controller.status;
+    if (width > mediumWidthBreakpoint) {
+      if (width > largeWidthBreakpoint) {
+        showMediumSizeLayout = false;
+        showLargeSizeLayout = true;
+      } else {
+        showMediumSizeLayout = true;
+        showLargeSizeLayout = false;
+      }
+      if (status != AnimationStatus.forward &&
+          status != AnimationStatus.completed) {
+        controller.forward();
+      }
+    } else {
+      showMediumSizeLayout = false;
+      showLargeSizeLayout = false;
+      if (status != AnimationStatus.reverse &&
+          status != AnimationStatus.dismissed) {
+        controller.reverse();
+      }
+    }
+    if (!controllerInitialized) {
+      controllerInitialized = true;
+      controller.value = width > mediumWidthBreakpoint ? 1 : 0;
+    }
+  }
+
+  PreferredSizeWidget _createAppBar(colorScheme) {
+    return AppBar(
+      title: Text(widget.title),
+      backgroundColor: colorScheme.inversePrimary,
+      actions: [Container()],
+    );
+  }
+
+  Widget createScreenFor(PageSelected pageSelected) => switch (pageSelected) {
+    PageSelected.home => IndexPage(),
+    PageSelected.cert => CertPage(),
+    PageSelected.history => MorePage(),
+    PageSelected.more => MorePage(),
+  };
+  void handleScreenChanged(int screenSelected) {
+    setState(() {
+      screenIndex = screenSelected;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            TextButton(
-              child: Text("测试连接"),
-              onPressed:  () {
-                showMaterialToast(context, "这是一个 Material Toast");
-              },
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        return NavigationTransition(
+          scaffoldKey: scaffoldKey,
+          animationController: controller,
+          appBar: _createAppBar(colorScheme),
+          body: createScreenFor(PageSelected.values[screenIndex]),
+          navigationRail: NavigationRail(
+            extended: showLargeSizeLayout,
+            destinations: _navRailDestinations,
+            selectedIndex: screenIndex,
+            onDestinationSelected: (index) {
+              handleScreenChanged(index);
+            },
+          ),
+          navigationBar: NavigationBars(
+            onSelectItem: (index) {
+              handleScreenChanged(index);
+            },
+            selectedIndex: 1,
+          ),
+        );
+      },
     );
+  }
+}
+
+final List<NavigationRailDestination> _navRailDestinations = appBarDestinations
+    .map(
+      (destination) => NavigationRailDestination(
+        icon: Tooltip(message: destination.label, child: destination.icon),
+        selectedIcon: Tooltip(
+          message: destination.label,
+          child: destination.selectedIcon,
+        ),
+        label: Text(destination.label),
+      ),
+    )
+    .toList(growable: false);
+
+class NavigationBars extends StatefulWidget {
+  const NavigationBars({
+    super.key,
+    this.onSelectItem,
+    required this.selectedIndex,
+  });
+
+  final void Function(int)? onSelectItem;
+  final int selectedIndex;
+
+  @override
+  State<NavigationBars> createState() => _NavigationBarsState();
+}
+
+class _NavigationBarsState extends State<NavigationBars> {
+  late int selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.selectedIndex;
+  }
+
+  @override
+  void didUpdateWidget(covariant NavigationBars oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedIndex != oldWidget.selectedIndex) {
+      selectedIndex = widget.selectedIndex;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget navigationBar = Focus(
+      child: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+          widget.onSelectItem!(index);
+        },
+        destinations: appBarDestinations,
+      ),
+    );
+    return navigationBar;
   }
 }

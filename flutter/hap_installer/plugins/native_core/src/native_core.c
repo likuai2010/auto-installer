@@ -1,7 +1,9 @@
 #include "native_core.h"
 #include "hdc.h"
 #include "hap_signer_tool.h"
+#ifndef _WIN32
 #include <libgen.h>
+#endif
 FILE *sout = NULL;
 FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {

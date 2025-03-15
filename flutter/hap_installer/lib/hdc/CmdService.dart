@@ -96,7 +96,11 @@ class CmdService {
       url = "127.0.0.1:${url}";
     }
     final cmd = "hdc tconn $url";
-    return await baseCmd(cmd);
+    try {
+      return await baseCmd(cmd);
+    } catch (e) {
+      return "$e";
+    }
   }
 
   Future<String> targetList() async {
