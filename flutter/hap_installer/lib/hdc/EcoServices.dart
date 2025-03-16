@@ -36,7 +36,7 @@ class EcoService {
       final request = await httpClient.openUrl(method, uri);
       request.headers.contentType = ContentType.json;
       request.headers.set("oauth2Token", authInfo?.accessToken ?? "");
-      request.headers.set("teamId", authInfo?.teamId ?? authInfo?.teamId ?? "");
+      request.headers.set("teamId", authInfo?.teamId ?? authInfo?.userId ?? "");
       request.headers.set("uid", authInfo?.userId ?? "");
       print("header: ${request.headers}");
       if (headers != null) {
@@ -59,7 +59,7 @@ class EcoService {
           return EcoResult(code: 0, msg: strResult);
         }
       } else if (response.statusCode == 401) {
-        throw Exception("登陆失效, ${strResult}");
+        throw Exception("登陆信息失效, ${strResult}");
       }
     } catch (e) {
       print('Error: $e');
@@ -83,7 +83,7 @@ class EcoService {
         await sink.close();
         return true;
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        throw Exception("登陆失效");
+        throw Exception("登陆信息失效");
       }
     } catch (e) {
       print('Error: $e');

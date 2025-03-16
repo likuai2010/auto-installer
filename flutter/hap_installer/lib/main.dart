@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/pages/Home.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  ThemeMode _themeMode = ThemeMode.dark;
+  ThemeMode _themeMode = ThemeMode.light;
 
   bool get _useLightMode => switch (_themeMode) {
     ThemeMode.system =>
@@ -29,8 +30,16 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     viewmodel.loadUserInfo(context);
-    return ChangeNotifierProvider(
-      create: (_) => viewmodel,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> HistoryViewModel() ),
+        ChangeNotifierProxyProvider<HistoryViewModel, EcoViewModel>(
+          create: (context) => viewmodel,
+          update: (_, history, __) {
+              viewmodel.historyViewModel = history;
+            return viewmodel;
+        }),
+      ],
       child: MaterialApp(
         title: '小白调试助手',
         themeMode: _themeMode,
@@ -38,7 +47,11 @@ class _AppState extends State<App> {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
           brightness: Brightness.light,
         ),
-        home: Home(title: '小白调试助手', useLightMode: _useLightMode),
+        darkTheme: ThemeData(
+          colorSchemeSeed: Colors.black,
+          brightness: Brightness.dark,
+        ),
+        home: Home(title: '小白调试助手'),
       ),
     );
   }

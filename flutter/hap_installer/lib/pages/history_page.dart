@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:hap_installer/HistoryViewModel.dart';
+import 'package:hap_installer/pages/debug_detail_page.dart';
+import 'package:hap_installer/widget/common.dart';
+import 'package:provider/provider.dart';
+
+class HistoryPage extends StatelessWidget {
+  HistoryPage({super.key});
+   @override
+  Widget build(BuildContext context) {
+    return Consumer<HistoryViewModel>( builder: (context, model, child) {
+      return Expanded(
+        child: model.historyList.isNotEmpty 
+          ? ListView.builder(itemCount: model.historyList.length, itemBuilder: (_, i)=> HistoryItem(info: model.historyList[i]))
+          : Center(child: Text("没有调试记录"))
+      );
+    });
+  }
+}
+
+class HistoryItem extends StatelessWidget {
+  const HistoryItem({super.key, required this.info});
+  final DebugHistory info;
+  @override
+  Widget build(BuildContext context) {
+    final model = Provider.of<HistoryViewModel>(context);
+    return GroupDecoration(
+      children: [
+        ListItem(leading: Icon(Icons.check_circle), title: info.hapInfo.packageName, subTitle: info.hapInfo.version ?? "0.0.0", tailling: Container(), onClick: (){
+            model.selectDebugHistory(info);
+            toPage(context, (_)=> DebugDetailPage());
+        },),
+      ],
+    );
+  }
+  
+}

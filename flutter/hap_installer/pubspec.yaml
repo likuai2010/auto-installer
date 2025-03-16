@@ -43,8 +43,10 @@ dependencies:
   path: ^1.8.0
   modal_bottom_sheet: ^3.0.0
   package_info_plus: ^8.3.0
+  webview_flutter: ^4.10.0
   native_core:
     path: plugins/native_core
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/store/
+    - assets/html/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

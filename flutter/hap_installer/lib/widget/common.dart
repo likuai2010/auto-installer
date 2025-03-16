@@ -35,15 +35,17 @@ class ListItem extends StatelessWidget {
     required this.title,
     this.subTitle,
     this.tailling,
+    this.onClick
   });
-  final Icon? leading;
+  final Widget? leading;
   final String title;
   final String? subTitle;
   final Widget? tailling;
+  final Function()? onClick;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => {},
+      onTap: onClick,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 7, vertical: 5),
         child: Row(
@@ -72,11 +74,11 @@ class ListItem extends StatelessWidget {
 class GroupDecoration extends StatelessWidget {
   const GroupDecoration({
     super.key,
-    required this.label,
+    this.label,
     required this.children,
   });
 
-  final String label;
+  final String? label;
   final List<Widget> children;
 
   @override
@@ -90,8 +92,10 @@ class GroupDecoration extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(label, style: Theme.of(context).textTheme.titleSmall),
+              label != null ? Text(label ?? "", style: Theme.of(context).textTheme.titleSmall): Container(),
               ...children,
             ],
           ),
@@ -206,4 +210,28 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
       ),
     );
   }
+}
+
+
+void toPage(BuildContext context, Widget Function(BuildContext) builder){
+  Navigator.push(context, MaterialPageRoute(builder: builder));
+}
+
+void showAlert(BuildContext context, {Widget? title, Widget? content}){
+    showDialog(context: context, builder: (_){
+      return  AlertDialog(
+          title: title,
+          content: content,
+          actions: <Widget>[
+            TextButton(
+              child: const Text('确认'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            FilledButton(
+              child: const Text('取消'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+    });
 }

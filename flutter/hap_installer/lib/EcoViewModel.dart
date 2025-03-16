@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
@@ -22,16 +23,19 @@ void toask(BuildContext context, [String message = ""]) {
 
 class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
+  bool loading = false;
+
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
   AuthInfo? userInfo;
-  HapInfo? hapInfo;
+  HapInfo? hapInfo = HapInfo(packageName: "com.xiaobai.test", filePath: "");
   String? currentDevice;
   SignConfig? signConfig;
   String storeDir = "";
-  bool loading = false;
   String ip = "192.168.3.47";
   String port = "44315";
+
+  HistoryViewModel? historyViewModel;
 
   EcoViewModel() {}
 
@@ -44,7 +48,7 @@ class EcoViewModel extends ChangeNotifier {
     this.storeDir = storeDir.path;
     tarnsformAssert();
     initSignConfig();
-    checkDevices();
+    //checkDevices();
   }
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
@@ -59,6 +63,7 @@ class EcoViewModel extends ChangeNotifier {
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
+        userInfo?.changeTeamId(teamList.first.id);
       } else {
         toask(context, '登录信息无效(tip: 请关闭代理软件, ip必须在国内!)');
       }
@@ -96,9 +101,8 @@ class EcoViewModel extends ChangeNotifier {
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
-    var result = _connectHdc("$ip:$port");
+    var result = await _connectHdc("$ip:$port");
     toask(context, result);
-    await checkDevices();
     notifyListeners();
   }
   _connectHdc(String url) async {
@@ -106,7 +110,7 @@ class EcoViewModel extends ChangeNotifier {
       return "请输入正确端口或地址";
     } else {
       final result = await cmd.connectHdc(url);
-      await checkDevices();
+      //await checkDevices();
       if (result.contains("Connect OK")) {
         return "连接成功";
       } else {
@@ -178,16 +182,20 @@ class EcoViewModel extends ChangeNotifier {
     String filePath = path.join(storeDir, "unsigned.hap");
     var error = await cmd.signHap(filePath, signConfig!);
     print("SignHap $error");
-    error = await cmd.installHap(await cmd.getOutPath(filePath));
-    print("installHap: $error");
+    // error = await cmd.installHap(await cmd.getOutPath(filePath));
+    // print("installHap: $error");
   }
 
-  installHap(HapInfo hap) async {
-    if (signConfig != null) {
-      signConfig!.packageName = hap.packageName;
-      if (currentDevice != "") {
-        signConfig!.udids.add(await cmd.getUdid());
-      }
+  installHap() async {
+    
+
+    if (hapInfo != null) {
+      var hap = hapInfo!;
+      historyViewModel?.createDebugHistory(hap);
+
+
+      signConfig!.packageName = hapInfo!.packageName;
+      signConfig!.udids.add(await cmd.getUdid());
       signConfig!.profilePath =
           "${await getAppDir()}/xiaobai-debug_${hap.packageName.replaceAll(".", "_")}.p7b";
       try {
@@ -196,7 +204,6 @@ class EcoViewModel extends ChangeNotifier {
         if (module == null) return;
         var result = await eco.autoCreateProfile(signConfig!, module, () {
           if (!isLogin) {
-            // toLogin()
             return true;
           } else {
             return false;
@@ -221,7 +228,7 @@ class EcoViewModel extends ChangeNotifier {
         //return e.message || e
       }
     }
-    //return "签名配置不能为空"
+    return "签名配置不能为空";
   }
 
 

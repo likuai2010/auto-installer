@@ -9,6 +9,7 @@ class AuthInfo {
   String? teamId;
   String? nickName;
   AuthInfo({required this.accessToken, required this.userId}) : teamId = userId;
+  
   changeTeamId(String teamId) {
     this.teamId = teamId;
   }

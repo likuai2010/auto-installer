@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/pages/common.dart';
+import 'package:hap_installer/widget/common.dart';
 
 import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:provider/provider.dart';
 
 class IndexPage extends StatelessWidget {
@@ -19,17 +20,20 @@ class IndexPage extends StatelessWidget {
           DebugSteps(),
           Consumer<EcoViewModel>(
             builder: (context, model, child) {
-              if (model.hapInfo?.packageName == null ||
-                  model.userInfo == null ||
-                  model.currentDevice == null) {
-                return Container();
-              }
+              // if (model.hapInfo?.packageName == null ||
+              //     model.userInfo == null ||
+              //     model.currentDevice == null) {
+              //   return Container();
+              // }
               return Center(
                 child: FilledButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => DebugDetailPage()));
+                    model.installHap();
+                  },
                   child: Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text("开始安装"),
+                    child: Text("开始调试"),
                   ),
                 ),
               );
@@ -49,11 +53,10 @@ class DebugSteps extends StatelessWidget {
     return Consumer<EcoViewModel>(
       builder: (context, model, child) {
         return GroupDecoration(
-          label: "",
           children: [
             ListItem(
               leading: Icon(Icons.person),
-              title: model.userInfo?.nickName ?? "未登录",
+              title: model.isLogin ? model.userInfo?.nickName ?? "匿名" : "未登录",
               subTitle: "华为账号",
               tailling: TextButton(
                 onPressed: () {

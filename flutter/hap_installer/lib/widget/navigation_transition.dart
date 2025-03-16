@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/pages/bar_transition.dart';
-import 'package:hap_installer/pages/rail_transition.dart';
+import 'package:hap_installer/widget/bar_transition.dart';
+import 'package:hap_installer/widget/rail_transition.dart';
 
 class NavigationTransition extends StatefulWidget {
   const NavigationTransition({

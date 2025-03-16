@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/pages/cert_page.dart';
+import 'package:hap_installer/pages/history_page.dart';
 import 'package:hap_installer/pages/index_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
-import 'package:hap_installer/pages/navigation_transition.dart';
-import 'package:hap_installer/pages/common.dart';
-import 'package:hap_installer/pages/constants.dart';
+import 'package:hap_installer/widget/navigation_transition.dart';
+import 'package:hap_installer/widget/common.dart';
+import 'package:hap_installer/widget/constants.dart';
 
 const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.title, required this.useLightMode});
+  const Home({super.key, required this.title});
 
   final String title;
-  final bool useLightMode;
 
   @override
   State<Home> createState() => _HomeState();
@@ -75,18 +75,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  PreferredSizeWidget _createAppBar(colorScheme) {
+  PreferredSizeWidget _createAppBar(PageSelected pageSelected) {
     return AppBar(
-      title: Text(widget.title),
-      backgroundColor: colorScheme.inversePrimary,
+      title: Text(appBarTitleFor(pageSelected)),
+      centerTitle: false,
       actions: [Container()],
     );
   }
-
+ String appBarTitleFor(PageSelected pageSelected) => switch (pageSelected) {
+    PageSelected.home => "主页",
+    PageSelected.cert => "AppGallery 证书",
+    PageSelected.history => "调试历史",
+    PageSelected.more => "更多",
+  };
   Widget createScreenFor(PageSelected pageSelected) => switch (pageSelected) {
     PageSelected.home => IndexPage(),
     PageSelected.cert => CertPage(),
-    PageSelected.history => MorePage(),
+    PageSelected.history => HistoryPage(),
     PageSelected.more => MorePage(),
   };
   void handleScreenChanged(int screenSelected) {
@@ -97,14 +102,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
         return NavigationTransition(
           scaffoldKey: scaffoldKey,
           animationController: controller,
-          appBar: _createAppBar(colorScheme),
+          appBar: _createAppBar(PageSelected.values[screenIndex]),
           body: createScreenFor(PageSelected.values[screenIndex]),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
@@ -118,7 +122,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             onSelectItem: (index) {
               handleScreenChanged(index);
             },
-            selectedIndex: 1,
+            selectedIndex: screenIndex,
           ),
         );
       },
