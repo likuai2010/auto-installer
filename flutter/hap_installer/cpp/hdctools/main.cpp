@@ -671,7 +671,7 @@ extern "C"
             return 0;
         }
 
-        Base::SetLogLevel(LOG_DEBUG);
+        Base::SetLogLevel(LOG_OFF);
         string g_serverListenString = "127.0.0.1:18710";
         Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
         Hdc::Base::RemoveLogCache();

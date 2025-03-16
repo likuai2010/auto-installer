@@ -35,7 +35,7 @@ class ListItem extends StatelessWidget {
     required this.title,
     this.subTitle,
     this.tailling,
-    this.onClick
+    this.onClick,
   });
   final Widget? leading;
   final String title;
@@ -47,19 +47,24 @@ class ListItem extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: leading ?? Icon(Icons.abc),
+              child: leading ?? Container(),
             ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title),
-                  subTitle != null ? Text(subTitle!) : Container(),
+                  subTitle != null
+                      ? Text(
+                        subTitle!,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      )
+                      : Container(),
                 ],
               ),
             ),
@@ -72,11 +77,7 @@ class ListItem extends StatelessWidget {
 }
 
 class GroupDecoration extends StatelessWidget {
-  const GroupDecoration({
-    super.key,
-    this.label,
-    required this.children,
-  });
+  const GroupDecoration({super.key, this.label, required this.children});
 
   final String? label;
   final List<Widget> children;
@@ -95,7 +96,15 @@ class GroupDecoration extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              label != null ? Text(label ?? "", style: Theme.of(context).textTheme.titleSmall): Container(),
+              label != null
+                  ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      label ?? "",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  )
+                  : Container(),
               ...children,
             ],
           ),
@@ -146,7 +155,10 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
             child: Column(
               children: [
                 Text("请到开发者选择项-开启无线调试"),
-                Text("Tip: 第一次可能失败，需要等待手机提示授权"),
+                Text(
+                  "Tip: 第一次可能失败，需要等待手机提示授权",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
               ],
             ),
           ),
@@ -162,7 +174,8 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                   controller: ipController,
                   decoration: InputDecoration(
                     border: null,
-                    labelText: "127.0.0.1",
+                    labelText: "请输入IP",
+                    labelStyle: Theme.of(context).textTheme.labelSmall,
                   ),
                 ),
               ),
@@ -178,6 +191,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                   decoration: InputDecoration(
                     border: null,
                     enabledBorder: null,
+                    labelStyle: Theme.of(context).textTheme.labelSmall,
                     labelText: "请输入端口",
                   ),
                 ),
@@ -186,7 +200,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                 onPressed: () async {
                   if (connectiong) return;
                   setState(() {
-                      connectiong = true;
+                    connectiong = true;
                   });
                   await viewmodel.connectDevice(
                     context,
@@ -194,10 +208,9 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                     portController.text,
                   );
                   setState(() {
-                      connectiong = false;
+                    connectiong = false;
                   });
                   Navigator.pop(context);
-                  
                 },
                 icon:
                     !connectiong
@@ -212,26 +225,28 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
   }
 }
 
-
-void toPage(BuildContext context, Widget Function(BuildContext) builder){
+void toPage(BuildContext context, Widget Function(BuildContext) builder) {
   Navigator.push(context, MaterialPageRoute(builder: builder));
 }
 
-void showAlert(BuildContext context, {Widget? title, Widget? content}){
-    showDialog(context: context, builder: (_){
-      return  AlertDialog(
-          title: title,
-          content: content,
-          actions: <Widget>[
-            TextButton(
-              child: const Text('确认'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            FilledButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-    });
+void showAlert(BuildContext context, {Widget? title, Widget? content}) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: title,
+        content: content,
+        actions: <Widget>[
+          TextButton(
+            child: const Text('确认'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          FilledButton(
+            child: const Text('取消'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    },
+  );
 }

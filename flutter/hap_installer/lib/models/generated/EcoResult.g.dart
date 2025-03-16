@@ -7,8 +7,10 @@ part of '../EcoResult.dart';
 // **************************************************************************
 
 _EcoResult _$EcoResultFromJson(Map<String, dynamic> json) => _EcoResult(
-  code: (json['code'] as num?)?.toInt() ?? 0,
-  msg: json['msg'] as String? ?? '',
+  ret:
+      json['ret'] == null
+          ? const Ret()
+          : Ret.fromJson(json['ret'] as Map<String, dynamic>),
   teams:
       (json['teams'] as List<dynamic>?)
           ?.map((e) => TeamInfo.fromJson(e as Map<String, dynamic>))
@@ -42,8 +44,7 @@ _EcoResult _$EcoResultFromJson(Map<String, dynamic> json) => _EcoResult(
 
 Map<String, dynamic> _$EcoResultToJson(_EcoResult instance) =>
     <String, dynamic>{
-      'code': instance.code,
-      'msg': instance.msg,
+      'ret': instance.ret,
       'teams': instance.teams,
       'list': instance.list,
       'certList': instance.certList,
@@ -52,6 +53,16 @@ Map<String, dynamic> _$EcoResultToJson(_EcoResult instance) =>
       'urlsInfo': instance.urlsInfo,
       'provisionFileUrl': instance.provisionFileUrl,
     };
+
+_Ret _$RetFromJson(Map<String, dynamic> json) => _Ret(
+  code: (json['code'] as num?)?.toInt() ?? 0,
+  msg: json['msg'] as String? ?? "",
+);
+
+Map<String, dynamic> _$RetToJson(_Ret instance) => <String, dynamic>{
+  'code': instance.code,
+  'msg': instance.msg,
+};
 
 _UrlInfo _$UrlInfoFromJson(Map<String, dynamic> json) =>
     _UrlInfo(newUrl: json['newUrl'] as String? ?? "");

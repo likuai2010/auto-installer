@@ -26,7 +26,7 @@ class EcoService {
 
   Future<EcoResult?> base(
     String url,
-    Map data,
+    Map<String, dynamic> data,
     Map<String, String>? headers, [
     String method = 'POST',
   ]) async {
@@ -52,18 +52,19 @@ class EcoService {
       final response = await request.close();
       final strResult = await response.transform(utf8.decoder).join();
       if (response.statusCode == 200) {
+        print("base result: ${strResult}");
         try {
           return EcoResult.fromJson(jsonDecode(strResult));
         } catch (e) {
           print('jsonDecode Error: $e');
-          return EcoResult(code: 0, msg: strResult);
+          return EcoResult(ret: Ret(code: 0, msg: strResult));
         }
       } else if (response.statusCode == 401) {
-        throw Exception("登陆信息失效, ${strResult}");
+        throw Exception("登陆信息失效: ${strResult}");
       }
     } catch (e) {
       print('Error: $e');
-      return EcoResult(code: 401, msg: "");
+      return EcoResult(ret: Ret(code: 401, msg: "$e"));
     } finally {
       httpClient.close();
     }
@@ -89,14 +90,13 @@ class EcoService {
       print('Error: $e');
     } finally {
       httpClient.close();
-      return false;
     }
   }
 
   initUserInfo(AuthInfo? authInfo) async {
     this.authInfo = authInfo;
     if (authInfo == null) return;
-    print("authInfo" + jsonEncode(authInfo?.toJson()));
+    print("authInfo" + jsonEncode(authInfo.toJson()));
   }
 
   Future<AuthInfo?> getAuthInfoBytempToken(String tokenUrl) async {
@@ -112,7 +112,7 @@ class EcoService {
         "https://cn.devecostudio.huawei.com/authrouter/auth/api/jwToken/check";
     final result = await base(uri, {}, {
       "refresh": "false",
-      "jwtToken": jwtToken.msg,
+      "jwtToken": jwtToken.ret.msg,
     }, "GET");
     if (result?.userInfo == null) {
       throw Exception("登陆失败");
@@ -125,7 +125,7 @@ class EcoService {
         "https://connect-api.cloud.huawei.com/api/ups/user-permission-service/v1/user-team-list";
     final result = await base(uri, {}, {}, "GET");
     // 没有权限获取
-    if (result?.code == 401) {
+    if (result?.ret.code == 401) {
       return null;
     }
     return result?.teams ?? List.empty();
@@ -151,7 +151,7 @@ class EcoService {
     final params = {"csr": csr, "certName": name, "certType": type};
     final result = await base(uri, params, {}, "POST");
     if (result?.harmonyCert == null) {
-      throw Exception("证书创建失败: ${result?.msg}");
+      throw Exception("证书创建失败: ${result?.ret.msg}");
     }
     return result!.harmonyCert!;
   }
@@ -172,9 +172,10 @@ class EcoService {
       "certList": [certId],
       "packageName": packageName,
     };
+    print("createProfile ${params}");
     final result = await base(uri, params, {});
     if (result?.provisionFileUrl == null) {
-      throw Exception("Profile创建失败: ${result?.msg}");
+      throw Exception("Profile创建失败: ${result?.ret.msg}");
     }
     return result!.provisionFileUrl!;
   }
@@ -201,16 +202,18 @@ class EcoService {
     return base(uri, params, {});
   }
 
-  getAcl(ModuleInfo? moduleJson) {
+  List<String> getAcl(ModuleInfo? moduleJson) {
     if (moduleJson?.module?.requestPermissions == null) {
       print("not found requestPermissions");
       return [];
     }
     final pers =
         moduleJson?.module?.requestPermissions.map((p) => p.name) ?? [];
-    final intersectionList = Set.from(pers).intersection(Set.from(aclList));
-    print("found acl" + intersectionList.toString());
-    return intersectionList;
+    final intersectionList = Set<String>.from(
+      pers,
+    ).intersection(Set<String>.from(aclList));
+    print("found acl ${intersectionList.toList()}");
+    return intersectionList.toList();
   }
 
   Future<bool> autoCreateProfile(
@@ -219,11 +222,10 @@ class EcoService {
     Function unLogin,
   ) async {
     const certName = "xiaobai-debug";
-    if (config.certId != "") {
+    if (config.certId.isEmpty) {
       print("testTag EcoService create cert");
       if (unLogin()) return false;
       final certList = await getCertList();
-      final debugCert = certList.firstWhere((c) => c.certName == certName);
       final debugCerts = certList.where((d) => d.certType == 1);
       final deleteIds =
           debugCerts
@@ -237,7 +239,7 @@ class EcoService {
       if (!await File(config.certPath).exists()) {
         await downloadFile(urlsInfo.first.newUrl, config.certPath);
       }
-      config.certId = debugCert.id;
+      config.certId = harmonyCert.id;
     } else {
       print("testTag EcoService cert 存在");
     }
@@ -247,17 +249,13 @@ class EcoService {
       var deviceList = await this.deviceList();
       if (deviceList.where((d) => d.udid == udid).isEmpty) {
         try {
-          var result = await createDevice(
-            "xiaobai-device-" + udid.substring(0, 10),
-            udid,
-          );
+          await createDevice("xiaobai-device-${udid.substring(0, 10)}", udid);
           deviceList = await this.deviceList();
         } catch (e) {
-          throw new Exception("注册设备失败: 请检查设备udid:" + udid);
+          throw Exception("注册设备失败: 请检查设备udid:$udid");
         }
       }
     }
-
     final profileName =
         "xiaobai-debug_${config.packageName.replaceAll(".", "_")}";
     if (!await File(config.profilePath).exists()) {

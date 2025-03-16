@@ -44,6 +44,7 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   package_info_plus: ^8.3.0
   webview_flutter: ^4.10.0
+  archive: ^4.0.4
   native_core:
     path: plugins/native_core
   intl: ^0.20.2

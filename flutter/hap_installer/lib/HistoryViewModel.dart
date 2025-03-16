@@ -1,39 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/DebugHapState.dart';
+import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 
+class HistoryViewModel extends ChangeNotifier {
+  List<DebugHistory> historyList = [];
+  DebugHistory? current;
 
-class DebugHistory{
-    DebugHistory({required this.hapInfo});
-    HapInfo hapInfo;
-    DateTime start = DateTime.now();
-    DateTime end = DateTime.now();
-    List<SetpInfo> setps = [SetpInfo(name: "登录检查"), SetpInfo(name: "连接状态检查"), SetpInfo(name: "签名应用"), SetpInfo(name: "安装应用")];
-}
+  fetchDebugHistory() {}
+  createDebugHistory(HapInfo hapInfo) {
+    current = DebugHistory(hapInfo: hapInfo);
+    addDebugHistory(current!);
+  }
 
+  updateHistory(Function(DebugHistory) update) {
+    if (current != null) {
+      update(current!);
+    }
+    notifyListeners();
+  }
 
-class HistoryViewModel extends ChangeNotifier{
-    List<DebugHistory> historyList = [DebugHistory(hapInfo: HapInfo(packageName: "xxx", filePath: "xxxx"))];
-    DebugHistory? current;
+  updateSetp(int index, Function(SetpInfo) update) {
+    if (current != null && index < current!.setps.length) {
+      List<SetpInfo> modifiableList = List.from(current!.setps);
+      modifiableList[index] = update(current!.setps[index]);
+      current!.setps = modifiableList;
+    }
+    notifyListeners();
+  }
 
-    fetchDebugHistory(){
-    }
-    createDebugHistory(HapInfo hapInfo){
-      current = DebugHistory(hapInfo: hapInfo);
-      addDebugHistory(current!);
-    }
-    updateHistory(Function(DebugHistory) update) {
-      if (current != null){
-         update(current!);
-      }
-      notifyListeners();
-    }
-    selectDebugHistory(DebugHistory history){
-      current = history;
-      notifyListeners();
-    }
-    addDebugHistory(DebugHistory history){
-      historyList.add(history);
-      notifyListeners();
-    }
+  selectDebugHistory(DebugHistory history) {
+    current = history;
+    notifyListeners();
+  }
+
+  addDebugHistory(DebugHistory history) {
+    historyList.add(history);
+    notifyListeners();
+  }
 }

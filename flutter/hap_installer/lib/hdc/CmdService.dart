@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:hap_installer/hdc/zipTools.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
@@ -48,8 +49,7 @@ Future<String> getAppDir() async {
 class CmdService {
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
     final modulePath = "${await getTempDir()}/module.json";
-    final error = await unHap(hapPath, "module.json", modulePath);
-    if (error != "") throw Exception(error);
+    await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
     final json = await File(modulePath).readAsString();
     return ModuleInfo.fromJson(jsonDecode(json));
   }
@@ -69,9 +69,8 @@ class CmdService {
     final outPath = await getOutPath(inPath);
     final cmd =
         "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1";
-    print("signCmd: $cmd");
     final error = await signCmd(cmd, await getTempDir());
-    if (error == "") {
+    if (error.contains("success")) {
       return "签名成功";
     } else {
       return "签名失败: $error";
@@ -86,7 +85,7 @@ class CmdService {
     if (result == "") {
       return "调试成功";
     } else {
-      return "调试失败: ${result}";
+      return "调试失败: $result";
     }
   }
 

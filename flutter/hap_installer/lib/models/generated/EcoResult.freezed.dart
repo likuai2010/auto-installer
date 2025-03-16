@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EcoResult implements DiagnosticableTreeMixin {
 
- int get code; String get msg; List<TeamInfo>? get teams; List<DeviceInfo>? get list; List<CertInfo>? get certList; AuthInfo? get userInfo; CertInfo? get harmonyCert; List<UrlInfo>? get urlsInfo; String? get provisionFileUrl;
+ Ret get ret; List<TeamInfo>? get teams; List<DeviceInfo>? get list; List<CertInfo>? get certList; AuthInfo? get userInfo; CertInfo? get harmonyCert; List<UrlInfo>? get urlsInfo; String? get provisionFileUrl;
 /// Create a copy of EcoResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,21 +30,21 @@ $EcoResultCopyWith<EcoResult> get copyWith => _$EcoResultCopyWithImpl<EcoResult>
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'EcoResult'))
-    ..add(DiagnosticsProperty('code', code))..add(DiagnosticsProperty('msg', msg))..add(DiagnosticsProperty('teams', teams))..add(DiagnosticsProperty('list', list))..add(DiagnosticsProperty('certList', certList))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('harmonyCert', harmonyCert))..add(DiagnosticsProperty('urlsInfo', urlsInfo))..add(DiagnosticsProperty('provisionFileUrl', provisionFileUrl));
+    ..add(DiagnosticsProperty('ret', ret))..add(DiagnosticsProperty('teams', teams))..add(DiagnosticsProperty('list', list))..add(DiagnosticsProperty('certList', certList))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('harmonyCert', harmonyCert))..add(DiagnosticsProperty('urlsInfo', urlsInfo))..add(DiagnosticsProperty('provisionFileUrl', provisionFileUrl));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EcoResult&&(identical(other.code, code) || other.code == code)&&(identical(other.msg, msg) || other.msg == msg)&&const DeepCollectionEquality().equals(other.teams, teams)&&const DeepCollectionEquality().equals(other.list, list)&&const DeepCollectionEquality().equals(other.certList, certList)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.harmonyCert, harmonyCert) || other.harmonyCert == harmonyCert)&&const DeepCollectionEquality().equals(other.urlsInfo, urlsInfo)&&(identical(other.provisionFileUrl, provisionFileUrl) || other.provisionFileUrl == provisionFileUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EcoResult&&(identical(other.ret, ret) || other.ret == ret)&&const DeepCollectionEquality().equals(other.teams, teams)&&const DeepCollectionEquality().equals(other.list, list)&&const DeepCollectionEquality().equals(other.certList, certList)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.harmonyCert, harmonyCert) || other.harmonyCert == harmonyCert)&&const DeepCollectionEquality().equals(other.urlsInfo, urlsInfo)&&(identical(other.provisionFileUrl, provisionFileUrl) || other.provisionFileUrl == provisionFileUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,msg,const DeepCollectionEquality().hash(teams),const DeepCollectionEquality().hash(list),const DeepCollectionEquality().hash(certList),userInfo,harmonyCert,const DeepCollectionEquality().hash(urlsInfo),provisionFileUrl);
+int get hashCode => Object.hash(runtimeType,ret,const DeepCollectionEquality().hash(teams),const DeepCollectionEquality().hash(list),const DeepCollectionEquality().hash(certList),userInfo,harmonyCert,const DeepCollectionEquality().hash(urlsInfo),provisionFileUrl);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'EcoResult(code: $code, msg: $msg, teams: $teams, list: $list, certList: $certList, userInfo: $userInfo, harmonyCert: $harmonyCert, urlsInfo: $urlsInfo, provisionFileUrl: $provisionFileUrl)';
+  return 'EcoResult(ret: $ret, teams: $teams, list: $list, certList: $certList, userInfo: $userInfo, harmonyCert: $harmonyCert, urlsInfo: $urlsInfo, provisionFileUrl: $provisionFileUrl)';
 }
 
 
@@ -55,11 +55,11 @@ abstract mixin class $EcoResultCopyWith<$Res>  {
   factory $EcoResultCopyWith(EcoResult value, $Res Function(EcoResult) _then) = _$EcoResultCopyWithImpl;
 @useResult
 $Res call({
- int code, String msg, List<TeamInfo>? teams, List<DeviceInfo>? list, List<CertInfo>? certList, AuthInfo? userInfo, CertInfo? harmonyCert, List<UrlInfo>? urlsInfo, String? provisionFileUrl
+ Ret ret, List<TeamInfo>? teams, List<DeviceInfo>? list, List<CertInfo>? certList, AuthInfo? userInfo, CertInfo? harmonyCert, List<UrlInfo>? urlsInfo, String? provisionFileUrl
 });
 
 
-$CertInfoCopyWith<$Res>? get harmonyCert;
+$RetCopyWith<$Res> get ret;$CertInfoCopyWith<$Res>? get harmonyCert;
 
 }
 /// @nodoc
@@ -72,11 +72,10 @@ class _$EcoResultCopyWithImpl<$Res>
 
 /// Create a copy of EcoResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? msg = null,Object? teams = freezed,Object? list = freezed,Object? certList = freezed,Object? userInfo = freezed,Object? harmonyCert = freezed,Object? urlsInfo = freezed,Object? provisionFileUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ret = null,Object? teams = freezed,Object? list = freezed,Object? certList = freezed,Object? userInfo = freezed,Object? harmonyCert = freezed,Object? urlsInfo = freezed,Object? provisionFileUrl = freezed,}) {
   return _then(_self.copyWith(
-code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as int,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String,teams: freezed == teams ? _self.teams : teams // ignore: cast_nullable_to_non_nullable
+ret: null == ret ? _self.ret : ret // ignore: cast_nullable_to_non_nullable
+as Ret,teams: freezed == teams ? _self.teams : teams // ignore: cast_nullable_to_non_nullable
 as List<TeamInfo>?,list: freezed == list ? _self.list : list // ignore: cast_nullable_to_non_nullable
 as List<DeviceInfo>?,certList: freezed == certList ? _self.certList : certList // ignore: cast_nullable_to_non_nullable
 as List<CertInfo>?,userInfo: freezed == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
@@ -87,6 +86,15 @@ as String?,
   ));
 }
 /// Create a copy of EcoResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RetCopyWith<$Res> get ret {
+  
+  return $RetCopyWith<$Res>(_self.ret, (value) {
+    return _then(_self.copyWith(ret: value));
+  });
+}/// Create a copy of EcoResult
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -106,11 +114,10 @@ $CertInfoCopyWith<$Res>? get harmonyCert {
 @JsonSerializable()
 
 class _EcoResult with DiagnosticableTreeMixin implements EcoResult {
-  const _EcoResult({this.code = 0, this.msg = '', final  List<TeamInfo>? teams = null, final  List<DeviceInfo>? list = null, final  List<CertInfo>? certList = null, this.userInfo = null, this.harmonyCert = null, final  List<UrlInfo>? urlsInfo = null, this.provisionFileUrl = null}): _teams = teams,_list = list,_certList = certList,_urlsInfo = urlsInfo;
+  const _EcoResult({this.ret = const Ret(), final  List<TeamInfo>? teams = null, final  List<DeviceInfo>? list = null, final  List<CertInfo>? certList = null, this.userInfo = null, this.harmonyCert = null, final  List<UrlInfo>? urlsInfo = null, this.provisionFileUrl = null}): _teams = teams,_list = list,_certList = certList,_urlsInfo = urlsInfo;
   factory _EcoResult.fromJson(Map<String, dynamic> json) => _$EcoResultFromJson(json);
 
-@override@JsonKey() final  int code;
-@override@JsonKey() final  String msg;
+@override@JsonKey() final  Ret ret;
  final  List<TeamInfo>? _teams;
 @override@JsonKey() List<TeamInfo>? get teams {
   final value = _teams;
@@ -165,21 +172,21 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'EcoResult'))
-    ..add(DiagnosticsProperty('code', code))..add(DiagnosticsProperty('msg', msg))..add(DiagnosticsProperty('teams', teams))..add(DiagnosticsProperty('list', list))..add(DiagnosticsProperty('certList', certList))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('harmonyCert', harmonyCert))..add(DiagnosticsProperty('urlsInfo', urlsInfo))..add(DiagnosticsProperty('provisionFileUrl', provisionFileUrl));
+    ..add(DiagnosticsProperty('ret', ret))..add(DiagnosticsProperty('teams', teams))..add(DiagnosticsProperty('list', list))..add(DiagnosticsProperty('certList', certList))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('harmonyCert', harmonyCert))..add(DiagnosticsProperty('urlsInfo', urlsInfo))..add(DiagnosticsProperty('provisionFileUrl', provisionFileUrl));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EcoResult&&(identical(other.code, code) || other.code == code)&&(identical(other.msg, msg) || other.msg == msg)&&const DeepCollectionEquality().equals(other._teams, _teams)&&const DeepCollectionEquality().equals(other._list, _list)&&const DeepCollectionEquality().equals(other._certList, _certList)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.harmonyCert, harmonyCert) || other.harmonyCert == harmonyCert)&&const DeepCollectionEquality().equals(other._urlsInfo, _urlsInfo)&&(identical(other.provisionFileUrl, provisionFileUrl) || other.provisionFileUrl == provisionFileUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EcoResult&&(identical(other.ret, ret) || other.ret == ret)&&const DeepCollectionEquality().equals(other._teams, _teams)&&const DeepCollectionEquality().equals(other._list, _list)&&const DeepCollectionEquality().equals(other._certList, _certList)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.harmonyCert, harmonyCert) || other.harmonyCert == harmonyCert)&&const DeepCollectionEquality().equals(other._urlsInfo, _urlsInfo)&&(identical(other.provisionFileUrl, provisionFileUrl) || other.provisionFileUrl == provisionFileUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,msg,const DeepCollectionEquality().hash(_teams),const DeepCollectionEquality().hash(_list),const DeepCollectionEquality().hash(_certList),userInfo,harmonyCert,const DeepCollectionEquality().hash(_urlsInfo),provisionFileUrl);
+int get hashCode => Object.hash(runtimeType,ret,const DeepCollectionEquality().hash(_teams),const DeepCollectionEquality().hash(_list),const DeepCollectionEquality().hash(_certList),userInfo,harmonyCert,const DeepCollectionEquality().hash(_urlsInfo),provisionFileUrl);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'EcoResult(code: $code, msg: $msg, teams: $teams, list: $list, certList: $certList, userInfo: $userInfo, harmonyCert: $harmonyCert, urlsInfo: $urlsInfo, provisionFileUrl: $provisionFileUrl)';
+  return 'EcoResult(ret: $ret, teams: $teams, list: $list, certList: $certList, userInfo: $userInfo, harmonyCert: $harmonyCert, urlsInfo: $urlsInfo, provisionFileUrl: $provisionFileUrl)';
 }
 
 
@@ -190,11 +197,11 @@ abstract mixin class _$EcoResultCopyWith<$Res> implements $EcoResultCopyWith<$Re
   factory _$EcoResultCopyWith(_EcoResult value, $Res Function(_EcoResult) _then) = __$EcoResultCopyWithImpl;
 @override @useResult
 $Res call({
- int code, String msg, List<TeamInfo>? teams, List<DeviceInfo>? list, List<CertInfo>? certList, AuthInfo? userInfo, CertInfo? harmonyCert, List<UrlInfo>? urlsInfo, String? provisionFileUrl
+ Ret ret, List<TeamInfo>? teams, List<DeviceInfo>? list, List<CertInfo>? certList, AuthInfo? userInfo, CertInfo? harmonyCert, List<UrlInfo>? urlsInfo, String? provisionFileUrl
 });
 
 
-@override $CertInfoCopyWith<$Res>? get harmonyCert;
+@override $RetCopyWith<$Res> get ret;@override $CertInfoCopyWith<$Res>? get harmonyCert;
 
 }
 /// @nodoc
@@ -207,11 +214,10 @@ class __$EcoResultCopyWithImpl<$Res>
 
 /// Create a copy of EcoResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? msg = null,Object? teams = freezed,Object? list = freezed,Object? certList = freezed,Object? userInfo = freezed,Object? harmonyCert = freezed,Object? urlsInfo = freezed,Object? provisionFileUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ret = null,Object? teams = freezed,Object? list = freezed,Object? certList = freezed,Object? userInfo = freezed,Object? harmonyCert = freezed,Object? urlsInfo = freezed,Object? provisionFileUrl = freezed,}) {
   return _then(_EcoResult(
-code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as int,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String,teams: freezed == teams ? _self._teams : teams // ignore: cast_nullable_to_non_nullable
+ret: null == ret ? _self.ret : ret // ignore: cast_nullable_to_non_nullable
+as Ret,teams: freezed == teams ? _self._teams : teams // ignore: cast_nullable_to_non_nullable
 as List<TeamInfo>?,list: freezed == list ? _self._list : list // ignore: cast_nullable_to_non_nullable
 as List<DeviceInfo>?,certList: freezed == certList ? _self._certList : certList // ignore: cast_nullable_to_non_nullable
 as List<CertInfo>?,userInfo: freezed == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
@@ -226,6 +232,15 @@ as String?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
+$RetCopyWith<$Res> get ret {
+  
+  return $RetCopyWith<$Res>(_self.ret, (value) {
+    return _then(_self.copyWith(ret: value));
+  });
+}/// Create a copy of EcoResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
 $CertInfoCopyWith<$Res>? get harmonyCert {
     if (_self.harmonyCert == null) {
     return null;
@@ -235,6 +250,154 @@ $CertInfoCopyWith<$Res>? get harmonyCert {
     return _then(_self.copyWith(harmonyCert: value));
   });
 }
+}
+
+
+/// @nodoc
+mixin _$Ret implements DiagnosticableTreeMixin {
+
+ int get code; String get msg;
+/// Create a copy of Ret
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RetCopyWith<Ret> get copyWith => _$RetCopyWithImpl<Ret>(this as Ret, _$identity);
+
+  /// Serializes this Ret to a JSON map.
+  Map<String, dynamic> toJson();
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'Ret'))
+    ..add(DiagnosticsProperty('code', code))..add(DiagnosticsProperty('msg', msg));
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Ret&&(identical(other.code, code) || other.code == code)&&(identical(other.msg, msg) || other.msg == msg));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,code,msg);
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'Ret(code: $code, msg: $msg)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RetCopyWith<$Res>  {
+  factory $RetCopyWith(Ret value, $Res Function(Ret) _then) = _$RetCopyWithImpl;
+@useResult
+$Res call({
+ int code, String msg
+});
+
+
+
+
+}
+/// @nodoc
+class _$RetCopyWithImpl<$Res>
+    implements $RetCopyWith<$Res> {
+  _$RetCopyWithImpl(this._self, this._then);
+
+  final Ret _self;
+  final $Res Function(Ret) _then;
+
+/// Create a copy of Ret
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? msg = null,}) {
+  return _then(_self.copyWith(
+code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as int,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// @nodoc
+@JsonSerializable()
+
+class _Ret with DiagnosticableTreeMixin implements Ret {
+  const _Ret({this.code = 0, this.msg = ""});
+  factory _Ret.fromJson(Map<String, dynamic> json) => _$RetFromJson(json);
+
+@override@JsonKey() final  int code;
+@override@JsonKey() final  String msg;
+
+/// Create a copy of Ret
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RetCopyWith<_Ret> get copyWith => __$RetCopyWithImpl<_Ret>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$RetToJson(this, );
+}
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'Ret'))
+    ..add(DiagnosticsProperty('code', code))..add(DiagnosticsProperty('msg', msg));
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Ret&&(identical(other.code, code) || other.code == code)&&(identical(other.msg, msg) || other.msg == msg));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,code,msg);
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'Ret(code: $code, msg: $msg)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RetCopyWith<$Res> implements $RetCopyWith<$Res> {
+  factory _$RetCopyWith(_Ret value, $Res Function(_Ret) _then) = __$RetCopyWithImpl;
+@override @useResult
+$Res call({
+ int code, String msg
+});
+
+
+
+
+}
+/// @nodoc
+class __$RetCopyWithImpl<$Res>
+    implements _$RetCopyWith<$Res> {
+  __$RetCopyWithImpl(this._self, this._then);
+
+  final _Ret _self;
+  final $Res Function(_Ret) _then;
+
+/// Create a copy of Ret
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? msg = null,}) {
+  return _then(_Ret(
+code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as int,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
 }
 
 

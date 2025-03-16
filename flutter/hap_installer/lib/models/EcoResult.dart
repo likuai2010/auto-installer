@@ -8,8 +8,7 @@ part 'generated/EcoResult.g.dart';
 @freezed
 abstract class EcoResult with _$EcoResult {
   const factory EcoResult({
-    @Default(0) int code,
-    @Default('') String msg,
+    @Default(Ret()) Ret ret,
     @Default(null) List<TeamInfo>? teams,
     @Default(null) List<DeviceInfo>? list,
     @Default(null) List<CertInfo>? certList,
@@ -21,6 +20,13 @@ abstract class EcoResult with _$EcoResult {
   // 从JSON构建
   factory EcoResult.fromJson(Map<String, dynamic> json) =>
       _$EcoResultFromJson(json);
+}
+
+@freezed
+abstract class Ret with _$Ret {
+  const factory Ret({@Default(0) int code, @Default("") String msg}) = _Ret;
+  // 从JSON构建
+  factory Ret.fromJson(Map<String, dynamic> json) => _$RetFromJson(json);
 }
 
 @freezed

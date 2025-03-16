@@ -32,13 +32,14 @@ class _AppState extends State<App> {
     viewmodel.loadUserInfo(context);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=> HistoryViewModel() ),
+        ChangeNotifierProvider(create: (_) => HistoryViewModel()),
         ChangeNotifierProxyProvider<HistoryViewModel, EcoViewModel>(
           create: (context) => viewmodel,
           update: (_, history, __) {
-              viewmodel.historyViewModel = history;
+            viewmodel.historyViewModel = history;
             return viewmodel;
-        }),
+          },
+        ),
       ],
       child: MaterialApp(
         title: '小白调试助手',
@@ -51,7 +52,7 @@ class _AppState extends State<App> {
           colorSchemeSeed: Colors.black,
           brightness: Brightness.dark,
         ),
-        home: Home(title: '小白调试助手'),
+        home: Home(),
       ),
     );
   }

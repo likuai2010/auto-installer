@@ -11,9 +11,7 @@ const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.title});
-
-  final String title;
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -82,7 +80,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       actions: [Container()],
     );
   }
- String appBarTitleFor(PageSelected pageSelected) => switch (pageSelected) {
+
+  String appBarTitleFor(PageSelected pageSelected) => switch (pageSelected) {
     PageSelected.home => "主页",
     PageSelected.cert => "AppGallery 证书",
     PageSelected.history => "调试历史",

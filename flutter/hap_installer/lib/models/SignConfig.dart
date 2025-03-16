@@ -17,6 +17,7 @@ abstract class SignConfig with _$SignConfig {
     @Default("") String keystorePwd,
     @Default("") String keyAlias,
   }) = _SignConfig;
+
   // 从JSON构建
   factory SignConfig.fromJson(Map<String, dynamic> json) =>
       _$SignConfigFromJson(json);

@@ -32,8 +32,9 @@ class EcoViewModel extends ChangeNotifier {
   String? currentDevice;
   SignConfig? signConfig;
   String storeDir = "";
+  String signConfigPath = "";
   String ip = "192.168.3.47";
-  String port = "44315";
+  String port = "39617";
 
   HistoryViewModel? historyViewModel;
 
@@ -45,7 +46,9 @@ class EcoViewModel extends ChangeNotifier {
     if (!await storeDir.exists()) {
       storeDir.create(recursive: true);
     }
+    final signConfigPath = path.join(await getAppDir(), "signConfig.json");
     this.storeDir = storeDir.path;
+    this.signConfigPath = signConfigPath;
     tarnsformAssert();
     initSignConfig();
     //checkDevices();
@@ -85,15 +88,17 @@ class EcoViewModel extends ChangeNotifier {
     final authInfo = await huawei.getAuthInfo();
     loading = false;
     await loadUserInfo(context, authInfo);
-   
   }
 
   toSelectFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     var file = result?.files.first;
-    toask(context, "${file?.path}");
     if (file?.path != null) {
-      hapInfo = await _loadHap(context, file!.path!);
+      try {
+        hapInfo = await _loadHap(context, file!.path!);
+      } catch (e) {
+        toask(context, "${e}");
+      }
       notifyListeners();
     }
   }
@@ -105,12 +110,13 @@ class EcoViewModel extends ChangeNotifier {
     toask(context, result);
     notifyListeners();
   }
+
   _connectHdc(String url) async {
     if (!_checkUrlOrPort(url)) {
       return "请输入正确端口或地址";
     } else {
       final result = await cmd.connectHdc(url);
-      //await checkDevices();
+      await checkDevices();
       if (result.contains("Connect OK")) {
         return "连接成功";
       } else {
@@ -123,9 +129,9 @@ class EcoViewModel extends ChangeNotifier {
     final result = await cmd.targetList();
     deviceList = result.split("\n").where((d) => d != '').toList();
     if (deviceList.isNotEmpty && deviceList.first.trim() != "[Empty]") {
-      currentDevice = "";
-    } else {
       currentDevice = deviceList.first;
+    } else {
+      currentDevice = null;
     }
   }
 
@@ -136,7 +142,7 @@ class EcoViewModel extends ChangeNotifier {
     if (!await tempFile.exists()) new Exception("文件不存在");
     final moduleInfo = await _loadModule(tempFile.path);
     return HapInfo(
-      packageName: moduleInfo?.app?.bundleName ?? "未知",
+      packageName: moduleInfo.app?.bundleName ?? "未知",
       filePath: hapFile.path,
     );
   }
@@ -159,7 +165,6 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   initSignConfig() async {
-    final configPath = path.join(await getAppDir(), "signConfig.json");
     final defaultConfig = SignConfig(
       udids: List.empty(),
       certId: "",
@@ -171,11 +176,12 @@ class EcoViewModel extends ChangeNotifier {
       certPath: path.join(storeDir, "xiaobai-debug.cer"),
     );
     try {
-      signConfig = await readSignConfigFromFile(configPath) ?? defaultConfig;
+      signConfig =
+          await readSignConfigFromFile(signConfigPath) ?? defaultConfig;
     } catch (e) {
       signConfig = defaultConfig;
     }
-    await saveJsonToFile(jsonEncode(signConfig!.toJson()), configPath);
+    await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
 
   testSignHap() async {
@@ -187,59 +193,94 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   installHap() async {
-    
-
     if (hapInfo != null) {
       var hap = hapInfo!;
+      var signConfig = this.signConfig!;
       historyViewModel?.createDebugHistory(hap);
+      historyViewModel?.updateSetp(0, (setp) {
+        return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
+      });
+      historyViewModel?.updateSetp(1, (setp) {
+        return setp.copyWith(loading: false, error: !isLogin ? "未连接设备" : null);
+      });
+      signConfig.packageName = hap.packageName;
+      signConfig.profilePath =
+          "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
 
-
-      signConfig!.packageName = hapInfo!.packageName;
-      signConfig!.udids.add(await cmd.getUdid());
-      signConfig!.profilePath =
-          "${await getAppDir()}/xiaobai-debug_${hap.packageName.replaceAll(".", "_")}.p7b";
+      historyViewModel?.updateSetp(2, (setp) {
+        return setp.copyWith(loading: true, error: "获取设备udid中...");
+      });
       try {
-        // onUpdate("请求签名...")
-        final module = await _loadModule(hap.filePath);
-        if (module == null) return;
-        var result = await eco.autoCreateProfile(signConfig!, module, () {
-          if (!isLogin) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        if (!result) return "请求签名失败";
-        await saveJsonToFile(
-          jsonEncode(signConfig!.toJson()),
-          "${getAppDir()}/signConfig.json",
-        );
-        //onUpdate("正在签名...")
-        var error = await cmd.signHap(hap.filePath, signConfig!);
-        if (error == "签名成功") {
-          //onUpdate("正在安装...")
-          await cmd.installHap(await cmd.getOutPath(hap.filePath));
-          // return ""
-        } else {
-          //return "签名失败"
+        final udid = await cmd.getUdid();
+        if (!signConfig.udids.contains(udid)) {
+          signConfig.udids.add(udid);
         }
       } catch (e) {
-        //promptAction.showToast({message: e.message || e, duration: 3000})
-        //return e.message || e
+        historyViewModel?.updateSetp(2, (setp) {
+          return setp.copyWith(loading: false, error: "获取设备udid失败: $e");
+        });
+      }
+      historyViewModel?.updateSetp(2, (setp) {
+        return setp.copyWith(loading: true, error: "请求签名中");
+      });
+      try {
+        final module = await _loadModule(hap.filePath);
+        await eco.autoCreateProfile(signConfig, module, () {
+          return !isLogin;
+        });
+      } catch (e) {
+        historyViewModel?.updateSetp(2, (setp) {
+          return setp.copyWith(loading: false, error: "请求签名失败: $e");
+        });
+        historyViewModel?.updateHistory((setp) {
+          setp.finished = true;
+        });
+        return;
+      } finally {
+        await saveJsonToFile(jsonEncode(signConfig.toJson()), signConfigPath);
+      }
+
+      historyViewModel?.updateSetp(2, (setp) {
+        return setp.copyWith(loading: true, error: "正在签名...");
+      });
+      var error = "so failure";
+      if (Platform.isWindows) {
+        await Future.delayed(Duration(milliseconds: 10000));
+      } else {
+        error = await cmd.signHap(hap.filePath, signConfig);
+      }
+
+      historyViewModel?.updateSetp(2, (setp) {
+        return setp.copyWith(
+          loading: false,
+          error: error == "签名成功" ? null : error,
+        );
+      });
+      if (error == "签名成功") {
+        historyViewModel?.updateSetp(3, (setp) {
+          return setp.copyWith(loading: true, error: "正在调试...");
+        });
+        try {
+          final error = await cmd.installHap(
+            await cmd.getOutPath(hap.filePath),
+          );
+          historyViewModel?.updateSetp(3, (setp) {
+            return setp.copyWith(loading: false, error: error);
+          });
+        } catch (e) {
+          historyViewModel?.updateSetp(3, (setp) {
+            return setp.copyWith(loading: false, error: "调试失败: $e");
+          });
+        }
       }
     }
-    return "签名配置不能为空";
+    historyViewModel?.updateHistory((setp) {
+      setp.finished = true;
+    });
   }
 
-
-
-  Future<ModuleInfo?> _loadModule(String hapPath) async {
-    try {
-      return await cmd.readModuleInfo(hapPath);
-    } catch (e) {
-      print("loadModule: $e");
-    }
-    return null;
+  Future<ModuleInfo> _loadModule(String hapPath) async {
+    return await cmd.readModuleInfo(hapPath);
   }
 
   bool _checkUrlOrPort(String url) {
