@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
 
-import 'package:hap_installer/main.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 
 void main() {

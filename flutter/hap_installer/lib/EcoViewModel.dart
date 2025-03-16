@@ -66,6 +66,7 @@ class EcoViewModel extends ChangeNotifier {
     } catch (e) {
       isLogin = false;
     }
+    notifyListeners();
   }
 
   toLogin(BuildContext context) async {
@@ -79,7 +80,7 @@ class EcoViewModel extends ChangeNotifier {
     final authInfo = await huawei.getAuthInfo();
     loading = false;
     await loadUserInfo(context, authInfo);
-    notifyListeners();
+   
   }
 
   toSelectFile(BuildContext context) async {
@@ -92,12 +93,26 @@ class EcoViewModel extends ChangeNotifier {
     }
   }
 
-  connectDevice(BuildContext context, String ip, String port) async {
+  Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
-    var result = await cmd.connectHdc("$ip:$port");
+    var result = _connectHdc("$ip:$port");
     toask(context, result);
-    checkDevices();
+    await checkDevices();
+    notifyListeners();
+  }
+  _connectHdc(String url) async {
+    if (!_checkUrlOrPort(url)) {
+      return "请输入正确端口或地址";
+    } else {
+      final result = await cmd.connectHdc(url);
+      await checkDevices();
+      if (result.contains("Connect OK")) {
+        return "连接成功";
+      } else {
+        return result;
+      }
+    }
   }
 
   checkDevices() async {
@@ -209,25 +224,7 @@ class EcoViewModel extends ChangeNotifier {
     //return "签名配置不能为空"
   }
 
-  connectHdc(String url) async {
-    if (!_checkUrlOrPort(url)) {
-      // promptAction.showToast({message:"请输入正确端口或地址"})
-      return;
-    } else {
-      final result = await cmd.connectHdc(url);
-      await checkDevices();
-      if (result.contains("Connect OK")) {
-        return;
-      } else {
-        // if (currentDevice?.contains("Unauthorized")) {
-        //   // "请等待授权弹框!"
-        // } else {
-        //   // promptAction.showToast({message: result})
-        // }
-        return;
-      }
-    }
-  }
+
 
   Future<ModuleInfo?> _loadModule(String hapPath) async {
     try {

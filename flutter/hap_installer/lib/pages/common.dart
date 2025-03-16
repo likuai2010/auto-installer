@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
@@ -183,14 +181,19 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
               IconButton(
                 onPressed: () async {
                   if (connectiong) return;
-                  connectiong = true;
+                  setState(() {
+                      connectiong = true;
+                  });
                   await viewmodel.connectDevice(
                     context,
                     ipController.text,
                     portController.text,
                   );
+                  setState(() {
+                      connectiong = false;
+                  });
                   Navigator.pop(context);
-                  connectiong = false;
+                  
                 },
                 icon:
                     !connectiong

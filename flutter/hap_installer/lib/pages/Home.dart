@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/main.dart';
 import 'package:hap_installer/pages/cert_page.dart';
 import 'package:hap_installer/pages/index_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
