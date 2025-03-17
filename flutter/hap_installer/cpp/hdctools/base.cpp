@@ -2482,12 +2482,17 @@ namespace Hdc
         {
             return g_tempDir;
         }
+        void SetTempDir(const char* tempDir)
+        {
+            g_tempDir = tempDir;
+        }
 
 #ifndef HDC_HILOG
         void SetLogCache(bool enable)
         {
             g_logCache = enable;
         }
+        
 
         void RemoveLogFile()
         {

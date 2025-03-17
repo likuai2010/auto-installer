@@ -16,6 +16,9 @@ import 'package:hap_installer/models/SignConfig.dart';
 import 'package:native_core/native_core.dart';
 import 'package:path/path.dart' as path;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
   messenger.showSnackBar(SnackBar(content: Text(message)));
@@ -41,7 +44,10 @@ class EcoViewModel extends ChangeNotifier {
   EcoViewModel() {}
 
   init() async {
-    startHdcServer();
+    if(Platform.isAndroid){
+        startHdcServer();
+    }
+     
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     if (!await storeDir.exists()) {
       storeDir.create(recursive: true);
@@ -49,9 +55,19 @@ class EcoViewModel extends ChangeNotifier {
     final signConfigPath = path.join(await getAppDir(), "signConfig.json");
     this.storeDir = storeDir.path;
     this.signConfigPath = signConfigPath;
-    tarnsformAssert();
+    
     initSignConfig();
-    //checkDevices();
+    await tarnsformAssert();
+  
+    if(Platform.isAndroid){
+      await checkDevices();
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final localIp = prefs.getString('ip');
+    final localPort = prefs.getString('port');
+    ip = localIp ?? ip;
+    port = localPort ?? port;
+    notifyListeners();
   }
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
@@ -106,6 +122,9 @@ class EcoViewModel extends ChangeNotifier {
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("ip", ip);
+    prefs.setString("port", port);
     var result = await _connectHdc("$ip:$port");
     toask(context, result);
     notifyListeners();
@@ -119,7 +138,11 @@ class EcoViewModel extends ChangeNotifier {
       await checkDevices();
       if (result.contains("Connect OK")) {
         return "连接成功";
-      } else {
+      } else if(result.contains("failed")) {
+        return "连接失败: 请检查ip和端口是否正确";
+      } else if(result.contains("repeat")) {
+        return "设备已经连接";
+      }else{
         return result;
       }
     }
@@ -148,17 +171,25 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   tarnsformAssert() async {
-    await copyAssert("xiaobai.csr");
-    await copyAssert("xiaobai.p12");
+    await copyAssert("store","xiaobai.csr", storeDir);
+    await copyAssert("store","xiaobai.p12",storeDir);
     // debug test
-    await copyAssert("unsigned.hap");
-    await copyAssert("xiaobai-debug.cer");
-    await copyAssert("xiaobai-debug.p7b");
+    await copyAssert("store", "unsigned.hap", storeDir);
+    await copyAssert("store", "xiaobai-debug.cer", storeDir);
+    await copyAssert("store", "xiaobai-debug.p7b",storeDir);
+    if(Platform.isMacOS){
+        var hdcDir = await getHdcDir();
+        await copyAssert("tools/macos", "hdc", hdcDir);
+        if (!Platform.isWindows) {
+          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+        }
+        await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
+    }
   }
-
-  copyAssert(String fileName) async {
-    final bytes = await rootBundle.load('assets/store/$fileName');
-    File file = File(path.join(storeDir, fileName));
+ 
+  copyAssert(String dir, String fileName, String targetDir) async {
+    final bytes = await rootBundle.load('assets/$dir/$fileName');
+    File file = File(path.join(targetDir, fileName));
     if (!await file.exists()) {
       file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
     }
@@ -219,6 +250,10 @@ class EcoViewModel extends ChangeNotifier {
         historyViewModel?.updateSetp(2, (setp) {
           return setp.copyWith(loading: false, error: "获取设备udid失败: $e");
         });
+        historyViewModel?.updateHistory((setp) {
+          setp.finished = true;
+        });
+        return ;
       }
       historyViewModel?.updateSetp(2, (setp) {
         return setp.copyWith(loading: true, error: "请求签名中");
@@ -229,6 +264,7 @@ class EcoViewModel extends ChangeNotifier {
           return !isLogin;
         });
       } catch (e) {
+        print("请求签名失败 ${e}");
         historyViewModel?.updateSetp(2, (setp) {
           return setp.copyWith(loading: false, error: "请求签名失败: $e");
         });

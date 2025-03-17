@@ -38,7 +38,6 @@ class EcoService {
       request.headers.set("oauth2Token", authInfo?.accessToken ?? "");
       request.headers.set("teamId", authInfo?.teamId ?? authInfo?.userId ?? "");
       request.headers.set("uid", authInfo?.userId ?? "");
-      print("header: ${request.headers}");
       if (headers != null) {
         for (var key in headers.keys) {
           request.headers.set(key, headers[key] ?? "");
@@ -46,13 +45,14 @@ class EcoService {
       }
       if (data.isNotEmpty) {
         final body = utf8.encode(jsonEncode(data));
+        print("base body: ${url.substring(url.length - 10, url.length)}");
         request.contentLength = body.length;
         request.add(body);
       }
       final response = await request.close();
       final strResult = await response.transform(utf8.decoder).join();
       if (response.statusCode == 200) {
-        print("base result: ${strResult}");
+        // print("base result: ${strResult}");
         try {
           return EcoResult.fromJson(jsonDecode(strResult));
         } catch (e) {
