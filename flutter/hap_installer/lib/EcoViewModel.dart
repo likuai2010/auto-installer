@@ -18,7 +18,6 @@ import 'package:path/path.dart' as path;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
   messenger.showSnackBar(SnackBar(content: Text(message)));
@@ -44,10 +43,10 @@ class EcoViewModel extends ChangeNotifier {
   EcoViewModel() {}
 
   init() async {
-    if(Platform.isAndroid){
-        startHdcServer();
+    if (Platform.isAndroid) {
+      startHdcServer();
     }
-     
+
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     if (!await storeDir.exists()) {
       storeDir.create(recursive: true);
@@ -55,11 +54,11 @@ class EcoViewModel extends ChangeNotifier {
     final signConfigPath = path.join(await getAppDir(), "signConfig.json");
     this.storeDir = storeDir.path;
     this.signConfigPath = signConfigPath;
-    
+
     initSignConfig();
     await tarnsformAssert();
-  
-    if(Platform.isAndroid){
+
+    if (Platform.isAndroid) {
       await checkDevices();
     }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -138,11 +137,11 @@ class EcoViewModel extends ChangeNotifier {
       await checkDevices();
       if (result.contains("Connect OK")) {
         return "连接成功";
-      } else if(result.contains("failed")) {
+      } else if (result.contains("failed")) {
         return "连接失败: 请检查ip和端口是否正确";
-      } else if(result.contains("repeat")) {
+      } else if (result.contains("repeat")) {
         return "设备已经连接";
-      }else{
+      } else {
         return result;
       }
     }
@@ -160,10 +159,8 @@ class EcoViewModel extends ChangeNotifier {
 
   Future<HapInfo> _loadHap(BuildContext context, String hapPath) async {
     final hapFile = File(hapPath);
-    final tempFile = File("${await getTempDir()}/unsigned.hap");
-    tempFile.writeAsBytes(hapFile.readAsBytesSync(), flush: true);
-    if (!await tempFile.exists()) new Exception("文件不存在");
-    final moduleInfo = await _loadModule(tempFile.path);
+    if (!await hapFile.exists()) throw Exception("文件不存在");
+    final moduleInfo = await _loadModule(hapFile.path);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
       filePath: hapFile.path,
@@ -171,22 +168,22 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   tarnsformAssert() async {
-    await copyAssert("store","xiaobai.csr", storeDir);
-    await copyAssert("store","xiaobai.p12",storeDir);
+    await copyAssert("store", "xiaobai.csr", storeDir);
+    await copyAssert("store", "xiaobai.p12", storeDir);
     // debug test
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
-    await copyAssert("store", "xiaobai-debug.p7b",storeDir);
-    if(Platform.isMacOS){
-        var hdcDir = await getHdcDir();
-        await copyAssert("tools/macos", "hdc", hdcDir);
-        if (!Platform.isWindows) {
-          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
-        }
-        await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
+    await copyAssert("store", "xiaobai-debug.p7b", storeDir);
+    if (Platform.isMacOS) {
+      var hdcDir = await getHdcDir();
+      await copyAssert("tools/macos", "hdc", hdcDir);
+      if (!Platform.isWindows) {
+        await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+      }
+      await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
     }
   }
- 
+
   copyAssert(String dir, String fileName, String targetDir) async {
     final bytes = await rootBundle.load('assets/$dir/$fileName');
     File file = File(path.join(targetDir, fileName));
@@ -214,7 +211,8 @@ class EcoViewModel extends ChangeNotifier {
     }
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
-  changeCertConfig(CertInfo info) async{
+
+  changeCertConfig(CertInfo info) async {
     signConfig!.certId = info.id;
     signConfig!.certPath = path.join(storeDir, "${info.certName}.cer");
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
@@ -260,7 +258,7 @@ class EcoViewModel extends ChangeNotifier {
         historyViewModel?.updateHistory((setp) {
           setp.finished = true;
         });
-        return ;
+        return;
       }
       historyViewModel?.updateSetp(2, (setp) {
         return setp.copyWith(loading: true, error: "请求签名中");
@@ -307,7 +305,10 @@ class EcoViewModel extends ChangeNotifier {
             await cmd.getOutPath(hap.filePath),
           );
           historyViewModel?.updateSetp(3, (setp) {
-            return setp.copyWith(loading: false, error: error == "调试成功" ? null : error);
+            return setp.copyWith(
+              loading: false,
+              error: error == "调试成功" ? null : error,
+            );
           });
         } catch (e) {
           historyViewModel?.updateSetp(3, (setp) {

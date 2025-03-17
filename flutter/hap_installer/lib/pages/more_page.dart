@@ -27,7 +27,11 @@ class MorePage extends StatelessWidget {
                   );
                 },
               ),
-              // ListItem(leading: Icon(Icons.settings_cell), title: "重启设备", onClick: () {}),
+              ListItem(
+                leading: Icon(Icons.settings_cell),
+                title: "重启设备",
+                onClick: () {},
+              ),
             ],
           ),
           GroupDecoration(

@@ -12,7 +12,7 @@ extractSpecificFileFromZip(
 
   // 解压缩ZIP文件
   var archive = ZipDecoder().decodeBytes(bytes);
-
+  print('extractSpecificFileFromZip: ${zipFilePath} ${bytes.length}');
   // 遍历解压后的文件
   for (var file in archive) {
     print('zip extracted: ${file.name}');

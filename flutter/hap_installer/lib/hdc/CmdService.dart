@@ -38,6 +38,7 @@ Future<String> getTempDir() async {
   }
   return appDir.path;
 }
+
 Future<String> getHdcDir() async {
   final temp = await getTemporaryDirectory();
   final appDir = Directory(path.join(temp.path, "hdc_tools"));
@@ -60,13 +61,13 @@ class CmdService {
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
     final modulePath = "${await getTempDir()}/module.json";
     await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
-    final json = await File(modulePath).readAsString();
     try {
-        final dict = jsonDecode(json);
-        return ModuleInfo.fromJson(dict);
-    } catch(e) {
-        print("readModuleInfo: $e");
-        throw Exception("加载modlue.json失败");
+      final json = await File(modulePath).readAsString();
+      final dict = jsonDecode(json);
+      return ModuleInfo.fromJson(dict);
+    } catch (e) {
+      print("readModuleInfo: $e");
+      throw Exception("加载modlue.json失败");
     }
   }
 
@@ -101,24 +102,19 @@ class CmdService {
     final result = await baseCmd("hdc install $filePath");
     if (result.contains("success")) {
       return "调试成功";
-    } else if(result.contains("9568322")) {
+    } else if (result.contains("9568322")) {
       return "由于应用来源不可信，签名验证失败! (tip: 签名中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
-    }
-     else if(result.contains("9568289")) {
+    } else if (result.contains("9568289")) {
       return "权限请求失败导致安装失败! (tip: 如果使用了system_basic或system_core等级的权限，将导致报错)";
-    } else if(result.contains("9568297")) {
+    } else if (result.contains("9568297")) {
       return "由于设备sdk版本较低导致安装失败! (tip: 该问题是由于编译打包所使用的SDK版本与设备镜像版本不匹配)";
-    }
-    else if(result.contains("9568332")) {
+    } else if (result.contains("9568332")) {
       return "签名不一致导致安装失败! (tip: 设备上已安装的应用与新安装的应用中签名不一致或者多个包（HAP和HSP）之间的签名存在差异)";
-    }
-    else if(result.contains("9568329")) {
+    } else if (result.contains("9568329")) {
       return "签名信息中的包名与应用的包名(bundleName)不一致! (tip: 用户导入了三方提供的HSP模块，且该HSP既非集成态HSP，又非同包名的HSP，造成包名不一致)";
-    }
-     else if(result.contains("9568320")) {
+    } else if (result.contains("9568320")) {
       return "不能安装未签名的HAP包! (tip: HAP包没有签名)";
-    }
-     else {
+    } else {
       return "调试失败: $result";
     }
   }
@@ -157,17 +153,17 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
-    if (Platform.isAndroid){
-        return await hdcCmd(cmd, await getTempDir());
-    }else{
-        var shell = Shell(workingDirectory: await getHdcDir());
+    if (Platform.isAndroid) {
+      return await hdcCmd(cmd, await getTempDir());
+    } else {
+      var shell = Shell(workingDirectory: await getHdcDir());
       return Isolate.run(() async {
-          try{
-            var results = shell.runSync(cmd.replaceFirst("hdc", "./hdc"));
-            return results.first.outText;
-          }catch(e){
-            return "$e";
-          }
+        try {
+          var results = shell.runSync(cmd.replaceFirst("hdc", "./hdc"));
+          return results.first.outText;
+        } catch (e) {
+          return "$e";
+        }
       });
     }
   }
