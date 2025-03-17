@@ -20,11 +20,11 @@ class IndexPage extends StatelessWidget {
           DebugSteps(),
           Consumer<EcoViewModel>(
             builder: (context, model, child) {
-              // if (model.hapInfo?.packageName == null ||
-              //     model.userInfo == null ||
-              //     model.currentDevice == null) {
-              //   return Container();
-              // }
+              if (model.hapInfo?.packageName == null ||
+                  model.userInfo == null ||
+                  model.currentDevice == null) {
+                return Container();
+              }
               return Center(
                 child: FilledButton(
                   onPressed: () {
@@ -91,7 +91,7 @@ class DebugSteps extends StatelessWidget {
             ListItem(
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: model.hapInfo?.packageName ?? "未选择",
-              subTitle: ".hap文件",
+              subTitle: "仅.hap文件",
               tailling: TextButton(
                 onPressed: () {
                   model.toSelectFile(context);

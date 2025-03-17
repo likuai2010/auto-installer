@@ -15,8 +15,12 @@ class CertPage extends StatelessWidget {
     }, child: Consumer<CertViewModel>( builder: (context, model, child) {
       return Expanded(
         child: model.isLogin ? 
-        ListView(children: model.certInfoList.map((CertInfo d) => CertItem(info: d,)).toList()):
-        Center(child: Text("未登录华为账号"))
+        ListView(children: model.certInfoList.map((CertInfo d) => CertItem(info: d, currentId: model.currentId, onclick: (){
+          showAlert(context, title: Text("是否下载证书并应用?"), content: Text("注意: p12文件不一致会签名失败(p12是颁发证书的密钥可自行生成)"), onConfirm: (){
+              model.useCert(context, d);
+          });
+        },)).toList()):
+        Center(child: Text("未登录账号"))
       );
     }));
   }
@@ -24,9 +28,21 @@ class CertPage extends StatelessWidget {
 }
 
 class CertItem extends StatelessWidget {
-  const CertItem({super.key, required this.info});
-
+  const CertItem({super.key, required this.info, required this.currentId, this.onclick});
+  final String? currentId;
   final CertInfo info;
+  final Function()? onclick;
+
+  Widget? _actions(TextTheme textTheme){
+    if (info.certType ==2){
+        return Container();
+    }
+    if (currentId == info.id){
+      return Padding(padding: const EdgeInsets.symmetric(horizontal: 6), child: Text("正在使用", style: textTheme.labelSmall));
+    }else{
+      return TextButton(onPressed: onclick, child: Text("使用",  style: textTheme.labelSmall));
+    }
+  }
    @override
   Widget build(BuildContext context) {
      final textTheme = Theme.of(
@@ -35,11 +51,10 @@ class CertItem extends StatelessWidget {
     return GroupDecoration(children: [
       ListItem(
         leading: Icon(Icons.key_outlined), 
-        title: "${info.certType == 2? '发布': '调试'}: ${info.certName}", 
-        subTitle: info.id,
-        tailling: Text(
-          "过期: ${formatTime(info.expireTime)}",style: Theme.of(context).textTheme.labelSmall)
-        )
+        title: "${info.certType == 2 ? '发布': '调试'}: ${info.certName}", 
+        subTitle: "${info.id}: 与${formatTime(info.expireTime)}过期",
+        tailling: _actions(textTheme)
+      )
     ]);
   }
   

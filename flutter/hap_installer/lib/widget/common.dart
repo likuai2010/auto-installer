@@ -229,7 +229,7 @@ void toPage(BuildContext context, Widget Function(BuildContext) builder) {
   Navigator.push(context, MaterialPageRoute(builder: builder));
 }
 
-void showAlert(BuildContext context, {Widget? title, Widget? content}) {
+void showAlert(BuildContext context, {Widget? title, Widget? content, Function()? onConfirm}) {
   showDialog(
     context: context,
     builder: (_) {
@@ -239,7 +239,12 @@ void showAlert(BuildContext context, {Widget? title, Widget? content}) {
         actions: <Widget>[
           TextButton(
             child: const Text('确认'),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              if(onConfirm != null){
+                  onConfirm();
+              }
+              Navigator.of(context).pop();
+            },
           ),
           FilledButton(
             child: const Text('取消'),

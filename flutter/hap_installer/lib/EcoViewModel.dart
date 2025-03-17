@@ -31,7 +31,7 @@ class EcoViewModel extends ChangeNotifier {
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
   AuthInfo? userInfo;
-  HapInfo? hapInfo = HapInfo(packageName: "com.xiaobai.test", filePath: "");
+  HapInfo? hapInfo;
   String? currentDevice;
   SignConfig? signConfig;
   String storeDir = "";
@@ -214,6 +214,12 @@ class EcoViewModel extends ChangeNotifier {
     }
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
+  changeCertConfig(CertInfo info) async{
+    signConfig!.certId = info.id;
+    signConfig!.certPath = path.join(storeDir, "${info.certName}.cer");
+    await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
+    return signConfig;
+  }
 
   testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned.hap");
@@ -265,7 +271,6 @@ class EcoViewModel extends ChangeNotifier {
           return !isLogin;
         });
       } catch (e) {
-        print("请求签名失败 ${e}");
         historyViewModel?.updateSetp(2, (setp) {
           return setp.copyWith(loading: false, error: "请求签名失败: $e");
         });
