@@ -215,12 +215,13 @@ class EcoViewModel extends ChangeNotifier {
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
 
-  testSignHap() async {
+  testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned.hap");
     var error = await cmd.signHap(filePath, signConfig!);
-    print("SignHap $error");
-    // error = await cmd.installHap(await cmd.getOutPath(filePath));
-    // print("installHap: $error");
+    toask(context, error);
+    error = await cmd.installHap(await cmd.getOutPath(filePath));
+    print("installHap: $error");
+    toask(context, error);
   }
 
   installHap() async {
@@ -301,7 +302,7 @@ class EcoViewModel extends ChangeNotifier {
             await cmd.getOutPath(hap.filePath),
           );
           historyViewModel?.updateSetp(3, (setp) {
-            return setp.copyWith(loading: false, error: error);
+            return setp.copyWith(loading: false, error: error == "调试成功" ? null : error);
           });
         } catch (e) {
           historyViewModel?.updateSetp(3, (setp) {

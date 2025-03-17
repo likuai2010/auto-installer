@@ -99,6 +99,17 @@ class DebugSteps extends StatelessWidget {
                 child: Text("选择"),
               ),
             ),
+             ListItem(
+              leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+              title: "test signApp",
+              subTitle: "test",
+              tailling: TextButton(
+                onPressed: () {
+                  model.testSignHap(context);
+                },
+                child: Text("选择"),
+              ),
+            ),
           ],
         );
       },

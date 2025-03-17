@@ -223,7 +223,7 @@ class EcoService {
   ) async {
     const certName = "xiaobai-debug";
     if (config.certId.isEmpty) {
-      print("testTag EcoService create cert");
+      print(" EcoService create cert");
       if (unLogin()) return false;
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
@@ -236,12 +236,10 @@ class EcoService {
       final csr = await readCsr(config.csrPath);
       final harmonyCert = await createCert(certName, 1, csr);
       final urlsInfo = await downloadObj(harmonyCert.certObjectId);
-      if (!await File(config.certPath).exists()) {
-        await downloadFile(urlsInfo.first.newUrl, config.certPath);
-      }
+      await downloadFile(urlsInfo.first.newUrl, config.certPath);
       config.certId = harmonyCert.id;
     } else {
-      print("testTag EcoService cert 存在");
+      print(" EcoService cert 存在");
     }
     var udid = config.udids.first;
     if (udid.isNotEmpty) {
@@ -270,9 +268,9 @@ class EcoService {
         config.packageName,
       );
       await downloadFile(provisionFileUrl, config.profilePath);
-      print("testTag ${profileName} profile 创建成功");
+      print(" ${profileName} profile 创建成功");
     } else {
-      print("testTag ${profileName} profile 存在");
+      print(" ${profileName} profile 存在");
     }
     return true;
   }

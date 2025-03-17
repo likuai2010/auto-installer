@@ -33,7 +33,13 @@ class CertItem extends StatelessWidget {
       context,
     ).textTheme.apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return GroupDecoration(children: [
-      ListItem(leading: Icon(Icons.key_outlined), title: "${info.certType == 2? '发布': '调试'}: ${info.certName}", subTitle: "过期时间:${formatTime(info.expireTime)}", tailling: Container(),)
+      ListItem(
+        leading: Icon(Icons.key_outlined), 
+        title: "${info.certType == 2? '发布': '调试'}: ${info.certName}", 
+        subTitle: info.id,
+        tailling: Text(
+          "过期: ${formatTime(info.expireTime)}",style: Theme.of(context).textTheme.labelSmall)
+        )
     ]);
   }
   
@@ -41,6 +47,6 @@ class CertItem extends StatelessWidget {
 
 String formatTime(int timestamp){
  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
- String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime); 
+ String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime); 
  return formattedDate;
 }
