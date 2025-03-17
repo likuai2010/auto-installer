@@ -13,6 +13,8 @@ import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:hap_installer/widget/DownloadDialog.dart';
+import 'package:hap_installer/widget/common.dart';
 import 'package:native_core/native_core.dart';
 import 'package:path/path.dart' as path;
 
@@ -21,6 +23,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
   messenger.showSnackBar(SnackBar(content: Text(message)));
+}
+
+void showDownloadDialog(BuildContext context, String javaPath) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return DownloadDialog(javaPath: javaPath);
+    },
+  );
 }
 
 class EcoViewModel extends ChangeNotifier {
@@ -92,10 +104,28 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  toLogin(BuildContext context) async {
-    if (loading) {
-      return;
+  // only windows
+  checkJava(BuildContext context) async {
+    if (!Platform.isWindows) return true;
+    var javaPath = await getJavaDir();
+    if (!await Directory(javaPath).exists()) {
+      showAlert(
+        context,
+        title: Text("警告!"),
+        content: Text("缺少java环境! 是否下载?"),
+        onConfirm: () {
+          showDownloadDialog(context, javaPath);
+        },
+      );
+      return false;
+    } else {
+      return true;
     }
+  }
+
+  toLogin(BuildContext context) async {
+    if (!await checkJava(context)) return;
+    if (loading) return;
     loading = true;
     notifyListeners();
     final huawei = LoginHuawei();
@@ -106,6 +136,7 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   toSelectFile(BuildContext context) async {
+    if (!await checkJava(context)) return;
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     var file = result?.files.first;
     if (file?.path != null) {
@@ -174,13 +205,18 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
+    var hdcDir = await getHdcDir();
     if (Platform.isMacOS) {
-      var hdcDir = await getHdcDir();
       await copyAssert("tools/macos", "hdc", hdcDir);
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
       await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
+    }
+    if (Platform.isWindows) {
+      await copyAssert("tools/windows", "hdc.exe", hdcDir);
+      await copyAssert("tools/windows", "libusb_shared.dll", hdcDir);
+      await copyAssert("tools/windows", "hap-sign-tool.jar", hdcDir);
     }
   }
 
@@ -220,7 +256,7 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   testSignHap(BuildContext context) async {
-    String filePath = path.join(storeDir, "unsigned.hap");
+    String filePath = path.join(storeDir, "unsigned-test.hap");
     var error = await cmd.signHap(filePath, signConfig!);
     toask(context, error);
     error = await cmd.installHap(await cmd.getOutPath(filePath));
@@ -283,13 +319,7 @@ class EcoViewModel extends ChangeNotifier {
       historyViewModel?.updateSetp(2, (setp) {
         return setp.copyWith(loading: true, error: "正在签名...");
       });
-      var error = "so failure";
-      if (Platform.isWindows) {
-        await Future.delayed(Duration(milliseconds: 10000));
-      } else {
-        error = await cmd.signHap(hap.filePath, signConfig);
-      }
-
+      var error = await cmd.signHap(hap.filePath, signConfig);
       historyViewModel?.updateSetp(2, (setp) {
         return setp.copyWith(
           loading: false,

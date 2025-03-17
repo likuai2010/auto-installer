@@ -4,7 +4,7 @@ import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/pages/Home.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   runApp(const App());
   viewmodel.init();
 }

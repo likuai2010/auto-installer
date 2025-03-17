@@ -28,7 +28,10 @@ class IndexPage extends StatelessWidget {
               return Center(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => DebugDetailPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => DebugDetailPage()),
+                    );
                     model.installHap();
                   },
                   child: Padding(
@@ -95,17 +98,6 @@ class DebugSteps extends StatelessWidget {
               tailling: TextButton(
                 onPressed: () {
                   model.toSelectFile(context);
-                },
-                child: Text("选择"),
-              ),
-            ),
-             ListItem(
-              leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
-              title: "test signApp",
-              subTitle: "test",
-              tailling: TextButton(
-                onPressed: () {
-                  model.testSignHap(context);
                 },
                 child: Text("选择"),
               ),

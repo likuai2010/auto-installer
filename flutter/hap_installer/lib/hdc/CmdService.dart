@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:ui';
 import 'package:hap_installer/hdc/zipTools.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
@@ -48,6 +49,11 @@ Future<String> getHdcDir() async {
   return appDir.path;
 }
 
+Future<String> getJavaDir() async {
+  final temp = await getTempDir();
+  return path.join(temp, "jdk-17.0.14+7-jre");
+}
+
 Future<String> getAppDir() async {
   final temp = await getApplicationDocumentsDirectory();
   final appDir = Directory(path.join(temp.path, 'hap_installer'));
@@ -85,9 +91,9 @@ class CmdService {
     }
     final outPath = await getOutPath(inPath);
     final cmd =
-        "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1";
+        "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile '${signConfig.certPath}' -profileFile '${signConfig.profilePath}' -inFile '$inPath' -signAlg SHA256withECDSA -keystoreFile '${signConfig.keystoreFile}' -keystorePwd '${signConfig.keystorePwd}' -keyPwd '${signConfig.keystorePwd}' -outFile '$outPath' -signCode 1";
     print("signHap $cmd");
-    final error = await signCmd(cmd, await getTempDir());
+    final error = await baseSign(cmd);
     if (error.contains("success")) {
       return "签名成功";
     } else {
@@ -99,7 +105,7 @@ class CmdService {
     if (!File(filePath).existsSync()) {
       return "文件不存在";
     }
-    final result = await baseCmd("hdc install $filePath");
+    final result = await baseCmd("hdc install '$filePath'");
     if (result.contains("success")) {
       return "调试成功";
     } else if (result.contains("9568322")) {
@@ -143,7 +149,7 @@ class CmdService {
     if (udid.length > 1) {
       return udid[1].trim();
     } else {
-      return "获取udid失败: ${result}";
+      return "获取udid失败: $result";
     }
   }
 
@@ -157,7 +163,7 @@ class CmdService {
       return await hdcCmd(cmd, await getTempDir());
     } else {
       var shell = Shell(workingDirectory: await getHdcDir());
-      return Isolate.run(() async {
+      return await Isolate.run(() async {
         try {
           var results = shell.runSync(cmd.replaceFirst("hdc", "./hdc"));
           return results.first.outText;
@@ -168,7 +174,26 @@ class CmdService {
     }
   }
 
-  test() {}
+  Future<String> baseSign(String cmd) async {
+    if (!Platform.isWindows) {
+      return await signCmd(cmd, await getTempDir());
+    } else {
+      var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
+      var hdcDir = await getHdcDir();
+      try {
+        var results = await shell.run(
+          cmd.replaceFirst(
+            "signtool",
+            "${path.join(await getJavaDir(), "bin", "java.exe")} -jar ${path.join(hdcDir, "hap-sign-tool.jar")}",
+          ),
+        );
+        return results.first.outText;
+      } catch (e) {
+        print("baseSign $e");
+        return "baseSign $e";
+      }
+    }
+  }
 }
 
 final cmd = CmdService();

@@ -229,7 +229,12 @@ void toPage(BuildContext context, Widget Function(BuildContext) builder) {
   Navigator.push(context, MaterialPageRoute(builder: builder));
 }
 
-void showAlert(BuildContext context, {Widget? title, Widget? content, Function()? onConfirm}) {
+void showAlert(
+  BuildContext context, {
+  Widget? title,
+  Widget? content,
+  Function()? onConfirm,
+}) {
   showDialog(
     context: context,
     builder: (_) {
@@ -240,10 +245,10 @@ void showAlert(BuildContext context, {Widget? title, Widget? content, Function()
           TextButton(
             child: const Text('确认'),
             onPressed: () {
-              if(onConfirm != null){
-                  onConfirm();
-              }
               Navigator.of(context).pop();
+              if (onConfirm != null) {
+                onConfirm();
+              }
             },
           ),
           FilledButton(

@@ -47,6 +47,7 @@ dependencies:
   archive: ^4.0.4
   process_run: ^1.2.4
   shared_preferences: ^2.5.2
+  dio: ^5.8.0+1
   native_core:
     path: plugins/native_core
   intl: ^0.20.2
@@ -74,6 +75,7 @@ flutter:
     - assets/store/
     - assets/html/
     - assets/tools/macos/
+    - assets/tools/windows/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
