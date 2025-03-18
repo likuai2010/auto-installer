@@ -25,11 +25,6 @@ class _AppState extends State<App> {
     ThemeMode.light => true,
     ThemeMode.dark => false,
   };
-  @override
-  void initState() {
-    super.initState();
-    viewmodel.loadUserInfo(context);
-  }
 
   @override
   Widget build(BuildContext context) {

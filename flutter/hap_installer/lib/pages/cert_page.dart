@@ -8,14 +8,23 @@ import 'package:provider/provider.dart';
 class CertPage extends StatelessWidget {
   const CertPage({super.key});
 
-  Widget _certList(context, model){
-    return  model.isLogin ? 
-          ListView(children: model.certInfoList.map((CertInfo d) => CertItem(info: d, currentId: model.currentId, onclick: (){
-            showAlert(context, title: Text("是否下载证书并应用?"), content: Text("注意: 需要使用对应的p12文件, 不一致会签名失败(p12是自己创建的密钥)"), onConfirm: (){
-                model.useCert(context, d);
-            });
-          },)).toList()):
-          Expanded(child: Center(child: Text("未登录账号")));
+  Widget _certList(context, CertViewModel model){
+    List<Widget> list = model.certInfoList.map(
+              (CertInfo d) => 
+                CertItem(
+                  info: d, 
+                  currentId: model.currentId,
+                  onclick: (){
+                    showAlert(context, 
+                      title: Text("是否下载证书并应用?"), 
+                      content: Text("注意: 需要使用对应的p12文件, 不一致会签名失败(p12是自己创建的密钥)"),
+                      onConfirm: (){ model.useCert(context, d); }
+                    );
+                  })
+            ).toList();
+    return model.isLogin 
+      ? ListView( children: list)
+      : Center(child: Text("未登录账号"));
   }
   @override
   Widget build(BuildContext context) {
@@ -27,7 +36,7 @@ class CertPage extends StatelessWidget {
          child: Column(children: [
             Padding(padding: const EdgeInsets.all(5), child: Text("tip: 未实名开发者账号证书有效14天，实名后六个月。", style: texttheme.labelSmall,)),
             SizedBox(height: 10),
-            _certList(context, model)
+            Expanded(child:  _certList(context, model)),
          ])
         );
     }));

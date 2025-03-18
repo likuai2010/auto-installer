@@ -60,11 +60,11 @@ class EcoService {
           return EcoResult(ret: Ret(code: 0, msg: strResult));
         }
       } else if (response.statusCode == 401) {
-        throw Exception("登陆信息失效: ${strResult}");
+        return EcoResult(ret: Ret(code: 401, msg: "登录信息过期"));
       }
     } catch (e) {
       print('Error: $e');
-      return EcoResult(ret: Ret(code: 401, msg: "$e"));
+      return EcoResult(ret: Ret(code: 403, msg: "$e"));
     } finally {
       httpClient.close();
     }
@@ -124,7 +124,7 @@ class EcoService {
         "https://connect-api.cloud.huawei.com/api/ups/user-permission-service/v1/user-team-list";
     final result = await base(uri, {}, {}, "GET");
     // 没有权限获取
-    if (result?.ret.code == 401) {
+    if (result?.ret.code == 403) {
       return null;
     }
     return result?.teams ?? List.empty();

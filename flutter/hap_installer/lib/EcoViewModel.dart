@@ -87,7 +87,9 @@ class EcoViewModel extends ChangeNotifier {
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
-        userInfo?.changeTeamId(teamList.first);
+        if (!teamList.any((t)=>t.id == userInfo?.teamId)){
+          userInfo?.changeTeamId(teamList.first);
+        }
       } else {
         toask(context, '登录信息无效(tip: 请关闭代理软件, ip必须在国内!)');
       }
@@ -190,8 +192,8 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList = result.split("\n").where((d) => d != '').toList();
-    if (deviceList.isNotEmpty && deviceList.first.trim() != "[Empty]") {
+    deviceList = result.split("\n").where((d) => d != '' && d != '[Empty]').toList();
+    if (deviceList.isNotEmpty) {
       currentDevice = deviceList.first;
     } else {
       currentDevice = null;

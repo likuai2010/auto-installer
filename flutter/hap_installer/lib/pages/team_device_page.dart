@@ -8,7 +8,7 @@ class TeamDevicePage extends StatelessWidget {
 
   List<Widget> teamList(EcoViewModel model){
     if(!model.isLogin) {
-      return [ListTile(title: Text("请登录！"))];
+      return [ListTile(title: Text("无"))];
     }
     return model.teamList.map((t){
           return  ListTile(title: Text(t.name), selected: model.userInfo?.teamId == t.id, onTap: (){
@@ -18,7 +18,7 @@ class TeamDevicePage extends StatelessWidget {
   }
   List<Widget> deviceList(EcoViewModel model){
     if(model.deviceList.isEmpty) {
-      return [ListTile(title: Text("请连接设备！"))];
+      return [ListTile(title: Text("无"))];
     }
     return model.deviceList.map((t){
         return  ListTile(
@@ -31,6 +31,7 @@ class TeamDevicePage extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+    
     return Consumer<EcoViewModel>(builder: (_, model, child){
         return ListView(children: [
               DrawerHeader(
