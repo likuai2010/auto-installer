@@ -1,3 +1,4 @@
+import 'package:hap_installer/models/EcoResult.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'generated/AuthInfo.g.dart';
@@ -10,8 +11,8 @@ class AuthInfo {
   String? nickName;
   AuthInfo({required this.accessToken, required this.userId}) : teamId = userId;
   
-  changeTeamId(String teamId) {
-    this.teamId = teamId;
+  changeTeamId(TeamInfo team) {
+    teamId = team.id;
   }
 
   factory AuthInfo.fromJson(Map<String, dynamic> json) =>

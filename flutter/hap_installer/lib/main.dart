@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/pages/Home.dart';
+import 'package:hap_installer/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   runApp(const App());
-  viewmodel.init();
 }
 
 class App extends StatefulWidget {
@@ -18,7 +18,6 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   ThemeMode _themeMode = ThemeMode.light;
-
   bool get _useLightMode => switch (_themeMode) {
     ThemeMode.system =>
       View.of(context).platformDispatcher.platformBrightness ==
@@ -26,10 +25,15 @@ class _AppState extends State<App> {
     ThemeMode.light => true,
     ThemeMode.dark => false,
   };
+  @override
+  void initState() {
+    super.initState();
+    viewmodel.loadUserInfo(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    viewmodel.loadUserInfo(context);
+ 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HistoryViewModel()),
@@ -52,7 +56,7 @@ class _AppState extends State<App> {
           colorSchemeSeed: Colors.black,
           brightness: Brightness.dark,
         ),
-        home: Home(),
+        home: SplashScreen(),
       ),
     );
   }

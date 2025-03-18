@@ -96,7 +96,6 @@ class EcoService {
   initUserInfo(AuthInfo? authInfo) async {
     this.authInfo = authInfo;
     if (authInfo == null) return;
-    print("authInfo" + jsonEncode(authInfo.toJson()));
   }
 
   Future<AuthInfo?> getAuthInfoBytempToken(String tokenUrl) async {

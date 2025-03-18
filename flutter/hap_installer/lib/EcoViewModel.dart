@@ -47,6 +47,7 @@ class EcoViewModel extends ChangeNotifier {
   SignConfig? signConfig;
   String storeDir = "";
   String signConfigPath = "";
+  String userInfoPath = "";
   String ip = "192.168.3.47";
   String port = "39617";
 
@@ -54,54 +55,51 @@ class EcoViewModel extends ChangeNotifier {
 
   EcoViewModel() {}
 
-  init() async {
+  Future<bool> init() async {
     if (Platform.isAndroid) {
       startHdcServer();
     }
-
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     if (!await storeDir.exists()) {
       storeDir.create(recursive: true);
     }
-    final signConfigPath = path.join(await getAppDir(), "signConfig.json");
+    signConfigPath = path.join(await getAppDir(), "signConfig.json");
+    userInfoPath = path.join(await getAppDir(), "userInfo.json");
     this.storeDir = storeDir.path;
-    this.signConfigPath = signConfigPath;
-
     initSignConfig();
     await tarnsformAssert();
-
-    if (Platform.isAndroid) {
-      await checkDevices();
-    }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final localIp = prefs.getString('ip');
     final localPort = prefs.getString('port');
     ip = localIp ?? ip;
     port = localPort ?? port;
-    notifyListeners();
+    return true;
   }
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
-    final configPath = path.join(await getAppDir(), "userInfo.json");
     if (authInfo != null) {
-      saveJsonToFile(jsonEncode(authInfo.toJson()), configPath);
+      saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
     }
-    userInfo = await readUserInfoFromFile(configPath);
+    userInfo = await readUserInfoFromFile(userInfoPath);
     if (userInfo == null) return;
     try {
       await eco.initUserInfo(userInfo);
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
-        userInfo?.changeTeamId(teamList.first.id);
+        userInfo?.changeTeamId(teamList.first);
       } else {
         toask(context, '登录信息无效(tip: 请关闭代理软件, ip必须在国内!)');
       }
       isLogin = true;
     } catch (e) {
       isLogin = false;
+      
     }
     notifyListeners();
+    if (!Platform.isAndroid) {
+      await checkDevices();
+    }
   }
 
   // only windows
@@ -147,6 +145,18 @@ class EcoViewModel extends ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+  changeTeam(TeamInfo info){
+    if (userInfo != null) {
+      userInfo!.changeTeamId(info);
+      eco.initUserInfo(userInfo);
+      saveJsonToFile(jsonEncode(userInfo!.toJson()), userInfoPath);
+      notifyListeners();
+    }
+  }
+  changeDevice(String id){
+    currentDevice = id;
+    notifyListeners();
   }
 
   Future connectDevice(BuildContext context, String ip, String port) async {
