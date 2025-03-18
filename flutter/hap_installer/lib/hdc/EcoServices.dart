@@ -227,17 +227,23 @@ class EcoService {
       if (unLogin()) return false;
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
-      final deleteIds =
-          debugCerts
-              .where((d) => d.certName == certName)
-              .map((d) => d.id)
-              .toList();
-      await deleteCertList(deleteIds);
-      final csr = await readCsr(config.csrPath);
-      final harmonyCert = await createCert(certName, 1, csr);
-      final urlsInfo = await downloadObj(harmonyCert.certObjectId);
-      await downloadFile(urlsInfo.first.newUrl, config.certPath);
-      config.certId = harmonyCert.id;
+      var xiaobaiDebug = debugCerts.where((d) => d.certName == certName).firstOrNull;
+      // 没有则创建
+      if(xiaobaiDebug == null){
+        // 最多三个证书
+        if (certList.length > 2){
+          final sortList = debugCerts.toList();
+          sortList.sort((a,b)=>a.expireTime.compareTo(b.expireTime));
+          await deleteCertList([sortList.first.id]);
+        }
+        final csr = await readCsr(config.csrPath);
+        xiaobaiDebug = await createCert(certName, 1, csr);
+      }{
+       
+        final urlsInfo = await downloadObj(xiaobaiDebug.certObjectId);
+        await downloadFile(urlsInfo.first.newUrl, config.certPath);
+      }
+      config.certId = xiaobaiDebug.id;
     } else {
       print(" EcoService cert 存在");
     }

@@ -74,10 +74,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   PreferredSizeWidget _createAppBar(PageSelected pageSelected) {
+    List<Widget> actions = [Container()];
+    if(pageSelected == PageSelected.cert){
+      actions.add(IconButton(onPressed: (){}, icon: Icon(Icons.settings)));
+    }
     return AppBar(
       title: Text(appBarTitleFor(pageSelected)),
       centerTitle: false,
-      actions: [Container()],
+      actions: actions,
     );
   }
 
