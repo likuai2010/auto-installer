@@ -87,7 +87,7 @@ class EcoViewModel extends ChangeNotifier {
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
-        if (!teamList.any((t)=>t.id == userInfo?.teamId)){
+        if (!teamList.any((t) => t.id == userInfo?.teamId)) {
           userInfo?.changeTeamId(teamList.first);
         }
       } else {
@@ -96,12 +96,11 @@ class EcoViewModel extends ChangeNotifier {
       isLogin = true;
     } catch (e) {
       isLogin = false;
-      
     }
-    notifyListeners();
     if (!Platform.isAndroid) {
       await checkDevices();
     }
+    notifyListeners();
   }
 
   // only windows
@@ -148,7 +147,8 @@ class EcoViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  changeTeam(TeamInfo info){
+
+  changeTeam(TeamInfo info) {
     if (userInfo != null) {
       userInfo!.changeTeamId(info);
       eco.initUserInfo(userInfo);
@@ -156,8 +156,10 @@ class EcoViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  changeDevice(String id){
+
+  changeDevice(String id) {
     currentDevice = id;
+    cmd.changeTarget(id);
     notifyListeners();
   }
 
@@ -168,8 +170,8 @@ class EcoViewModel extends ChangeNotifier {
     prefs.setString("ip", ip);
     prefs.setString("port", port);
     var result = await _connectHdc("$ip:$port");
+
     toask(context, result);
-    notifyListeners();
   }
 
   _connectHdc(String url) async {
@@ -192,12 +194,17 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList = result.split("\n").where((d) => d != '' && d != '[Empty]').toList();
+    deviceList =
+        result.split("\n").where((d) => d != '' && d != '[Empty]').toList();
     if (deviceList.isNotEmpty) {
-      currentDevice = deviceList.first;
+      if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
+        currentDevice = deviceList.first;
+        changeDevice(currentDevice!);
+      }
     } else {
       currentDevice = null;
     }
+    notifyListeners();
   }
 
   Future<HapInfo> _loadHap(BuildContext context, String hapPath) async {

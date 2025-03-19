@@ -9,7 +9,6 @@ import 'package:hap_installer/pages/team_device_page.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
-import 'package:provider/provider.dart';
 
 const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
@@ -32,7 +31,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   initState() {
     super.initState();
-  
+
     controller = AnimationController(
       duration: Duration(milliseconds: 1000),
       value: 0,
@@ -78,17 +77,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  PreferredSizeWidget _createAppBar(BuildContext context, PageSelected pageSelected) {
+  PreferredSizeWidget _createAppBar(
+    BuildContext context,
+    PageSelected pageSelected,
+  ) {
     List<Widget> actions = [Container()];
-    if(pageSelected == PageSelected.cert){
-      actions.add(IconButton(onPressed: (){
-       scaffoldKey.currentState?.openEndDrawer();
-      }, icon: Icon(Icons.settings)));
+    if (pageSelected == PageSelected.cert) {
+      actions.add(
+        IconButton(
+          onPressed: () {
+            scaffoldKey.currentState?.openEndDrawer();
+          },
+          icon: Icon(Icons.settings),
+        ),
+      );
     }
-    if(pageSelected == PageSelected.home){
-      actions.add(IconButton(onPressed: (){
-       scaffoldKey.currentState?.openEndDrawer();
-      }, icon: Icon(Icons.mode_edit)));
+    if (pageSelected == PageSelected.home) {
+      actions.add(
+        IconButton(
+          onPressed: () {
+            scaffoldKey.currentState?.openEndDrawer();
+            viewmodel.checkDevices();
+          },
+          icon: Icon(Icons.mode_edit),
+        ),
+      );
     }
     return AppBar(
       title: Text(appBarTitleFor(pageSelected)),
@@ -114,13 +127,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       screenIndex = screenSelected;
     });
   }
-  Widget? buildDrawer(PageSelected pageSelected){
-      if(pageSelected == PageSelected.home){
-        return Drawer(child: TeamDevicePage());
-      }
-      if(pageSelected == PageSelected.cert){
-        return Drawer(child: SignConfigPage());
-      }
+
+  Widget? buildDrawer(PageSelected pageSelected) {
+    if (pageSelected == PageSelected.home) {
+      return Drawer(child: TeamDevicePage());
+    }
+    if (pageSelected == PageSelected.cert) {
+      return Drawer(child: SignConfigPage());
+    }
   }
 
   @override

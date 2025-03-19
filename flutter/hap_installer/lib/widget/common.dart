@@ -139,88 +139,85 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          AppBar(
-            leading: Container(),
-            leadingWidth: 10,
-            title: Text("连接设备"),
-            actions: [const CloseButton()],
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Text("请到开发者选择项-开启无线调试"),
-                Text(
-                  "Tip: 第一次可能失败，需要等待手机提示授权",
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-          ),
-
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        AppBar(
+          leading: Container(),
+          leadingWidth: 10,
+          title: Text("连接设备"),
+          actions: [const CloseButton()],
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
             children: [
-              SizedBox(
-                width: 200,
-                child: TextField(
-                  maxLength: 15,
-                  controller: ipController,
-                  decoration: InputDecoration(
-                    border: null,
-                    labelText: "请输入IP",
-                    labelStyle: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: Text(":"),
-              ),
-              SizedBox(
-                width: 100,
-                child: TextField(
-                  maxLength: 5,
-                  controller: portController,
-                  decoration: InputDecoration(
-                    border: null,
-                    enabledBorder: null,
-                    labelStyle: Theme.of(context).textTheme.labelSmall,
-                    labelText: "请输入端口",
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () async {
-                  if (connectiong) return;
-                  setState(() {
-                    connectiong = true;
-                  });
-                  await viewmodel.connectDevice(
-                    context,
-                    ipController.text,
-                    portController.text,
-                  );
-                  setState(() {
-                    connectiong = false;
-                  });
-                  Navigator.pop(context);
-                },
-                icon:
-                    !connectiong
-                        ? Icon(Icons.check_circle)
-                        : CircularProgressIndicator(value: null),
+              Text("请到开发者选择项-开启无线调试"),
+              Text(
+                "Tip: 第一次可能失败，需要等待手机提示授权",
+                style: Theme.of(context).textTheme.labelSmall,
               ),
             ],
           ),
-        ],
-      ),
+        ),
+
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 200,
+              child: TextField(
+                maxLength: 15,
+                controller: ipController,
+                decoration: InputDecoration(
+                  border: null,
+                  labelText: "请输入IP",
+                  labelStyle: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text(":"),
+            ),
+            SizedBox(
+              width: 100,
+              child: TextField(
+                maxLength: 5,
+                controller: portController,
+                decoration: InputDecoration(
+                  border: null,
+                  enabledBorder: null,
+                  labelStyle: Theme.of(context).textTheme.labelSmall,
+                  labelText: "请输入端口",
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                if (connectiong) return;
+                setState(() {
+                  connectiong = true;
+                });
+                await viewmodel.connectDevice(
+                  context,
+                  ipController.text,
+                  portController.text,
+                );
+                setState(() {
+                  connectiong = false;
+                });
+                Navigator.pop(context);
+              },
+              icon:
+                  !connectiong
+                      ? Icon(Icons.check_circle)
+                      : CircularProgressIndicator(value: null),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

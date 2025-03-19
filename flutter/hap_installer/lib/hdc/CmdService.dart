@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:ui';
 import 'package:hap_installer/hdc/zipTools.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
@@ -64,6 +63,12 @@ Future<String> getAppDir() async {
 }
 
 class CmdService {
+  String _t = "";
+
+  changeTarget(String device) {
+    _t = "-t $device";
+  }
+
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
     final modulePath = "${await getTempDir()}/module.json";
     await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
@@ -105,11 +110,11 @@ class CmdService {
     if (!File(filePath).existsSync()) {
       return "文件不存在";
     }
-    final result = await baseCmd("hdc install '$filePath'");
+    final result = await baseCmd("hdc $_t install '$filePath'");
     if (result.contains("success")) {
       return "调试成功";
     } else if (result.contains("9568322")) {
-      return "由于应用来源不可信，签名验证失败! (tip: 签名中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
+      return "Profile验证失败: 请检查Profile文件 (tip: Profile中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
     } else if (result.contains("9568289")) {
       return "权限请求失败导致安装失败! (tip: 如果使用了system_basic或system_core等级的权限，将导致报错)";
     } else if (result.contains("9568297")) {
@@ -127,7 +132,7 @@ class CmdService {
 
   Future<String> connectHdc(String url) async {
     if (url.length <= 5) {
-      url = "127.0.0.1:${url}";
+      url = "127.0.0.1:$url";
     }
     final cmd = "hdc tconn $url";
     try {
@@ -143,7 +148,7 @@ class CmdService {
   }
 
   Future<String> getUdid() async {
-    final cmd = "hdc shell bm get --udid";
+    final cmd = "hdc $_t shell bm get --udid";
     final result = await baseCmd(cmd);
     final udid = result.split(":");
     if (udid.length > 1) {
@@ -154,7 +159,7 @@ class CmdService {
   }
 
   Future<String> openApp(String packageName) async {
-    final cmd = "hdc shell aa start -a EntryAbility -b $packageName";
+    final cmd = "hdc $_t shell aa start -a EntryAbility -b $packageName";
     return await baseCmd(cmd);
   }
 

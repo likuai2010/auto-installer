@@ -18,7 +18,14 @@ class DebugDetailPage extends StatelessWidget {
           return ListView(
             children:
                 model.current!.setps
-                    .map((s) => DebugStepItem(info: s))
+                    .map(
+                      (s) => DebugStepItem(
+                        info: s,
+                        onClick: () {
+                          model.resetProfile(context);
+                        },
+                      ),
+                    )
                     .toList(),
           );
         },
@@ -44,9 +51,9 @@ class DebugDetailPage extends StatelessWidget {
 }
 
 class DebugStepItem extends StatelessWidget {
-  DebugStepItem({required this.info});
-  SetpInfo info;
-
+  const DebugStepItem({super.key, required this.info, this.onClick});
+  final SetpInfo info;
+  final Function()? onClick;
   Widget getIcon() {
     if (info.loading == null) {
       return SizedBox(
@@ -81,6 +88,13 @@ class DebugStepItem extends StatelessWidget {
     }
   }
 
+  Widget _actions() {
+    if (info.error != null && info.loading == false) {
+      return TextButton(onPressed: onClick, child: Text("重置证书和Profile"));
+    }
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GroupDecoration(
@@ -100,6 +114,7 @@ class DebugStepItem extends StatelessWidget {
               ),
             )
             : Container(),
+        _actions(),
       ],
     );
   }

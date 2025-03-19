@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/HistoryViewModel.dart';
-import 'package:hap_installer/pages/Home.dart';
 import 'package:hap_installer/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +27,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
- 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HistoryViewModel()),

@@ -76,15 +76,28 @@ class DebugSteps extends StatelessWidget {
                 Icons.signal_wifi_off_outlined,
               ), //Icon(Icons.signal_wifi_4_bar)
               title: model.currentDevice ?? "未连接",
-              subTitle: "无线连接",
+              subTitle:
+                  model.currentDevice?.contains(".") == true ? "无线连接" : "USB连接",
               tailling: TextButton(
                 onPressed: () {
                   showModalBottomSheet<void>(
                     showDragHandle: true,
+                    isScrollControlled: true,
                     context: context,
-                    constraints: const BoxConstraints(maxWidth: 640),
+                    constraints: const BoxConstraints(maxHeight: 600),
                     builder: (context) {
-                      return ConnectDeviceBox(ip: model.ip, port: model.port);
+                      return AnimatedPadding(
+                        padding: MediaQuery.of(context).viewInsets,
+                        duration: const Duration(milliseconds: 100),
+                        child: Container(
+                          height: 300,
+                          child: ConnectDeviceBox(
+                            ip: model.ip,
+                            port: model.port,
+                          ),
+                        ),
+                      );
+                      //return ConnectDeviceBox(ip: model.ip, port: model.port);
                     },
                   );
                 },

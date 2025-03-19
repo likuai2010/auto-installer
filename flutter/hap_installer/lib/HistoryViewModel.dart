@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 
@@ -17,6 +20,15 @@ class HistoryViewModel extends ChangeNotifier {
       update(current!);
     }
     notifyListeners();
+  }
+
+  resetProfile(BuildContext context) async {
+    final profile = File(viewmodel.signConfig?.profilePath ?? "");
+    viewmodel.signConfig?.certId = "";
+    if (await profile.exists()) {
+      await profile.delete();
+    }
+    toask(context, "证书和Profile已重置, 请重新签名.");
   }
 
   updateSetp(int index, Function(SetpInfo) update) {
