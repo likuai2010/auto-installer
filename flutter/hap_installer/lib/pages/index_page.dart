@@ -50,7 +50,13 @@ class IndexPage extends StatelessWidget {
 
 class DebugSteps extends StatelessWidget {
   DebugSteps({super.key});
-
+  String userName(EcoViewModel model){
+    var nickname = model.userInfo?.nickName ?? "匿名";
+    if(model.teamList.isEmpty){
+      nickname += "(未实名)";
+    }
+    return model.isLogin ? nickname : "未登录";
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<EcoViewModel>(
@@ -59,7 +65,7 @@ class DebugSteps extends StatelessWidget {
           children: [
             ListItem(
               leading: Icon(Icons.person),
-              title: model.isLogin ? model.userInfo?.nickName ?? "匿名" : "未登录",
+              title: userName(model),
               subTitle: "华为账号",
               tailling: TextButton(
                 onPressed: () {

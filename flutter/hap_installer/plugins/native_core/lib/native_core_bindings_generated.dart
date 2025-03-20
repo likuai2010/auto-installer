@@ -89,27 +89,27 @@ class NativeCoreBindings {
             )
           >();
 
-  ffi.Pointer<ffi.Char> uzip(
+  int unHap(
     ffi.Pointer<ffi.Char> source,
     ffi.Pointer<ffi.Char> fileName,
     ffi.Pointer<ffi.Char> destination,
   ) {
-    return _uzip(source, fileName, destination);
+    return _unHap(source, fileName, destination);
   }
 
-  late final _uzipPtr = _lookup<
+  late final _unHapPtr = _lookup<
     ffi.NativeFunction<
-      ffi.Pointer<ffi.Char> Function(
+      ffi.Int Function(
         ffi.Pointer<ffi.Char>,
         ffi.Pointer<ffi.Char>,
         ffi.Pointer<ffi.Char>,
       )
     >
-  >('uzip');
-  late final _uzip =
-      _uzipPtr
+  >('unHap');
+  late final _unHap =
+      _unHapPtr
           .asFunction<
-            ffi.Pointer<ffi.Char> Function(
+            int Function(
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Char>,

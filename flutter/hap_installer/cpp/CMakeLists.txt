@@ -23,18 +23,10 @@ endif()
 if(APPLE)
 add_library(libssl STATIC IMPORTED)
 add_library(libcrypto STATIC IMPORTED)
-if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/x86-64/libssl.a)
+set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/universal/libssl.a)
 set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/x86-64/libcrypto.a)
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/universal/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-else()
-set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/arm64-v8a/libssl.a)
-set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/darwin64/arm64-v8a/libcrypto.a)
-set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-endif()
-
 
 endif()
 if(ANDROID)
@@ -43,6 +35,10 @@ set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 endif()
 
+if(APPLE)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+endif()
 
 add_subdirectory(third_party/bounds_checking_function)
 
@@ -55,10 +51,7 @@ third_party/bounds_checking_function/include
 if(ANDROID)
 add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
 endif()
-if(APPLE)
-set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-set(CMAKE_OSX_ARCHITECTURES "arm64")
-endif()
+
 
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)

@@ -88,7 +88,7 @@ class EcoViewModel extends ChangeNotifier {
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
-        if (!teamList.any((t) => t.id == userInfo?.teamId)) {
+        if (teamList.isNotEmpty && !teamList.any((t) => t.id == userInfo?.teamId)) {
           userInfo?.changeTeamId(teamList.first);
         }
       } else {
@@ -227,12 +227,23 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
     var hdcDir = await getHdcDir();
+    print("hdcDir: ${hdcDir}");
     if (Platform.isMacOS) {
-      await copyAssert("tools/macos", "hdc", hdcDir);
-      if (!Platform.isWindows) {
-        await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+      final arch = await getArchitecture();
+      if (arch.contains("x86_64")){
+        await copyAssert("tools/macos", "hdc_x86_64", hdcDir, "hdc");
+        if (!Platform.isWindows) {
+          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+        }
+        await copyAssert("tools/macos", "libusb_shared_x86_64.dylib", hdcDir, "libusb_shared.dylib");
+      }else{
+        await copyAssert("tools/macos", "hdc", hdcDir);
+        if (!Platform.isWindows) {
+          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+        }
+        await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
       }
-      await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
+     
     }
     if (Platform.isWindows) {
       await copyAssert("tools/windows", "hdc.exe", hdcDir);
@@ -241,9 +252,9 @@ class EcoViewModel extends ChangeNotifier {
     }
   }
 
-  copyAssert(String dir, String fileName, String targetDir) async {
+  copyAssert(String dir, String fileName, String targetDir, [String? target]) async {
     final bytes = await rootBundle.load('assets/$dir/$fileName');
-    File file = File(path.join(targetDir, fileName));
+    File file = File(path.join(targetDir, target ?? fileName));
     if (!await file.exists()) {
       file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
     }

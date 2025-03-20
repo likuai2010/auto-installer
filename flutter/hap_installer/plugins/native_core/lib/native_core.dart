@@ -59,15 +59,20 @@ _signCmd(String args, String tempDir) async {
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {
+  final hapPathString = hapPath.toNativeUtf8();
+  final inFileNameString = inFileName.toNativeUtf8();
+  final outPathString = outPath.toNativeUtf8();
   return await Isolate.run(() {
-    final result = _bindings.uzip(
-      hapPath.toNativeUtf8().cast(),
-      inFileName.toNativeUtf8().cast(),
-      outPath.toNativeUtf8().cast(),
+    final result = _bindings.unHap(
+      hapPathString.cast(),
+      inFileNameString.cast(),
+      outPathString.cast(),
     );
-    calloc.free(result);
-    final dartString = result.cast<Utf8>().toDartString();
-    return dartString;
+    calloc.free(hapPathString);
+    return switch(result){
+      0 => "成功",
+      _ => "失败"
+    };
   });
 }
 

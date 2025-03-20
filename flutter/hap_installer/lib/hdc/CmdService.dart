@@ -70,15 +70,18 @@ class CmdService {
   }
 
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
-    final modulePath = "${await getTempDir()}/module.json";
-    // if (Platform.isWindows) {
-    //   await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
-    // } else {
-
-    // }
-    await unHap(hapPath, "module.json", modulePath);
+    final modulePath = File(path.join(await getTempDir(), "module.json"));
+    if (await modulePath.exists()){
+      await modulePath.delete();
+    }
+    if (Platform.isWindows) {
+      await extractSpecificFileFromZip(hapPath, "module.json", modulePath.path);
+    } else {
+      //await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
+      await unHap(hapPath, "module.json", modulePath.path);
+    }
     try {
-      final json = await File(modulePath).readAsString();
+      final json = await modulePath.readAsString();
       final dict = jsonDecode(json);
       return ModuleInfo.fromJson(dict);
     } catch (e) {
@@ -101,7 +104,7 @@ class CmdService {
     }
     final outPath = await getOutPath(inPath);
     var cmd = "";
-    if (Platform.isAndroid) {
+    if (!Platform.isWindows) {
       cmd =
           'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1';
     } else {
@@ -176,6 +179,7 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
+   
     if (Platform.isAndroid) {
       return await hdcCmd(cmd, await getTempDir());
     } else {
@@ -190,6 +194,8 @@ class CmdService {
       });
     }
   }
+
+
 
   Future<String> baseSign(String cmd) async {
     if (!Platform.isWindows) {
@@ -210,6 +216,17 @@ class CmdService {
         return "baseSign $e";
       }
     }
+  }
+}
+Future<String> getArchitecture() async {
+  if (Platform.isMacOS || Platform.isLinux) {
+    var result = await Process.run('uname', ['-m']);
+    return result.stdout.trim();
+  } else if (Platform.isWindows) {
+    var result = await Process.run('wmic', ['OS', 'get', 'OSArchitecture']);
+    return result.stdout.contains('64') ? 'x86_64' : 'x86';
+  } else {
+    return 'unknown';
   }
 }
 

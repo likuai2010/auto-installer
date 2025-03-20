@@ -6,7 +6,7 @@ extern "C"
 #endif
 
     int sign_hap(int argc, const char *argv[]);
-    const char *unzip(const char *source, const char *fileName, const char *destination);
+    int unzip(const char *source, const char *fileName, const char *destination);
 
 #ifdef __cplusplus
 }

@@ -40,7 +40,7 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 #endif
   return ret;
 }
-FFI_PLUGIN_EXPORT const char *uzip(const char *source, const char *fileName, const char *destination)
+FFI_PLUGIN_EXPORT int unHap(const char *source, const char *fileName, const char *destination)
 {
-  return unzip(source, fileName, destination);
+    return unzip(source, fileName, destination);
 }

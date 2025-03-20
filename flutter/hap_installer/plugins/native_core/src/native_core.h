@@ -19,4 +19,4 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir);
 FFI_PLUGIN_EXPORT int hdcServer(void);
 
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir);
-FFI_PLUGIN_EXPORT const char *uzip(const char *source, const char *fileName, const char *destination);
+FFI_PLUGIN_EXPORT int unHap(const char *source, const char *fileName, const char *destination);
