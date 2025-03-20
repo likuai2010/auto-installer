@@ -251,7 +251,15 @@ class EcoViewModel extends ChangeNotifier {
       await copyAssert("tools/windows", "hap-sign-tool.jar", hdcDir);
     }
   }
-
+  clearCache(BuildContext context) async {
+    final temp = await getTempDir();
+    await Directory(temp).delete(recursive: true);
+    try {
+      await FilePicker.platform.clearTemporaryFiles();
+    // ignore: empty_catches
+    }catch(e){}
+    toask(context, "清理完成!");
+  }
   copyAssert(String dir, String fileName, String targetDir, [String? target]) async {
     final bytes = await rootBundle.load('assets/$dir/$fileName');
     File file = File(path.join(targetDir, target ?? fileName));

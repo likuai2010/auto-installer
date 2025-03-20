@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
@@ -27,11 +28,11 @@ class MorePage extends StatelessWidget {
                   );
                 },
               ),
-              ListItem(
-                leading: Icon(Icons.settings_cell),
-                title: "重启设备",
-                onClick: () {},
-              ),
+              // ListItem(
+              //   leading: Icon(Icons.settings_cell),
+              //   title: "重启设备",
+              //   onClick: () {},
+              // ),
             ],
           ),
           GroupDecoration(
@@ -63,7 +64,9 @@ class MorePage extends StatelessWidget {
               ListItem(
                 leading: Icon(Icons.color_lens),
                 title: "清理缓存",
-                onClick: () => {showAlert(context, title: Text("是否清理缓存?"))},
+                onClick: () => {showAlert(context, title: Text("是否清理缓存?"), onConfirm: (){
+                  viewmodel.clearCache(context);
+                })},
               ),
             ],
           ),
