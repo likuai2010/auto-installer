@@ -30,7 +30,6 @@ set(include_dirs
 third_party/bzip2/source
 third_party/zlib/source
 third_party/json/source/include
-
 )
 list(APPEND include_dirs
 "${signature_tools_api}/include"

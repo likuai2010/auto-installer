@@ -71,15 +71,10 @@ class CmdService {
 
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
     final modulePath = File(path.join(await getTempDir(), "module.json"));
-    if (await modulePath.exists()){
+    if (await modulePath.exists()) {
       await modulePath.delete();
     }
-    if (Platform.isWindows) {
-      await extractSpecificFileFromZip(hapPath, "module.json", modulePath.path);
-    } else {
-      //await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
-      await unHap(hapPath, "module.json", modulePath.path);
-    }
+    await unHap(hapPath, "module.json", modulePath.path);
     try {
       final json = await modulePath.readAsString();
       final dict = jsonDecode(json);
@@ -179,7 +174,6 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
-   
     if (Platform.isAndroid) {
       return await hdcCmd(cmd, await getTempDir());
     } else {
@@ -194,8 +188,6 @@ class CmdService {
       });
     }
   }
-
-
 
   Future<String> baseSign(String cmd) async {
     if (!Platform.isWindows) {
@@ -218,6 +210,7 @@ class CmdService {
     }
   }
 }
+
 Future<String> getArchitecture() async {
   if (Platform.isMacOS || Platform.isLinux) {
     var result = await Process.run('uname', ['-m']);

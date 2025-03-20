@@ -5,7 +5,6 @@
 
 using namespace OHOS::SignatureTools;
 
-
 extern "C" int sign_hap(int argc, char *args[])
 {
     return ParamsRunTool::ProcessCmd((char **)args, argc) ? 0 : -1;
@@ -19,7 +18,6 @@ int unzip(const char *source, const char *fileName, const char *destination)
     if (zipfile == NULL)
     {
         message = message + "无法打开 ZIP 文件: " + source;
-        printf(message.c_str());
         return 100;
     }
 
@@ -27,13 +25,11 @@ int unzip(const char *source, const char *fileName, const char *destination)
     {
         unzClose(zipfile);
         message = message + "未找到文件: " + destination;
-        printf(message.c_str());
         return 101;
     }
     if (unzOpenCurrentFile(zipfile) != UNZ_OK)
     {
         message = message + "无法打开文件: " + destination;
-        printf(message.c_str());
         unzClose(zipfile);
         return 102;
     }

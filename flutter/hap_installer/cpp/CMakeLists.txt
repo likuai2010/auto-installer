@@ -52,8 +52,9 @@ if(ANDROID)
 add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
 endif()
 
-
+if( NOT WIN32)
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
-
-
+else()
+add_subdirectory(unhap)
+endif()
