@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LocalWebView extends StatefulWidget {
+  const LocalWebView({super.key, required this.url, this.isFile = true});
+
+  final String url;
+  final bool isFile;
   @override
   _LocalWebViewState createState() => _LocalWebViewState();
 }
@@ -17,17 +22,12 @@ class _LocalWebViewState extends State<LocalWebView> {
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setNavigationDelegate(
             NavigationDelegate(
-              onProgress: (int progress) {
-                // Update loading bar.
-              },
+              onProgress: (int progress) {},
               onPageStarted: (String url) {},
               onPageFinished: (String url) {},
               onHttpError: (HttpResponseError error) {},
               onWebResourceError: (WebResourceError error) {},
               onNavigationRequest: (NavigationRequest request) {
-                if (request.url.startsWith('https://www.youtube.com/')) {
-                  return NavigationDecision.prevent;
-                }
                 return NavigationDecision.navigate;
               },
             ),
@@ -36,8 +36,11 @@ class _LocalWebViewState extends State<LocalWebView> {
   }
 
   Future<void> _loadHtmlFromAssets() async {
-    _controller.loadRequest(Uri.parse("https://baidu.com"));
-    //_controller.loadFlutterAsset('assets/html/disclaimer.html');
+    if (!widget.isFile) {
+      _controller.loadRequest(Uri.parse(widget.url));
+    } else {
+      _controller.loadFlutterAsset('assets/html/disclaimer.html');
+    }
   }
 
   @override

@@ -71,7 +71,12 @@ class CmdService {
 
   Future<ModuleInfo> readModuleInfo(String hapPath) async {
     final modulePath = "${await getTempDir()}/module.json";
-    await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
+    // if (Platform.isWindows) {
+    //   await extractSpecificFileFromZip(hapPath, "module.json", modulePath);
+    // } else {
+
+    // }
+    await unHap(hapPath, "module.json", modulePath);
     try {
       final json = await File(modulePath).readAsString();
       final dict = jsonDecode(json);
@@ -95,8 +100,14 @@ class CmdService {
       return "hap文件不存在";
     }
     final outPath = await getOutPath(inPath);
-    final cmd =
-        "signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile '${signConfig.certPath}' -profileFile '${signConfig.profilePath}' -inFile '$inPath' -signAlg SHA256withECDSA -keystoreFile '${signConfig.keystoreFile}' -keystorePwd '${signConfig.keystorePwd}' -keyPwd '${signConfig.keystorePwd}' -outFile '$outPath' -signCode 1";
+    var cmd = "";
+    if (Platform.isAndroid) {
+      cmd =
+          'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1';
+    } else {
+      cmd =
+          'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
+    }
     print("signHap $cmd");
     final error = await baseSign(cmd);
     if (error.contains("success")) {
@@ -107,10 +118,11 @@ class CmdService {
   }
 
   Future<String> installHap(String filePath) async {
-    if (!File(filePath).existsSync()) {
+    if (!await File(filePath).exists()) {
       return "文件不存在";
     }
-    final result = await baseCmd("hdc $_t install '$filePath'");
+    print("installHap $filePath");
+    final result = await baseCmd('hdc $_t install "$filePath"');
     if (result.contains("success")) {
       return "调试成功";
     } else if (result.contains("9568322")) {

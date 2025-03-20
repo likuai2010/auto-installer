@@ -18,10 +18,10 @@ hdc_z
 signtool
 )
 elseif(WIN32)
-list(APPEND LIBRARY_PATHS
-${libPath}/windows/x86-64/libhdc_z.dll.a
-${libPath}/windows/x86-64/libsigntool.dll.a
-)
+  list(APPEND LIBRARY_PATHS
+  ${libPath}/windows/x86-64/libhdc_z.dll.a
+  ${libPath}/windows/x86-64/libsigntool.dll.a
+  )
 elseif(APPLE)
 else()
 add_library(hdc STATIC IMPORTED)

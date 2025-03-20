@@ -22,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
+  messenger.hideCurrentSnackBar();
   messenger.showSnackBar(SnackBar(content: Text(message)));
 }
 
@@ -142,6 +143,7 @@ class EcoViewModel extends ChangeNotifier {
       try {
         hapInfo = await _loadHap(context, file!.path!);
       } catch (e) {
+        print("toSelectFile $e");
         toask(context, "${e}");
       }
       notifyListeners();
