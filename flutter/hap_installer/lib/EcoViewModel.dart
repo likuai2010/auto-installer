@@ -13,6 +13,7 @@ import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:native_core/native_core.dart';
@@ -39,6 +40,7 @@ void showDownloadDialog(BuildContext context, String javaPath) {
 class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
   bool loading = false;
+  bool firstUse = false;
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
@@ -72,12 +74,18 @@ class EcoViewModel extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final localIp = prefs.getString('ip');
     final localPort = prefs.getString('port');
+    firstUse = prefs.getBool('firstUse') ?? true;
+    prefs.setBool("firstUse", false);
     ip = localIp ?? ip;
     port = localPort ?? port;
+    
     return true;
   }
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
+    if (firstUse){
+        showTips(context);
+    }
     if (authInfo != null) {
       saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
     }
