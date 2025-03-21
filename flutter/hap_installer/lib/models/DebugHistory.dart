@@ -14,6 +14,7 @@ abstract class DebugHistory with _$DebugHistory {
     @Default([
       SetpInfo(name: "登录检查"),
       SetpInfo(name: "连接状态检查"),
+      SetpInfo(name: "请求签名"),
       SetpInfo(name: "签名应用"),
       SetpInfo(name: "安装应用"),
     ])

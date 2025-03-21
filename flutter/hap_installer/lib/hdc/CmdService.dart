@@ -93,7 +93,7 @@ class CmdService {
     return outFile;
   }
 
-  Future<String> signHap(String inPath, SignConfig signConfig) async {
+  Future<String?> signHap(String inPath, SignConfig signConfig) async {
     if (!await File(inPath).exists()) {
       return "hap文件不存在";
     }
@@ -109,20 +109,20 @@ class CmdService {
     print("signHap $cmd");
     final error = await baseSign(cmd);
     if (error.contains("success")) {
-      return "签名成功";
+      return null;
     } else {
       return "签名失败: $error";
     }
   }
 
-  Future<String> installHap(String filePath) async {
+  Future<String?> installHap(String filePath) async {
     if (!await File(filePath).exists()) {
       return "文件不存在";
     }
     print("installHap $filePath");
     final result = await baseCmd('hdc $_t install "$filePath"');
     if (result.contains("success")) {
-      return "调试成功";
+      return null;
     } else if (result.contains("9568322")) {
       return "Profile验证失败: 请检查Profile文件 (tip: Profile中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
     } else if (result.contains("9568289")) {

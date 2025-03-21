@@ -95,7 +95,7 @@ class DebugSteps extends StatelessWidget {
                       return AnimatedPadding(
                         padding: MediaQuery.of(context).viewInsets,
                         duration: const Duration(milliseconds: 100),
-                        child: Container(
+                        child: SizedBox(
                           height: 300,
                           child: ConnectDeviceBox(
                             ip: model.ip,
@@ -114,11 +114,15 @@ class DebugSteps extends StatelessWidget {
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: model.hapInfo?.packageName ?? "未选择",
               subTitle: "仅.hap文件",
-              tailling: TextButton(
+              tailling: 
+              
+              TextButton(
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child: Text("选择"),
+                child: !model.fileLoading
+                        ? Text("选择")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
           ],

@@ -41,6 +41,7 @@ class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
   bool loading = false;
   bool firstUse = false;
+  bool fileLoading = false;
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
@@ -145,17 +146,20 @@ class EcoViewModel extends ChangeNotifier {
 
   toSelectFile(BuildContext context) async {
     if (!await checkJava(context)) return;
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (fileLoading) return;
+    fileLoading = true;
+    notifyListeners();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ["app","hsp","hap"]);
     var file = result?.files.first;
     if (file?.path != null) {
       try {
         hapInfo = await _loadHap(context, file!.path!);
       } catch (e) {
-        print("toSelectFile $e");
         toask(context, "${e}");
       }
-      notifyListeners();
     }
+    fileLoading = false;
+    notifyListeners();
   }
 
   changeTeam(TeamInfo info) {
@@ -306,99 +310,69 @@ class EcoViewModel extends ChangeNotifier {
   testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned-test.hap");
     var error = await cmd.signHap(filePath, signConfig!);
-    toask(context, error);
+    toask(context, error ??"");
     error = await cmd.installHap(await cmd.getOutPath(filePath));
     print("installHap: $error");
-    toask(context, error);
+    toask(context, error ?? "");
   }
 
   installHap() async {
     if (hapInfo != null) {
       var hap = hapInfo!;
       var signConfig = this.signConfig!;
-      historyViewModel?.createDebugHistory(hap);
-      historyViewModel?.updateSetp(0, (setp) {
+      bool nextStep = true;
+      final model = historyViewModel!;
+      model.createDebugHistory(hap);
+      model.updateHistory((s){
+        s.finished = false;
+      });
+      model.updateStep(0, (setp) {
         return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
       });
-      historyViewModel?.updateSetp(1, (setp) {
-        return setp.copyWith(loading: false, error: !isLogin ? "未连接设备" : null);
+      model.updateStep(1, (setp) {
+        return setp.copyWith(loading: false, error: currentDevice == null ? "未连接设备" : null);
       });
       signConfig.packageName = hap.packageName;
       signConfig.profilePath =
           "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
 
-      historyViewModel?.updateSetp(2, (setp) {
-        return setp.copyWith(loading: true, error: "获取设备udid中...");
-      });
-      try {
-        final udid = await cmd.getUdid();
-        if (!signConfig.udids.contains(udid)) {
-          signConfig.udids.add(udid);
-        }
-      } catch (e) {
-        historyViewModel?.updateSetp(2, (setp) {
-          return setp.copyWith(loading: false, error: "获取设备udid失败: $e");
-        });
-        historyViewModel?.updateHistory((setp) {
-          setp.finished = true;
-        });
-        return;
+      if(nextStep){
+        nextStep = await model.startSetp(2, () async {
+            final udid = await cmd.getUdid();
+            if (!signConfig.udids.contains(udid)) {
+              signConfig.udids.add(udid);
+            }
+            return null;
+        }, "获取设备udid");
       }
-      historyViewModel?.updateSetp(2, (setp) {
-        return setp.copyWith(loading: true, error: "请求签名中");
-      });
-      try {
-        final module = await _loadModule(hap.filePath);
-        await eco.autoCreateProfile(signConfig, module, () {
-          return !isLogin;
+      if(nextStep){
+        nextStep = await model.startSetp(2, () async {
+            final module = await _loadModule(hap.filePath);
+            await eco.autoCreateProfile(signConfig, module, () =>!isLogin);
+            return null;
         });
-      } catch (e) {
-        historyViewModel?.updateSetp(2, (setp) {
-          return setp.copyWith(loading: false, error: "请求签名失败: $e");
-        });
-        historyViewModel?.updateHistory((setp) {
-          setp.finished = true;
-        });
-        return;
-      } finally {
-        await saveJsonToFile(jsonEncode(signConfig.toJson()), signConfigPath);
       }
-
-      historyViewModel?.updateSetp(2, (setp) {
-        return setp.copyWith(loading: true, error: "正在签名...");
-      });
-      var error = await cmd.signHap(hap.filePath, signConfig);
-      historyViewModel?.updateSetp(2, (setp) {
-        return setp.copyWith(
-          loading: false,
-          error: error == "签名成功" ? null : error,
-        );
-      });
-      if (error == "签名成功") {
-        historyViewModel?.updateSetp(3, (setp) {
-          return setp.copyWith(loading: true, error: "正在调试...");
+      if(nextStep){
+        nextStep = await model.startSetp(3, () async {
+          return await cmd.signHap(hap.filePath, signConfig);
         });
-        try {
-          final error = await cmd.installHap(
+      }
+      if(nextStep){
+        nextStep = await model.startSetp(4, () async {
+          return await cmd.installHap(
             await cmd.getOutPath(hap.filePath),
           );
-          historyViewModel?.updateSetp(3, (setp) {
-            return setp.copyWith(
-              loading: false,
-              error: error == "调试成功" ? null : error,
-            );
-          });
-        } catch (e) {
-          historyViewModel?.updateSetp(3, (setp) {
-            return setp.copyWith(loading: false, error: "调试失败: $e");
-          });
-        }
+        });
       }
+      model.updateHistory((setp) {
+        setp.finished = true;
+      });
     }
-    historyViewModel?.updateHistory((setp) {
-      setp.finished = true;
-    });
+  
   }
+
+
+
 
   Future<ModuleInfo> _loadModule(String hapPath) async {
     return await cmd.readModuleInfo(hapPath);

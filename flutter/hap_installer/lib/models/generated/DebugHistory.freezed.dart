@@ -86,7 +86,7 @@ $HapInfoCopyWith<$Res> get hapInfo {
 @JsonSerializable()
 
 class _DebugHistory implements DebugHistory {
-   _DebugHistory({required this.hapInfo, this.finished = false, this.start = null, this.end = null, this.setps = const [SetpInfo(name: "登录检查"), SetpInfo(name: "连接状态检查"), SetpInfo(name: "签名应用"), SetpInfo(name: "安装应用")]});
+   _DebugHistory({required this.hapInfo, this.finished = false, this.start = null, this.end = null, this.setps = const [SetpInfo(name: "登录检查"), SetpInfo(name: "连接状态检查"), SetpInfo(name: "请求签名"), SetpInfo(name: "签名应用"), SetpInfo(name: "安装应用")]});
   factory _DebugHistory.fromJson(Map<String, dynamic> json) => _$DebugHistoryFromJson(json);
 
 @override  HapInfo hapInfo;

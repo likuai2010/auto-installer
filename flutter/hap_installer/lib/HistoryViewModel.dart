@@ -20,6 +20,7 @@ class HistoryViewModel extends ChangeNotifier {
       update(current!);
     }
     notifyListeners();
+
   }
 
   resetProfile(BuildContext context) async {
@@ -31,7 +32,7 @@ class HistoryViewModel extends ChangeNotifier {
     toask(context, "证书和Profile已重置, 请重新签名.");
   }
 
-  updateSetp(int index, Function(SetpInfo) update) {
+  updateStep(int index, Function(SetpInfo) update) {
     if (current != null && index < current!.setps.length) {
       List<SetpInfo> modifiableList = List.from(current!.setps);
       modifiableList[index] = update(current!.setps[index]);
@@ -39,6 +40,30 @@ class HistoryViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<bool> startSetp(int index, Future<String?> Function() builder, [String? label]) async {
+    updateStep(index, (setp) {
+      return setp.copyWith(loading: true, error: "正在${label ?? setp.name}...");
+    });
+    try {
+      final error = await builder();
+      updateStep(index, (setp) {
+        return setp.copyWith(
+          loading: false,
+          error: error,
+        );
+      });
+      return error == null;
+    } catch (e) {
+      updateStep(index, (setp) {
+        return setp.copyWith(loading: false, error: "${label ?? setp.name}失败: $e");
+      });
+      return false;
+    }
+  }
+
+
+
 
   selectDebugHistory(DebugHistory history) {
     current = history;
