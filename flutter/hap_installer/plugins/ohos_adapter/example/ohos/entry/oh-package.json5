@@ -1,3 +1,4 @@
+
 {
   "name": "entry",
   "version": "1.0.0",
@@ -6,6 +7,6 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "ohos_adapter": "file:../har/ohos_adapter.har"
-  }
+  },
 }
+

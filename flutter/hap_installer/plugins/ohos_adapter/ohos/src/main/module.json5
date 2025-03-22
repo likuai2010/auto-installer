@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "ohos_adapter",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}
