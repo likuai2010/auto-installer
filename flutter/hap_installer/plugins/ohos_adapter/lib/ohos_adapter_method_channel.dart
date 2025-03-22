@@ -11,7 +11,23 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
+  }
+
+  @override
+  Future<bool> isOhos() async {
+    return true;
+  }
+
+  @override
+  Future<void> openUrl(String url) async {
+    await methodChannel.invokeMethod<void>('openUrl');
+  }
+
+  @override
+  Future<String?> sleectFile() async {
+    return await methodChannel.invokeMethod<String>('sleectFile');
   }
 }

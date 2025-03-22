@@ -26,4 +26,16 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  Future<void> openUrl(String url) {
+    throw UnimplementedError('openUrl() has not been implemented.');
+  }
+
+  Future<String?> sleectFile() async {
+    throw UnimplementedError('openFile() has not been implemented.');
+  }
+
+  Future<bool> isOhos() async {
+    return false;
+  }
 }
