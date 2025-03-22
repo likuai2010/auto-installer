@@ -307,9 +307,6 @@ class EcoViewModel extends ChangeNotifier {
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
         await copyAssert("macos", "hdc_x86_64", hdcDir, "hdc");
-        if (!Platform.isWindows) {
-          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
-        }
         await copyAssert(
           "macos",
           "libusb_shared_x86_64.dylib",
@@ -318,10 +315,10 @@ class EcoViewModel extends ChangeNotifier {
         );
       } else {
         await copyAssert("macos", "hdc", hdcDir);
-        if (!Platform.isWindows) {
-          await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
-        }
         await copyAssert("macos", "libusb_shared.dylib", hdcDir);
+      }
+      if (!Platform.isWindows) {
+        await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
     }
     if (Platform.isWindows) {
@@ -331,6 +328,9 @@ class EcoViewModel extends ChangeNotifier {
     }
     if (Platform.isLinux) {
       await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
+      await copyAssert("linux", "hdc.exe", hdcDir);
+      await copyAssert("linux", "libusb_shared.dll", hdcDir);
+      await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
     }
   }
 
