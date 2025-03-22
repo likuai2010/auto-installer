@@ -89,7 +89,6 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   model.toConnect(context, () {
                     showModalBottomSheet<void>(
-                      showDragHandle: true,
                       isScrollControlled: true,
                       context: context,
                       constraints: const BoxConstraints(maxHeight: 600),

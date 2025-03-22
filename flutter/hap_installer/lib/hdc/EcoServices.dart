@@ -231,8 +231,11 @@ class EcoService {
       }
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
-      var xiaobaiDebug =
-          debugCerts.where((d) => d.certName == certName).firstOrNull;
+      CertInfo? xiaobaiDebug;
+      final devCerts = debugCerts.where((d) => d.certName == certName);
+      if (devCerts.isNotEmpty) {
+        xiaobaiDebug = devCerts.first;
+      }
       // 没有则创建
       if (xiaobaiDebug == null) {
         // 最多三个证书

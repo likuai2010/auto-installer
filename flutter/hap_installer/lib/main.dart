@@ -17,13 +17,6 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   ThemeMode _themeMode = ThemeMode.light;
-  bool get _useLightMode => switch (_themeMode) {
-    ThemeMode.system =>
-      View.of(context).platformDispatcher.platformBrightness ==
-          Brightness.light,
-    ThemeMode.light => true,
-    ThemeMode.dark => false,
-  };
 
   @override
   Widget build(BuildContext context) {

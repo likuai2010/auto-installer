@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/HistoryViewModel.dart';
@@ -15,9 +14,8 @@ import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:hap_installer/widget/common.dart';
-import 'package:native_core/native_core.dart';
 import 'package:path/path.dart' as path;
-
+import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void toask(BuildContext context, [String message = ""]) {
@@ -62,7 +60,7 @@ class EcoViewModel extends ChangeNotifier {
 
   Future<bool> init() async {
     if (Platform.isAndroid) {
-      startHdcServer();
+      cmd.startHdcServer();
     }
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     final debugDir = Directory(path.join(await getTempDir(), "apps"));
@@ -215,7 +213,6 @@ class EcoViewModel extends ChangeNotifier {
     prefs.setString("ip", ip);
     prefs.setString("port", port);
     var result = await _connectHdc("$ip:$port");
-
     toask(context, result);
   }
 
@@ -269,7 +266,7 @@ class EcoViewModel extends ChangeNotifier {
     await debugDir.create(recursive: true);
     List<String> pathList = [];
     if (path.extension(hapPath, 1).contains("app")) {
-      await unApp(hapPath, debugPath);
+      await cmd.unApp(hapPath, debugPath);
       final files = Directory(debugPath).list();
       pathList =
           await files
@@ -282,11 +279,11 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    await unHap(
-      pathList.first,
-      "module.json",
-      path.join(debugPath, "module.json"),
-    );
+    // await unHap(
+    //   pathList.first,
+    //   "module.json",
+    //   path.join(debugPath, "module.json"),
+    // );
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",

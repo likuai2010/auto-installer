@@ -110,18 +110,32 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  String appBarTitleFor(PageSelected pageSelected) => switch (pageSelected) {
-    PageSelected.home => "主页",
-    PageSelected.cert => "AppGallery 证书",
-    PageSelected.history => "调试历史",
-    PageSelected.more => "更多",
-  };
-  Widget createScreenFor(PageSelected pageSelected) => switch (pageSelected) {
-    PageSelected.home => IndexPage(),
-    PageSelected.cert => CertPage(),
-    PageSelected.history => HistoryPage(),
-    PageSelected.more => MorePage(),
-  };
+  String appBarTitleFor(PageSelected pageSelected) {
+    switch (pageSelected) {
+      case PageSelected.home:
+        return "主页";
+      case PageSelected.cert:
+        return "AppGallery 证书";
+      case PageSelected.history:
+        return "调试历史";
+      case PageSelected.more:
+        return "更多";
+    }
+  }
+
+  Widget createScreenFor(PageSelected pageSelected) {
+    switch (pageSelected) {
+      case PageSelected.home:
+        return IndexPage();
+      case PageSelected.cert:
+        return CertPage();
+      case PageSelected.history:
+        return HistoryPage();
+      case PageSelected.more:
+        return MorePage();
+    }
+  }
+
   void handleScreenChanged(int screenSelected) {
     setState(() {
       screenIndex = screenSelected;
@@ -135,6 +149,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     if (pageSelected == PageSelected.cert) {
       return Drawer(child: SignConfigPage());
     }
+    return null;
   }
 
   @override

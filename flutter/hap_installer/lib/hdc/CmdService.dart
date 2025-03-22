@@ -4,29 +4,11 @@ import 'dart:isolate';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
-import 'package:native_core/native_core.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
+import 'package:path_provider/path_provider.dart';
 
-Future<SignConfig?> readSignConfigFromFile(String filePath) async {
-  if (!await File(filePath).exists()) return null;
-  final json = await File(filePath).readAsString();
-  final config = SignConfig.fromJson(jsonDecode(json));
-  return config;
-}
-
-Future<AuthInfo?> readUserInfoFromFile(String filePath) async {
-  if (!await File(filePath).exists()) return null;
-  final json = await File(filePath).readAsString();
-  final config = AuthInfo.fromJson(jsonDecode(json));
-  return config;
-}
-
-Future saveJsonToFile(String json, String filePath) async {
-  final file = File(filePath);
-  await file.writeAsString(json, flush: true);
-}
+import 'package:native_core/native_core.dart';
 
 Future<String> getTempDir() async {
   final temp = await getTemporaryDirectory();
@@ -47,11 +29,6 @@ Future<String> getHdcDir() async {
   return appDir.path;
 }
 
-Future<String> getJavaDir() async {
-  final temp = await getTempDir();
-  return path.join(temp, "jdk-17.0.14+7-jre");
-}
-
 Future<String> getAppDir() async {
   final temp = await getApplicationDocumentsDirectory();
   final appDir = Directory(path.join(temp.path, 'hap_installer'));
@@ -61,8 +38,44 @@ Future<String> getAppDir() async {
   return appDir.path;
 }
 
+Future<SignConfig?> readSignConfigFromFile(String filePath) async {
+  if (!await File(filePath).exists()) return null;
+  final json = await File(filePath).readAsString();
+  final config = SignConfig.fromJson(jsonDecode(json));
+  return config;
+}
+
+Future<AuthInfo?> readUserInfoFromFile(String filePath) async {
+  if (!await File(filePath).exists()) return null;
+  final json = await File(filePath).readAsString();
+  final config = AuthInfo.fromJson(jsonDecode(json));
+  return config;
+}
+
+Future saveJsonToFile(String json, String filePath) async {
+  final file = File(filePath);
+  await file.writeAsString(json, flush: true);
+}
+
+Future<String> getJavaDir() async {
+  final temp = await getTempDir();
+  return path.join(temp, "jdk-17.0.14+7-jre");
+}
+
 class CmdService {
   String _t = "";
+
+  startHdcServer() {
+    startHdcServer();
+  }
+
+  unApp(String hapPath, String debugPath) {
+    return unApp(hapPath, debugPath);
+  }
+
+  unHap(String first, String s, String join) {
+    return unHap(first, s, join);
+  }
 
   changeTarget(String device) {
     _t = "-t $device";
@@ -177,7 +190,7 @@ class CmdService {
       var shell = Shell(workingDirectory: await getHdcDir());
       return await Isolate.run(() async {
         try {
-          var results = shell.runSync(cmd.replaceFirst("hdc", "./hdc"));
+          var results = await shell.run(cmd.replaceFirst("hdc", "./hdc"));
           return results.first.outText;
         } catch (e) {
           return "$e";
@@ -193,7 +206,7 @@ class CmdService {
       var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
       var hdcDir = await getHdcDir();
       var java = "java.exe";
-      if(Platform.isLinux){
+      if (Platform.isLinux) {
         java = "java";
       }
       try {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LocalWebView extends StatefulWidget {
@@ -25,7 +24,6 @@ class _LocalWebViewState extends State<LocalWebView> {
               onProgress: (int progress) {},
               onPageStarted: (String url) {},
               onPageFinished: (String url) {},
-              onHttpError: (HttpResponseError error) {},
               onWebResourceError: (WebResourceError error) {},
               onNavigationRequest: (NavigationRequest request) {
                 return NavigationDecision.navigate;

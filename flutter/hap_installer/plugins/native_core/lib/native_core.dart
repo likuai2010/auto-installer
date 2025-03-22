@@ -69,13 +69,17 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
       outPathString.cast(),
     );
     calloc.free(hapPathString);
-    return switch (result) {
-      0 => "成功",
-      100 => "文件打开失败",
-      101 => "没有此文件: $inFileName",
-      102 => "打开内部文件失败",
-      _ => "失败",
-    };
+    switch (result) {
+      case 0:
+        return "成功";
+      case 100:
+        return "文件打开失败";
+      case 101:
+        return "没有此文件: $inFileName";
+      case 102:
+        return "打开内部文件失败";
+    }
+    return "失败";
   });
 }
 
@@ -85,12 +89,16 @@ Future<String> unApp(String hapPath, String outPath) async {
   return await Isolate.run(() {
     final result = _bindings.unApp(hapPathString.cast(), outPathString.cast());
     calloc.free(hapPathString);
-    return switch (result) {
-      0 => "成功",
-      100 => "文件打开失败",
-      102 => "打开内部文件失败",
-      _ => "失败",
-    };
+    switch (result) {
+      case 0:
+        return "成功";
+      case 100:
+        return "文件打开失败";
+      case 101:
+      case 102:
+        return "打开内部文件失败";
+    }
+    return "失败";
   });
 }
 

@@ -1,7 +1,9 @@
-import 'package:archive/archive_io.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:process_run/stdio.dart';
+
+import 'package:archive/archive_io.dart';
 
 class DownloadDialog extends StatefulWidget {
   DownloadDialog({required this.javaPath});
@@ -17,11 +19,10 @@ class _DownloadDialogState extends State<DownloadDialog> {
   @override
   void initState() {
     super.initState();
-    if(Platform.isLinux){
+    if (Platform.isLinux) {
       file = ".tar.gz";
     }
     _downloadJRE();
-    
   }
 
   Widget installButton() {
@@ -30,17 +31,12 @@ class _DownloadDialogState extends State<DownloadDialog> {
     }
     return TextButton(
       onPressed: () async {
-        
         final savePath = File("${widget.javaPath}$file");
         setState(() {
           _progress = null;
           _status = "安装中...";
         });
-        await extractFileToDisk(
-          savePath.path,
-          savePath.parent.path,
-          callback: (_) {},
-        );
+        await extractFileToDisk(savePath.path, savePath.parent.path);
         setState(() {
           _progress = 1;
           _status = "安装完成";
@@ -61,11 +57,12 @@ class _DownloadDialogState extends State<DownloadDialog> {
       return;
     }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip"; 
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip";
     if (Platform.isLinux) {
-        url = "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_17.0.14_7.tar.gz"; 
+      url =
+          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_17.0.14_7.tar.gz";
     }
-   
+
     try {
       Dio dio = Dio();
       await dio.download(
