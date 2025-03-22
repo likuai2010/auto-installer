@@ -236,11 +236,10 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList =
-        result
-            .split("\n")
-            .where((d) => d != '' && !d.contains('[Empty]'))
-            .toList();
+    deviceList = result
+        .split("\n")
+        .where((d) => d != '' && !d.contains('[Empty]'))
+        .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -266,24 +265,23 @@ class EcoViewModel extends ChangeNotifier {
     await debugDir.create(recursive: true);
     List<String> pathList = [];
     if (path.extension(hapPath, 1).contains("app")) {
-      await cmd.unApp(hapPath, debugPath);
+      await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList =
-          await files
-              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-              .map((f) => f.path)
-              .toList();
+      pathList = await files
+          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+          .map((f) => f.path)
+          .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
     } else {
       pathList = [hapPath];
     }
-    // await unHap(
-    //   pathList.first,
-    //   "module.json",
-    //   path.join(debugPath, "module.json"),
-    // );
+    await cmd.unzip_Hap(
+      pathList.first,
+      "module.json",
+      path.join(debugPath, "module.json"),
+    );
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",

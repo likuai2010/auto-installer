@@ -69,11 +69,11 @@ class CmdService {
     startHdcServer();
   }
 
-  unApp(String hapPath, String debugPath) {
+  unzip_App(String hapPath, String debugPath) {
     return unApp(hapPath, debugPath);
   }
 
-  unHap(String first, String s, String join) {
+  unzip_Hap(String first, String s, String join) {
     return unHap(first, s, join);
   }
 
