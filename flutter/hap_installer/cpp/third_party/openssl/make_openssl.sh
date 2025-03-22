@@ -13,8 +13,12 @@
 # limitations under the License.
 pushd source
 #build macos
-./Configure darwin64-x86_64 --prefix=/opt/openssl --openssldir=/opt/openssl no-shared no-tests
+# ./Configure darwin64-x86_64 --prefix=/opt/openssl --openssldir=/opt/openssl no-shared no-tests
+# make -j$(nproc)
+
+./Configure linux-x86_64-clang --prefix=/opt/openssl --openssldir=/opt/openssl no-shared no-tests
 make -j$(nproc)
+
 
 # export CROSS_COMPILE=aarch64-linux-gnu-
 # pushd source

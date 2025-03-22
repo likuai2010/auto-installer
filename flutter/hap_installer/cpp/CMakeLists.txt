@@ -10,6 +10,10 @@ set(LIBS_DIR ${NATIVERENDER_ROOT_PATH}/third_party)
 set(OPENSSL_ROOT_DIR ${LIBS_DIR}/openssl)
 set(OPENSSL_INCLUDE_DIR ${OPENSSL_ROOT_DIR}/include)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+set(LINUX 1)
+endif()
+
 if(OHOS)
 # 导入静态库
 add_library(libssl STATIC IMPORTED)
@@ -34,6 +38,13 @@ add_library(libcrypto STATIC IMPORTED)
 set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android/arm64-v8a/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 endif()
+message(1111 ${LINUX})
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+add_library(libcrypto STATIC IMPORTED)
+set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/linux/x86-64/libcrypto.a)
+set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+endif()
+
 
 if(APPLE)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")

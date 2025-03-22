@@ -12,6 +12,18 @@ cp -f hdctools/libhdc_z.a ../../plugins/native_core/macos/Classes/libs/libhdc_z.
 cp -f hapsigner/libsigntool.a ../../plugins/native_core/macos/Classes/libs/libsigntool.a
 popd
 fi
+
+if [ "$1" = "linux" ]; then
+cmake  -G Ninja \
+  -DCMAKE_BUILD_TYPE=DEBUG \
+  -B build_linux \
+  -S .
+pushd build_linux
+ninja
+# cp -f hdctools/libhdc_z.a ../../plugins/native_core/macos/Classes/libs/libhdc_z.a
+# cp -f hapsigner/libsigntool.a ../../plugins/native_core/macos/Classes/libs/libsigntool.a
+popd
+fi
 #windows  use MSYS2 build
 if [ "$1" = "windows" ]; then
 cmake  -G Ninja \
