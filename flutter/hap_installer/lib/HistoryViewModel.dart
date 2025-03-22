@@ -20,7 +20,6 @@ class HistoryViewModel extends ChangeNotifier {
       update(current!);
     }
     notifyListeners();
-
   }
 
   resetProfile(BuildContext context) async {
@@ -41,29 +40,38 @@ class HistoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> startSetp(int index, Future<String?> Function() builder, [String? label]) async {
+  Future<bool> startSetp(
+    int index,
+    Future<String?> Function() builder, [
+    String? label,
+  ]) async {
     updateStep(index, (setp) {
       return setp.copyWith(loading: true, error: "正在${label ?? setp.name}...");
     });
     try {
       final error = await builder();
       updateStep(index, (setp) {
-        return setp.copyWith(
-          loading: false,
-          error: error,
-        );
+        return setp.copyWith(loading: false, error: error);
       });
       return error == null;
+    } on FormatException catch (e) {
+      updateStep(index, (setp) {
+        return setp.copyWith(
+          loading: false,
+          error: "${label ?? setp.name}失败: ${e.message}",
+        );
+      });
+      return false;
     } catch (e) {
       updateStep(index, (setp) {
-        return setp.copyWith(loading: false, error: "${label ?? setp.name}失败: $e");
+        return setp.copyWith(
+          loading: false,
+          error: "${label ?? setp.name}失败: $e",
+        );
       });
       return false;
     }
   }
-
-
-
 
   selectDebugHistory(DebugHistory history) {
     current = history;

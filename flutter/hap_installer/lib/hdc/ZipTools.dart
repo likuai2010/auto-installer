@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 
-extractSpecificFileFromZip(
+void extractSpecificFileFromZip(
   String zipFilePath,
   String fileNameToExtract,
   String outputDirectory,

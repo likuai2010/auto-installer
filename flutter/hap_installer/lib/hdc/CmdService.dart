@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'package:hap_installer/hdc/zipTools.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
@@ -69,19 +68,15 @@ class CmdService {
     _t = "-t $device";
   }
 
-  Future<ModuleInfo> readModuleInfo(String hapPath) async {
-    final modulePath = File(path.join(await getTempDir(), "module.json"));
-    if (await modulePath.exists()) {
-      await modulePath.delete();
-    }
-    await unHap(hapPath, "module.json", modulePath.path);
+  Future<ModuleInfo> readModuleInfo(String debugDir) async {
+    final modulePath = File(path.join(debugDir, "module.json"));
     try {
       final json = await modulePath.readAsString();
       final dict = jsonDecode(json);
       return ModuleInfo.fromJson(dict);
     } catch (e) {
       print("readModuleInfo: $e");
-      throw Exception("加载modlue.json失败");
+      throw FormatException("加载modlue.json失败");
     }
   }
 
@@ -135,6 +130,8 @@ class CmdService {
       return "签名信息中的包名与应用的包名(bundleName)不一致! (tip: 用户导入了三方提供的HSP模块，且该HSP既非集成态HSP，又非同包名的HSP，造成包名不一致)";
     } else if (result.contains("9568320")) {
       return "不能安装未签名的HAP包! (tip: HAP包没有签名)";
+    } else if (result.contains("9568263")) {
+      return "不支持降级安装! (tip: 设备上已有新版)";
     } else {
       return "调试失败: $result";
     }

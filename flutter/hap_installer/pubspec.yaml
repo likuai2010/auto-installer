@@ -75,8 +75,9 @@ flutter:
   assets:
     - assets/store/
     - assets/html/
-    - assets/tools/macos/
-    - assets/tools/windows/
+    - assets/macos/
+    - assets/windows/
+    - assets/linux/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

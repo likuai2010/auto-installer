@@ -16,6 +16,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINAR
 list(APPEND LIBRARY_PATHS 
 hdc_z
 signtool
+unhap
 )
 elseif(WIN32)
   list(APPEND LIBRARY_PATHS

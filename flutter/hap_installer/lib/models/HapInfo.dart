@@ -7,7 +7,7 @@ part 'generated/HapInfo.g.dart';
 abstract class HapInfo with _$HapInfo {
   const factory HapInfo({
     @Default("") String packageName,
-    @Default('') String filePath,
+    @Default([]) List<String> pathList,
     @Default(null) String? version,
     @Default(null) String? icon,
   }) = _HapInfo;

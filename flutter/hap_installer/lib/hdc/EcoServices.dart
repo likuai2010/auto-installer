@@ -84,7 +84,7 @@ class EcoService {
         await sink.close();
         return true;
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        throw Exception("登陆信息失效");
+        throw FormatException("登陆信息失效");
       }
     } catch (e) {
       print('Error: $e');
@@ -105,7 +105,7 @@ class EcoService {
         "https://cn.devecostudio.huawei.com/authrouter/auth/api/temptoken/check?site=CN&tempToken=${tempToken}&appid=1007&version=0.0.0";
     final jwtToken = await base(uri, {}, {}, "GET");
     if (jwtToken == null) {
-      throw Exception("tempToken 无效");
+      throw FormatException("tempToken 无效");
     }
     uri =
         "https://cn.devecostudio.huawei.com/authrouter/auth/api/jwToken/check";
@@ -114,7 +114,7 @@ class EcoService {
       "jwtToken": jwtToken.ret.msg,
     }, "GET");
     if (result?.userInfo == null) {
-      throw Exception("登陆失败");
+      throw FormatException("登陆失败");
     }
     return result?.userInfo;
   }
@@ -126,6 +126,9 @@ class EcoService {
     // 没有权限获取
     if (result?.ret.code == 403) {
       return null;
+    }
+    if (result?.ret.code == 401) {
+      throw FormatException(result?.ret.msg ?? "");
     }
     return result?.teams ?? List.empty();
   }
@@ -150,7 +153,7 @@ class EcoService {
     final params = {"csr": csr, "certName": name, "certType": type};
     final result = await base(uri, params, {}, "POST");
     if (result?.harmonyCert == null) {
-      throw Exception("证书创建失败: ${result?.ret.msg}");
+      throw FormatException("证书创建失败: ${result?.ret.msg}");
     }
     return result!.harmonyCert!;
   }
@@ -174,7 +177,7 @@ class EcoService {
     print("createProfile ${params}");
     final result = await base(uri, params, {});
     if (result?.provisionFileUrl == null) {
-      throw Exception("Profile创建失败: ${result?.ret.msg}");
+      throw FormatException("Profile创建失败: ${result?.ret.msg}");
     }
     return result!.provisionFileUrl!;
   }
@@ -223,22 +226,25 @@ class EcoService {
     const certName = "xiaobai-debug";
     if (config.certId.isEmpty) {
       print(" EcoService create cert");
-      if (unLogin()) return false;
+      if (unLogin()) {
+        throw FormatException("请登录华为账号");
+      }
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
-      var xiaobaiDebug = debugCerts.where((d) => d.certName == certName).firstOrNull;
+      var xiaobaiDebug =
+          debugCerts.where((d) => d.certName == certName).firstOrNull;
       // 没有则创建
-      if(xiaobaiDebug == null){
+      if (xiaobaiDebug == null) {
         // 最多三个证书
-        if (certList.length > 2){
+        if (certList.length > 2) {
           final sortList = debugCerts.toList();
-          sortList.sort((a,b)=>a.expireTime.compareTo(b.expireTime));
+          sortList.sort((a, b) => a.expireTime.compareTo(b.expireTime));
           await deleteCertList([sortList.first.id]);
         }
         final csr = await readCsr(config.csrPath);
         xiaobaiDebug = await createCert(certName, 1, csr);
-      }{
-       
+      }
+      {
         final urlsInfo = await downloadObj(xiaobaiDebug.certObjectId);
         await downloadFile(urlsInfo.first.newUrl, config.certPath);
       }
@@ -248,14 +254,16 @@ class EcoService {
     }
     var udid = config.udids.first;
     if (udid.isNotEmpty) {
-      if (unLogin()) return false;
+      if (unLogin()) {
+        throw FormatException("请登录华为账号");
+      }
       var deviceList = await this.deviceList();
       if (deviceList.where((d) => d.udid == udid).isEmpty) {
         try {
           await createDevice("xiaobai-device-${udid.substring(0, 10)}", udid);
           deviceList = await this.deviceList();
         } catch (e) {
-          throw Exception("注册设备失败: 请检查设备udid:$udid");
+          throw FormatException("注册设备失败: 请检查设备udid:$udid");
         }
       }
     }

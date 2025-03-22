@@ -32,6 +32,8 @@ cmake  -G Ninja \
   -S .
 pushd build_windows
 ninja 
+cp -f unhap/libunhap.dll.a ../../plugins/native_core/libs/windows/x86-64/libunhap.dll.a
+cp -f unhap/libunhap.dll ../../plugins/native_core/libs/windows/x86-64/libunhap.dll
 popd
 fi
 

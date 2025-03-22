@@ -1,9 +1,5 @@
-import 'dart:ui';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hap_installer/models/EcoResult.dart';
-import 'package:path/path.dart' as path;
 
 part 'generated/SignConfig.freezed.dart';
 part 'generated/SignConfig.g.dart';

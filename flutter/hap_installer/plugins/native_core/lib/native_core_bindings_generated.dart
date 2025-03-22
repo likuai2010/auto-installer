@@ -115,4 +115,19 @@ class NativeCoreBindings {
               ffi.Pointer<ffi.Char>,
             )
           >();
+
+  int unApp(ffi.Pointer<ffi.Char> source, ffi.Pointer<ffi.Char> destination) {
+    return _unApp(source, destination);
+  }
+
+  late final _unAppPtr = _lookup<
+    ffi.NativeFunction<
+      ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+    >
+  >('unApp');
+  late final _unApp =
+      _unAppPtr
+          .asFunction<
+            int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+          >();
 }

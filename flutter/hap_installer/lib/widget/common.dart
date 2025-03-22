@@ -137,6 +137,22 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
     portController = TextEditingController(text: widget.port);
   }
 
+  void connectHdc(BuildContext context) async {
+    if (connectiong) return;
+    setState(() {
+      connectiong = true;
+    });
+    await viewmodel.connectDevice(
+      context,
+      ipController.text,
+      portController.text,
+    );
+    setState(() {
+      connectiong = false;
+    });
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -186,6 +202,9 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
               child: TextField(
                 maxLength: 5,
                 controller: portController,
+                onSubmitted: (_) {
+                  connectHdc(context);
+                },
                 decoration: InputDecoration(
                   border: null,
                   enabledBorder: null,
@@ -196,19 +215,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
             ),
             IconButton(
               onPressed: () async {
-                if (connectiong) return;
-                setState(() {
-                  connectiong = true;
-                });
-                await viewmodel.connectDevice(
-                  context,
-                  ipController.text,
-                  portController.text,
-                );
-                setState(() {
-                  connectiong = false;
-                });
-                Navigator.pop(context);
+                connectHdc(context);
               },
               icon:
                   !connectiong

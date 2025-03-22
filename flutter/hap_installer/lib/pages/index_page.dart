@@ -49,14 +49,15 @@ class IndexPage extends StatelessWidget {
 }
 
 class DebugSteps extends StatelessWidget {
-  DebugSteps({super.key});
-  String userName(EcoViewModel model){
+  const DebugSteps({super.key});
+  String userName(EcoViewModel model) {
     var nickname = model.userInfo?.nickName ?? "匿名";
-    if(model.teamList.isEmpty){
+    if (model.teamList.isEmpty) {
       nickname += "(未实名)";
     }
     return model.isLogin ? nickname : "未登录";
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<EcoViewModel>(
@@ -86,41 +87,44 @@ class DebugSteps extends StatelessWidget {
                   model.currentDevice?.contains(".") == true ? "无线连接" : "USB连接",
               tailling: TextButton(
                 onPressed: () {
-                  showModalBottomSheet<void>(
-                    showDragHandle: true,
-                    isScrollControlled: true,
-                    context: context,
-                    constraints: const BoxConstraints(maxHeight: 600),
-                    builder: (context) {
-                      return AnimatedPadding(
-                        padding: MediaQuery.of(context).viewInsets,
-                        duration: const Duration(milliseconds: 100),
-                        child: SizedBox(
-                          height: 300,
-                          child: ConnectDeviceBox(
-                            ip: model.ip,
-                            port: model.port,
+                  model.toConnect(context, () {
+                    showModalBottomSheet<void>(
+                      showDragHandle: true,
+                      isScrollControlled: true,
+                      context: context,
+                      constraints: const BoxConstraints(maxHeight: 600),
+                      builder: (context) {
+                        return AnimatedPadding(
+                          padding: MediaQuery.of(context).viewInsets,
+                          duration: const Duration(milliseconds: 100),
+                          child: SizedBox(
+                            height: 300,
+                            child: ConnectDeviceBox(
+                              ip: model.ip,
+                              port: model.port,
+                            ),
                           ),
-                        ),
-                      );
-                      //return ConnectDeviceBox(ip: model.ip, port: model.port);
-                    },
-                  );
+                        );
+                      },
+                    );
+                  });
                 },
-                child: Text("连接设备"),
+                child:
+                    !model.deviceLoaing
+                        ? Text("连接设备")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: model.hapInfo?.packageName ?? "未选择",
-              subTitle: "仅.hap文件",
-              tailling: 
-              
-              TextButton(
+              subTitle: "支持.app,.hap,.hsp",
+              tailling: TextButton(
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child: !model.fileLoading
+                child:
+                    !model.fileLoading
                         ? Text("选择")
                         : CircularProgressIndicator(value: null),
               ),

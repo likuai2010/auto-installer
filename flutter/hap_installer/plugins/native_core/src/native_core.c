@@ -1,10 +1,12 @@
 #include "native_core.h"
 
-#include "hap_signer_tool.h"
 #ifndef _WIN32
 #include <libgen.h>
 #include "hdc.h"
+#include "un_hap.h"
 #include "hap_signer_tool.h"
+#else
+#include "un_hap.h"
 #endif
 
 FILE *sout = NULL;
@@ -52,5 +54,9 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 }
 FFI_PLUGIN_EXPORT int unHap(const char *source, const char *fileName, const char *destination)
 {
-  return unzip(source, fileName, destination);
+  return extractFileByHap(source, fileName, destination);
+}
+FFI_PLUGIN_EXPORT int unApp(const char *source, const char *destination)
+{
+  return unzipByApp(source, destination);
 }

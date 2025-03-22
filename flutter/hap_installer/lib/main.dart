@@ -4,7 +4,7 @@ import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main() async {
+main() {
   runApp(const App());
 }
 

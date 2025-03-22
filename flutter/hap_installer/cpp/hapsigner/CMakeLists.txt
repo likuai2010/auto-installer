@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5.0)
 project(hapsigner C)
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(third_party/zlib)
+
 add_subdirectory(third_party/bzip2)
 
 

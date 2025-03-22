@@ -1,12 +1,7 @@
-import 'dart:isolate';
-
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
-import 'package:hap_installer/hdc/CmdService.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:process_run/stdio.dart';
-import 'package:path/path.dart' as path;
 
 class DownloadDialog extends StatefulWidget {
   DownloadDialog({required this.javaPath});
@@ -60,8 +55,12 @@ class _DownloadDialogState extends State<DownloadDialog> {
       });
       return;
     }
+    String platform = "windows";
+    if (Platform.isLinux) {
+      platform = "linux";
+    }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip"; // 请替换为实际下载链接
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/$platform/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip"; // 请替换为实际下载链接
     try {
       Dio dio = Dio();
       await dio.download(

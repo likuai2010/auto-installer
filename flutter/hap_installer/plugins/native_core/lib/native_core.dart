@@ -31,9 +31,9 @@ int _hdcCmd(String args, String tempDir) {
   return result;
 }
 
-Future startHdcServer() async {
+startHdcServer() {
   final ReceivePort receivePort = ReceivePort();
-  await Isolate.spawn((SendPort sendPort) async {
+  Isolate.spawn((SendPort sendPort) async {
     _bindings.hdcServer();
     sendPort.send("");
   }, receivePort.sendPort);
@@ -69,9 +69,27 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
       outPathString.cast(),
     );
     calloc.free(hapPathString);
-    return switch(result){
+    return switch (result) {
       0 => "成功",
-      _ => "失败"
+      100 => "文件打开失败",
+      101 => "没有此文件: $inFileName",
+      102 => "打开内部文件失败",
+      _ => "失败",
+    };
+  });
+}
+
+Future<String> unApp(String hapPath, String outPath) async {
+  final hapPathString = hapPath.toNativeUtf8();
+  final outPathString = outPath.toNativeUtf8();
+  return await Isolate.run(() {
+    final result = _bindings.unApp(hapPathString.cast(), outPathString.cast());
+    calloc.free(hapPathString);
+    return switch (result) {
+      0 => "成功",
+      100 => "文件打开失败",
+      102 => "打开内部文件失败",
+      _ => "失败",
     };
   });
 }

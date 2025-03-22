@@ -22,4 +22,6 @@ link_libraries(
 
 if(WIN32)
 add_library(unhap SHARED ${outputs})
+else()
+add_library(unhap STATIC ${outputs})
 endif()

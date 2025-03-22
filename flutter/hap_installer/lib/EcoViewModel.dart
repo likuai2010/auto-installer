@@ -11,7 +11,6 @@ import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
-import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
@@ -39,9 +38,10 @@ void showDownloadDialog(BuildContext context, String javaPath) {
 
 class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
-  bool loading = false;
   bool firstUse = false;
+  bool loading = false;
   bool fileLoading = false;
+  bool deviceLoaing = false;
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
@@ -52,6 +52,7 @@ class EcoViewModel extends ChangeNotifier {
   String storeDir = "";
   String signConfigPath = "";
   String userInfoPath = "";
+  String debugPath = "";
   String ip = "192.168.3.47";
   String port = "39617";
 
@@ -64,13 +65,19 @@ class EcoViewModel extends ChangeNotifier {
       startHdcServer();
     }
     final storeDir = Directory(path.join(await getAppDir(), "store"));
+    final debugDir = Directory(path.join(await getTempDir(), "apps"));
     if (!await storeDir.exists()) {
-      storeDir.create(recursive: true);
+      await storeDir.create(recursive: true);
     }
+    if (!await debugDir.exists()) {
+      await debugDir.create(recursive: true);
+    }
+    debugPath = debugDir.path;
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
+
     this.storeDir = storeDir.path;
-    initSignConfig();
+    await initSignConfig();
     await tarnsformAssert();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final localIp = prefs.getString('ip');
@@ -79,14 +86,11 @@ class EcoViewModel extends ChangeNotifier {
     prefs.setBool("firstUse", false);
     ip = localIp ?? ip;
     port = localPort ?? port;
-    
+    print("testTag init");
     return true;
   }
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
-    if (firstUse){
-        showTips(context);
-    }
     if (authInfo != null) {
       saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
     }
@@ -97,11 +101,12 @@ class EcoViewModel extends ChangeNotifier {
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
-        if (teamList.isNotEmpty && !teamList.any((t) => t.id == userInfo?.teamId)) {
+        if (teamList.isNotEmpty &&
+            !teamList.any((t) => t.id == userInfo?.teamId)) {
           userInfo?.changeTeamId(teamList.first);
         }
       } else {
-        toask(context, '登录信息无效(tip: 请关闭代理软件, ip必须在国内!)');
+        toask(context, '获取团队信息失败(tip: 请关闭代理软件, ip必须在国内!)');
       }
       isLogin = true;
     } catch (e) {
@@ -113,9 +118,9 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // only windows
+  // only windows and linux
   checkJava(BuildContext context) async {
-    if (!Platform.isWindows) return true;
+    if (!Platform.isWindows && Platform.isLinux) return true;
     var javaPath = await getJavaDir();
     if (!await Directory(javaPath).exists()) {
       showAlert(
@@ -133,6 +138,10 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   toLogin(BuildContext context) async {
+    if (firstUse) {
+      showTips(context);
+      firstUse = true;
+    }
     if (!await checkJava(context)) return;
     if (loading) return;
     loading = true;
@@ -144,19 +153,41 @@ class EcoViewModel extends ChangeNotifier {
     await loadUserInfo(context, authInfo);
   }
 
+  toConnect(BuildContext context, Function() builder) async {
+    deviceLoaing = true;
+    notifyListeners();
+    try {
+      await checkDevices();
+    } catch (e) {
+      toask(context, "检查设备失败");
+    }
+    deviceLoaing = false;
+    notifyListeners();
+    builder();
+  }
+
   toSelectFile(BuildContext context) async {
     if (!await checkJava(context)) return;
     if (fileLoading) return;
     fileLoading = true;
     notifyListeners();
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ["app","hsp","hap"]);
-    var file = result?.files.first;
-    if (file?.path != null) {
-      try {
-        hapInfo = await _loadHap(context, file!.path!);
-      } catch (e) {
-        toask(context, "${e}");
+    try {
+      FilePickerResult? result = null;
+      if (Platform.isAndroid) {
+        result = await FilePicker.platform.pickFiles(type: FileType.any);
+      } else {
+        result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ["jpg", "hsp", "hap"],
+        );
       }
+
+      var file = result?.files.first;
+      if (file?.path != null) {
+        hapInfo = await _loadApp(context, file!.path!);
+      }
+    } catch (e) {
+      toask(context, "${e}");
     }
     fileLoading = false;
     notifyListeners();
@@ -209,11 +240,18 @@ class EcoViewModel extends ChangeNotifier {
   checkDevices() async {
     final result = await cmd.targetList();
     deviceList =
-        result.split("\n").where((d) => d != '' && d != '[Empty]').toList();
+        result
+            .split("\n")
+            .where((d) => d != '' && !d.contains('[Empty]'))
+            .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
-        currentDevice = deviceList.first;
-        changeDevice(currentDevice!);
+        if (deviceList.first.contains("server failed")) {
+          currentDevice = "hdc服务启动失败，请重启应用!";
+        } else {
+          currentDevice = deviceList.first;
+          changeDevice(currentDevice!);
+        }
       }
     } else {
       currentDevice = null;
@@ -221,13 +259,38 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<HapInfo> _loadHap(BuildContext context, String hapPath) async {
-    final hapFile = File(hapPath);
-    if (!await hapFile.exists()) throw Exception("文件不存在");
-    final moduleInfo = await _loadModule(hapFile.path);
+  Future<HapInfo> _loadApp(BuildContext context, String hapPath) async {
+    final appFile = File(hapPath);
+    if (!await appFile.exists()) throw FormatException("文件不存在");
+    final debugDir = Directory(debugPath);
+    if (await debugDir.exists()) {
+      await debugDir.delete(recursive: true);
+    }
+    await debugDir.create(recursive: true);
+    List<String> pathList = [];
+    if (path.extension(hapPath, 1).contains("app")) {
+      await unApp(hapPath, debugPath);
+      final files = Directory(debugPath).list();
+      pathList =
+          await files
+              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+              .map((f) => f.path)
+              .toList();
+      pathList.sort((a, b) {
+        return path.extension(b).compareTo(path.extension(a));
+      });
+    } else {
+      pathList = [hapPath];
+    }
+    await unHap(
+      pathList.first,
+      "module.json",
+      path.join(debugPath, "module.json"),
+    );
+    final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
-      filePath: hapFile.path,
+      pathList: pathList,
     );
   }
 
@@ -242,37 +305,51 @@ class EcoViewModel extends ChangeNotifier {
     print("hdcDir: ${hdcDir}");
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
-      if (arch.contains("x86_64")){
-        await copyAssert("tools/macos", "hdc_x86_64", hdcDir, "hdc");
+      if (arch.contains("x86_64")) {
+        await copyAssert("macos", "hdc_x86_64", hdcDir, "hdc");
         if (!Platform.isWindows) {
           await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
         }
-        await copyAssert("tools/macos", "libusb_shared_x86_64.dylib", hdcDir, "libusb_shared.dylib");
-      }else{
-        await copyAssert("tools/macos", "hdc", hdcDir);
+        await copyAssert(
+          "macos",
+          "libusb_shared_x86_64.dylib",
+          hdcDir,
+          "libusb_shared.dylib",
+        );
+      } else {
+        await copyAssert("macos", "hdc", hdcDir);
         if (!Platform.isWindows) {
           await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
         }
-        await copyAssert("tools/macos", "libusb_shared.dylib", hdcDir);
+        await copyAssert("macos", "libusb_shared.dylib", hdcDir);
       }
-     
     }
     if (Platform.isWindows) {
-      await copyAssert("tools/windows", "hdc.exe", hdcDir);
-      await copyAssert("tools/windows", "libusb_shared.dll", hdcDir);
-      await copyAssert("tools/windows", "hap-sign-tool.jar", hdcDir);
+      await copyAssert("windows", "hdc.exe", hdcDir);
+      await copyAssert("windows", "libusb_shared.dll", hdcDir);
+      await copyAssert("windows", "hap-sign-tool.jar", hdcDir);
+    }
+    if (Platform.isLinux) {
+      await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
     }
   }
+
   clearCache(BuildContext context) async {
     final temp = await getTempDir();
     await Directory(temp).delete(recursive: true);
     try {
       await FilePicker.platform.clearTemporaryFiles();
-    // ignore: empty_catches
-    }catch(e){}
+      // ignore: empty_catches
+    } catch (e) {}
     toask(context, "清理完成!");
   }
-  copyAssert(String dir, String fileName, String targetDir, [String? target]) async {
+
+  copyAssert(
+    String dir,
+    String fileName,
+    String targetDir, [
+    String? target,
+  ]) async {
     final bytes = await rootBundle.load('assets/$dir/$fileName');
     File file = File(path.join(targetDir, target ?? fileName));
     if (!await file.exists()) {
@@ -310,7 +387,7 @@ class EcoViewModel extends ChangeNotifier {
   testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned-test.hap");
     var error = await cmd.signHap(filePath, signConfig!);
-    toask(context, error ??"");
+    toask(context, error ?? "");
     error = await cmd.installHap(await cmd.getOutPath(filePath));
     print("installHap: $error");
     toask(context, error ?? "");
@@ -323,59 +400,57 @@ class EcoViewModel extends ChangeNotifier {
       bool nextStep = true;
       final model = historyViewModel!;
       model.createDebugHistory(hap);
-      model.updateHistory((s){
+      model.updateHistory((s) {
         s.finished = false;
       });
       model.updateStep(0, (setp) {
         return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
       });
       model.updateStep(1, (setp) {
-        return setp.copyWith(loading: false, error: currentDevice == null ? "未连接设备" : null);
+        return setp.copyWith(
+          loading: false,
+          error: currentDevice == null ? "未连接设备" : null,
+        );
       });
       signConfig.packageName = hap.packageName;
       signConfig.profilePath =
           "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
 
-      if(nextStep){
+      if (nextStep) {
         nextStep = await model.startSetp(2, () async {
-            final udid = await cmd.getUdid();
-            if (!signConfig.udids.contains(udid)) {
-              signConfig.udids.add(udid);
-            }
-            return null;
+          final udid = await cmd.getUdid();
+          if (!signConfig.udids.contains(udid)) {
+            signConfig.udids.add(udid);
+          }
+          return null;
         }, "获取设备udid");
       }
-      if(nextStep){
+      if (nextStep) {
         nextStep = await model.startSetp(2, () async {
-            final module = await _loadModule(hap.filePath);
-            await eco.autoCreateProfile(signConfig, module, () =>!isLogin);
-            return null;
+          final module = await cmd.readModuleInfo(debugPath);
+          await eco.autoCreateProfile(signConfig, module, () => !isLogin);
+          return null;
         });
       }
-      if(nextStep){
-        nextStep = await model.startSetp(3, () async {
-          return await cmd.signHap(hap.filePath, signConfig);
-        });
+      for (var p in hap.pathList) {
+        if (nextStep) {
+          nextStep = await model.startSetp(3, () async {
+            return await cmd.signHap(p, signConfig);
+          }, "签名(${path.basename(p)})");
+        }
       }
-      if(nextStep){
-        nextStep = await model.startSetp(4, () async {
-          return await cmd.installHap(
-            await cmd.getOutPath(hap.filePath),
-          );
-        });
+
+      for (var p in hap.pathList) {
+        if (nextStep) {
+          nextStep = await model.startSetp(4, () async {
+            return await cmd.installHap(await cmd.getOutPath(p));
+          }, "调试(${path.basename(p)})");
+        }
       }
       model.updateHistory((setp) {
         setp.finished = true;
       });
     }
-  
-  }
-
-
-
-
-  Future<ModuleInfo> _loadModule(String hapPath) async {
-    return await cmd.readModuleInfo(hapPath);
   }
 
   bool _checkUrlOrPort(String url) {
