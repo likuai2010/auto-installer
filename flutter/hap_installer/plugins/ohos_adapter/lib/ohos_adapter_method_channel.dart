@@ -23,11 +23,21 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
 
   @override
   Future<void> openUrl(String url) async {
-    await methodChannel.invokeMethod<void>('openUrl');
+    await methodChannel.invokeMethod<void>('openUrl', {"url": url});
   }
 
   @override
-  Future<String?> sleectFile() async {
-    return await methodChannel.invokeMethod<String>('sleectFile');
+  Future<String?> selectFile() async {
+    return await methodChannel.invokeMethod<String>('selectFile');
+  }
+
+  @override
+  Future<String?> tempDir() async {
+    return await methodChannel.invokeMethod<String>('tempDir');
+  }
+
+  @override
+  Future<String?> appDir() async {
+    return await methodChannel.invokeMethod<String>('appDir');
   }
 }

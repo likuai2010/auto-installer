@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hap_installer/HistoryViewModel.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
+import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
@@ -62,6 +63,7 @@ class EcoViewModel extends ChangeNotifier {
     if (Platform.isAndroid) {
       cmd.startHdcServer();
     }
+    print("testTag  init xxxxx");
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     final debugDir = Directory(path.join(await getTempDir(), "apps"));
     if (!await storeDir.exists()) {
@@ -170,19 +172,9 @@ class EcoViewModel extends ChangeNotifier {
     fileLoading = true;
     notifyListeners();
     try {
-      FilePickerResult? result = null;
-      if (Platform.isAndroid) {
-        result = await FilePicker.platform.pickFiles(type: FileType.any);
-      } else {
-        result = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: ["jpg", "hsp", "hap"],
-        );
-      }
-
-      var file = result?.files.first;
-      if (file?.path != null) {
-        hapInfo = await _loadApp(context, file!.path!);
+      final filePath = await selectFile();
+      if (filePath != null) {
+        hapInfo = await _loadApp(context, filePath!);
       }
     } catch (e) {
       toask(context, "${e}");

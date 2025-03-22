@@ -1,5 +1,3 @@
-
-
 {
   "modelVersion": "5.0.0",
   "name": "hap_installer",
@@ -15,6 +13,8 @@
     "@ohos/hypium": "1.0.6"
   },
   "overrides": {
-    "@ohos/flutter_ohos": "file:./har/flutter.har"
+    "@ohos/flutter_ohos": "file:./har/flutter.har",
+    "ohos_adapter": "file:./har/ohos_adapter.har",
+    "@ohos/flutter_module": "file:./entry"
   }
 }

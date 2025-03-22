@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 
 const String EcoUrl =
     "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=8888&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc";
@@ -15,6 +16,9 @@ class LoginHuawei {
   LoginHuawei() : port = 3333 + Random().nextInt(1000);
 
   Future<void> openUrl() async {
+    if (await ohosAdapter.isOhos()) {
+      ohosAdapter.openUrl(EcoUrl.replaceAll("8888", "$port"));
+    }
     if (Platform.isAndroid) {
       await launchUrl(
         Uri.parse(EcoUrl.replaceAll("8888", "$port")),

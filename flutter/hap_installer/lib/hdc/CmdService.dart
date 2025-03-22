@@ -1,42 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:native_core/native_core.dart';
-
-Future<String> getTempDir() async {
-  final temp = await getTemporaryDirectory();
-
-  final appDir = Directory(path.join(temp.path, "hap_installer"));
-  if (!await appDir.exists()) {
-    appDir.create(recursive: true);
-  }
-  return appDir.path;
-}
-
-Future<String> getHdcDir() async {
-  final temp = await getTemporaryDirectory();
-  final appDir = Directory(path.join(temp.path, "hdc_tools"));
-  if (!await appDir.exists()) {
-    appDir.create(recursive: true);
-  }
-  return appDir.path;
-}
-
-Future<String> getAppDir() async {
-  final temp = await getApplicationDocumentsDirectory();
-  final appDir = Directory(path.join(temp.path, 'hap_installer'));
-  if (!await appDir.exists()) {
-    appDir.create(recursive: true);
-  }
-  return appDir.path;
-}
 
 Future<SignConfig?> readSignConfigFromFile(String filePath) async {
   if (!await File(filePath).exists()) return null;

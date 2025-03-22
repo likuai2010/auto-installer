@@ -13,7 +13,17 @@ class OhosAdapter {
     return OhosAdapterPlatform.instance.openUrl(url);
   }
 
-  Future<String?> sleectFile() {
-    return OhosAdapterPlatform.instance.sleectFile();
+  Future<String?> selectFile() {
+    return OhosAdapterPlatform.instance.selectFile();
+  }
+
+  Future<String?> tempDir() {
+    return OhosAdapterPlatform.instance.tempDir();
+  }
+
+  Future<String?> appDir() {
+    return OhosAdapterPlatform.instance.selectFile();
   }
 }
+
+final ohosAdapter = OhosAdapter();

@@ -31,11 +31,15 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
     throw UnimplementedError('openUrl() has not been implemented.');
   }
 
-  Future<String?> sleectFile() async {
-    throw UnimplementedError('openFile() has not been implemented.');
+  Future<String?> selectFile() async {
+    throw UnimplementedError('selectFile() has not been implemented.');
   }
 
   Future<bool> isOhos() async {
     return false;
   }
+
+  Future<String?> tempDir() async {}
+
+  Future<String?> appDir() async {}
 }

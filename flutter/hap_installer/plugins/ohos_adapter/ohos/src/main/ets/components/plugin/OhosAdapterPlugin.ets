@@ -1,21 +1,30 @@
 import {
+  AbilityPluginBinding,
   FlutterPlugin,
   FlutterPluginBinding,
   MethodCall,
   MethodCallHandler,
   MethodChannel,
   MethodResult,
+  AbilityAware
 } from '@ohos/flutter_ohos';
 
-import  { picker } from '@kit.CoreFileKit';
+import fs from '@ohos.file.fs';
+import  { fileUri, picker } from '@kit.CoreFileKit';
 import { common, Want } from '@kit.AbilityKit';
-import { BusinessError } from '@kit.BasicServicesKit';
 
 /** OhosAdapterPlugin **/
-export default class OhosAdapterPlugin implements FlutterPlugin, MethodCallHandler {
+export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
-
+  binding: AbilityPluginBinding | null  = null;
   constructor() {
+  }
+
+  onAttachedToAbility(binding: AbilityPluginBinding): void {
+    this.binding = binding;
+  }
+
+  onDetachedFromAbility(): void {
   }
 
   getUniqueClassName(): string {
@@ -34,15 +43,24 @@ export default class OhosAdapterPlugin implements FlutterPlugin, MethodCallHandl
   }
 
   onMethodCall(call: MethodCall, result: MethodResult): void {
+    const  context = this.binding!.getAbility().context;
     if (call.method == "getPlatformVersion") {
       result.success("OpenHarmony ^ ^ ")
     } else if(call.method == "openUrl") {
-      //openUrl("")
+      let url = call.argument("url") as string;
+      openUrl(url, context)
       result.success(null)
     }
     else if(call.method == "selectFile") {
-      //selectFile()
-      result.success("")
+      selectFile(context).then((f)=>{
+        result.success(f)
+      })
+    }
+    else if(call.method == "tempDir") {
+      result.success(context.tempDir)
+    }
+    else if(call.method == "appDir") {
+      result.success(context.filesDir)
     }
     else {
       result.notImplemented()
@@ -50,21 +68,24 @@ export default class OhosAdapterPlugin implements FlutterPlugin, MethodCallHandl
   }
 }
 
-async function selectFile(context: common.Context) { // 需确保 context 由 UIAbilityContext 转换而来
+async function selectFile(context: common.Context ) { // 需确保 context 由 UIAbilityContext 转换而来
   try {
     let documentSelectOptions = new picker.DocumentSelectOptions();
+    documentSelectOptions.maxSelectNumber =1;
+    documentSelectOptions.fileSuffixFilters = ["hap","app","hsp"]
     let documentPicker = new picker.DocumentViewPicker(context);
-    const documentSelectResult = documentPicker.select(documentSelectOptions)
+    const documentSelectResult = await documentPicker.select(documentSelectOptions)
     console.info('testTag' + JSON.stringify(documentSelectResult));
     if(documentSelectResult.length > 0){
       const targetUri = documentSelectResult[0]
       let hapPath =  context.filesDir + "/unsigned.hap"
       await fs.copy(targetUri, fileUri.getUriFromPath(hapPath))
+      console.info('testTag selectFile' + hapPath);
       return hapPath
     }
     return null;
-  } catch (error) {
-    console.error('testTag err: ' +err.message, err.stack);
+  } catch (err) {
+    console.error('testTag err: ' + err.message, err.stack);
     return null;
   }
 }
@@ -79,5 +100,6 @@ export function  openUrl(url: string, context:common.Context): void{
   try {
     (context as common.UIAbilityContext).startAbility(want)
   } catch (paramError) {
+    console.error("openUrl error",paramError)
   }
 }
