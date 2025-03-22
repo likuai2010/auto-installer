@@ -55,7 +55,7 @@ add_subdirectory(third_party/bounds_checking_function)
 include_directories(include
 ${OPENSSL_INCLUDE_DIR}
 hdctools/
-third_party/bounds_checking_function/include
+third_party/bounds_checking_function/source/include
 )
 
 if(ANDROID)
