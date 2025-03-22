@@ -187,16 +187,20 @@ class CmdService {
   }
 
   Future<String> baseSign(String cmd) async {
-    if (!Platform.isWindows) {
+    if (!Platform.isWindows && !Platform.isLinux) {
       return await signCmd(cmd, await getTempDir());
     } else {
       var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
       var hdcDir = await getHdcDir();
+      var java = "java.exe";
+      if(Platform.isLinux){
+        java = "java";
+      }
       try {
         var results = await shell.run(
           cmd.replaceFirst(
             "signtool",
-            "${path.join(await getJavaDir(), "bin", "java.exe")} -jar ${path.join(hdcDir, "hap-sign-tool.jar")}",
+            "${path.join(await getJavaDir(), "bin", java)} -jar ${path.join(hdcDir, "hap-sign-tool.jar")}",
           ),
         );
         return results.first.outText;

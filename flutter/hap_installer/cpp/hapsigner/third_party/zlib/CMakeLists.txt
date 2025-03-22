@@ -48,10 +48,16 @@ set(cflags
 #"-Werror"
 #"-Wno-strict-prototypes"
 #"-march=armv8-a+crc"
-)
+
 
 include_directories(${include_dirs})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
+)
+if(LINUX)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
 set(LD_FLAGS "-fPIC -fstack-protector-all")
 
 if(OHOS)

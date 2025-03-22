@@ -20,8 +20,7 @@ cmake  -G Ninja \
   -S .
 pushd build_linux
 ninja
-# cp -f hdctools/libhdc_z.a ../../plugins/native_core/macos/Classes/libs/libhdc_z.a
-# cp -f hapsigner/libsigntool.a ../../plugins/native_core/macos/Classes/libs/libsigntool.a
+cp -rf unhap/libunhap.a ../../plugins/native_core/libs/linux/x86-64/libunhap.a
 popd
 fi
 #windows  use MSYS2 build

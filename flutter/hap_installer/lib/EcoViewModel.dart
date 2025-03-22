@@ -120,7 +120,7 @@ class EcoViewModel extends ChangeNotifier {
 
   // only windows and linux
   checkJava(BuildContext context) async {
-    if (!Platform.isWindows && Platform.isLinux) return true;
+    if (!Platform.isWindows && !Platform.isLinux) return true;
     var javaPath = await getJavaDir();
     if (!await Directory(javaPath).exists()) {
       showAlert(
@@ -328,8 +328,8 @@ class EcoViewModel extends ChangeNotifier {
     }
     if (Platform.isLinux) {
       await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
-      await copyAssert("linux", "hdc.exe", hdcDir);
-      await copyAssert("linux", "libusb_shared.dll", hdcDir);
+      await copyAssert("linux", "hdc", hdcDir);
+      await copyAssert("linux", "libusb_shared.so", hdcDir);
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
     }
   }

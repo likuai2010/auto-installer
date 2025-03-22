@@ -13,11 +13,15 @@ class DownloadDialog extends StatefulWidget {
 class _DownloadDialogState extends State<DownloadDialog> {
   double? _progress = 0.0;
   String _status = "开始下载...";
-
+  String file = ".zip";
   @override
   void initState() {
     super.initState();
+    if(Platform.isLinux){
+      file = ".tar.gz";
+    }
     _downloadJRE();
+    
   }
 
   Widget installButton() {
@@ -26,7 +30,8 @@ class _DownloadDialogState extends State<DownloadDialog> {
     }
     return TextButton(
       onPressed: () async {
-        final savePath = File("${widget.javaPath}.zip");
+        
+        final savePath = File("${widget.javaPath}$file");
         setState(() {
           _progress = null;
           _status = "安装中...";
@@ -47,7 +52,7 @@ class _DownloadDialogState extends State<DownloadDialog> {
   }
 
   Future<void> _downloadJRE() async {
-    final savePath = File("${widget.javaPath}.zip");
+    final savePath = File("${widget.javaPath}$file");
     if (await savePath.exists()) {
       setState(() {
         _progress = 1;
@@ -55,12 +60,12 @@ class _DownloadDialogState extends State<DownloadDialog> {
       });
       return;
     }
-    String platform = "windows";
-    if (Platform.isLinux) {
-      platform = "linux";
-    }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/$platform/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip"; // 请替换为实际下载链接
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip"; 
+    if (Platform.isLinux) {
+        url = "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_17.0.14_7.tar.gz"; 
+    }
+   
     try {
       Dio dio = Dio();
       await dio.download(

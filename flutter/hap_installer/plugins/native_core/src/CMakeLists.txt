@@ -8,11 +8,10 @@ project(native_core_library VERSION 0.0.1 LANGUAGES C)
 
 set(libPath ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
 
-
 set(LIBRARY_PATHS )
 
 if(ANDROID)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/shared")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
 list(APPEND LIBRARY_PATHS 
 hdc_z
 signtool
@@ -24,13 +23,16 @@ elseif(WIN32)
   )
 elseif(APPLE)
 else()
-add_library(hdc STATIC IMPORTED)
-set_target_properties(hdc PROPERTIES IMPORTED_LOCATION ${libPath}/linux/arm64-v8a/libhdc_z.a)
-set_target_properties(hdc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
-add_library(signtool STATIC IMPORTED)
-set_target_properties(signtool PROPERTIES IMPORTED_LOCATION ${libPath}/windows/x86-64/libsigntool.a)
-set_target_properties(signtool PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${libPath}/include)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
+list(APPEND LIBRARY_PATHS
+  ${libPath}/linux/x86-64/libunhap.a
+  ${libPath}/linux/x86-64/libzlib.a
+)
 endif()
+
 
 include_directories(${libPath}/include)
 
@@ -45,11 +47,17 @@ set_target_properties(native_core PROPERTIES
 )
 
 target_compile_definitions(native_core PUBLIC DART_SHARED_LIB)
+
 target_link_libraries(native_core PRIVATE ${LIBRARY_PATHS})
+
+
+
 if (ANDROID)
   # Support Android 15 16k page size
   target_link_options(native_core PRIVATE "-Wl,-z,max-page-size=16384")
 endif()
+
+
 
 if(WIN32)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/runner/Debug)

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.0)
 project(unhap C)
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(../hapsigner/third_party/zlib "${CMAKE_CURRENT_BINARY_DIR}/shared")
+add_subdirectory(../hapsigner/third_party/zlib "${CMAKE_CURRENT_BINARY_DIR}/zlib")
 
 set(include_dirs
     ../hapsigner/third_party/zlib/source
