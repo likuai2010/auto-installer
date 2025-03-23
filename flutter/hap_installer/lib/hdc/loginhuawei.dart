@@ -16,7 +16,7 @@ class LoginHuawei {
   LoginHuawei() : port = 3333 + Random().nextInt(1000);
 
   Future<void> openUrl() async {
-    if (await ohosAdapter.isOhos()) {
+    if (ohosAdapter.isOhos) {
       ohosAdapter.openUrl(EcoUrl.replaceAll("8888", "$port"));
     }
     if (Platform.isAndroid) {

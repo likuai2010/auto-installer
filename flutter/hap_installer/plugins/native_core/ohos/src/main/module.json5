@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "native_core",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+    ]
+  }
+}

@@ -60,9 +60,7 @@ class EcoViewModel extends ChangeNotifier {
   EcoViewModel() {}
 
   Future<bool> init() async {
-    if (Platform.isAndroid) {
-      cmd.startHdcServer();
-    }
+    cmd.startServer();
     print("testTag  init xxxxx");
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     final debugDir = Directory(path.join(await getTempDir(), "apps"));
@@ -72,11 +70,13 @@ class EcoViewModel extends ChangeNotifier {
     if (!await debugDir.exists()) {
       await debugDir.create(recursive: true);
     }
+
     debugPath = debugDir.path;
+    this.storeDir = storeDir.path;
+    print("testTag  init ${debugPath}, ${this.storeDir}");
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
 
-    this.storeDir = storeDir.path;
     await initSignConfig();
     await tarnsformAssert();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -159,7 +159,7 @@ class EcoViewModel extends ChangeNotifier {
     try {
       await checkDevices();
     } catch (e) {
-      toask(context, "检查设备失败");
+      toask(context, "检查设备失败 ${e}");
     }
     deviceLoaing = false;
     notifyListeners();
@@ -174,7 +174,7 @@ class EcoViewModel extends ChangeNotifier {
     try {
       final filePath = await selectFile();
       if (filePath != null) {
-        hapInfo = await _loadApp(context, filePath!);
+        hapInfo = await _loadApp(context, filePath);
       }
     } catch (e) {
       toask(context, "${e}");
@@ -244,6 +244,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       currentDevice = null;
     }
+    deviceLoaing = false;
     notifyListeners();
   }
 
@@ -274,6 +275,7 @@ class EcoViewModel extends ChangeNotifier {
       "module.json",
       path.join(debugPath, "module.json"),
     );
+    print("readModuleInfo ${debugPath}");
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
@@ -406,8 +408,10 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final udid = await cmd.getUdid();
-          if (!signConfig.udids.contains(udid)) {
-            signConfig.udids.add(udid);
+          var udids = signConfig.udids.toList();
+          if (!udids.contains(udid)) {
+            udids.add(udid);
+            signConfig.udids = udids;
           }
           return null;
         }, "获取设备udid");

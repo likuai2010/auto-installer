@@ -161,9 +161,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
 
 if(OHOS)
-    set(LD_FLAGS "-fPIC -Wl-zrelro-znow-znoexecstack -fstack-protector-all"
-    libace_napi.z.so
-    hilog_ndk.z
+    set(LD_FLAGS "-fPIC -Wl,-z,relro,-z,now, -fstack-protector-all"
+        libace_napi.z.so
+        hilog_ndk.z
     )
 endif()
 if(WIN32)

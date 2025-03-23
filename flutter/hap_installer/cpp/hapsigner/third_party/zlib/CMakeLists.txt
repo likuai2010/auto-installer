@@ -61,7 +61,7 @@ endif()
 set(LD_FLAGS "-fPIC -fstack-protector-all")
 
 if(OHOS)
-list(APPEND LD_FLAGS "-s -Wl,-z,relro,-z,now,-z, noexecstack")
+list(APPEND LD_FLAGS "-s -Wl,-z,relro,-z,now,")
 endif()
 
 add_library(zlib STATIC ${outputs})

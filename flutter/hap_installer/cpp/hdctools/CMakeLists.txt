@@ -10,14 +10,13 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb -Wall ")
 add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/lz4)
 
-add_subdirectory(third_party/libuv)
-
 #-DHDC_SUPPORT_USB
 if(OHOS)
     add_definitions(-DHILOG )
+else()
+    add_subdirectory(third_party/libuv)
 endif()
 
-#//-DHOST_LINUX
 add_definitions(-DUSE_CONFIG_UV_THREADS -DSIZE_THREAD_POOL=128 -DHDC_HOST  -DHARMONY_PROJECT -DTEST_HASH -DHDC_MSG_HASH="TEST")
 if(LINUX OR ANDROID)
     add_definitions(-DHOST_LINUX)
@@ -52,5 +51,12 @@ target_link_libraries(
     uv
     usb
 )
+if(OHOS)
+target_link_libraries(
+    hdc_z
+    hilog_ndk.z
+)
+endif()
+
 
 #add_executable(hdc main.cpp base.cpp server.cpp auth.cpp ${COMMON_SRCS} ${HOST_SRCS})

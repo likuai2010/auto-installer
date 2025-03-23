@@ -35,9 +35,7 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
     throw UnimplementedError('selectFile() has not been implemented.');
   }
 
-  Future<bool> isOhos() async {
-    return false;
-  }
+  bool get isOhos => false;
 
   Future<String?> tempDir() async {}
 

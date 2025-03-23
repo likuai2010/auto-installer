@@ -10,8 +10,8 @@ import 'native_core_bindings_generated.dart';
 Future<String> hdcCmd(String args, String tempDir) async {
   return await Isolate.run(() {
     final logPath = path.join(tempDir, "hdc_out.log");
-    _hdcCmd(args, logPath);
-    return File(logPath).readAsString();
+    //_hdcCmd(args, logPath);
+    return "11";
   });
 }
 
@@ -19,7 +19,6 @@ int _hdcCmd(String args, String tempDir) {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
-    // 使用 toNativeUtf8 将 Dart 字符串转换为 C 字符串 (Pointer<Utf8>)
     charArray[i] = params[i].cast();
   }
   final result = _bindings.hdcCmd(
@@ -34,41 +33,47 @@ int _hdcCmd(String args, String tempDir) {
 startHdcServer() {
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawn((SendPort sendPort) async {
-    _bindings.hdcServer();
+    //_bindings.hdcServer();
     sendPort.send("");
   }, receivePort.sendPort);
 }
 
 Future<String> signCmd(String args, String tempDir) async {
-  return await Isolate.run(() {
-    final logPath = path.join(tempDir, "sign_out.log");
-    _signCmd(args, logPath);
-    return File(logPath).readAsString();
-  });
+  final SendPort helperIsolateSendPort = await _helperIsolateSendPort;
+  final int requestId = _nextSumRequestId++;
+  final _SignRequest request = _SignRequest(requestId, args, tempDir);
+  final Completer<String> completer = Completer<String>();
+  _cmdRequests[requestId] = completer;
+  helperIsolateSendPort.send(request);
+  return completer.future;
 }
 
-_signCmd(String args, String tempDir) async {
+_signCmd(String args, String tempDir) {
   final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     charArray[i] = params[i].cast();
   }
+  print("_signCmd ${params.length}");
   _bindings.signCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
+  print("_signCmd finishd");
   calloc.free(charArray);
   return;
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {
-  final hapPathString = hapPath.toNativeUtf8();
-  final inFileNameString = inFileName.toNativeUtf8();
-  final outPathString = outPath.toNativeUtf8();
   return await Isolate.run(() {
+    final hapPathString = hapPath.toNativeUtf8();
+    final inFileNameString = inFileName.toNativeUtf8();
+    final outPathString = outPath.toNativeUtf8();
     final result = _bindings.unHap(
       hapPathString.cast(),
       inFileNameString.cast(),
       outPathString.cast(),
     );
     calloc.free(hapPathString);
+    calloc.free(inFileNameString);
+    calloc.free(outPathString);
     switch (result) {
       case 0:
         return "成功";
@@ -84,9 +89,9 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
 }
 
 Future<String> unApp(String hapPath, String outPath) async {
-  final hapPathString = hapPath.toNativeUtf8();
-  final outPathString = outPath.toNativeUtf8();
   return await Isolate.run(() {
+    final hapPathString = hapPath.toNativeUtf8();
+    final outPathString = outPath.toNativeUtf8();
     final result = _bindings.unApp(hapPathString.cast(), outPathString.cast());
     calloc.free(hapPathString);
     switch (result) {
@@ -102,12 +107,12 @@ Future<String> unApp(String hapPath, String outPath) async {
   });
 }
 
-Future<int> sumAsync(int a, int b) async {
+Future<String> sumAsync(int a, int b) async {
   final SendPort helperIsolateSendPort = await _helperIsolateSendPort;
   final int requestId = _nextSumRequestId++;
   final _SumRequest request = _SumRequest(requestId, a, b);
-  final Completer<int> completer = Completer<int>();
-  _sumRequests[requestId] = completer;
+  final Completer<String> completer = Completer<String>();
+  _cmdRequests[requestId] = completer;
   helperIsolateSendPort.send(request);
   return completer.future;
 }
@@ -119,7 +124,9 @@ final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
     return DynamicLibrary.open('$_libName.framework/$_libName');
   }
-  if (Platform.isAndroid || Platform.isLinux) {
+  if (Platform.isAndroid ||
+      Platform.isLinux ||
+      Platform.operatingSystem == "ohos") {
     return DynamicLibrary.open('lib$_libName.so');
   }
   if (Platform.isWindows) {
@@ -142,21 +149,24 @@ class _SumRequest {
   const _SumRequest(this.id, this.a, this.b);
 }
 
-/// A response with the result of `sum`.
-///
-/// Typically sent from one isolate to another.
-class _SumResponse {
+class _SignRequest {
   final int id;
-  final int result;
+  final String a;
+  final String b;
 
-  const _SumResponse(this.id, this.result);
+  const _SignRequest(this.id, this.a, this.b);
 }
 
-/// Counter to identify [_SumRequest]s and [_SumResponse]s.
+class _CmdResponse {
+  final int id;
+  final String result;
+
+  const _CmdResponse(this.id, this.result);
+}
+
 int _nextSumRequestId = 0;
 
-/// Mapping from [_SumRequest] `id`s to the completers corresponding to the correct future of the pending request.
-final Map<int, Completer<int>> _sumRequests = <int, Completer<int>>{};
+final Map<int, Completer<String>> _cmdRequests = <int, Completer<String>>{};
 
 /// The SendPort belonging to the helper isolate.
 Future<SendPort> _helperIsolateSendPort = () async {
@@ -168,38 +178,44 @@ Future<SendPort> _helperIsolateSendPort = () async {
   // We receive two types of messages:
   // 1. A port to send messages on.
   // 2. Responses to requests we sent.
-  final ReceivePort receivePort =
-      ReceivePort()..listen((dynamic data) {
-        if (data is SendPort) {
-          // The helper isolate sent us the port on which we can sent it requests.
-          completer.complete(data);
-          return;
-        }
-        if (data is _SumResponse) {
-          // The helper isolate sent us a response to a request we sent.
-          final Completer<int> completer = _sumRequests[data.id]!;
-          _sumRequests.remove(data.id);
-          completer.complete(data.result);
-          return;
-        }
-        throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
-      });
+  final ReceivePort receivePort = ReceivePort()
+    ..listen((dynamic data) {
+      if (data is SendPort) {
+        completer.complete(data);
+        return;
+      }
+      if (data is _CmdResponse) {
+        final Completer<String> completer = _cmdRequests[data.id]!;
+        _cmdRequests.remove(data.id);
+        completer.complete(data.result);
+        return;
+      }
+      throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
+    });
 
   // Start the helper isolate.
   await Isolate.spawn((SendPort sendPort) async {
-    final ReceivePort helperReceivePort =
-        ReceivePort()..listen((dynamic data) {
-          // On the helper isolate listen to requests and respond to them.
-          if (data is _SumRequest) {
-            //inal int result = _bindings.sum_long_running(data.a, data.b);
-            //final _SumResponse response = _SumResponse(data.id, result);
-            //sendPort.send(response);
-            return;
-          }
-          throw UnsupportedError(
-            'Unsupported message type: ${data.runtimeType}',
-          );
-        });
+    final ReceivePort helperReceivePort = ReceivePort()
+      ..listen((dynamic data) async {
+        // On the helper isolate listen to requests and respond to them.
+        if (data is _SumRequest) {
+          //inal int result = _bindings.sum_long_running(data.a, data.b);
+          final response = _CmdResponse(data.id, "");
+          sendPort.send(response);
+          return;
+        }
+        if (data is _SignRequest) {
+          final logPath = path.join(data.b, "sign_out.log");
+          _signCmd(data.a, logPath);
+          final result = await File(logPath).readAsString();
+          final response = _CmdResponse(data.id, result);
+          sendPort.send(response);
+          return;
+        }
+        throw UnsupportedError(
+          'Unsupported message type: ${data.runtimeType}',
+        );
+      });
 
     // Send the port to the main isolate on which we can receive requests.
     sendPort.send(helperReceivePort.sendPort);

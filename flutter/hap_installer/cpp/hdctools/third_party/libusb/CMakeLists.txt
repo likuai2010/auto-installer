@@ -46,7 +46,7 @@ ${target_gen_dir}/libusb-1.0.26/libusb/os
 
 set(cflags
     "-U__ANDROID__"
-    #"-UUSE_UDEV"
+    # "-UUSE_UDEV"
     # "-Wno-#warnings"
     # "-Wno-error=sign-compare"
     # "-Wno-error=switch"

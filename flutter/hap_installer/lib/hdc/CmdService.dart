@@ -5,6 +5,7 @@ import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
 
@@ -37,8 +38,10 @@ Future<String> getJavaDir() async {
 class CmdService {
   String _t = "";
 
-  startHdcServer() {
-    startHdcServer();
+  startServer() {
+    if (Platform.isAndroid || ohosAdapter.isOhos) {
+      startHdcServer();
+    }
   }
 
   unzip_App(String hapPath, String debugPath) {
@@ -135,7 +138,7 @@ class CmdService {
   }
 
   Future<String> targetList() async {
-    final cmd = "hdc list targets";
+    const cmd = "hdc list targets";
     return await baseCmd(cmd);
   }
 
@@ -156,7 +159,7 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || ohosAdapter.isOhos) {
       return await hdcCmd(cmd, await getTempDir());
     } else {
       var shell = Shell(workingDirectory: await getHdcDir());
@@ -175,6 +178,7 @@ class CmdService {
     if (!Platform.isWindows && !Platform.isLinux) {
       return await signCmd(cmd, await getTempDir());
     } else {
+      // window and linux
       var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
       var hdcDir = await getHdcDir();
       var java = "java.exe";

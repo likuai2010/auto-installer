@@ -15,6 +15,7 @@
   "overrides": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
     "ohos_adapter": "file:./har/ohos_adapter.har",
-    "@ohos/flutter_module": "file:./entry"
+    "@ohos/flutter_module": "file:./entry",
+    "native_core": "file:./har/native_core.har"
   }
 }

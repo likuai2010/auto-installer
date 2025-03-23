@@ -17,7 +17,7 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   }
 
   @override
-  Future<bool> isOhos() async {
+  bool get isOhos {
     return true;
   }
 

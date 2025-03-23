@@ -8,7 +8,7 @@ import 'package:ohos_adapter/ohos_adapter.dart';
 
 Future<String> getTempDir() async {
   var tempDir = "";
-  if (await ohosAdapter.isOhos()) {
+  if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
     tempDir = (await getTemporaryDirectory()).path;
@@ -23,7 +23,7 @@ Future<String> getTempDir() async {
 
 Future<String> getHdcDir() async {
   var tempDir = "";
-  if (await ohosAdapter.isOhos()) {
+  if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
     tempDir = (await getTemporaryDirectory()).path;
@@ -37,7 +37,7 @@ Future<String> getHdcDir() async {
 
 Future<String> getAppDir() async {
   var tempDir = "";
-  if (await ohosAdapter.isOhos()) {
+  if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.appDir()) ?? "";
   } else {
     tempDir = (await getApplicationDocumentsDirectory()).path;
@@ -51,7 +51,7 @@ Future<String> getAppDir() async {
 
 Future<String?> selectFile() async {
   FilePickerResult? result = null;
-  if (await ohosAdapter.isOhos()) {
+  if (ohosAdapter.isOhos) {
     return await ohosAdapter.selectFile();
   }
   if (Platform.isAndroid) {

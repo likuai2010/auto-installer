@@ -15,51 +15,44 @@ import 'dart:ffi' as ffi;
 class NativeCoreBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-  _lookup;
+      _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
   NativeCoreBindings(ffi.DynamicLibrary dynamicLibrary)
-    : _lookup = dynamicLibrary.lookup;
+      : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   NativeCoreBindings.fromLookup(
-    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
-  ) : _lookup = lookup;
+      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+          lookup)
+      : _lookup = lookup;
 
   int hdcCmd(
     int argc,
     ffi.Pointer<ffi.Pointer<ffi.Char>> args,
     ffi.Pointer<ffi.Char> tempDir,
   ) {
-    return _hdcCmd(argc, args, tempDir);
+    return _hdcCmd(
+      argc,
+      args,
+      tempDir,
+    );
   }
 
   late final _hdcCmdPtr = _lookup<
-    ffi.NativeFunction<
-      ffi.Int Function(
-        ffi.Int,
-        ffi.Pointer<ffi.Pointer<ffi.Char>>,
-        ffi.Pointer<ffi.Char>,
-      )
-    >
-  >('hdcCmd');
-  late final _hdcCmd =
-      _hdcCmdPtr
-          .asFunction<
-            int Function(
-              int,
-              ffi.Pointer<ffi.Pointer<ffi.Char>>,
-              ffi.Pointer<ffi.Char>,
-            )
-          >();
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Pointer<ffi.Char>)>>('hdcCmd');
+  late final _hdcCmd = _hdcCmdPtr.asFunction<
+      int Function(
+          int, ffi.Pointer<ffi.Pointer<ffi.Char>>, ffi.Pointer<ffi.Char>)>();
 
   int hdcServer() {
     return _hdcServer();
   }
 
-  late final _hdcServerPtr = _lookup<ffi.NativeFunction<ffi.Int Function()>>(
-    'hdcServer',
-  );
+  late final _hdcServerPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>('hdcServer');
   late final _hdcServer = _hdcServerPtr.asFunction<int Function()>();
 
   int signCmd(
@@ -67,67 +60,55 @@ class NativeCoreBindings {
     ffi.Pointer<ffi.Pointer<ffi.Char>> args,
     ffi.Pointer<ffi.Char> tempDir,
   ) {
-    return _signCmd(argc, args, tempDir);
+    return _signCmd(
+      argc,
+      args,
+      tempDir,
+    );
   }
 
   late final _signCmdPtr = _lookup<
-    ffi.NativeFunction<
-      ffi.Int Function(
-        ffi.Int,
-        ffi.Pointer<ffi.Pointer<ffi.Char>>,
-        ffi.Pointer<ffi.Char>,
-      )
-    >
-  >('signCmd');
-  late final _signCmd =
-      _signCmdPtr
-          .asFunction<
-            int Function(
-              int,
-              ffi.Pointer<ffi.Pointer<ffi.Char>>,
-              ffi.Pointer<ffi.Char>,
-            )
-          >();
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Pointer<ffi.Char>)>>('signCmd');
+  late final _signCmd = _signCmdPtr.asFunction<
+      int Function(
+          int, ffi.Pointer<ffi.Pointer<ffi.Char>>, ffi.Pointer<ffi.Char>)>();
 
   int unHap(
     ffi.Pointer<ffi.Char> source,
     ffi.Pointer<ffi.Char> fileName,
     ffi.Pointer<ffi.Char> destination,
   ) {
-    return _unHap(source, fileName, destination);
+    return _unHap(
+      source,
+      fileName,
+      destination,
+    );
   }
 
   late final _unHapPtr = _lookup<
-    ffi.NativeFunction<
-      ffi.Int Function(
-        ffi.Pointer<ffi.Char>,
-        ffi.Pointer<ffi.Char>,
-        ffi.Pointer<ffi.Char>,
-      )
-    >
-  >('unHap');
-  late final _unHap =
-      _unHapPtr
-          .asFunction<
-            int Function(
-              ffi.Pointer<ffi.Char>,
-              ffi.Pointer<ffi.Char>,
-              ffi.Pointer<ffi.Char>,
-            )
-          >();
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>)>>('unHap');
+  late final _unHap = _unHapPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>)>();
 
-  int unApp(ffi.Pointer<ffi.Char> source, ffi.Pointer<ffi.Char> destination) {
-    return _unApp(source, destination);
+  int unApp(
+    ffi.Pointer<ffi.Char> source,
+    ffi.Pointer<ffi.Char> destination,
+  ) {
+    return _unApp(
+      source,
+      destination,
+    );
   }
 
   late final _unAppPtr = _lookup<
-    ffi.NativeFunction<
-      ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
-    >
-  >('unApp');
-  late final _unApp =
-      _unAppPtr
-          .asFunction<
-            int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
-          >();
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>>('unApp');
+  late final _unApp = _unAppPtr
+      .asFunction<int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
 }

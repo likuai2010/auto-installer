@@ -5,8 +5,8 @@ class OhosAdapter {
     return OhosAdapterPlatform.instance.getPlatformVersion();
   }
 
-  Future<bool> isOhos() {
-    return OhosAdapterPlatform.instance.isOhos();
+  bool get isOhos {
+    return OhosAdapterPlatform.instance.isOhos;
   }
 
   Future<void> openUrl(String url) {
@@ -22,7 +22,7 @@ class OhosAdapter {
   }
 
   Future<String?> appDir() {
-    return OhosAdapterPlatform.instance.selectFile();
+    return OhosAdapterPlatform.instance.appDir();
   }
 }
 

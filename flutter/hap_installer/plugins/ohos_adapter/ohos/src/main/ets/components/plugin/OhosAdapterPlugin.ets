@@ -78,7 +78,8 @@ async function selectFile(context: common.Context ) { // 需确保 context 由 U
     console.info('testTag' + JSON.stringify(documentSelectResult));
     if(documentSelectResult.length > 0){
       const targetUri = documentSelectResult[0]
-      let hapPath =  context.filesDir + "/unsigned.hap"
+      const sl = targetUri.split("/")
+      let hapPath =  context.filesDir + "/" + sl[sl.length - 1]
       await fs.copy(targetUri, fileUri.getUriFromPath(hapPath))
       console.info('testTag selectFile' + hapPath);
       return hapPath
