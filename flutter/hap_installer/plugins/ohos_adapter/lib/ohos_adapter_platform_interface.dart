@@ -40,4 +40,8 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<String?> tempDir() async {}
 
   Future<String?> appDir() async {}
+  Future<String?> hdcCmd(String cmd) async {}
+
+  Future<String?> signCmd(String cmd) async {}
+  Future<void> startServer() async {}
 }

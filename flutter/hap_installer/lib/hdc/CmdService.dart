@@ -39,6 +39,9 @@ class CmdService {
   String _t = "";
 
   startServer() {
+    if (ohosAdapter.isOhos) {
+      ohosAdapter.startServer();
+    }
     if (Platform.isAndroid || ohosAdapter.isOhos) {
       startHdcServer();
     }
@@ -64,7 +67,7 @@ class CmdService {
       return ModuleInfo.fromJson(dict);
     } catch (e) {
       print("readModuleInfo: $e");
-      throw FormatException("加载modlue.json失败");
+      throw const FormatException("加载modlue.json失败");
     }
   }
 
@@ -159,7 +162,10 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
-    if (Platform.isAndroid || ohosAdapter.isOhos) {
+    if (ohosAdapter.isOhos) {
+      return await ohosAdapter.hdcCmd(cmd) ?? "";
+    }
+    if (Platform.isAndroid) {
       return await hdcCmd(cmd, await getTempDir());
     } else {
       var shell = Shell(workingDirectory: await getHdcDir());
@@ -175,6 +181,9 @@ class CmdService {
   }
 
   Future<String> baseSign(String cmd) async {
+    if (ohosAdapter.isOhos) {
+      return await ohosAdapter.signCmd(cmd) ?? "";
+    }
     if (!Platform.isWindows && !Platform.isLinux) {
       return await signCmd(cmd, await getTempDir());
     } else {

@@ -24,8 +24,8 @@ elseif(WIN32)
 elseif(OHOS)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
 list(APPEND LIBRARY_PATHS 
-hdc_z
-signtool
+# hdc_z
+# signtool
 unhap
 )
 else()

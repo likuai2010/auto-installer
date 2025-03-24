@@ -24,6 +24,18 @@ class OhosAdapter {
   Future<String?> appDir() {
     return OhosAdapterPlatform.instance.appDir();
   }
+
+  Future<String?> hdcCmd(String cmd) {
+    return OhosAdapterPlatform.instance.hdcCmd(cmd);
+  }
+
+  Future<String?> signCmd(String cmd) {
+    return OhosAdapterPlatform.instance.signCmd(cmd);
+  }
+
+  Future<void> startServer() {
+    return OhosAdapterPlatform.instance.startServer();
+  }
 }
 
 final ohosAdapter = OhosAdapter();

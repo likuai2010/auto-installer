@@ -40,4 +40,21 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   Future<String?> appDir() async {
     return await methodChannel.invokeMethod<String>('appDir');
   }
+
+  @override
+  Future<String?> hdcCmd(String cmd) async {
+    return await methodChannel.invokeMethod<String>('hdcCmd', {"args": cmd});
+  }
+
+  @override
+  Future<String?> signCmd(
+    String cmd,
+  ) async {
+    return await methodChannel.invokeMethod<String>('signCmd', {"args": cmd});
+  }
+
+  @override
+  Future<void> startServer() async {
+    methodChannel.invokeMethod<void>('startServer');
+  }
 }

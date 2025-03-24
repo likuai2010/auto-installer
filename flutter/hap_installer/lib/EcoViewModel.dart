@@ -53,7 +53,7 @@ class EcoViewModel extends ChangeNotifier {
   String userInfoPath = "";
   String debugPath = "";
   String ip = "192.168.3.47";
-  String port = "39617";
+  String port = "39549";
 
   HistoryViewModel? historyViewModel;
 
@@ -201,9 +201,9 @@ class EcoViewModel extends ChangeNotifier {
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("ip", ip);
-    prefs.setString("port", port);
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString("ip", ip);
+    // prefs.setString("port", port);
     var result = await _connectHdc("$ip:$port");
     toask(context, result);
   }

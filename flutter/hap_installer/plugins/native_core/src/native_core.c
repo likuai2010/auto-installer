@@ -15,8 +15,11 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
   int ret = 0;
 #ifdef _WIN32
   ret = 404;
+#elif __OHOS__
+  ret = 404;
   // ret = cmd(argc, args, tempDir);
 #else
+
   FILE *sout = freopen(tempDir, "w", stdout);
   FILE *serr = freopen(tempDir, "w", stderr);
   const char *dir = dirname(tempDir);
@@ -31,6 +34,8 @@ FFI_PLUGIN_EXPORT int hdcServer(void)
 {
 #ifdef _WIN32
   return 404;
+#elif __OHOS__
+  return 404;
 #else
   return server();
 #endif
@@ -40,15 +45,17 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
   int ret = 0;
 #ifdef _WIN32
   ret = 404;
+#elif __OHOS__
+  ret = 404;
 #else
-  FILE *sout = freopen(tempDir, "w", stdout);
-  FILE *serr = freopen(tempDir, "w", stderr);
-  ret = sign_hap(argc, args);
-  if (sout != NULL)
-    fclose(sout);
-  if (serr != NULL)
-    fclose(serr);
-  freopen("/dev/tty", "w", stdout);
+  // FILE *sout = freopen(tempDir, "w", stdout);
+  // FILE *serr = freopen(tempDir, "w", stderr);
+  // ret = sign_hap(argc, args);
+  // if (sout != NULL)
+  //   fclose(sout);
+  // if (serr != NULL)
+  //   fclose(serr);
+  // freopen("/dev/tty", "w", stdout);
 #endif
   return ret;
 }

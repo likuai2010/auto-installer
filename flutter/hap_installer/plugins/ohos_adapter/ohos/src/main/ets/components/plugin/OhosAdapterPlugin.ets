@@ -12,7 +12,8 @@ import {
 import fs from '@ohos.file.fs';
 import  { fileUri, picker } from '@kit.CoreFileKit';
 import { common, Want } from '@kit.AbilityKit';
-
+import { cmd, startServer } from 'libinstaller.so';
+import { signHap } from 'libsigntool.so';
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -61,6 +62,30 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     }
     else if(call.method == "appDir") {
       result.success(context.filesDir)
+    }
+     else if(call.method == "hdcCmd") {
+      const args = call.argument("args") as string;
+      cmd(args, (res: number)=>{
+          let out = fs.readTextSync(context.tempDir +"/hdc_out.txt")
+          let err = fs.readTextSync(context.tempDir +"/hdc_err.txt")
+          if (res == 0) {
+            result.success(out)
+          } else {
+            result.success(out + err)
+          }
+      })
+    }
+     else if(call.method == "signCmd") {
+      const args = call.argument("args") as string;
+      signHap(args, (res: number)=>{
+          if(res == 0){
+            result.success("success")
+          }else{
+            result.success("签名失败")
+          }
+      })
+    } else if(call.method == "startServer") {
+      startServer()
     }
     else {
       result.notImplemented()

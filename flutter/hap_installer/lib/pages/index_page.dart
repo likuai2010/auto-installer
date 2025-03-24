@@ -34,7 +34,7 @@ class IndexPage extends StatelessWidget {
                     );
                     model.installHap();
                   },
-                  child: Padding(
+                  child: const Padding(
                     padding: EdgeInsets.all(8),
                     child: Text("开始调试"),
                   ),
@@ -72,10 +72,9 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   viewmodel.toLogin(context);
                 },
-                child:
-                    !model.loading
-                        ? Text(model.isLogin ? "更换账号" : "登录账号")
-                        : CircularProgressIndicator(value: null),
+                child: !model.loading
+                    ? Text(model.isLogin ? "更换账号" : "登录账号")
+                    : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -108,10 +107,9 @@ class DebugSteps extends StatelessWidget {
                     );
                   });
                 },
-                child:
-                    !model.deviceLoaing
-                        ? Text("连接设备")
-                        : CircularProgressIndicator(value: null),
+                child: !model.deviceLoaing
+                    ? Text("连接设备")
+                    : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -122,10 +120,9 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child:
-                    !model.fileLoading
-                        ? Text("选择")
-                        : CircularProgressIndicator(value: null),
+                child: !model.fileLoading
+                    ? Text("选择")
+                    : CircularProgressIndicator(value: null),
               ),
             ),
           ],

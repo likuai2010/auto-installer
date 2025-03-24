@@ -6,6 +6,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ohos/flutter_ohos": "file:./har/flutter.har"
+    "@ohos/flutter_ohos": "file:./har/flutter.har",
+    "libinstaller.so": "file:./src/main/cpp/libinstaller",
+    "libsigntool.so": "file:./src/main/cpp/libsigntool",
   }
 }
