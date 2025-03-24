@@ -11,7 +11,7 @@ Future<String> getTempDir() async {
   if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
-    tempDir = (await getTemporaryDirectory()).path;
+    tempDir = (await getApplicationCacheDirectory()).path;
   }
 
   final appDir = Directory(path.join(tempDir, "hap_installer"));
@@ -26,7 +26,7 @@ Future<String> getHdcDir() async {
   if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
-    tempDir = (await getTemporaryDirectory()).path;
+    tempDir = (await getApplicationCacheDirectory()).path;
   }
   final appDir = Directory(path.join(tempDir, "hdc_tools"));
   if (!await appDir.exists()) {

@@ -24,7 +24,7 @@ class LoginHuawei {
         Uri.parse(EcoUrl.replaceAll("8888", "$port")),
         mode: LaunchMode.externalApplication,
       );
-    } else {
+    }  else {
       await launchUrl(Uri.parse(EcoUrl.replaceAll("8888", "$port")));
     }
   }
