@@ -7,16 +7,16 @@ import 'package:path/path.dart' as path;
 
 import 'native_core_bindings_generated.dart';
 
-Future<String> hdcCmd(String args, String tempDir) async {
+Future<String> hdcCmd(List<String> args, String tempDir) async {
   return await Isolate.run(() {
     final logPath = path.join(tempDir, "hdc_out.log");
-    //_hdcCmd(args, logPath);
-    return "11";
+    _hdcCmd(args, logPath);
+    return File(logPath).readAsString();
   });
 }
 
-int _hdcCmd(String args, String tempDir) {
-  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
+int _hdcCmd(List<String> args, String tempDir) {
+  final params = args.map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     charArray[i] = params[i].cast();
@@ -33,32 +33,38 @@ int _hdcCmd(String args, String tempDir) {
 startHdcServer() {
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawn((SendPort sendPort) async {
-    //_bindings.hdcServer();
+    _bindings.hdcServer();
     sendPort.send("");
   }, receivePort.sendPort);
 }
 
-Future<String> signCmd(String args, String tempDir) async {
-  final SendPort helperIsolateSendPort = await _helperIsolateSendPort;
-  final int requestId = _nextSumRequestId++;
-  final _SignRequest request = _SignRequest(requestId, args, tempDir);
-  final Completer<String> completer = Completer<String>();
-  _cmdRequests[requestId] = completer;
-  helperIsolateSendPort.send(request);
-  return completer.future;
+Future<String> signCmd(List<String> args, String tempDir) async {
+  // final SendPort helperIsolateSendPort = await _helperIsolateSendPort;
+  // final int requestId = _nextSumRequestId++;
+  // final _SignRequest request = _SignRequest(requestId, args, tempDir);
+  // final Completer<String> completer = Completer<String>();
+  // _cmdRequests[requestId] = completer;
+  // helperIsolateSendPort.send(request);
+  // return completer.future;
+   return await Isolate.run(() {
+    // final logPath = path.join(tempDir, "sign_out.log");
+    return _signCmd(args, "");
+  });
 }
 
-_signCmd(String args, String tempDir) {
-  final params = args.split(" ").map((p) => p.toNativeUtf8()).toList();
+_signCmd(List<String> args, String tempDir) {
+  final params = args.map((p) => p.toNativeUtf8()).toList();
   final Pointer<Pointer<Char>> charArray = calloc<Pointer<Char>>(params.length);
   for (int i = 0; i < params.length; i++) {
     charArray[i] = params[i].cast();
   }
-  print("_signCmd ${params.length}");
-  _bindings.signCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
-  print("_signCmd finishd");
-  calloc.free(charArray);
-  return;
+  final result = _bindings.signCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
+    calloc.free(charArray);
+  if(result == 0){
+    return "success";
+  }else{
+    return "签名失败";
+  }
 }
 
 Future<String> unHap(String hapPath, String inFileName, String outPath) async {
@@ -205,11 +211,13 @@ Future<SendPort> _helperIsolateSendPort = () async {
           return;
         }
         if (data is _SignRequest) {
-          final logPath = path.join(data.b, "sign_out.log");
-          _signCmd(data.a, logPath);
-          final result = await File(logPath).readAsString();
-          final response = _CmdResponse(data.id, result);
-          sendPort.send(response);
+          // final logPath = path.join(data.b, "sign_out.log");
+          // print("signtool ");
+          // // _signCmd(data.a, logPath);
+          // final result = await File(logPath).readAsString();
+          //  print("signtool ");
+          // final response = _CmdResponse(data.id, result);
+          // sendPort.send(response);
           return;
         }
         throw UnsupportedError(

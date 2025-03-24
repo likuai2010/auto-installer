@@ -17,9 +17,7 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
   ret = 404;
 #elif __OHOS__
   ret = 404;
-  // ret = cmd(argc, args, tempDir);
 #else
-
   FILE *sout = freopen(tempDir, "w", stdout);
   FILE *serr = freopen(tempDir, "w", stderr);
   const char *dir = dirname(tempDir);
@@ -50,7 +48,7 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 #else
   // FILE *sout = freopen(tempDir, "w", stdout);
   // FILE *serr = freopen(tempDir, "w", stderr);
-  // ret = sign_hap(argc, args);
+  ret = sign_hap(argc, args);
   // if (sout != NULL)
   //   fclose(sout);
   // if (serr != NULL)

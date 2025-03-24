@@ -85,14 +85,7 @@ class CmdService {
     }
     final outPath = await getOutPath(inPath);
     var cmd = "";
-    if (!Platform.isWindows) {
-      cmd =
-          'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile ${signConfig.certPath} -profileFile ${signConfig.profilePath} -inFile $inPath -signAlg SHA256withECDSA -keystoreFile ${signConfig.keystoreFile} -keystorePwd ${signConfig.keystorePwd} -keyPwd ${signConfig.keystorePwd} -outFile $outPath -signCode 1';
-    } else {
-      cmd =
-          'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
-    }
-    print("signHap $cmd");
+    cmd = 'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
     final error = await baseSign(cmd);
     if (error.contains("success")) {
       return null;
@@ -103,7 +96,7 @@ class CmdService {
 
   Future<String?> installHap(String filePath) async {
     if (!await File(filePath).exists()) {
-      return "文件不存在";
+      return "文件不存在 $filePath";
     }
     print("installHap $filePath");
     final result = await baseCmd('hdc $_t install "$filePath"');
@@ -166,14 +159,17 @@ class CmdService {
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
     if (Platform.isAndroid) {
-      return await hdcCmd(cmd, await getTempDir());
+      return await hdcCmd(cmdToArgs(cmd), await getTempDir());
     } else {
-      var shell = Shell(workingDirectory: await getHdcDir());
+      final hdcDir = await getHdcDir();
+      var shell = Shell(workingDirectory: hdcDir);
       return await Isolate.run(() async {
         try {
+          print("baseCmd ${hdcDir}");
           var results = await shell.run(cmd.replaceFirst("hdc", "./hdc"));
           return results.first.outText;
         } catch (e) {
+          print("baseCmd $e");
           return "$e";
         }
       });
@@ -181,11 +177,12 @@ class CmdService {
   }
 
   Future<String> baseSign(String cmd) async {
+    // ohos ffi 会卡线程，采用bridge
     if (ohosAdapter.isOhos) {
       return await ohosAdapter.signCmd(cmd) ?? "";
     }
     if (!Platform.isWindows && !Platform.isLinux) {
-      return await signCmd(cmd, await getTempDir());
+      return await signCmd(cmdToArgs(cmd), await getTempDir());
     } else {
       // window and linux
       var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
@@ -220,6 +217,16 @@ Future<String> getArchitecture() async {
   } else {
     return 'unknown';
   }
+}
+
+List<String> cmdToArgs(String cmd){
+   RegExp regExp = RegExp(r'([^\s"]+)|"([^"]*)"');
+    List<String> matches = [];
+    for (var match in regExp.allMatches(cmd)) {
+      matches.add(match.group(2) ?? match.group(1)!);
+    }
+    print("cmdToArgs $matches");
+    return matches;
 }
 
 final cmd = CmdService();

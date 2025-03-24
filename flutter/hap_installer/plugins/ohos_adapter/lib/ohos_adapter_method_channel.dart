@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -18,7 +20,7 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
 
   @override
   bool get isOhos {
-    return true;
+    return Platform.operatingSystem == "ohos";
   }
 
   @override
