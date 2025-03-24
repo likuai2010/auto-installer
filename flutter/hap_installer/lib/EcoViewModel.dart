@@ -62,7 +62,6 @@ class EcoViewModel extends ChangeNotifier {
 
   Future<bool> init() async {
     cmd.startServer();
-    print("testTag  init xxxxx");
     final storeDir = Directory(path.join(await getAppDir(), "store"));
     final debugDir = Directory(path.join(await getTempDir(), "apps"));
     if (!await storeDir.exists()) {
@@ -74,20 +73,18 @@ class EcoViewModel extends ChangeNotifier {
 
     debugPath = debugDir.path;
     this.storeDir = storeDir.path;
-    print("testTag  init ${debugPath}, ${this.storeDir}");
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
 
     await initSignConfig();
     await tarnsformAssert();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final localIp = prefs.getString('ip');
-    final localPort = prefs.getString('port');
-    firstUse = prefs.getBool('firstUse') ?? true;
-    prefs.setBool("firstUse", false);
-    ip = localIp ?? ip;
-    port = localPort ?? port;
-    print("testTag init");
+
+    final url = await getLocalUrl();
+    firstUse = await getFirstUse() ?? true;
+    await setFirstUse();
+    ip = url?.split(":").first ?? ip;
+    port = url?.split(":").last ?? port;
+    print("eco init");
     return true;
   }
 
@@ -126,8 +123,8 @@ class EcoViewModel extends ChangeNotifier {
     if (!await Directory(javaPath).exists()) {
       showAlert(
         context,
-        title: Text("警告!"),
-        content: Text("缺少java环境! 是否下载?"),
+        title: const Text("警告!"),
+        content: const Text("缺少java环境! 是否下载?"),
         onConfirm: () {
           showDownloadDialog(context, javaPath);
         },
@@ -202,9 +199,7 @@ class EcoViewModel extends ChangeNotifier {
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString("ip", ip);
-    // prefs.setString("port", port);
+    setLocalUrl("$ip:$port");
     var result = await _connectHdc("$ip:$port");
     toask(context, result);
   }
@@ -396,7 +391,9 @@ class EcoViewModel extends ChangeNotifier {
       model.updateStep(0, (setp) {
         return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
       });
-      model.updateStep(1, (setp) {
+      model.updateStep(1, (setp) async {
+        await checkDevices();
+        if (currentDevice == null) await _connectHdc("$ip:$port");
         return setp.copyWith(
           loading: false,
           error: currentDevice == null ? "未连接设备" : null,

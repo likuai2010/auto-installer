@@ -59,4 +59,17 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   Future<void> startServer() async {
     methodChannel.invokeMethod<void>('startServer');
   }
+
+  @override
+  Future<String?> getLocalKey(String key) async {
+    return await methodChannel.invokeMethod<String>('getKey', {
+      "key": key,
+    });
+  }
+
+  @override
+  Future<void> setLocalKey(String key, String value) async {
+    return await methodChannel
+        .invokeMethod<void>('setKey', {"key": key, "value": value});
+  }
 }

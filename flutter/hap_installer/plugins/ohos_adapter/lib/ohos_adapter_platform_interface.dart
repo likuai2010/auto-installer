@@ -44,4 +44,9 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
 
   Future<String?> signCmd(String cmd) async {}
   Future<void> startServer() async {}
+
+  Future<void> setLocalKey(String key, String value) async {}
+  Future<String> getLocalKey(String key) async {
+    throw UnimplementedError('getLocalUrl() has not been implemented.');
+  }
 }

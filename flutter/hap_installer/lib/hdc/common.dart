@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:ohos_adapter/ohos_adapter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> getTempDir() async {
   var tempDir = "";
@@ -64,4 +65,36 @@ Future<String?> selectFile() async {
   }
 
   return result?.files.first.path;
+}
+
+Future<String?> getLocalUrl() async {
+  if (ohosAdapter.isOhos) {
+    return ohosAdapter.getLocalUrl();
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('url');
+}
+
+Future<bool?> getFirstUse() async {
+  if (ohosAdapter.isOhos) {
+    return ohosAdapter.getFirstUse();
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('firstUse');
+}
+
+Future<void> setFirstUse() async {
+  if (ohosAdapter.isOhos) {
+    return await ohosAdapter.setFirstUse();
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('firstUse', true);
+}
+
+Future<void> setLocalUrl(url) async {
+  if (ohosAdapter.isOhos) {
+    return await ohosAdapter.setLocalUrl(url);
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('url', url);
 }

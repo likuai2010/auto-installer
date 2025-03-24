@@ -36,6 +36,23 @@ class OhosAdapter {
   Future<void> startServer() {
     return OhosAdapterPlatform.instance.startServer();
   }
+
+  Future<void> setLocalUrl(String url) {
+    return OhosAdapterPlatform.instance.setLocalKey("url", url);
+  }
+
+  Future<bool> getFirstUse() async {
+    return (await OhosAdapterPlatform.instance.getLocalKey("firstUse")) ==
+        "ture";
+  }
+
+  Future<void> setFirstUse() {
+    return OhosAdapterPlatform.instance.setLocalKey("firstUse", "ture");
+  }
+
+  Future<String> getLocalUrl() {
+    return OhosAdapterPlatform.instance.getLocalKey("url");
+  }
 }
 
 final ohosAdapter = OhosAdapter();

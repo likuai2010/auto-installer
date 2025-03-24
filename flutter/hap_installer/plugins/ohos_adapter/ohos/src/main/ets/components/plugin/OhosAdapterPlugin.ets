@@ -87,6 +87,12 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     } else if(call.method == "startServer") {
       startServer()
     }
+     else if(call.method == "getKey") {
+      result.success(":")
+    }
+    else if(call.method == "setKey") {
+      result.success(null)
+    }
     else {
       result.notImplemented()
     }
