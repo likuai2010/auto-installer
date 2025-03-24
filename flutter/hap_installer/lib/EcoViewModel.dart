@@ -15,6 +15,7 @@ import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:hap_installer/widget/common.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,7 +113,7 @@ class EcoViewModel extends ChangeNotifier {
     } catch (e) {
       isLogin = false;
     }
-    if (!Platform.isAndroid) {
+    if (!Platform.isAndroid && !ohosAdapter.isOhos) {
       await checkDevices();
     }
     notifyListeners();

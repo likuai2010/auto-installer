@@ -85,7 +85,8 @@ class CmdService {
     }
     final outPath = await getOutPath(inPath);
     var cmd = "";
-    cmd = 'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
+    cmd =
+        'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
     final error = await baseSign(cmd);
     if (error.contains("success")) {
       return null;
@@ -156,6 +157,7 @@ class CmdService {
 
   Future<String> baseCmd(String cmd) async {
     if (ohosAdapter.isOhos) {
+      print("baseCmd ${cmd}");
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
     if (Platform.isAndroid) {
@@ -219,14 +221,14 @@ Future<String> getArchitecture() async {
   }
 }
 
-List<String> cmdToArgs(String cmd){
-   RegExp regExp = RegExp(r'([^\s"]+)|"([^"]*)"');
-    List<String> matches = [];
-    for (var match in regExp.allMatches(cmd)) {
-      matches.add(match.group(2) ?? match.group(1)!);
-    }
-    print("cmdToArgs $matches");
-    return matches;
+List<String> cmdToArgs(String cmd) {
+  RegExp regExp = RegExp(r'([^\s"]+)|"([^"]*)"');
+  List<String> matches = [];
+  for (var match in regExp.allMatches(cmd)) {
+    matches.add(match.group(2) ?? match.group(1)!);
+  }
+  print("cmdToArgs $matches");
+  return matches;
 }
 
 final cmd = CmdService();

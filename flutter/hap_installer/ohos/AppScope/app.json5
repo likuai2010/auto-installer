@@ -1,7 +1,7 @@
 {
   "app": {
-    "bundleName": "com.example.hap_installer",
-    "vendor": "example",
+    "bundleName": "com.xiaobai.hap_installer",
+    "vendor": "hap_installer",
     "versionCode": 1,
     "versionName": "1.0.0",
     "icon": "$media:app_icon",

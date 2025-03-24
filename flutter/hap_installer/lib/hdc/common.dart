@@ -59,7 +59,7 @@ Future<String?> selectFile() async {
   } else {
     result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ["jpg", "hsp", "hap"],
+      allowedExtensions: ["app", "hsp", "hap"],
     );
   }
 
