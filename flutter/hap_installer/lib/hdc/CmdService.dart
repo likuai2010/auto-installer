@@ -74,7 +74,7 @@ class CmdService {
   Future<String> getOutPath(String inPath) async {
     final outFile = path.join(
       await getTempDir(),
-      "${path.basenameWithoutExtension(inPath)}_signed${path.extension(inPath)}",
+      "${path.basenameWithoutExtension(inPath).trim()}_signed${path.extension(inPath)}",
     );
     return outFile;
   }

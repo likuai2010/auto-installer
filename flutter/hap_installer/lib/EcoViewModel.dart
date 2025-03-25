@@ -391,14 +391,13 @@ class EcoViewModel extends ChangeNotifier {
       model.updateStep(0, (setp) {
         return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
       });
-      model.updateStep(1, (setp) async {
-        await checkDevices();
-        if (currentDevice == null) await _connectHdc("$ip:$port");
-        return setp.copyWith(
-          loading: false,
-          error: currentDevice == null ? "未连接设备" : null,
-        );
+      nextStep = await model.startSetp(1, () async {
+        if (Platform.isAndroid) {
+          await _connectHdc("$ip:$port");
+        }
+        return currentDevice == null ? "未连接设备" : null;
       });
+
       signConfig.packageName = hap.packageName;
       signConfig.profilePath =
           "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";

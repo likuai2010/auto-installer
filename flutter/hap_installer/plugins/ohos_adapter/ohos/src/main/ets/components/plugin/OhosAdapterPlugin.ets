@@ -14,6 +14,7 @@ import  { fileUri, picker } from '@kit.CoreFileKit';
 import { common, Want } from '@kit.AbilityKit';
 import { cmd, startServer } from 'libinstaller.so';
 import { signHap } from 'libsigntool.so';
+import { preferences } from '@kit.ArkData';
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -86,12 +87,18 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       })
     } else if(call.method == "startServer") {
       startServer()
-    }
-     else if(call.method == "getKey") {
-      result.success(":")
-    }
-    else if(call.method == "setKey") {
-      result.success(null)
+    } else if(call.method == "getKey") {
+      let ret = preferences.getPreferencesSync(context,{name:"hap_installer"})
+      const key = call.argument("key") as string;
+      result.success(ret.getSync(key,"127.0.0.1:12345") as string)
+    } else if(call.method == "setKey") {
+      let ret = preferences.getPreferencesSync(context,{name:"hap_installer"})
+      const key = call.argument("key") as string;
+      const value = call.argument("value") as string;
+      ret.putSync(key, value);
+      ret.flush().then(()=>{
+        result.success(null)
+      });
     }
     else {
       result.notImplemented()

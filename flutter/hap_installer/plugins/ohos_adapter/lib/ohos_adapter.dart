@@ -50,7 +50,7 @@ class OhosAdapter {
     return OhosAdapterPlatform.instance.setLocalKey("firstUse", "ture");
   }
 
-  Future<String> getLocalUrl() {
+  Future<String?> getLocalUrl() {
     return OhosAdapterPlatform.instance.getLocalKey("url");
   }
 }
