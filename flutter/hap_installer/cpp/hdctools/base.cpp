@@ -1600,15 +1600,21 @@ namespace Hdc
         int ProgramMutex(const char *procname, bool checkOrNew)
         {
             char bufPath[BUF_SIZE_DEFAULT] = "";
-            char buf[BUF_SIZE_DEFAULT] = "";
             char pidBuf[BUF_SIZE_TINY] = "";
-            size_t size = sizeof(buf);
 
-            if (uv_os_tmpdir(buf, &size) < 0)
+            std::string temp = Base::GetTmpDir();
+            const char* buf = temp.c_str();
+            size_t size = sizeof(buf);
+            if (size < 0)
             {
                 WRITE_LOG(LOG_FATAL, "Tmppath failed");
                 return ERR_API_FAIL;
             }
+//            if (uv_os_tmpdir(buf, &size) < 0)
+//            {
+//                WRITE_LOG(LOG_FATAL, "Tmppath failed");
+//                return ERR_API_FAIL;
+//            }
             if (snprintf_s(bufPath, sizeof(bufPath), sizeof(bufPath) - 1, "%s%c.%s.pid", buf, Base::GetPathSep(), procname) < 0)
             {
                 return ERR_BUF_OVERFLOW;

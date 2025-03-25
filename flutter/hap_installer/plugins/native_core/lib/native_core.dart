@@ -30,10 +30,11 @@ int _hdcCmd(List<String> args, String tempDir) {
   return result;
 }
 
-startHdcServer() {
+startHdcServer(String tempDir) {
   final ReceivePort receivePort = ReceivePort();
   Isolate.spawn((SendPort sendPort) async {
-    _bindings.hdcServer();
+    print("startServer");
+    _bindings.hdcServer(tempDir.toNativeUtf8().cast());
     sendPort.send("");
   }, receivePort.sendPort);
 }

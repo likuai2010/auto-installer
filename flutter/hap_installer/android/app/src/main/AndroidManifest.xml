@@ -27,9 +27,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="application/octet-stream" android:extension="hsp"/>
-                <data android:mimeType="application/octet-stream" android:extension="hap"/>
-                <data android:mimeType="application/octet-stream" android:extension="app"/>
+                <data android:mimeType="application/octet-stream"/>
                 <data android:scheme="content"/>
                 <data android:scheme="file"/>
             </intent-filter>

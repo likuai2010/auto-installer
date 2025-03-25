@@ -28,14 +28,14 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 #endif
   return ret;
 }
-FFI_PLUGIN_EXPORT int hdcServer(void)
+FFI_PLUGIN_EXPORT int hdcServer(const char *tempDir)
 {
 #ifdef _WIN32
   return 404;
 #elif __OHOS__
   return 404;
 #else
-  return server();
+  return server(tempDir);
 #endif
 }
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)

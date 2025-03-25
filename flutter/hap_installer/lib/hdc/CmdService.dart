@@ -39,12 +39,13 @@ Future<String> getJavaDir() async {
 class CmdService {
   String _t = "";
 
-  startServer() {
+  startServer() async {
     if (ohosAdapter.isOhos) {
       ohosAdapter.startServer();
     }
-    if (Platform.isAndroid || ohosAdapter.isOhos) {
-      startHdcServer();
+    if (Platform.isAndroid) {
+      final temp = await getTempDir();
+      startHdcServer(temp);
     }
   }
 

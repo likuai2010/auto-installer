@@ -12,30 +12,31 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
 
         // MethodChannel 实现
-        MethodChannel(flutterEngine?.dartExecutor, CHANNEL).setMethodCallHandler { call, result ->
-            if (call.method == "handleFileOpen") {
-                val filePath = intent?.dataString // 获取文件路径
-                if (filePath != null) {
-                    result.success(filePath)
+        flutterEngine?.dartExecutor?.let {
+            MethodChannel(it, CHANNEL).setMethodCallHandler { call, result ->
+                if (call.method == "handleFileOpen") {
+                    val filePath = intent?.dataString // 获取文件路径
+                    if (filePath != null) {
+                        result.success(filePath)
+                    } else {
+                        result.error("UNAVAILABLE", "File path not available", null)
+                    }
                 } else {
-                    result.error("UNAVAILABLE", "File path not available", null)
+                    result.notImplemented()
                 }
-            } else {
-                result.notImplemented()
             }
         }
     }
 
-    // 处理新打开的 Intent
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        this.intent = intent ?: return
-        val filePath = intent?.dataString 
+        val filePath = intent.dataString
         if (filePath != null) {
             sendMessageToFlutter(filePath)
         }
     }
+
     private fun sendMessageToFlutter(message: String) {
-        MethodChannel(flutterEngine?.dartExecutor, CHANNEL).invokeMethod("handleFileOpen", message)
+        flutterEngine?.dartExecutor?.let { MethodChannel(it, CHANNEL).invokeMethod("handleFileOpen", message) }
     }
 }

@@ -673,8 +673,9 @@ int cmd(int argc, const char *argv[], const char *tempPath)
     return 0;
 }
 
-int server()
+int server(const char *tempPath)
 {
+    Base::SetTempDir(tempPath);
     string server = "::ffff:127.0.0.1:18710";
     RunServerMode(server);
     return 0;

@@ -11,7 +11,7 @@ set(libPath ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
 set(LIBRARY_PATHS )
 
 if(ANDROID)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/shared")
 list(APPEND LIBRARY_PATHS 
 hdc_z
 signtool
@@ -70,11 +70,11 @@ add_custom_command(TARGET native_core POST_BUILD
   ${libPath}/windows/x86-64/libunhap.dll
   ${OUTPUT_DIR}
 )
-# add_custom_command(TARGET native_core POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#   ${libPath}/windows/x86-64/libwinpthread-1.dll
-#   ${OUTPUT_DIR}
-# )
+add_custom_command(TARGET native_core POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${libPath}/windows/x86-64/libwinpthread-1.dll
+  ${OUTPUT_DIR}
+)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/runner/Release)
 add_custom_command(TARGET native_core POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different

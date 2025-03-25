@@ -15,11 +15,12 @@
 #ifndef HDC_H
 #define HDC_H
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-int cmd(int argc, const char *argv[], const char *tempPath);
-int server(void);
+    int cmd(int argc, const char *argv[], const char *tempPath);
+    int server(const char *tempPath);
 
 #ifdef __cplusplus
 }
