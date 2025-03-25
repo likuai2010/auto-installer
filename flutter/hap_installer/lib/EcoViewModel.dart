@@ -12,13 +12,13 @@ import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:hap_installer/pages/Home.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
@@ -119,6 +119,13 @@ class EcoViewModel extends ChangeNotifier {
   // only windows and linux
   checkJava(BuildContext context) async {
     if (!Platform.isWindows && !Platform.isLinux) return true;
+    try {
+      final hasJava = await hasJavaBySys();
+      if (hasJava) return true;
+    } catch (e) {
+      toask(context, "检查java环境失败: $e");
+    }
+
     var javaPath = await getJavaDir();
     if (!await Directory(javaPath).exists()) {
       showAlert(
@@ -224,10 +231,11 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList = result
-        .split("\n")
-        .where((d) => d != '' && !d.contains('[Empty]'))
-        .toList();
+    deviceList =
+        result
+            .split("\n")
+            .where((d) => d != '' && !d.contains('[Empty]'))
+            .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -256,27 +264,31 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList = await files
-          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-          .map((f) => f.path)
-          .toList();
+      pathList =
+          await files
+              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+              .map((f) => f.path)
+              .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
     } else {
       pathList = [hapPath];
     }
-    await cmd.unzip_Hap(
+    final err = await cmd.unzip_Hap(
       pathList.first,
       "module.json",
       path.join(debugPath, "module.json"),
     );
-    print("readModuleInfo ${debugPath}");
+    if (err != "成功") {
+      throw FormatException("解压文件失败: $err");
+    }
+    print("readModuleInfo ${debugPath} ${err}");
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
       pathList: pathList,
-      version: moduleInfo.app?.versionName
+      version: moduleInfo.app?.versionName,
     );
   }
 

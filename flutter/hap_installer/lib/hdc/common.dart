@@ -12,7 +12,11 @@ Future<String> getTempDir() async {
   if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
-    tempDir = (await getApplicationCacheDirectory()).path;
+    if (Platform.isLinux) {
+      tempDir = (await getApplicationCacheDirectory()).path;
+    } else {
+      tempDir = (await getTemporaryDirectory()).path;
+    }
   }
 
   final appDir = Directory(path.join(tempDir, "hap_installer"));
@@ -27,7 +31,11 @@ Future<String> getHdcDir() async {
   if (ohosAdapter.isOhos) {
     tempDir = (await ohosAdapter.tempDir()) ?? "";
   } else {
-    tempDir = (await getApplicationCacheDirectory()).path;
+    if (Platform.isLinux) {
+      tempDir = (await getApplicationCacheDirectory()).path;
+    } else {
+      tempDir = (await getTemporaryDirectory()).path;
+    }
   }
   final appDir = Directory(path.join(tempDir, "hdc_tools"));
   if (!await appDir.exists()) {
@@ -51,7 +59,7 @@ Future<String> getAppDir() async {
 }
 
 Future<String?> selectFile() async {
-  FilePickerResult? result = null;
+  FilePickerResult? result;
   if (ohosAdapter.isOhos) {
     return await ohosAdapter.selectFile();
   }
@@ -63,8 +71,18 @@ Future<String?> selectFile() async {
       allowedExtensions: ["app", "hsp", "hap"],
     );
   }
-
-  return result?.files.first.path;
+  final filePath = result?.files.first.path;
+  if (filePath != null && Platform.isWindows) {
+    final tempHap = File(
+      path.join(await getTempDir(), "temp${path.extension(filePath)}"),
+    );
+    if (await tempHap.exists()) {
+      tempHap.delete();
+    }
+    await File(filePath).copy(tempHap.path);
+    return tempHap.path;
+  }
+  return filePath;
 }
 
 Future<String?> getLocalUrl() async {

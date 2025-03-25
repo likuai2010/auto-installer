@@ -5,6 +5,7 @@ import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:hap_installer/pages/Home.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
@@ -67,7 +68,7 @@ class CmdService {
       return ModuleInfo.fromJson(dict);
     } catch (e) {
       print("readModuleInfo: $e");
-      throw const FormatException("加载modlue.json失败");
+      throw FormatException("加载modlue.json失败: $e");
     }
   }
 
@@ -161,8 +162,8 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
+    print("baseCmd ${cmd}");
     if (ohosAdapter.isOhos) {
-      print("baseCmd ${cmd}");
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
     if (Platform.isAndroid) {
@@ -172,9 +173,15 @@ class CmdService {
       var shell = Shell(workingDirectory: hdcDir);
       return await Isolate.run(() async {
         try {
-          print("baseCmd ${hdcDir}");
-          var results = await shell.run(cmd.replaceFirst("hdc", "./hdc"));
-          return results.first.outText;
+          if (!Platform.isWindows) {
+            var results = await shell.run(cmd.replaceFirst("hdc", "./hdc"));
+            return results.first.outText;
+          } else {
+            final args = cmdToArgs(cmd.replaceFirst("hdc ", ""));
+            print("args $args");
+            var result = await Process.run(path.join(hdcDir, "hdc.exe"), args);
+            return result.outText + result.errText;
+          }
         } catch (e) {
           print("baseCmd $e");
           return "$e";
@@ -198,14 +205,18 @@ class CmdService {
       if (Platform.isLinux) {
         java = "java";
       }
+      final hasJava = await hasJavaBySys();
       try {
-        var results = await shell.run(
-          cmd.replaceFirst(
-            "signtool",
-            "${path.join(await getJavaDir(), "bin", java)} -jar ${path.join(hdcDir, "hap-sign-tool.jar")}",
-          ),
-        );
-        return results.first.outText;
+        final javaCmd =
+            !hasJava ? path.join(await getJavaDir(), "bin", java) : 'java';
+        final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
+        print("baseSign $javaCmd  $args");
+        var result = await Process.run(javaCmd, [
+          "-jar",
+          path.join(hdcDir, "hap-sign-tool.jar"),
+          ...args,
+        ]);
+        return result.outText + result.errText;
       } catch (e) {
         print("baseSign $e");
         return "baseSign $e";
@@ -237,3 +248,18 @@ List<String> cmdToArgs(String cmd) {
 }
 
 final cmd = CmdService();
+
+Future<bool> runHdc() async {
+  var result = await Process.run('java', ['-version']);
+  // 检查命令的退出状态
+  if (result.exitCode == 0) {
+    print('Java 版本: ${result.stdout}');
+    print('Java 已安装');
+
+    return true;
+  } else {
+    print('Java 未安装或无法运行');
+    print('错误信息: ${result.stderr}');
+    return false;
+  }
+}

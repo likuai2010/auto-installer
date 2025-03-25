@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
 
-
 class UserGuidePage extends StatelessWidget {
-   UserGuidePage({super.key});
+  UserGuidePage({super.key});
 
   final pdfPinchController = PdfControllerPinch(
     document: PdfDocument.openAsset('assets/html/guide.pdf'),
@@ -13,15 +12,11 @@ class UserGuidePage extends StatelessWidget {
   final pdfController = PdfController(
     document: PdfDocument.openAsset('assets/html/guide.pdf'),
   );
-  Widget? buildPage(){
-    if(!Platform.isWindows){
-      return PdfViewPinch(
-        controller: pdfPinchController,
-      );
-    }else{
-      PdfView(
-        controller: pdfController,
-      );
+  Widget? buildPage() {
+    if (!Platform.isWindows) {
+      return PdfViewPinch(controller: pdfPinchController);
+    } else {
+      PdfView(controller: pdfController);
     }
   }
 

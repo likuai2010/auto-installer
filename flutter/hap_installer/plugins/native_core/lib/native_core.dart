@@ -46,7 +46,7 @@ Future<String> signCmd(List<String> args, String tempDir) async {
   // _cmdRequests[requestId] = completer;
   // helperIsolateSendPort.send(request);
   // return completer.future;
-   return await Isolate.run(() {
+  return await Isolate.run(() {
     // final logPath = path.join(tempDir, "sign_out.log");
     return _signCmd(args, "");
   });
@@ -58,11 +58,12 @@ _signCmd(List<String> args, String tempDir) {
   for (int i = 0; i < params.length; i++) {
     charArray[i] = params[i].cast();
   }
-  final result = _bindings.signCmd(params.length, charArray, tempDir.toNativeUtf8().cast());
-    calloc.free(charArray);
-  if(result == 0){
+  final result = _bindings.signCmd(
+      params.length, charArray, tempDir.toNativeUtf8().cast());
+  calloc.free(charArray);
+  if (result == 0) {
     return "success";
-  }else{
+  } else {
     return "签名失败";
   }
 }
@@ -84,7 +85,7 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
       case 0:
         return "成功";
       case 100:
-        return "文件打开失败";
+        return "文件打开失败: ${hapPath}";
       case 101:
         return "没有此文件: $inFileName";
       case 102:
@@ -104,7 +105,7 @@ Future<String> unApp(String hapPath, String outPath) async {
       case 0:
         return "成功";
       case 100:
-        return "文件打开失败";
+        return "文件打开失败: ${hapPath}";
       case 101:
       case 102:
         return "打开内部文件失败";

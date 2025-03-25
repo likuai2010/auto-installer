@@ -67,16 +67,25 @@ if(WIN32)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/runner/Debug)
 add_custom_command(TARGET native_core POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  # ${libPath}/windows/x86-64/libunhap.dll
-  ${libPath}/windows/x86-64/libwinpthread-1.dll
+  ${libPath}/windows/x86-64/libunhap.dll
   ${OUTPUT_DIR}
 )
+# add_custom_command(TARGET native_core POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#   ${libPath}/windows/x86-64/libwinpthread-1.dll
+#   ${OUTPUT_DIR}
+# )
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/runner/Release)
 add_custom_command(TARGET native_core POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  # ${libPath}/windows/x86-64/libunhap.dll
+  ${libPath}/windows/x86-64/libunhap.dll
+  ${OUTPUT_DIR}
+)
+add_custom_command(TARGET native_core POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
   ${libPath}/windows/x86-64/libwinpthread-1.dll
   ${OUTPUT_DIR}
 )
+
 
 endif()
