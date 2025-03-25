@@ -27,7 +27,25 @@
               "entity.system.home"
             ],
             "actions": [
-              "action.system.home"
+              "action.system.home",
+              "ohos.want.action.sendData",
+              "ohos.want.action.viewData"
+            ],
+            "uris": [
+              {
+                "scheme": "file",
+                // 必填，声明协议类型为文件
+                "type": "openharmony.package",
+                // 必填，表示支持打开的文件类型
+                "linkFeature": "FileOpen",
+                // 必填，表示此URI的功能为文件打开
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "general.text",
+                "maxFileSupported": 1
+              },
             ]
           }
         ]
@@ -35,6 +53,9 @@
     ],
     "requestPermissions": [
       {"name" :  "ohos.permission.INTERNET"},
+      {
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
+      }
     ]
   }
 }

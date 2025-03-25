@@ -47,5 +47,22 @@
 		</dict>
 	</dict>
 	</dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeExtensions</key>
+		<array>
+		<string>hap</string>
+		<string>app</string>
+		<string>hsp</string>
+		</array>
+		<key>CFBundleTypeName</key>
+		<string>CustomFile</string>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>LSHandlerRank</key>
+    	<string>Owner</string>   <!-- 让你的应用成为该文件类型的默认打开程序 -->
+	</dict>
+	</array>
 </dict>
 </plist>

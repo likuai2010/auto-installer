@@ -276,6 +276,7 @@ class EcoViewModel extends ChangeNotifier {
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
       pathList: pathList,
+      version: moduleInfo.app?.versionName
     );
   }
 

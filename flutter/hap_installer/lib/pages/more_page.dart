@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
+import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
+import 'package:process_run/stdio.dart';
 
 showTips(BuildContext context){
   showDialog(
@@ -18,10 +20,11 @@ showTips(BuildContext context){
               child: const Text('知道了'),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            // FilledButton(
-            //   child: const Text('查看使用教程'),
-            //   onPressed: () => Navigator.of(context).pop(),
-            // ),
+            !Platform.isLinux ?
+            FilledButton(
+              child: const Text('查看使用教程'),
+              onPressed: () => toPage(context, (_) => UserGuidePage()),
+            ): Container(),
           ],
         );
       },
@@ -104,6 +107,16 @@ class MorePage extends StatelessWidget {
                 onClick:
                     () => showTips(context),
               ),
+              !Platform.isLinux ? ListItem(
+                leading: Icon(Icons.quiz),
+                title: "使用教程",
+                onClick:
+                    () => {
+                      toPage(context, (_) {
+                        return UserGuidePage();
+                      }),
+                    },
+              ) : Container(),
               ListItem(
                 leading: Icon(Icons.privacy_tip),
                 title: "免责声明",
@@ -114,16 +127,6 @@ class MorePage extends StatelessWidget {
                       }),
                     },
               ),
-              // ListItem(
-              //   leading: Icon(Icons.quiz),
-              //   title: "使用教程",
-              //   onClick:
-              //       () => {
-              //         toPage(context, (_) {
-              //           return PrivacyPage();
-              //         }),
-              //       },
-              // ),
             ],
           ),
           GroupDecoration(
