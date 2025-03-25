@@ -54,11 +54,8 @@ dependencies:
   ohos_adapter:
     path: plugins/ohos_adapter
   intl: ^0.20.2
-  pdfx: ^2.8.0
-  # pdfx:
-  #    git:
-  #     url: "https://gitee.com/openharmony-sig/flutter_pdfx.git"
-  #     path: "packages/pdfx"
+  syncfusion_flutter_pdfviewer: ^29.1.33
+  # pdfx: ^2.8.0
  
 
 dev_dependencies:
