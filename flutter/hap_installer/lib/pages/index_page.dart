@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hap_installer/hdc/loginhuawei.dart';
+import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 
 import 'package:hap_installer/EcoViewModel.dart';
@@ -141,6 +143,19 @@ class AppInfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GroupDecoration(label: "", children: [Text(name, style: style)]);
+    return GroupDecoration(label: "", children: [
+      Center(child: Text(name, style: style),),
+      SizedBox(height: 10,),
+      Row(children: [
+        Expanded(child: TextButton(onPressed: (){
+            openByUrl("https://github.com/likuai2010/auto-installer/");
+        }, child: Text("GitHub")),),
+        Expanded(child: TextButton(onPressed: (){
+          toPage(context,(_)=> UserGuidePage());
+        }, child: Text("使用教程")),)
+        
+        ]
+      )
+    ]);
   }
 }
