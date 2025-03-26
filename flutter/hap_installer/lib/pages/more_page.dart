@@ -1,36 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
-import 'package:process_run/stdio.dart';
 
-showTips(BuildContext context){
+showTips(BuildContext context) {
   showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('温馨提示'),
-          content: const Text(
-            '使用本工具安装App需要打开“开发者模式”，当您关闭“开发者模式”后，所有使用本工具安装的App都将失效。请前往设置-关于本机页面连点5次“软件版本”以开启开发者模式。具体安装步骤请查看更多-使用教程',
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text('温馨提示'),
+        content: const Text(
+          '使用本工具安装App需要打开“开发者模式”，当您关闭“开发者模式”后，所有使用本工具安装的App都将失效。请前往设置-关于本机页面连点5次“软件版本”以开启开发者模式。具体安装步骤请查看更多-使用教程',
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('知道了'),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('知道了'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            !Platform.isLinux ?
-            FilledButton(
-              child: const Text('查看使用教程'),
-              onPressed: () => toPage(context, (_) => UserGuidePage()),
-            ): Container(),
-          ],
-        );
-      },
+          !Platform.isLinux
+              ? FilledButton(
+                child: const Text('查看使用教程'),
+                onPressed: () => toPage(context, (_) => UserGuidePage()),
+              )
+              : Container(),
+        ],
+      );
+    },
   );
 }
-
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -92,9 +93,16 @@ class MorePage extends StatelessWidget {
               ListItem(
                 leading: Icon(Icons.color_lens),
                 title: "清理缓存",
-                onClick: () => {showAlert(context, title: Text("是否清理缓存?"), onConfirm: (){
-                  viewmodel.clearCache(context);
-                })},
+                onClick:
+                    () => {
+                      showAlert(
+                        context,
+                        title: Text("是否清理缓存?"),
+                        onConfirm: () {
+                          viewmodel.clearCache(context);
+                        },
+                      ),
+                    },
               ),
             ],
           ),
@@ -104,19 +112,20 @@ class MorePage extends StatelessWidget {
               ListItem(
                 leading: Icon(Icons.privacy_tip),
                 title: "温馨提示",
-                onClick:
-                    () => showTips(context),
+                onClick: () => showTips(context),
               ),
-              !Platform.isLinux ? ListItem(
-                leading: Icon(Icons.quiz),
-                title: "使用教程",
-                onClick:
-                    () => {
-                      toPage(context, (_) {
-                        return UserGuidePage();
-                      }),
-                    },
-              ) : Container(),
+              !Platform.isLinux
+                  ? ListItem(
+                    leading: Icon(Icons.quiz),
+                    title: "使用教程",
+                    onClick:
+                        () => {
+                          toPage(context, (_) {
+                            return UserGuidePage();
+                          }),
+                        },
+                  )
+                  : Container(),
               ListItem(
                 leading: Icon(Icons.privacy_tip),
                 title: "免责声明",

@@ -189,9 +189,10 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   openFile(BuildContext context, String filePath) async {
+    if (fileLoading) return;
     fileLoading = true;
     notifyListeners();
-     try {
+    try {
       hapInfo = await _loadApp(context, filePath);
     } catch (e) {
       toask(context, "$e");
