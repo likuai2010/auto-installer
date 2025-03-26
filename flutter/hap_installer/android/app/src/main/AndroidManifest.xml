@@ -27,9 +27,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="application/octet-stream"/>
-                <data android:scheme="content"/>
-                <data android:scheme="file"/>
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.hap" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

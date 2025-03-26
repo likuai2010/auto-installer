@@ -18,11 +18,11 @@ class AppDelegate: FlutterAppDelegate {
       // 通过 MethodChannel 传递文件路径
        if let flutterVC = mainFlutterWindow?.contentViewController as? FlutterViewController {
             let methodChannel = FlutterMethodChannel(
-                name: "com.example.hap_instaler/openFile",
+                name: "com.xiaobai.hap_instaler/openFile",
                 binaryMessenger: flutterVC.engine.binaryMessenger
             )
             // 通过 MethodChannel 发送文件路径到 Dart 端
-            methodChannel.invokeMethod("handleFileOpen", arguments: ["filePath": url.path])
+            methodChannel.invokeMethod("openFile", arguments: ["path": url.path])
         }
     }
   }

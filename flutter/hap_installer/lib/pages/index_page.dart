@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
@@ -8,10 +9,21 @@ import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:provider/provider.dart';
 
 class IndexPage extends StatelessWidget {
-  const IndexPage({super.key});
-
+  static const platform = MethodChannel("com.xiaobai.hap_instaler/openFile");
+  BuildContext? context;
+  IndexPage({super.key}){
+      platform.setMethodCallHandler((MethodCall call) async {
+      if(call.method == "openFile"){
+        print("openFile ${call.arguments.toString()}");
+        if(context != null){
+          viewmodel.openFile(context!, call.arguments.toString());
+        }
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    this.context = context;
     final textTheme = Theme.of(
       context,
     ).textTheme.apply(displayColor: Theme.of(context).colorScheme.onSurface);

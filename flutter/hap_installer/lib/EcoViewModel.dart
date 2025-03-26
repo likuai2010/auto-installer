@@ -188,6 +188,18 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  openFile(BuildContext context, String filePath) async {
+    fileLoading = true;
+    notifyListeners();
+     try {
+      hapInfo = await _loadApp(context, filePath);
+    } catch (e) {
+      toask(context, "$e");
+    }
+    fileLoading = false;
+    notifyListeners();
+  }
+
   changeTeam(TeamInfo info) {
     if (userInfo != null) {
       userInfo!.changeTeamId(info);
