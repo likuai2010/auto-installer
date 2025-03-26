@@ -11,12 +11,17 @@ import 'package:provider/provider.dart';
 class IndexPage extends StatelessWidget {
   static const platform = MethodChannel("com.xiaobai.hap_instaler/openFile");
   BuildContext? context;
-  IndexPage({super.key}){
-      platform.setMethodCallHandler((MethodCall call) async {
-      if(call.method == "openFile"){
+  IndexPage({super.key}) {
+    platform.setMethodCallHandler((MethodCall call) async {
+      if (call.method == "openFile") {
         print("openFile ${call.arguments.toString()}");
-        if(context != null){
-          viewmodel.openFile(context!, call.arguments.toString());
+        if (call.arguments is Map<String, dynamic>) {
+          var url = call.arguments['url'];
+          if (context != null) {
+            viewmodel.openFile(context!, url);
+          }
+        } else {
+          print('Arguments are not in the expected format');
         }
       }
     });
@@ -86,9 +91,10 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   viewmodel.toLogin(context);
                 },
-                child: !model.loading
-                    ? Text(model.isLogin ? "更换账号" : "登录账号")
-                    : CircularProgressIndicator(value: null),
+                child:
+                    !model.loading
+                        ? Text(model.isLogin ? "更换账号" : "登录账号")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -121,9 +127,10 @@ class DebugSteps extends StatelessWidget {
                     );
                   });
                 },
-                child: !model.deviceLoaing
-                    ? Text("连接设备")
-                    : CircularProgressIndicator(value: null),
+                child:
+                    !model.deviceLoaing
+                        ? Text("连接设备")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -134,9 +141,10 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child: !model.fileLoading
-                    ? Text("选择")
-                    : CircularProgressIndicator(value: null),
+                child:
+                    !model.fileLoading
+                        ? Text("选择")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
           ],
@@ -155,19 +163,32 @@ class AppInfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GroupDecoration(label: "", children: [
-      Center(child: Text(name, style: style),),
-      SizedBox(height: 10,),
-      Row(children: [
-        Expanded(child: TextButton(onPressed: (){
-            openByUrl("https://github.com/likuai2010/auto-installer/");
-        }, child: Text("GitHub")),),
-        Expanded(child: TextButton(onPressed: (){
-          toPage(context,(_)=> UserGuidePage());
-        }, child: Text("使用教程")),)
-        
-        ]
-      )
-    ]);
+    return GroupDecoration(
+      label: "",
+      children: [
+        Center(child: Text(name, style: style)),
+        SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  openByUrl("https://github.com/likuai2010/auto-installer/");
+                },
+                child: Text("GitHub"),
+              ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  toPage(context, (_) => UserGuidePage());
+                },
+                child: Text("使用教程"),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

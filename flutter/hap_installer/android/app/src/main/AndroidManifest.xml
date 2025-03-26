@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:label="hap_installer"
-        android:name="${applicationName}"
+        android:name="小白调试助手"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:scheme="file" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.hap" />
+                <data android:pathPattern=".*\.jpg" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
