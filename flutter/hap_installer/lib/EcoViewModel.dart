@@ -19,6 +19,7 @@ import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_file_saver/flutter_file_saver.dart';
 
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
@@ -138,6 +139,15 @@ class EcoViewModel extends ChangeNotifier {
     }
   }
 
+  exportLog() async {
+    final logPath = "${await getTempDir()}hdc.log";
+
+    FlutterFileSaver().writeFileAsString(
+      fileName: 'hdc_log.txt',
+      data: await File(logPath).readAsString(),
+    );
+  }
+
   toLogin(BuildContext context) async {
     if (firstUse) {
       showTips(context);
@@ -240,10 +250,11 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList = result
-        .split("\n")
-        .where((d) => d != '' && !d.contains('[Empty]'))
-        .toList();
+    deviceList =
+        result
+            .split("\n")
+            .where((d) => d != '' && !d.contains('[Empty]'))
+            .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -274,10 +285,11 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList = await files
-          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-          .map((f) => f.path)
-          .toList();
+      pathList =
+          await files
+              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+              .map((f) => f.path)
+              .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
@@ -148,6 +150,17 @@ class DebugSteps extends StatelessWidget {
                         : CircularProgressIndicator(value: null),
               ),
             ),
+            Platform.isAndroid
+                ? TextButton(
+                  onPressed: () {
+                    model.exportLog();
+                  },
+                  child:
+                      !model.fileLoading
+                          ? Text("导出Hdc日志")
+                          : CircularProgressIndicator(value: null),
+                )
+                : Container(),
           ],
         );
       },

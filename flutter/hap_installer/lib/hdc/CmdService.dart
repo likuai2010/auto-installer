@@ -168,6 +168,7 @@ class CmdService {
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
     if (Platform.isAndroid) {
+      getExternalDir();
       return await hdcCmd(cmdToArgs(cmd), await getTempDir());
     } else {
       final hdcDir = await getHdcDir();

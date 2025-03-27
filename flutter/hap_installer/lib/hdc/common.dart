@@ -26,6 +26,12 @@ Future<String> getTempDir() async {
   return appDir.path;
 }
 
+Future<String> getExternalDir() async {
+  final path = (await getDownloadsDirectory())?.path;
+  print("getExternalDir ${path}");
+  return path ?? "";
+}
+
 Future<String> getHdcDir() async {
   var tempDir = "";
   if (ohosAdapter.isOhos) {
