@@ -119,12 +119,8 @@ class EcoViewModel extends ChangeNotifier {
   // only windows and linux
   checkJava(BuildContext context) async {
     if (!Platform.isWindows && !Platform.isLinux) return true;
-    try {
-      final hasJava = await hasJavaBySys();
-      if (hasJava) return true;
-    } catch (e) {
-      toask(context, "检查java环境失败: $e");
-    }
+    final hasJava = await hasJavaBySys();
+    if (hasJava) return true;
 
     var javaPath = await getJavaDir();
     if (!await Directory(javaPath).exists()) {
@@ -145,7 +141,7 @@ class EcoViewModel extends ChangeNotifier {
   toLogin(BuildContext context) async {
     if (firstUse) {
       showTips(context);
-      firstUse = true;
+      firstUse = false;
     }
     if (!await checkJava(context)) return;
     if (loading) return;
@@ -244,11 +240,10 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList =
-        result
-            .split("\n")
-            .where((d) => d != '' && !d.contains('[Empty]'))
-            .toList();
+    deviceList = result
+        .split("\n")
+        .where((d) => d != '' && !d.contains('[Empty]'))
+        .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -267,7 +262,9 @@ class EcoViewModel extends ChangeNotifier {
 
   Future<HapInfo> _loadApp(BuildContext context, String hapPath) async {
     final appFile = File(hapPath);
-    if (!await appFile.exists()) throw FormatException("文件不存在");
+    if (!await appFile.exists()) {
+      throw FormatException("文件不存在: ${hapPath}");
+    }
     final debugDir = Directory(debugPath);
     if (await debugDir.exists()) {
       await debugDir.delete(recursive: true);
@@ -277,11 +274,10 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList =
-          await files
-              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-              .map((f) => f.path)
-              .toList();
+      pathList = await files
+          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+          .map((f) => f.path)
+          .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
@@ -296,7 +292,7 @@ class EcoViewModel extends ChangeNotifier {
     if (err != "成功") {
       throw FormatException("解压文件失败: $err");
     }
-    print("readModuleInfo ${debugPath} ${err}");
+    print("readModuleInfo $debugPath $err");
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
@@ -364,7 +360,7 @@ class EcoViewModel extends ChangeNotifier {
     final bytes = await rootBundle.load('assets/$dir/$fileName');
     File file = File(path.join(targetDir, target ?? fileName));
     if (!await file.exists()) {
-      file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+      await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
     }
   }
 

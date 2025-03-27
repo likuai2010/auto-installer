@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:archive/archive_io.dart';
 
 class DownloadDialog extends StatefulWidget {
-  DownloadDialog({required this.javaPath});
+  const DownloadDialog({super.key, required this.javaPath});
   final String javaPath;
   @override
   _DownloadDialogState createState() => _DownloadDialogState();
@@ -85,7 +85,7 @@ class _DownloadDialogState extends State<DownloadDialog> {
       // 下载完成后可以提示用户或进行其他操作
     } catch (e) {
       setState(() {
-        _status = "下载失败!";
+        _status = "下载失败: $e";
       });
     }
   }
@@ -93,20 +93,20 @@ class _DownloadDialogState extends State<DownloadDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("安装java环境"),
+      title: const Text("安装java环境"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LinearProgressIndicator(value: _progress),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(_status),
         ],
       ),
       actions: <Widget>[
         installButton(),
         TextButton(
-          child: Text("取消"),
+          child: const Text("取消"),
           onPressed: () {
             Navigator.of(context).pop();
           },

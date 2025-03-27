@@ -106,7 +106,7 @@ Future<void> setFirstUse() async {
     return await ohosAdapter.setFirstUse();
   }
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('firstUse', true);
+  await prefs.setBool('firstUse', false);
 }
 
 Future<void> setLocalUrl(url) async {

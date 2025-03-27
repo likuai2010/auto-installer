@@ -249,15 +249,15 @@ class _NavigationBarsState extends State<NavigationBars> {
 }
 
 Future<bool> hasJavaBySys() async {
-  var result = await Process.run('java', ['-version']);
-  // 检查命令的退出状态
-  if (result.exitCode == 0) {
-    print('Java 已安装');
-    print('Java 版本: ${result.stdout}');
-    return true;
-  } else {
-    print('Java 未安装或无法运行');
-    print('错误信息: ${result.stderr}');
+  try {
+    var result = await Process.run('java', ['-version']);
+    // 检查命令的退出状态
+    if (result.exitCode == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
     return false;
   }
 }
