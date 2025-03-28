@@ -68,6 +68,7 @@ class EcoService {
     } finally {
       httpClient.close();
     }
+    return null;
   }
 
   downloadFile(String debugCertUrl, String certPath) async {

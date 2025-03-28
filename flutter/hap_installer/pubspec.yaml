@@ -80,6 +80,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/store/
+    - assets/pay/
     - assets/html/
     - assets/macos/
     - assets/windows/

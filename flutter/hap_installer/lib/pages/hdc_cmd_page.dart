@@ -59,6 +59,7 @@ class HdcCmdPageState extends State<HdcCmdPage> {
           ),
         ],
       ),
+      
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
@@ -73,9 +74,10 @@ class HdcCmdPageState extends State<HdcCmdPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
+      bottomNavigationBar: AnimatedPadding(
+        padding: MediaQuery.of(context).viewInsets,
+        duration: const Duration(milliseconds: 100),
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10), child: Row(
           children: [
             Expanded(
               child: TextField(
@@ -88,7 +90,7 @@ class HdcCmdPageState extends State<HdcCmdPage> {
             SizedBox(width: 10),
             IconButton(onPressed: sendCmd, icon: Icon(Icons.check_circle)),
           ],
-        ),
+        )) ,
       ),
     );
   }

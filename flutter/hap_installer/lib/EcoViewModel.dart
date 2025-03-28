@@ -395,6 +395,23 @@ class EcoViewModel extends ChangeNotifier {
     }
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
+  saveSignConfig() async {
+    await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
+  }
+  resetSignConfig() async {
+     final defaultConfig = SignConfig(
+      udids: List.empty(),
+      certId: "",
+      csrPath: path.join(storeDir, "xiaobai.csr"),
+      keystoreFile: path.join(storeDir, "xiaobai.p12"),
+      keystorePwd: "xiaobai123",
+      keyAlias: "xiaobai",
+      profilePath: path.join(storeDir, "xiaobai-debug.p7b"),
+      certPath: path.join(storeDir, "xiaobai-debug.cer"),
+    );
+    signConfig = defaultConfig;
+    await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
+  }
 
   changeCertConfig(CertInfo info) async {
     signConfig!.certId = info.id;

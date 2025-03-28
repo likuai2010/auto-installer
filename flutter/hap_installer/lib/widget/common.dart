@@ -170,13 +170,12 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
             children: [
               Text("请到开发者选择项-开启无线调试"),
               Text(
-                "Tip: 第一次可能失败，需要等待手机提示授权",
+                "提示: 第一次可能失败，需要等待手机提示授权",
                 style: Theme.of(context).textTheme.labelSmall,
               ),
             ],
           ),
         ),
-
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,

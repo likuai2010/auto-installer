@@ -90,7 +90,15 @@ Future<String?> selectFile() async {
   }
   return filePath;
 }
-
+Future<String?> selectStoreFile() async {
+  FilePickerResult? result;
+  if (ohosAdapter.isOhos) {
+    return await ohosAdapter.selectFile();
+  }
+  result = await FilePicker.platform.pickFiles(type: FileType.any);
+  final filePath = result?.files.first.path;
+  return filePath;
+}
 Future<String?> getLocalUrl() async {
   if (ohosAdapter.isOhos) {
     return ohosAdapter.getLocalUrl();

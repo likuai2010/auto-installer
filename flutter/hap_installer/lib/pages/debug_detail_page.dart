@@ -5,6 +5,8 @@ import 'package:hap_installer/widget/common.dart';
 import 'package:provider/provider.dart';
 
 class DebugDetailPage extends StatelessWidget {
+  const DebugDetailPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;

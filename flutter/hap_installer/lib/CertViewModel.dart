@@ -26,4 +26,13 @@ class CertViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+  deleteCert(BuildContext context, CertInfo info) async {
+    try {
+      await eco.deleteCertList([info.id]);
+      await fetchCertList();
+    } catch (e) {
+      toask(context, "应用证书失败: $e");
+    }
+    notifyListeners();
+  }
 }

@@ -39,6 +39,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       value: 0,
       vsync: this,
     );
+    viewmodel.loadUserInfo(context);
   }
 
   @override
@@ -156,7 +157,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    viewmodel.loadUserInfo(context);
+   
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {

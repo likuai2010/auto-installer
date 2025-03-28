@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
@@ -104,6 +105,21 @@ class MorePage extends StatelessWidget {
                       ),
                     },
               ),
+              ListItem(
+                leading: Icon(Icons.color_lens),
+                title: "重置证书配置",
+                onClick:
+                    () => {
+                      showAlert(
+                        context,
+                        title: Text("是否还原默认证书配置?"),
+                        content: Text("使用自定义证书配置后，可通过此功能还原默认值证书配置"),
+                        onConfirm: () {
+                          viewmodel.resetSignConfig();
+                        },
+                      ),
+                    },
+              ),
             ],
           ),
           GroupDecoration(
@@ -140,7 +156,10 @@ class MorePage extends StatelessWidget {
           ),
           GroupDecoration(
             label: "关于",
-            children: [ListItem(title: "应用版本", tailling: Text("2.0.0"))],
+            children: [
+              ListItem(title: "充电支持", tailling: Text(""), onClick: ()=> toPage(context, (_) => PayPage()),),
+              ListItem(title: "应用版本", tailling: Text("2.0.0"))
+            ],
           ),
         ],
       ),
