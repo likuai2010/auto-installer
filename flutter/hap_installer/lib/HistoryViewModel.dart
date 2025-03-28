@@ -1,15 +1,27 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
+import 'package:hap_installer/models/PayList.dart';
 
 class HistoryViewModel extends ChangeNotifier {
   List<DebugHistory> historyList = [];
+
+  PayList payList = PayList();
+
   DebugHistory? current;
 
   fetchDebugHistory() {}
+
+  fetchPayList() async {
+    final json = await rootBundle.loadString("assets/pay/list.json");
+    payList = PayList.fromJson(jsonDecode(json));
+    notifyListeners();
+  }
   createDebugHistory(HapInfo hapInfo) {
     current = DebugHistory(hapInfo: hapInfo);
     addDebugHistory(current!);
