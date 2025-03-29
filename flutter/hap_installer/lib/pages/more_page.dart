@@ -142,23 +142,29 @@ class MorePage extends StatelessWidget {
                         },
                   )
                   : Container(),
-              ListItem(
-                leading: Icon(Icons.privacy_tip),
-                title: "免责声明",
-                onClick:
-                    () => {
-                      toPage(context, (_) {
-                        return PrivacyPage();
-                      }),
-                    },
-              ),
+              Platform.isAndroid
+                  ? ListItem(
+                    leading: Icon(Icons.privacy_tip),
+                    title: "免责声明",
+                    onClick:
+                        () => {
+                          toPage(context, (_) {
+                            return PrivacyPage();
+                          }),
+                        },
+                  )
+                  : Container(),
             ],
           ),
           GroupDecoration(
             label: "关于",
             children: [
-              ListItem(title: "充电支持", tailling: Text(""), onClick: ()=> toPage(context, (_) => PayPage()),),
-              ListItem(title: "应用版本", tailling: Text("2.0.0"))
+              ListItem(
+                title: "充电支持",
+                tailling: Text(""),
+                onClick: () => toPage(context, (_) => PayPage()),
+              ),
+              ListItem(title: "应用版本", tailling: Text("2.0.0")),
             ],
           ),
         ],

@@ -1,98 +1,377 @@
 {
-    "updateTime": "2025-3-28",
-    "payList":  [
-        { "nick": "*点", "amount": "1" },
-        { "nick": "*。", "amount": "6.66" },
-        { "nick": "*！", "amount": "7.7" },
-        { "nick": "*龱", "amount": "8.8" },
-        { "nick": "*洋", "amount": "10" },
-        { "nick": "*🐳", "amount": "5" },
-        { "nick": "*。", "amount": "5" },
-        { "nick": "*土", "amount": "10" },
-        { "nick": "*城", "amount": "1" },
-        { "nick": "*航", "amount": "5.2" },
-        { "nick": "*杰", "amount": "5" },
-        { "nick": "C*H", "amount": "20" },
-        { "nick": "*空", "amount": "10" },
-        { "nick": "*哥", "amount": "10" },
-        { "nick": "**千", "amount": "66" },
-        { "nick": "*鱼", "amount": "6.66" },
-        { "nick": "*辰", "amount": "10" },
-        { "nick": "*超", "amount": "10" },
-        { "nick": "*远", "amount": "9.9" },
-        { "nick": "**阳", "amount": "2" },
-        { "nick": "*单", "amount": "1.66" },
-        { "nick": "*🌤️", "amount": "5" },
-        { "nick": "*成", "amount": "10" },
-        { "nick": "*字", "amount": "20" },
-        { "nick": "小*）", "amount": "50" },
-        { "nick": "F*g", "amount": "1" },
-        { "nick": "*杨", "amount": "10" },
-        { "nick": "*雨", "amount": "1" },
-        { "nick": "*吗", "amount": "10" },
-        { "nick": "*磊", "amount": "6.6" },
-        { "nick": "*昂", "amount": "15" },
-        { "nick": "*⁶", "amount": "10" },
-        { "nick": "**磊", "amount": "6.6" },
-        { "nick": "*怯", "amount": "6.66" },
-        { "nick": "2*F", "amount": "9" },
-        { "nick": "*船", "amount": "5" },
-        { "nick": "**金", "amount": "1" },
-        { "nick": "^*o", "amount": "0.3" },
-        { "nick": "**i", "amount": "5" },
-        { "nick": "*驰", "amount": "50" },
-        { "nick": "*谦", "amount": "20" },
-        { "nick": "*。", "amount": "1" },
-        { "nick": "**亮", "amount": "5" },
-        { "nick": "*N", "amount": "1" },
-        { "nick": "j*n", "amount": "30" },
-        { "nick": "C*u", "amount": "19.15" },
-        { "nick": "*康", "amount": "50" },
-        { "nick": "*云", "amount": "5" },
-        { "nick": "*吗", "amount": "9.9" },
-        { "nick": "*哥", "amount": "8.88" },
-        { "nick": "*星", "amount": "0.1" },
-        { "nick": "**实", "amount": "20" },
-        { "nick": "*龙", "amount": "5" },
-        { "nick": "*西", "amount": "5" },
-        { "nick": "*堂", "amount": "18.88" },
-        { "nick": "*隆", "amount": "6.66" },
-        { "nick": "*", "amount": "1" },
-        { "nick": "*集", "amount": "3" },
-        { "nick": "**川", "amount": "10" },
-        { "nick": "*💎", "amount": "1" },
-        { "nick": "*生", "amount": "2" },
-        { "nick": "**腾", "amount": "20" },
-        { "nick": "*章", "amount": "0.1" },
-        { "nick": "*⁵", "amount": "50" },
-        { "nick": "c*a", "amount": "10" },
-        { "nick": "*头", "amount": "1" },
-        { "nick": "**帆", "amount": "5" },
-        { "nick": "*c", "amount": "10" },
-        { "nick": "*K", "amount": "10" },
-        { "nick": "**贵", "amount": "18.8" },
-        { "nick": "*~", "amount": "50" },
-        { "nick": "*根", "amount": "50" },
-        { "nick": "**隆", "amount": "1" },
-        { "nick": "H*L", "amount": "10" },
-        { "nick": "T*A", "amount": "100" },
-        { "nick": "*鸡", "amount": "5" },
-        { "nick": "*龙", "amount": "6" },
-        { "nick": "*程", "amount": "5" },
-        { "nick": "*四", "amount": "19.7" },
-        { "nick": "*+", "amount": "8.88" },
-        { "nick": "*沙", "amount": "26.6" },
-        { "nick": "*寒", "amount": "2" },
-        { "nick": "L*n", "amount": "9.9" },
-        { "nick": "*布", "amount": "1" },
-        { "nick": "*龱", "amount": "10" },
-        { "nick": "*超", "amount": "50" },
-        { "nick": "h*l", "amount": "20" },
-        { "nick": "*啊", "amount": "6.66" },
-        { "nick": "W*i", "amount": "10" },
-        { "nick": "*卷", "amount": "10" },
-        { "nick": "y*l", "amount": "5" },
-        { "nick": "R*n", "amount": "1" },
-        { "nick": "**霖", "amount": "5" }
-      ]
+  "time": "2025-3-28",
+  "payList": [
+    {
+      "nick": "*点",
+      "amount": "1"
+    },
+    {
+      "nick": "*。",
+      "amount": "6.66"
+    },
+    {
+      "nick": "*！",
+      "amount": "7.7"
+    },
+    {
+      "nick": "*龱",
+      "amount": "8.8"
+    },
+    {
+      "nick": "*洋",
+      "amount": "10"
+    },
+    {
+      "nick": "*🐳",
+      "amount": "5"
+    },
+    {
+      "nick": "*。",
+      "amount": "5"
+    },
+    {
+      "nick": "*土",
+      "amount": "10"
+    },
+    {
+      "nick": "*城",
+      "amount": "1"
+    },
+    {
+      "nick": "*航",
+      "amount": "5.2"
+    },
+    {
+      "nick": "*杰",
+      "amount": "5"
+    },
+    {
+      "nick": "C*H",
+      "amount": "20"
+    },
+    {
+      "nick": "*空",
+      "amount": "10"
+    },
+    {
+      "nick": "*哥",
+      "amount": "10"
+    },
+    {
+      "nick": "**千",
+      "amount": "66"
+    },
+    {
+      "nick": "*鱼",
+      "amount": "6.66"
+    },
+    {
+      "nick": "*辰",
+      "amount": "10"
+    },
+    {
+      "nick": "*超",
+      "amount": "10"
+    },
+    {
+      "nick": "*远",
+      "amount": "9.9"
+    },
+    {
+      "nick": "**阳",
+      "amount": "2"
+    },
+    {
+      "nick": "*单",
+      "amount": "1.66"
+    },
+    {
+      "nick": "*🌤️",
+      "amount": "5"
+    },
+    {
+      "nick": "*成",
+      "amount": "10"
+    },
+    {
+      "nick": "*字",
+      "amount": "20"
+    },
+    {
+      "nick": "小*）",
+      "amount": "50"
+    },
+    {
+      "nick": "F*g",
+      "amount": "1"
+    },
+    {
+      "nick": "*杨",
+      "amount": "10"
+    },
+    {
+      "nick": "*雨",
+      "amount": "1"
+    },
+    {
+      "nick": "*吗",
+      "amount": "10"
+    },
+    {
+      "nick": "*磊",
+      "amount": "6.6"
+    },
+    {
+      "nick": "*昂",
+      "amount": "15"
+    },
+    {
+      "nick": "*⁶",
+      "amount": "10"
+    },
+    {
+      "nick": "**磊",
+      "amount": "6.6"
+    },
+    {
+      "nick": "*怯",
+      "amount": "6.66"
+    },
+    {
+      "nick": "2*F",
+      "amount": "9"
+    },
+    {
+      "nick": "*船",
+      "amount": "5"
+    },
+    {
+      "nick": "**金",
+      "amount": "1"
+    },
+    {
+      "nick": "^*o",
+      "amount": "0.3"
+    },
+    {
+      "nick": "**i",
+      "amount": "5"
+    },
+    {
+      "nick": "*驰",
+      "amount": "50"
+    },
+    {
+      "nick": "*谦",
+      "amount": "20"
+    },
+    {
+      "nick": "*。",
+      "amount": "1"
+    },
+    {
+      "nick": "**亮",
+      "amount": "5"
+    },
+    {
+      "nick": "*N",
+      "amount": "1"
+    },
+    {
+      "nick": "j*n",
+      "amount": "30"
+    },
+    {
+      "nick": "C*u",
+      "amount": "19.15"
+    },
+    {
+      "nick": "*康",
+      "amount": "50"
+    },
+    {
+      "nick": "*云",
+      "amount": "5"
+    },
+    {
+      "nick": "*吗",
+      "amount": "9.9"
+    },
+    {
+      "nick": "*哥",
+      "amount": "8.88"
+    },
+    {
+      "nick": "*星",
+      "amount": "0.1"
+    },
+    {
+      "nick": "**实",
+      "amount": "20"
+    },
+    {
+      "nick": "*龙",
+      "amount": "5"
+    },
+    {
+      "nick": "*西",
+      "amount": "5"
+    },
+    {
+      "nick": "*堂",
+      "amount": "18.88"
+    },
+    {
+      "nick": "*隆",
+      "amount": "6.66"
+    },
+    {
+      "nick": "*",
+      "amount": "1"
+    },
+    {
+      "nick": "*集",
+      "amount": "3"
+    },
+    {
+      "nick": "**川",
+      "amount": "10"
+    },
+    {
+      "nick": "*💎",
+      "amount": "1"
+    },
+    {
+      "nick": "*生",
+      "amount": "2"
+    },
+    {
+      "nick": "**腾",
+      "amount": "20"
+    },
+    {
+      "nick": "*章",
+      "amount": "0.1"
+    },
+    {
+      "nick": "*⁵",
+      "amount": "50"
+    },
+    {
+      "nick": "c*a",
+      "amount": "10"
+    },
+    {
+      "nick": "*头",
+      "amount": "1"
+    },
+    {
+      "nick": "**帆",
+      "amount": "5"
+    },
+    {
+      "nick": "*c",
+      "amount": "10"
+    },
+    {
+      "nick": "*K",
+      "amount": "10"
+    },
+    {
+      "nick": "**贵",
+      "amount": "18.8"
+    },
+    {
+      "nick": "*~",
+      "amount": "50"
+    },
+    {
+      "nick": "*根",
+      "amount": "50"
+    },
+    {
+      "nick": "**隆",
+      "amount": "1"
+    },
+    {
+      "nick": "H*L",
+      "amount": "10"
+    },
+    {
+      "nick": "T*A",
+      "amount": "100"
+    },
+    {
+      "nick": "*鸡",
+      "amount": "5"
+    },
+    {
+      "nick": "*龙",
+      "amount": "6"
+    },
+    {
+      "nick": "*程",
+      "amount": "5"
+    },
+    {
+      "nick": "*四",
+      "amount": "19.7"
+    },
+    {
+      "nick": "*+",
+      "amount": "8.88"
+    },
+    {
+      "nick": "*沙",
+      "amount": "26.6"
+    },
+    {
+      "nick": "*寒",
+      "amount": "2"
+    },
+    {
+      "nick": "L*n",
+      "amount": "9.9"
+    },
+    {
+      "nick": "*布",
+      "amount": "1"
+    },
+    {
+      "nick": "*龱",
+      "amount": "10"
+    },
+    {
+      "nick": "*超",
+      "amount": "50"
+    },
+    {
+      "nick": "h*l",
+      "amount": "20"
+    },
+    {
+      "nick": "*啊",
+      "amount": "6.66"
+    },
+    {
+      "nick": "W*i",
+      "amount": "10"
+    },
+    {
+      "nick": "*卷",
+      "amount": "10"
+    },
+    {
+      "nick": "y*l",
+      "amount": "5"
+    },
+    {
+      "nick": "R*n",
+      "amount": "1"
+    },
+    {
+      "nick": "**霖",
+      "amount": "5"
+    }
+  ]
 }

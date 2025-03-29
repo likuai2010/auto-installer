@@ -98,7 +98,10 @@ class GroupDecoration extends StatelessWidget {
             children: [
               label != null
                   ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 5,
+                    ),
                     child: Text(
                       label ?? "",
                       style: Theme.of(context).textTheme.bodySmall,

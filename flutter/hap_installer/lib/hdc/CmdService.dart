@@ -151,7 +151,7 @@ class CmdService {
     final result = await baseCmd(cmd);
     final udid = result.split(":");
     if (udid.length > 1) {
-      return udid[1].trim();
+      return udid.last.trim();
     } else {
       return "获取udid失败: $result";
     }
