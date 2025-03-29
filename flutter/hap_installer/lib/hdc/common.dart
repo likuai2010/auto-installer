@@ -67,7 +67,7 @@ Future<String> getAppDir() async {
 Future<String?> selectFile() async {
   FilePickerResult? result;
   if (ohosAdapter.isOhos) {
-    return await ohosAdapter.selectFile();
+    return await ohosAdapter.selectFile(["app", "hsp", "hap"]);
   }
   if (Platform.isAndroid) {
     result = await FilePicker.platform.pickFiles(type: FileType.any);
@@ -90,15 +90,17 @@ Future<String?> selectFile() async {
   }
   return filePath;
 }
+
 Future<String?> selectStoreFile() async {
   FilePickerResult? result;
   if (ohosAdapter.isOhos) {
-    return await ohosAdapter.selectFile();
+    return await ohosAdapter.selectFile([]);
   }
   result = await FilePicker.platform.pickFiles(type: FileType.any);
   final filePath = result?.files.first.path;
   return filePath;
 }
+
 Future<String?> getLocalUrl() async {
   if (ohosAdapter.isOhos) {
     return ohosAdapter.getLocalUrl();

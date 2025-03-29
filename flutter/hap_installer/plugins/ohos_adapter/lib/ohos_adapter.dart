@@ -13,8 +13,8 @@ class OhosAdapter {
     return OhosAdapterPlatform.instance.openUrl(url);
   }
 
-  Future<String?> selectFile() {
-    return OhosAdapterPlatform.instance.selectFile();
+  Future<String?> selectFile(List<String> filter) {
+    return OhosAdapterPlatform.instance.selectFile(filter);
   }
 
   Future<String?> tempDir() {

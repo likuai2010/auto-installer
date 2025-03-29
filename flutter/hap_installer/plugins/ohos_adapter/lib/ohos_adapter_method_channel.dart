@@ -29,8 +29,9 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   }
 
   @override
-  Future<String?> selectFile() async {
-    return await methodChannel.invokeMethod<String>('selectFile');
+  Future<String?> selectFile(List<String> filter) async {
+    return await methodChannel
+        .invokeMethod<String>('selectFile', {"filter": filter});
   }
 
   @override

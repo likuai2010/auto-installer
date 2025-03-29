@@ -15,6 +15,7 @@ import { common, Want } from '@kit.AbilityKit';
 import { cmd, startServer } from 'libinstaller.so';
 import { signHap } from 'libsigntool.so';
 import { preferences } from '@kit.ArkData';
+import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -50,11 +51,13 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       result.success("OpenHarmony ^ ^ ")
     } else if(call.method == "openUrl") {
       let url = call.argument("url") as string;
+      requestBackground()
       openUrl(url, context)
       result.success(null)
     }
     else if(call.method == "selectFile") {
-      selectFile(context).then((f)=>{
+      let filter = call.argument("filter") as string[];
+      selectFile(context, filter).then((f)=>{
         result.success(f)
       })
     }
@@ -106,11 +109,11 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
   }
 }
 
-async function selectFile(context: common.Context ) { // 需确保 context 由 UIAbilityContext 转换而来
+async function selectFile(context: common.Context, filter: string[] | null = null) { // 需确保 context 由 UIAbilityContext 转换而来
   try {
     let documentSelectOptions = new picker.DocumentSelectOptions();
     documentSelectOptions.maxSelectNumber =1;
-    documentSelectOptions.fileSuffixFilters = ["hap","app","hsp"]
+    documentSelectOptions.fileSuffixFilters = filter ?? ["hap","app","hsp"]
     let documentPicker = new picker.DocumentViewPicker(context);
     const documentSelectResult = await documentPicker.select(documentSelectOptions)
     console.info('testTag' + JSON.stringify(documentSelectResult));
@@ -141,4 +144,15 @@ export function  openUrl(url: string, context:common.Context): void{
   } catch (paramError) {
     console.error("openUrl error",paramError)
   }
+}
+
+function requestBackground(){
+   try {
+      let delayInfo = backgroundTaskManager.requestSuspendDelay("open url", () => {
+        console.info("Request suspension delay will time out.");
+      })
+      let taskId = delayInfo.requestId;
+    } catch (error) {
+      console.error(`requestSuspendDelay failed. code is ${error.code} message is ${error.message}`);
+    }
 }
