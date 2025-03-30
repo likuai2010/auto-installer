@@ -18,7 +18,6 @@ class PayPage extends StatelessWidget {
       crossAxisSpacing: 5,
       childAspectRatio: 1.5,
       crossAxisCount: columns.toInt(),
-
       children: List.generate(model.payList.payList.length, (i) {
         return Card.filled(
           child: Padding(
@@ -49,16 +48,15 @@ class PayPage extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context,
-
                 builder: (_) {
                   return AlertDialog(
-                    title: Text("充电"),
+                    title: const Text("充电"),
                     content: SizedBox(
                       width: 300,
                       height: 400,
                       child: Column(
                         children: [
-                          Text("如果您觉得我们的软件对您有帮助，欢迎扫码赞赏。"),
+                          const Text("如果您觉得我们的软件对您有帮助，欢迎扫码赞赏。"),
                           SizedBox(
                             width: 240,
                             height: 240,
@@ -71,7 +69,7 @@ class PayPage extends StatelessWidget {
                 },
               );
             },
-            child: Text("赞赏"),
+            child: const Text("赞赏"),
           ),
         ],
       ),
@@ -91,7 +89,7 @@ class PayPage extends StatelessWidget {
                   style: texttheme.labelSmall,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(child: _payList(context, model)),
             ],
           );

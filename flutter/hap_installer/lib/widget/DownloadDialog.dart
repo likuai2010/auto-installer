@@ -64,11 +64,10 @@ class _DownloadDialogState extends State<DownloadDialog> {
     }
 
     try {
-      Dio dio = Dio();
-      await dio.download(
+      await download(
         url,
         savePath.path,
-        onReceiveProgress: (received, total) {
+        (received, total) {
           if (total != -1) {
             setState(() {
               _progress = received / total;
@@ -77,17 +76,34 @@ class _DownloadDialogState extends State<DownloadDialog> {
           }
         },
       );
-
       setState(() {
         _status = "下载完成";
       });
-
-      // 下载完成后可以提示用户或进行其他操作
     } catch (e) {
       setState(() {
         _status = "下载失败: $e";
       });
     }
+  }
+
+  download(String url, String filePath,
+      Function(int received, int total) onReceiveProgress) async {
+    final httpClient = HttpClient();
+    final uri = Uri.parse(url);
+    final request = await httpClient.openUrl("GET", uri);
+    final response = await request.close();
+    final contentLength = response.contentLength;
+    int receivedLength = 0;
+    final bytes = <int>[];
+    await for (var data in response) {
+      bytes.addAll(data);
+      receivedLength += data.length;
+      if (contentLength != -1) {
+        onReceiveProgress(receivedLength, contentLength);
+      }
+    }
+    final file = File(filePath);
+    await file.writeAsBytes(bytes, flush: true);
   }
 
   @override

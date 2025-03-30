@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
@@ -94,14 +92,13 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   viewmodel.toLogin(context);
                 },
-                child:
-                    !model.loading
-                        ? Text(model.isLogin ? "更换账号" : "登录账号")
-                        : CircularProgressIndicator(value: null),
+                child: !model.loading
+                    ? Text(model.isLogin ? "更换账号" : "登录账号")
+                    : CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
-              leading: Icon(
+              leading: const Icon(
                 Icons.signal_wifi_off_outlined,
               ), //Icon(Icons.signal_wifi_4_bar)
               title: model.currentDevice ?? "未连接",
@@ -130,10 +127,9 @@ class DebugSteps extends StatelessWidget {
                     );
                   });
                 },
-                child:
-                    !model.deviceLoaing
-                        ? Text("连接设备")
-                        : CircularProgressIndicator(value: null),
+                child: !model.deviceLoaing
+                    ? const Text("连接设备")
+                    : const CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -144,23 +140,22 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child:
-                    !model.fileLoading
-                        ? Text("选择")
-                        : CircularProgressIndicator(value: null),
+                child: !model.fileLoading
+                    ? const Text("选择")
+                    : const CircularProgressIndicator(value: null),
               ),
             ),
-            Platform.isAndroid
-                ? TextButton(
-                  onPressed: () {
-                    model.exportLog();
-                  },
-                  child:
-                      !model.fileLoading
-                          ? Text("导出Hdc日志")
-                          : CircularProgressIndicator(value: null),
-                )
-                : Container(),
+            // Platform.isAndroid
+            //     ? TextButton(
+            //       onPressed: () {
+            //         model.exportLog();
+            //       },
+            //       child:
+            //           !model.fileLoading
+            //               ? Text("导出Hdc日志")
+            //               : CircularProgressIndicator(value: null),
+            //     )
+            //     : Container(),
           ],
         );
       },

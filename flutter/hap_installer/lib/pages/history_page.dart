@@ -12,14 +12,13 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         return Expanded(
-          child:
-              model.historyList.isNotEmpty
-                  ? ListView.builder(
-                    itemCount: model.historyList.length,
-                    itemBuilder:
-                        (_, i) => HistoryItem(info: model.historyList[i]),
-                  )
-                  : Center(child: Text("没有调试记录")),
+          child: model.historyList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: model.historyList.length,
+                  itemBuilder: (_, i) =>
+                      HistoryItem(info: model.historyList[i]),
+                )
+              : const Center(child: Text("没有调试记录")),
         );
       },
     );
