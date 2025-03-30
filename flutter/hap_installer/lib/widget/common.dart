@@ -36,16 +36,19 @@ class ListItem extends StatelessWidget {
     this.subTitle,
     this.tailling,
     this.onClick,
+    this.onLongPress,
   });
   final Widget? leading;
   final String title;
   final String? subTitle;
   final Widget? tailling;
   final Function()? onClick;
+  final Function()? onLongPress;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onClick,
+      onLongPress: onLongPress,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(
@@ -61,9 +64,9 @@ class ListItem extends StatelessWidget {
                   Text(title),
                   subTitle != null
                       ? Text(
-                        subTitle!,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      )
+                          subTitle!,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        )
                       : Container(),
                 ],
               ),
@@ -98,15 +101,15 @@ class GroupDecoration extends StatelessWidget {
             children: [
               label != null
                   ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 5,
-                    ),
-                    child: Text(
-                      label ?? "",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  )
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0,
+                        vertical: 5,
+                      ),
+                      child: Text(
+                        label ?? "",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    )
                   : Container(),
               ...children,
             ],
@@ -195,7 +198,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                 ),
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 5),
               child: Text(":"),
             ),
@@ -219,10 +222,9 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
               onPressed: () async {
                 connectHdc(context);
               },
-              icon:
-                  !connectiong
-                      ? Icon(Icons.check_circle)
-                      : CircularProgressIndicator(value: null),
+              icon: !connectiong
+                  ? const Icon(Icons.check_circle)
+                  : const CircularProgressIndicator(value: null),
             ),
           ],
         ),

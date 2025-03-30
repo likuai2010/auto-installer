@@ -225,7 +225,7 @@ class EcoViewModel extends ChangeNotifier {
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
-    setLocalUrl("$ip:$port");
+    await setLocalUrl("$ip:$port");
     var result = await _connectHdc("$ip:$port");
     toask(context, result);
   }
@@ -250,11 +250,10 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList =
-        result
-            .split("\n")
-            .where((d) => d != '' && !d.contains('[Empty]'))
-            .toList();
+    deviceList = result
+        .split("\n")
+        .where((d) => d != '' && !d.contains('[Empty]'))
+        .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -285,11 +284,10 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList =
-          await files
-              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-              .map((f) => f.path)
-              .toList();
+      pathList = await files
+          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+          .map((f) => f.path)
+          .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
@@ -304,7 +302,7 @@ class EcoViewModel extends ChangeNotifier {
     if (err != "成功") {
       throw FormatException("解压文件失败: $err");
     }
-    print("readModuleInfo $debugPath $err");
+    print("readModuleInfo  $hapPath  $err");
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
       packageName: moduleInfo.app?.bundleName ?? "未知",
@@ -395,11 +393,13 @@ class EcoViewModel extends ChangeNotifier {
     }
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
+
   saveSignConfig() async {
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
   }
+
   resetSignConfig() async {
-     final defaultConfig = SignConfig(
+    final defaultConfig = SignConfig(
       udids: List.empty(),
       certId: "",
       csrPath: path.join(storeDir, "xiaobai.csr"),

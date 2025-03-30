@@ -120,7 +120,7 @@ async function selectFile(context: common.Context, filter: string[] | null = nul
     if(documentSelectResult.length > 0){
       const targetUri = documentSelectResult[0]
       const sl = targetUri.split("/")
-      let hapPath =  context.filesDir + "/" + sl[sl.length - 1]
+      let hapPath =  context.filesDir + "/" + sl[sl.length - 1].replace(/\s+/g, '_')
       await fs.copy(targetUri, fileUri.getUriFromPath(hapPath))
       console.info('testTag selectFile' + hapPath);
       return hapPath

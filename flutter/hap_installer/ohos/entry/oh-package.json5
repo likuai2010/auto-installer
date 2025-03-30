@@ -7,6 +7,7 @@
   "license": "",
   "dependencies": {
     "ohos_adapter": "file:../har/ohos_adapter.har",
-    "native_core": "file:../har/native_core.har"
+    "native_core": "file:../har/native_core.har",
+    "pdf_render": "file:../har/pdf_render.har"
   }
 }
