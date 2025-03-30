@@ -1,4 +1,3 @@
-// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -10,649 +9,692 @@ part of '../ModuleInfo.dart';
 // FreezedGenerator
 // **************************************************************************
 
-// dart format off
 T _$identity<T>(T value) => value;
 
-/// @nodoc
-mixin _$AppInfo implements DiagnosticableTreeMixin {
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
- String get bundleName; String get compileSdkVersion; String get versionName;
-/// Create a copy of AppInfo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$AppInfoCopyWith<AppInfo> get copyWith => _$AppInfoCopyWithImpl<AppInfo>(this as AppInfo, _$identity);
-
-  /// Serializes this AppInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'AppInfo'))
-    ..add(DiagnosticsProperty('bundleName', bundleName))..add(DiagnosticsProperty('compileSdkVersion', compileSdkVersion))..add(DiagnosticsProperty('versionName', versionName));
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppInfo&&(identical(other.bundleName, bundleName) || other.bundleName == bundleName)&&(identical(other.compileSdkVersion, compileSdkVersion) || other.compileSdkVersion == compileSdkVersion)&&(identical(other.versionName, versionName) || other.versionName == versionName));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,bundleName,compileSdkVersion,versionName);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'AppInfo(bundleName: $bundleName, compileSdkVersion: $compileSdkVersion, versionName: $versionName)';
-}
-
-
+AppInfo _$AppInfoFromJson(Map<String, dynamic> json) {
+  return _AppInfo.fromJson(json);
 }
 
 /// @nodoc
-abstract mixin class $AppInfoCopyWith<$Res>  {
-  factory $AppInfoCopyWith(AppInfo value, $Res Function(AppInfo) _then) = _$AppInfoCopyWithImpl;
-@useResult
-$Res call({
- String bundleName, String compileSdkVersion, String versionName
-});
+mixin _$AppInfo {
+  String get bundleName => throw _privateConstructorUsedError;
+  String get compileSdkVersion => throw _privateConstructorUsedError;
+  String get versionName => throw _privateConstructorUsedError;
 
-
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AppInfoCopyWith<AppInfo> get copyWith => throw _privateConstructorUsedError;
 }
+
 /// @nodoc
-class _$AppInfoCopyWithImpl<$Res>
+abstract class $AppInfoCopyWith<$Res> {
+  factory $AppInfoCopyWith(AppInfo value, $Res Function(AppInfo) then) =
+      _$AppInfoCopyWithImpl<$Res, AppInfo>;
+  @useResult
+  $Res call({String bundleName, String compileSdkVersion, String versionName});
+}
+
+/// @nodoc
+class _$AppInfoCopyWithImpl<$Res, $Val extends AppInfo>
     implements $AppInfoCopyWith<$Res> {
-  _$AppInfoCopyWithImpl(this._self, this._then);
+  _$AppInfoCopyWithImpl(this._value, this._then);
 
-  final AppInfo _self;
-  final $Res Function(AppInfo) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of AppInfo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? bundleName = null,Object? compileSdkVersion = null,Object? versionName = null,}) {
-  return _then(_self.copyWith(
-bundleName: null == bundleName ? _self.bundleName : bundleName // ignore: cast_nullable_to_non_nullable
-as String,compileSdkVersion: null == compileSdkVersion ? _self.compileSdkVersion : compileSdkVersion // ignore: cast_nullable_to_non_nullable
-as String,versionName: null == versionName ? _self.versionName : versionName // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bundleName = null,
+    Object? compileSdkVersion = null,
+    Object? versionName = null,
+  }) {
+    return _then(_value.copyWith(
+      bundleName: null == bundleName
+          ? _value.bundleName
+          : bundleName // ignore: cast_nullable_to_non_nullable
+              as String,
+      compileSdkVersion: null == compileSdkVersion
+          ? _value.compileSdkVersion
+          : compileSdkVersion // ignore: cast_nullable_to_non_nullable
+              as String,
+      versionName: null == versionName
+          ? _value.versionName
+          : versionName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$AppInfoImplCopyWith<$Res> implements $AppInfoCopyWith<$Res> {
+  factory _$$AppInfoImplCopyWith(
+          _$AppInfoImpl value, $Res Function(_$AppInfoImpl) then) =
+      __$$AppInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String bundleName, String compileSdkVersion, String versionName});
 }
 
+/// @nodoc
+class __$$AppInfoImplCopyWithImpl<$Res>
+    extends _$AppInfoCopyWithImpl<$Res, _$AppInfoImpl>
+    implements _$$AppInfoImplCopyWith<$Res> {
+  __$$AppInfoImplCopyWithImpl(
+      _$AppInfoImpl _value, $Res Function(_$AppInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bundleName = null,
+    Object? compileSdkVersion = null,
+    Object? versionName = null,
+  }) {
+    return _then(_$AppInfoImpl(
+      bundleName: null == bundleName
+          ? _value.bundleName
+          : bundleName // ignore: cast_nullable_to_non_nullable
+              as String,
+      compileSdkVersion: null == compileSdkVersion
+          ? _value.compileSdkVersion
+          : compileSdkVersion // ignore: cast_nullable_to_non_nullable
+              as String,
+      versionName: null == versionName
+          ? _value.versionName
+          : versionName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
+  const _$AppInfoImpl(
+      {this.bundleName = "",
+      this.compileSdkVersion = "",
+      this.versionName = ""});
 
-class _AppInfo with DiagnosticableTreeMixin implements AppInfo {
-  const _AppInfo({this.bundleName = "", this.compileSdkVersion = "", this.versionName = ""});
-  factory _AppInfo.fromJson(Map<String, dynamic> json) => _$AppInfoFromJson(json);
+  factory _$AppInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AppInfoImplFromJson(json);
 
-@override@JsonKey() final  String bundleName;
-@override@JsonKey() final  String compileSdkVersion;
-@override@JsonKey() final  String versionName;
+  @override
+  @JsonKey()
+  final String bundleName;
+  @override
+  @JsonKey()
+  final String compileSdkVersion;
+  @override
+  @JsonKey()
+  final String versionName;
 
-/// Create a copy of AppInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$AppInfoCopyWith<_AppInfo> get copyWith => __$AppInfoCopyWithImpl<_AppInfo>(this, _$identity);
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AppInfo(bundleName: $bundleName, compileSdkVersion: $compileSdkVersion, versionName: $versionName)';
+  }
 
-@override
-Map<String, dynamic> toJson() {
-  return _$AppInfoToJson(this, );
-}
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'AppInfo'))
-    ..add(DiagnosticsProperty('bundleName', bundleName))..add(DiagnosticsProperty('compileSdkVersion', compileSdkVersion))..add(DiagnosticsProperty('versionName', versionName));
-}
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AppInfo'))
+      ..add(DiagnosticsProperty('bundleName', bundleName))
+      ..add(DiagnosticsProperty('compileSdkVersion', compileSdkVersion))
+      ..add(DiagnosticsProperty('versionName', versionName));
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppInfo&&(identical(other.bundleName, bundleName) || other.bundleName == bundleName)&&(identical(other.compileSdkVersion, compileSdkVersion) || other.compileSdkVersion == compileSdkVersion)&&(identical(other.versionName, versionName) || other.versionName == versionName));
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AppInfoImpl &&
+            (identical(other.bundleName, bundleName) ||
+                other.bundleName == bundleName) &&
+            (identical(other.compileSdkVersion, compileSdkVersion) ||
+                other.compileSdkVersion == compileSdkVersion) &&
+            (identical(other.versionName, versionName) ||
+                other.versionName == versionName));
+  }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,bundleName,compileSdkVersion,versionName);
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, bundleName, compileSdkVersion, versionName);
 
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'AppInfo(bundleName: $bundleName, compileSdkVersion: $compileSdkVersion, versionName: $versionName)';
-}
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AppInfoImplCopyWith<_$AppInfoImpl> get copyWith =>
+      __$$AppInfoImplCopyWithImpl<_$AppInfoImpl>(this, _$identity);
 
-
-}
-
-/// @nodoc
-abstract mixin class _$AppInfoCopyWith<$Res> implements $AppInfoCopyWith<$Res> {
-  factory _$AppInfoCopyWith(_AppInfo value, $Res Function(_AppInfo) _then) = __$AppInfoCopyWithImpl;
-@override @useResult
-$Res call({
- String bundleName, String compileSdkVersion, String versionName
-});
-
-
-
-
-}
-/// @nodoc
-class __$AppInfoCopyWithImpl<$Res>
-    implements _$AppInfoCopyWith<$Res> {
-  __$AppInfoCopyWithImpl(this._self, this._then);
-
-  final _AppInfo _self;
-  final $Res Function(_AppInfo) _then;
-
-/// Create a copy of AppInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? bundleName = null,Object? compileSdkVersion = null,Object? versionName = null,}) {
-  return _then(_AppInfo(
-bundleName: null == bundleName ? _self.bundleName : bundleName // ignore: cast_nullable_to_non_nullable
-as String,compileSdkVersion: null == compileSdkVersion ? _self.compileSdkVersion : compileSdkVersion // ignore: cast_nullable_to_non_nullable
-as String,versionName: null == versionName ? _self.versionName : versionName // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AppInfoImplToJson(
+      this,
+    );
+  }
 }
 
+abstract class _AppInfo implements AppInfo {
+  const factory _AppInfo(
+      {final String bundleName,
+      final String compileSdkVersion,
+      final String versionName}) = _$AppInfoImpl;
 
+  factory _AppInfo.fromJson(Map<String, dynamic> json) = _$AppInfoImpl.fromJson;
+
+  @override
+  String get bundleName;
+  @override
+  String get compileSdkVersion;
+  @override
+  String get versionName;
+  @override
+  @JsonKey(ignore: true)
+  _$$AppInfoImplCopyWith<_$AppInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-
-/// @nodoc
-mixin _$RequestPermission implements DiagnosticableTreeMixin {
-
- String get name;
-/// Create a copy of RequestPermission
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$RequestPermissionCopyWith<RequestPermission> get copyWith => _$RequestPermissionCopyWithImpl<RequestPermission>(this as RequestPermission, _$identity);
-
-  /// Serializes this RequestPermission to a JSON map.
-  Map<String, dynamic> toJson();
-
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'RequestPermission'))
-    ..add(DiagnosticsProperty('name', name));
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestPermission&&(identical(other.name, name) || other.name == name));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,name);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'RequestPermission(name: $name)';
-}
-
-
+RequestPermission _$RequestPermissionFromJson(Map<String, dynamic> json) {
+  return _RequestPermission.fromJson(json);
 }
 
 /// @nodoc
-abstract mixin class $RequestPermissionCopyWith<$Res>  {
-  factory $RequestPermissionCopyWith(RequestPermission value, $Res Function(RequestPermission) _then) = _$RequestPermissionCopyWithImpl;
-@useResult
-$Res call({
- String name
-});
+mixin _$RequestPermission {
+  String get name => throw _privateConstructorUsedError;
 
-
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RequestPermissionCopyWith<RequestPermission> get copyWith =>
+      throw _privateConstructorUsedError;
 }
+
 /// @nodoc
-class _$RequestPermissionCopyWithImpl<$Res>
+abstract class $RequestPermissionCopyWith<$Res> {
+  factory $RequestPermissionCopyWith(
+          RequestPermission value, $Res Function(RequestPermission) then) =
+      _$RequestPermissionCopyWithImpl<$Res, RequestPermission>;
+  @useResult
+  $Res call({String name});
+}
+
+/// @nodoc
+class _$RequestPermissionCopyWithImpl<$Res, $Val extends RequestPermission>
     implements $RequestPermissionCopyWith<$Res> {
-  _$RequestPermissionCopyWithImpl(this._self, this._then);
+  _$RequestPermissionCopyWithImpl(this._value, this._then);
 
-  final RequestPermission _self;
-  final $Res Function(RequestPermission) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of RequestPermission
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,}) {
-  return _then(_self.copyWith(
-name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$RequestPermissionImplCopyWith<$Res>
+    implements $RequestPermissionCopyWith<$Res> {
+  factory _$$RequestPermissionImplCopyWith(_$RequestPermissionImpl value,
+          $Res Function(_$RequestPermissionImpl) then) =
+      __$$RequestPermissionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name});
 }
 
+/// @nodoc
+class __$$RequestPermissionImplCopyWithImpl<$Res>
+    extends _$RequestPermissionCopyWithImpl<$Res, _$RequestPermissionImpl>
+    implements _$$RequestPermissionImplCopyWith<$Res> {
+  __$$RequestPermissionImplCopyWithImpl(_$RequestPermissionImpl _value,
+      $Res Function(_$RequestPermissionImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+  }) {
+    return _then(_$RequestPermissionImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$RequestPermissionImpl
+    with DiagnosticableTreeMixin
+    implements _RequestPermission {
+  const _$RequestPermissionImpl({this.name = ""});
 
-class _RequestPermission with DiagnosticableTreeMixin implements RequestPermission {
-  const _RequestPermission({this.name = ""});
-  factory _RequestPermission.fromJson(Map<String, dynamic> json) => _$RequestPermissionFromJson(json);
+  factory _$RequestPermissionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RequestPermissionImplFromJson(json);
 
-@override@JsonKey() final  String name;
+  @override
+  @JsonKey()
+  final String name;
 
-/// Create a copy of RequestPermission
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RequestPermissionCopyWith<_RequestPermission> get copyWith => __$RequestPermissionCopyWithImpl<_RequestPermission>(this, _$identity);
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RequestPermission(name: $name)';
+  }
 
-@override
-Map<String, dynamic> toJson() {
-  return _$RequestPermissionToJson(this, );
-}
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'RequestPermission'))
-    ..add(DiagnosticsProperty('name', name));
-}
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'RequestPermission'))
+      ..add(DiagnosticsProperty('name', name));
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestPermission&&(identical(other.name, name) || other.name == name));
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RequestPermissionImpl &&
+            (identical(other.name, name) || other.name == name));
+  }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,name);
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name);
 
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'RequestPermission(name: $name)';
-}
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RequestPermissionImplCopyWith<_$RequestPermissionImpl> get copyWith =>
+      __$$RequestPermissionImplCopyWithImpl<_$RequestPermissionImpl>(
+          this, _$identity);
 
-
-}
-
-/// @nodoc
-abstract mixin class _$RequestPermissionCopyWith<$Res> implements $RequestPermissionCopyWith<$Res> {
-  factory _$RequestPermissionCopyWith(_RequestPermission value, $Res Function(_RequestPermission) _then) = __$RequestPermissionCopyWithImpl;
-@override @useResult
-$Res call({
- String name
-});
-
-
-
-
-}
-/// @nodoc
-class __$RequestPermissionCopyWithImpl<$Res>
-    implements _$RequestPermissionCopyWith<$Res> {
-  __$RequestPermissionCopyWithImpl(this._self, this._then);
-
-  final _RequestPermission _self;
-  final $Res Function(_RequestPermission) _then;
-
-/// Create a copy of RequestPermission
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,}) {
-  return _then(_RequestPermission(
-name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RequestPermissionImplToJson(
+      this,
+    );
+  }
 }
 
+abstract class _RequestPermission implements RequestPermission {
+  const factory _RequestPermission({final String name}) =
+      _$RequestPermissionImpl;
 
+  factory _RequestPermission.fromJson(Map<String, dynamic> json) =
+      _$RequestPermissionImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$RequestPermissionImplCopyWith<_$RequestPermissionImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-
-/// @nodoc
-mixin _$Module implements DiagnosticableTreeMixin {
-
- List<RequestPermission> get requestPermissions;
-/// Create a copy of Module
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ModuleCopyWith<Module> get copyWith => _$ModuleCopyWithImpl<Module>(this as Module, _$identity);
-
-  /// Serializes this Module to a JSON map.
-  Map<String, dynamic> toJson();
-
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'Module'))
-    ..add(DiagnosticsProperty('requestPermissions', requestPermissions));
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Module&&const DeepCollectionEquality().equals(other.requestPermissions, requestPermissions));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(requestPermissions));
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'Module(requestPermissions: $requestPermissions)';
-}
-
-
+Module _$ModuleFromJson(Map<String, dynamic> json) {
+  return _Module.fromJson(json);
 }
 
 /// @nodoc
-abstract mixin class $ModuleCopyWith<$Res>  {
-  factory $ModuleCopyWith(Module value, $Res Function(Module) _then) = _$ModuleCopyWithImpl;
-@useResult
-$Res call({
- List<RequestPermission> requestPermissions
-});
+mixin _$Module {
+  List<RequestPermission> get requestPermissions =>
+      throw _privateConstructorUsedError;
 
-
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ModuleCopyWith<Module> get copyWith => throw _privateConstructorUsedError;
 }
+
 /// @nodoc
-class _$ModuleCopyWithImpl<$Res>
+abstract class $ModuleCopyWith<$Res> {
+  factory $ModuleCopyWith(Module value, $Res Function(Module) then) =
+      _$ModuleCopyWithImpl<$Res, Module>;
+  @useResult
+  $Res call({List<RequestPermission> requestPermissions});
+}
+
+/// @nodoc
+class _$ModuleCopyWithImpl<$Res, $Val extends Module>
     implements $ModuleCopyWith<$Res> {
-  _$ModuleCopyWithImpl(this._self, this._then);
+  _$ModuleCopyWithImpl(this._value, this._then);
 
-  final Module _self;
-  final $Res Function(Module) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of Module
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? requestPermissions = null,}) {
-  return _then(_self.copyWith(
-requestPermissions: null == requestPermissions ? _self.requestPermissions : requestPermissions // ignore: cast_nullable_to_non_nullable
-as List<RequestPermission>,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requestPermissions = null,
+  }) {
+    return _then(_value.copyWith(
+      requestPermissions: null == requestPermissions
+          ? _value.requestPermissions
+          : requestPermissions // ignore: cast_nullable_to_non_nullable
+              as List<RequestPermission>,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$ModuleImplCopyWith<$Res> implements $ModuleCopyWith<$Res> {
+  factory _$$ModuleImplCopyWith(
+          _$ModuleImpl value, $Res Function(_$ModuleImpl) then) =
+      __$$ModuleImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<RequestPermission> requestPermissions});
 }
 
+/// @nodoc
+class __$$ModuleImplCopyWithImpl<$Res>
+    extends _$ModuleCopyWithImpl<$Res, _$ModuleImpl>
+    implements _$$ModuleImplCopyWith<$Res> {
+  __$$ModuleImplCopyWithImpl(
+      _$ModuleImpl _value, $Res Function(_$ModuleImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requestPermissions = null,
+  }) {
+    return _then(_$ModuleImpl(
+      requestPermissions: null == requestPermissions
+          ? _value._requestPermissions
+          : requestPermissions // ignore: cast_nullable_to_non_nullable
+              as List<RequestPermission>,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
+  const _$ModuleImpl(
+      {final List<RequestPermission> requestPermissions = const []})
+      : _requestPermissions = requestPermissions;
 
-class _Module with DiagnosticableTreeMixin implements Module {
-  const _Module({final  List<RequestPermission> requestPermissions = const []}): _requestPermissions = requestPermissions;
-  factory _Module.fromJson(Map<String, dynamic> json) => _$ModuleFromJson(json);
+  factory _$ModuleImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ModuleImplFromJson(json);
 
- final  List<RequestPermission> _requestPermissions;
-@override@JsonKey() List<RequestPermission> get requestPermissions {
-  if (_requestPermissions is EqualUnmodifiableListView) return _requestPermissions;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_requestPermissions);
+  final List<RequestPermission> _requestPermissions;
+  @override
+  @JsonKey()
+  List<RequestPermission> get requestPermissions {
+    if (_requestPermissions is EqualUnmodifiableListView)
+      return _requestPermissions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_requestPermissions);
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'Module(requestPermissions: $requestPermissions)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'Module'))
+      ..add(DiagnosticsProperty('requestPermissions', requestPermissions));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ModuleImpl &&
+            const DeepCollectionEquality()
+                .equals(other._requestPermissions, _requestPermissions));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_requestPermissions));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ModuleImplCopyWith<_$ModuleImpl> get copyWith =>
+      __$$ModuleImplCopyWithImpl<_$ModuleImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ModuleImplToJson(
+      this,
+    );
+  }
 }
 
+abstract class _Module implements Module {
+  const factory _Module({final List<RequestPermission> requestPermissions}) =
+      _$ModuleImpl;
 
-/// Create a copy of Module
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ModuleCopyWith<_Module> get copyWith => __$ModuleCopyWithImpl<_Module>(this, _$identity);
+  factory _Module.fromJson(Map<String, dynamic> json) = _$ModuleImpl.fromJson;
 
-@override
-Map<String, dynamic> toJson() {
-  return _$ModuleToJson(this, );
-}
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'Module'))
-    ..add(DiagnosticsProperty('requestPermissions', requestPermissions));
+  @override
+  List<RequestPermission> get requestPermissions;
+  @override
+  @JsonKey(ignore: true)
+  _$$ModuleImplCopyWith<_$ModuleImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Module&&const DeepCollectionEquality().equals(other._requestPermissions, _requestPermissions));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_requestPermissions));
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'Module(requestPermissions: $requestPermissions)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ModuleCopyWith<$Res> implements $ModuleCopyWith<$Res> {
-  factory _$ModuleCopyWith(_Module value, $Res Function(_Module) _then) = __$ModuleCopyWithImpl;
-@override @useResult
-$Res call({
- List<RequestPermission> requestPermissions
-});
-
-
-
-
-}
-/// @nodoc
-class __$ModuleCopyWithImpl<$Res>
-    implements _$ModuleCopyWith<$Res> {
-  __$ModuleCopyWithImpl(this._self, this._then);
-
-  final _Module _self;
-  final $Res Function(_Module) _then;
-
-/// Create a copy of Module
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? requestPermissions = null,}) {
-  return _then(_Module(
-requestPermissions: null == requestPermissions ? _self._requestPermissions : requestPermissions // ignore: cast_nullable_to_non_nullable
-as List<RequestPermission>,
-  ));
-}
-
-
-}
-
-
-/// @nodoc
-mixin _$ModuleInfo implements DiagnosticableTreeMixin {
-
- AppInfo? get app; Module? get module;
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ModuleInfoCopyWith<ModuleInfo> get copyWith => _$ModuleInfoCopyWithImpl<ModuleInfo>(this as ModuleInfo, _$identity);
-
-  /// Serializes this ModuleInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ModuleInfo'))
-    ..add(DiagnosticsProperty('app', app))..add(DiagnosticsProperty('module', module));
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ModuleInfo&&(identical(other.app, app) || other.app == app)&&(identical(other.module, module) || other.module == module));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,app,module);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'ModuleInfo(app: $app, module: $module)';
-}
-
-
+ModuleInfo _$ModuleInfoFromJson(Map<String, dynamic> json) {
+  return _ModuleInfo.fromJson(json);
 }
 
 /// @nodoc
-abstract mixin class $ModuleInfoCopyWith<$Res>  {
-  factory $ModuleInfoCopyWith(ModuleInfo value, $Res Function(ModuleInfo) _then) = _$ModuleInfoCopyWithImpl;
-@useResult
-$Res call({
- AppInfo? app, Module? module
-});
+mixin _$ModuleInfo {
+  AppInfo? get app => throw _privateConstructorUsedError;
+  Module? get module => throw _privateConstructorUsedError;
 
-
-$AppInfoCopyWith<$Res>? get app;$ModuleCopyWith<$Res>? get module;
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ModuleInfoCopyWith<ModuleInfo> get copyWith =>
+      throw _privateConstructorUsedError;
 }
+
 /// @nodoc
-class _$ModuleInfoCopyWithImpl<$Res>
+abstract class $ModuleInfoCopyWith<$Res> {
+  factory $ModuleInfoCopyWith(
+          ModuleInfo value, $Res Function(ModuleInfo) then) =
+      _$ModuleInfoCopyWithImpl<$Res, ModuleInfo>;
+  @useResult
+  $Res call({AppInfo? app, Module? module});
+
+  $AppInfoCopyWith<$Res>? get app;
+  $ModuleCopyWith<$Res>? get module;
+}
+
+/// @nodoc
+class _$ModuleInfoCopyWithImpl<$Res, $Val extends ModuleInfo>
     implements $ModuleInfoCopyWith<$Res> {
-  _$ModuleInfoCopyWithImpl(this._self, this._then);
+  _$ModuleInfoCopyWithImpl(this._value, this._then);
 
-  final ModuleInfo _self;
-  final $Res Function(ModuleInfo) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? app = freezed,Object? module = freezed,}) {
-  return _then(_self.copyWith(
-app: freezed == app ? _self.app : app // ignore: cast_nullable_to_non_nullable
-as AppInfo?,module: freezed == module ? _self.module : module // ignore: cast_nullable_to_non_nullable
-as Module?,
-  ));
-}
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AppInfoCopyWith<$Res>? get app {
-    if (_self.app == null) {
-    return null;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? app = freezed,
+    Object? module = freezed,
+  }) {
+    return _then(_value.copyWith(
+      app: freezed == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as AppInfo?,
+      module: freezed == module
+          ? _value.module
+          : module // ignore: cast_nullable_to_non_nullable
+              as Module?,
+    ) as $Val);
   }
 
-  return $AppInfoCopyWith<$Res>(_self.app!, (value) {
-    return _then(_self.copyWith(app: value));
-  });
-}/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ModuleCopyWith<$Res>? get module {
-    if (_self.module == null) {
-    return null;
+  @override
+  @pragma('vm:prefer-inline')
+  $AppInfoCopyWith<$Res>? get app {
+    if (_value.app == null) {
+      return null;
+    }
+
+    return $AppInfoCopyWith<$Res>(_value.app!, (value) {
+      return _then(_value.copyWith(app: value) as $Val);
+    });
   }
 
-  return $ModuleCopyWith<$Res>(_self.module!, (value) {
-    return _then(_self.copyWith(module: value));
-  });
-}
+  @override
+  @pragma('vm:prefer-inline')
+  $ModuleCopyWith<$Res>? get module {
+    if (_value.module == null) {
+      return null;
+    }
+
+    return $ModuleCopyWith<$Res>(_value.module!, (value) {
+      return _then(_value.copyWith(module: value) as $Val);
+    });
+  }
 }
 
+/// @nodoc
+abstract class _$$ModuleInfoImplCopyWith<$Res>
+    implements $ModuleInfoCopyWith<$Res> {
+  factory _$$ModuleInfoImplCopyWith(
+          _$ModuleInfoImpl value, $Res Function(_$ModuleInfoImpl) then) =
+      __$$ModuleInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({AppInfo? app, Module? module});
+
+  @override
+  $AppInfoCopyWith<$Res>? get app;
+  @override
+  $ModuleCopyWith<$Res>? get module;
+}
+
+/// @nodoc
+class __$$ModuleInfoImplCopyWithImpl<$Res>
+    extends _$ModuleInfoCopyWithImpl<$Res, _$ModuleInfoImpl>
+    implements _$$ModuleInfoImplCopyWith<$Res> {
+  __$$ModuleInfoImplCopyWithImpl(
+      _$ModuleInfoImpl _value, $Res Function(_$ModuleInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? app = freezed,
+    Object? module = freezed,
+  }) {
+    return _then(_$ModuleInfoImpl(
+      app: freezed == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as AppInfo?,
+      module: freezed == module
+          ? _value.module
+          : module // ignore: cast_nullable_to_non_nullable
+              as Module?,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$ModuleInfoImpl with DiagnosticableTreeMixin implements _ModuleInfo {
+  const _$ModuleInfoImpl({this.app = null, this.module = null});
 
-class _ModuleInfo with DiagnosticableTreeMixin implements ModuleInfo {
-  const _ModuleInfo({this.app = null, this.module = null});
-  factory _ModuleInfo.fromJson(Map<String, dynamic> json) => _$ModuleInfoFromJson(json);
+  factory _$ModuleInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ModuleInfoImplFromJson(json);
 
-@override@JsonKey() final  AppInfo? app;
-@override@JsonKey() final  Module? module;
+  @override
+  @JsonKey()
+  final AppInfo? app;
+  @override
+  @JsonKey()
+  final Module? module;
 
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ModuleInfoCopyWith<_ModuleInfo> get copyWith => __$ModuleInfoCopyWithImpl<_ModuleInfo>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$ModuleInfoToJson(this, );
-}
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ModuleInfo'))
-    ..add(DiagnosticsProperty('app', app))..add(DiagnosticsProperty('module', module));
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ModuleInfo&&(identical(other.app, app) || other.app == app)&&(identical(other.module, module) || other.module == module));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,app,module);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'ModuleInfo(app: $app, module: $module)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ModuleInfoCopyWith<$Res> implements $ModuleInfoCopyWith<$Res> {
-  factory _$ModuleInfoCopyWith(_ModuleInfo value, $Res Function(_ModuleInfo) _then) = __$ModuleInfoCopyWithImpl;
-@override @useResult
-$Res call({
- AppInfo? app, Module? module
-});
-
-
-@override $AppInfoCopyWith<$Res>? get app;@override $ModuleCopyWith<$Res>? get module;
-
-}
-/// @nodoc
-class __$ModuleInfoCopyWithImpl<$Res>
-    implements _$ModuleInfoCopyWith<$Res> {
-  __$ModuleInfoCopyWithImpl(this._self, this._then);
-
-  final _ModuleInfo _self;
-  final $Res Function(_ModuleInfo) _then;
-
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? app = freezed,Object? module = freezed,}) {
-  return _then(_ModuleInfo(
-app: freezed == app ? _self.app : app // ignore: cast_nullable_to_non_nullable
-as AppInfo?,module: freezed == module ? _self.module : module // ignore: cast_nullable_to_non_nullable
-as Module?,
-  ));
-}
-
-/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AppInfoCopyWith<$Res>? get app {
-    if (_self.app == null) {
-    return null;
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ModuleInfo(app: $app, module: $module)';
   }
 
-  return $AppInfoCopyWith<$Res>(_self.app!, (value) {
-    return _then(_self.copyWith(app: value));
-  });
-}/// Create a copy of ModuleInfo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ModuleCopyWith<$Res>? get module {
-    if (_self.module == null) {
-    return null;
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ModuleInfo'))
+      ..add(DiagnosticsProperty('app', app))
+      ..add(DiagnosticsProperty('module', module));
   }
 
-  return $ModuleCopyWith<$Res>(_self.module!, (value) {
-    return _then(_self.copyWith(module: value));
-  });
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ModuleInfoImpl &&
+            (identical(other.app, app) || other.app == app) &&
+            (identical(other.module, module) || other.module == module));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, app, module);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ModuleInfoImplCopyWith<_$ModuleInfoImpl> get copyWith =>
+      __$$ModuleInfoImplCopyWithImpl<_$ModuleInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ModuleInfoImplToJson(
+      this,
+    );
+  }
 }
 
-// dart format on
+abstract class _ModuleInfo implements ModuleInfo {
+  const factory _ModuleInfo({final AppInfo? app, final Module? module}) =
+      _$ModuleInfoImpl;
+
+  factory _ModuleInfo.fromJson(Map<String, dynamic> json) =
+      _$ModuleInfoImpl.fromJson;
+
+  @override
+  AppInfo? get app;
+  @override
+  Module? get module;
+  @override
+  @JsonKey(ignore: true)
+  _$$ModuleInfoImplCopyWith<_$ModuleInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

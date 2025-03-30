@@ -6,21 +6,22 @@ part of '../SignConfig.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_SignConfig _$SignConfigFromJson(Map<String, dynamic> json) => _SignConfig(
-  packageName: json['packageName'] as String? ?? "",
-  udids:
-      (json['udids'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-      const [],
-  csrPath: json['csrPath'] as String? ?? "",
-  certPath: json['certPath'] as String? ?? "",
-  certId: json['certId'] as String? ?? "",
-  profilePath: json['profilePath'] as String? ?? "",
-  keystoreFile: json['keystoreFile'] as String? ?? "",
-  keystorePwd: json['keystorePwd'] as String? ?? "",
-  keyAlias: json['keyAlias'] as String? ?? "",
-);
+_$SignConfigImpl _$$SignConfigImplFromJson(Map<String, dynamic> json) =>
+    _$SignConfigImpl(
+      packageName: json['packageName'] as String? ?? "",
+      udids:
+          (json['udids'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const [],
+      csrPath: json['csrPath'] as String? ?? "",
+      certPath: json['certPath'] as String? ?? "",
+      certId: json['certId'] as String? ?? "",
+      profilePath: json['profilePath'] as String? ?? "",
+      keystoreFile: json['keystoreFile'] as String? ?? "",
+      keystorePwd: json['keystorePwd'] as String? ?? "",
+      keyAlias: json['keyAlias'] as String? ?? "",
+    );
 
-Map<String, dynamic> _$SignConfigToJson(_SignConfig instance) =>
+Map<String, dynamic> _$$SignConfigImplToJson(_$SignConfigImpl instance) =>
     <String, dynamic>{
       'packageName': instance.packageName,
       'udids': instance.udids,

@@ -1,4 +1,3 @@
-// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -10,154 +9,216 @@ part of '../HapInfo.dart';
 // FreezedGenerator
 // **************************************************************************
 
-// dart format off
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+HapInfo _$HapInfoFromJson(Map<String, dynamic> json) {
+  return _HapInfo.fromJson(json);
+}
 
 /// @nodoc
 mixin _$HapInfo {
+  String get packageName => throw _privateConstructorUsedError;
+  List<String> get pathList => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
+  String? get icon => throw _privateConstructorUsedError;
 
- String get packageName; List<String> get pathList; String? get version; String? get icon;
-/// Create a copy of HapInfo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$HapInfoCopyWith<HapInfo> get copyWith => _$HapInfoCopyWithImpl<HapInfo>(this as HapInfo, _$identity);
-
-  /// Serializes this HapInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HapInfo&&(identical(other.packageName, packageName) || other.packageName == packageName)&&const DeepCollectionEquality().equals(other.pathList, pathList)&&(identical(other.version, version) || other.version == version)&&(identical(other.icon, icon) || other.icon == icon));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,packageName,const DeepCollectionEquality().hash(pathList),version,icon);
-
-@override
-String toString() {
-  return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon)';
-}
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HapInfoCopyWith<HapInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $HapInfoCopyWith<$Res>  {
-  factory $HapInfoCopyWith(HapInfo value, $Res Function(HapInfo) _then) = _$HapInfoCopyWithImpl;
-@useResult
-$Res call({
- String packageName, List<String> pathList, String? version, String? icon
-});
-
-
-
-
+abstract class $HapInfoCopyWith<$Res> {
+  factory $HapInfoCopyWith(HapInfo value, $Res Function(HapInfo) then) =
+      _$HapInfoCopyWithImpl<$Res, HapInfo>;
+  @useResult
+  $Res call(
+      {String packageName,
+      List<String> pathList,
+      String? version,
+      String? icon});
 }
+
 /// @nodoc
-class _$HapInfoCopyWithImpl<$Res>
+class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
     implements $HapInfoCopyWith<$Res> {
-  _$HapInfoCopyWithImpl(this._self, this._then);
+  _$HapInfoCopyWithImpl(this._value, this._then);
 
-  final HapInfo _self;
-  final $Res Function(HapInfo) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of HapInfo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? packageName = null,Object? pathList = null,Object? version = freezed,Object? icon = freezed,}) {
-  return _then(_self.copyWith(
-packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
-as String,pathList: null == pathList ? _self.pathList : pathList // ignore: cast_nullable_to_non_nullable
-as List<String>,version: freezed == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String?,icon: freezed == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? packageName = null,
+    Object? pathList = null,
+    Object? version = freezed,
+    Object? icon = freezed,
+  }) {
+    return _then(_value.copyWith(
+      packageName: null == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String,
+      pathList: null == pathList
+          ? _value.pathList
+          : pathList // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$HapInfoImplCopyWith<$Res> implements $HapInfoCopyWith<$Res> {
+  factory _$$HapInfoImplCopyWith(
+          _$HapInfoImpl value, $Res Function(_$HapInfoImpl) then) =
+      __$$HapInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String packageName,
+      List<String> pathList,
+      String? version,
+      String? icon});
 }
 
+/// @nodoc
+class __$$HapInfoImplCopyWithImpl<$Res>
+    extends _$HapInfoCopyWithImpl<$Res, _$HapInfoImpl>
+    implements _$$HapInfoImplCopyWith<$Res> {
+  __$$HapInfoImplCopyWithImpl(
+      _$HapInfoImpl _value, $Res Function(_$HapInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? packageName = null,
+    Object? pathList = null,
+    Object? version = freezed,
+    Object? icon = freezed,
+  }) {
+    return _then(_$HapInfoImpl(
+      packageName: null == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String,
+      pathList: null == pathList
+          ? _value._pathList
+          : pathList // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$HapInfoImpl implements _HapInfo {
+  const _$HapInfoImpl(
+      {this.packageName = "",
+      final List<String> pathList = const [],
+      this.version = null,
+      this.icon = null})
+      : _pathList = pathList;
 
-class _HapInfo implements HapInfo {
-  const _HapInfo({this.packageName = "", final  List<String> pathList = const [], this.version = null, this.icon = null}): _pathList = pathList;
-  factory _HapInfo.fromJson(Map<String, dynamic> json) => _$HapInfoFromJson(json);
+  factory _$HapInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HapInfoImplFromJson(json);
 
-@override@JsonKey() final  String packageName;
- final  List<String> _pathList;
-@override@JsonKey() List<String> get pathList {
-  if (_pathList is EqualUnmodifiableListView) return _pathList;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_pathList);
+  @override
+  @JsonKey()
+  final String packageName;
+  final List<String> _pathList;
+  @override
+  @JsonKey()
+  List<String> get pathList {
+    if (_pathList is EqualUnmodifiableListView) return _pathList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pathList);
+  }
+
+  @override
+  @JsonKey()
+  final String? version;
+  @override
+  @JsonKey()
+  final String? icon;
+
+  @override
+  String toString() {
+    return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HapInfoImpl &&
+            (identical(other.packageName, packageName) ||
+                other.packageName == packageName) &&
+            const DeepCollectionEquality().equals(other._pathList, _pathList) &&
+            (identical(other.version, version) || other.version == version) &&
+            (identical(other.icon, icon) || other.icon == icon));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, packageName,
+      const DeepCollectionEquality().hash(_pathList), version, icon);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HapInfoImplCopyWith<_$HapInfoImpl> get copyWith =>
+      __$$HapInfoImplCopyWithImpl<_$HapInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HapInfoImplToJson(
+      this,
+    );
+  }
 }
 
-@override@JsonKey() final  String? version;
-@override@JsonKey() final  String? icon;
+abstract class _HapInfo implements HapInfo {
+  const factory _HapInfo(
+      {final String packageName,
+      final List<String> pathList,
+      final String? version,
+      final String? icon}) = _$HapInfoImpl;
 
-/// Create a copy of HapInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$HapInfoCopyWith<_HapInfo> get copyWith => __$HapInfoCopyWithImpl<_HapInfo>(this, _$identity);
+  factory _HapInfo.fromJson(Map<String, dynamic> json) = _$HapInfoImpl.fromJson;
 
-@override
-Map<String, dynamic> toJson() {
-  return _$HapInfoToJson(this, );
+  @override
+  String get packageName;
+  @override
+  List<String> get pathList;
+  @override
+  String? get version;
+  @override
+  String? get icon;
+  @override
+  @JsonKey(ignore: true)
+  _$$HapInfoImplCopyWith<_$HapInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HapInfo&&(identical(other.packageName, packageName) || other.packageName == packageName)&&const DeepCollectionEquality().equals(other._pathList, _pathList)&&(identical(other.version, version) || other.version == version)&&(identical(other.icon, icon) || other.icon == icon));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,packageName,const DeepCollectionEquality().hash(_pathList),version,icon);
-
-@override
-String toString() {
-  return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$HapInfoCopyWith<$Res> implements $HapInfoCopyWith<$Res> {
-  factory _$HapInfoCopyWith(_HapInfo value, $Res Function(_HapInfo) _then) = __$HapInfoCopyWithImpl;
-@override @useResult
-$Res call({
- String packageName, List<String> pathList, String? version, String? icon
-});
-
-
-
-
-}
-/// @nodoc
-class __$HapInfoCopyWithImpl<$Res>
-    implements _$HapInfoCopyWith<$Res> {
-  __$HapInfoCopyWithImpl(this._self, this._then);
-
-  final _HapInfo _self;
-  final $Res Function(_HapInfo) _then;
-
-/// Create a copy of HapInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? packageName = null,Object? pathList = null,Object? version = freezed,Object? icon = freezed,}) {
-  return _then(_HapInfo(
-packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
-as String,pathList: null == pathList ? _self._pathList : pathList // ignore: cast_nullable_to_non_nullable
-as List<String>,version: freezed == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String?,icon: freezed == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-
-
-}
-
-// dart format on

@@ -6,26 +6,29 @@ part of '../PayList.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_PayList _$PayListFromJson(Map<String, dynamic> json) => _PayList(
-  time: json['time'] as String? ?? "",
-  payList:
-      (json['payList'] as List<dynamic>?)
-          ?.map((e) => PayInfo.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-);
+_$PayListImpl _$$PayListImplFromJson(Map<String, dynamic> json) =>
+    _$PayListImpl(
+      time: json['time'] as String? ?? "",
+      payList: (json['payList'] as List<dynamic>?)
+              ?.map((e) => PayInfo.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
 
-Map<String, dynamic> _$PayListToJson(_PayList instance) => <String, dynamic>{
-  'time': instance.time,
-  'payList': instance.payList,
-};
+Map<String, dynamic> _$$PayListImplToJson(_$PayListImpl instance) =>
+    <String, dynamic>{
+      'time': instance.time,
+      'payList': instance.payList,
+    };
 
-_PayInfo _$PayInfoFromJson(Map<String, dynamic> json) => _PayInfo(
-  nick: json['nick'] as String? ?? "",
-  amount: json['amount'] as String? ?? "",
-);
+_$PayInfoImpl _$$PayInfoImplFromJson(Map<String, dynamic> json) =>
+    _$PayInfoImpl(
+      nick: json['nick'] as String? ?? "",
+      amount: json['amount'] as String? ?? "",
+    );
 
-Map<String, dynamic> _$PayInfoToJson(_PayInfo instance) => <String, dynamic>{
-  'nick': instance.nick,
-  'amount': instance.amount,
-};
+Map<String, dynamic> _$$PayInfoImplToJson(_$PayInfoImpl instance) =>
+    <String, dynamic>{
+      'nick': instance.nick,
+      'amount': instance.amount,
+    };

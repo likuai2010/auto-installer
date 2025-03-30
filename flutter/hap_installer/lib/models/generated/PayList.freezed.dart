@@ -1,4 +1,3 @@
-// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -10,284 +9,316 @@ part of '../PayList.dart';
 // FreezedGenerator
 // **************************************************************************
 
-// dart format off
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+PayList _$PayListFromJson(Map<String, dynamic> json) {
+  return _PayList.fromJson(json);
+}
 
 /// @nodoc
 mixin _$PayList {
+  String get time => throw _privateConstructorUsedError;
+  List<PayInfo> get payList => throw _privateConstructorUsedError;
 
- String get time; List<PayInfo> get payList;
-/// Create a copy of PayList
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$PayListCopyWith<PayList> get copyWith => _$PayListCopyWithImpl<PayList>(this as PayList, _$identity);
-
-  /// Serializes this PayList to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PayList&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.payList, payList));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,time,const DeepCollectionEquality().hash(payList));
-
-@override
-String toString() {
-  return 'PayList(time: $time, payList: $payList)';
-}
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PayListCopyWith<PayList> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $PayListCopyWith<$Res>  {
-  factory $PayListCopyWith(PayList value, $Res Function(PayList) _then) = _$PayListCopyWithImpl;
-@useResult
-$Res call({
- String time, List<PayInfo> payList
-});
-
-
-
-
+abstract class $PayListCopyWith<$Res> {
+  factory $PayListCopyWith(PayList value, $Res Function(PayList) then) =
+      _$PayListCopyWithImpl<$Res, PayList>;
+  @useResult
+  $Res call({String time, List<PayInfo> payList});
 }
+
 /// @nodoc
-class _$PayListCopyWithImpl<$Res>
+class _$PayListCopyWithImpl<$Res, $Val extends PayList>
     implements $PayListCopyWith<$Res> {
-  _$PayListCopyWithImpl(this._self, this._then);
+  _$PayListCopyWithImpl(this._value, this._then);
 
-  final PayList _self;
-  final $Res Function(PayList) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of PayList
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? time = null,Object? payList = null,}) {
-  return _then(_self.copyWith(
-time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
-as String,payList: null == payList ? _self.payList : payList // ignore: cast_nullable_to_non_nullable
-as List<PayInfo>,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? time = null,
+    Object? payList = null,
+  }) {
+    return _then(_value.copyWith(
+      time: null == time
+          ? _value.time
+          : time // ignore: cast_nullable_to_non_nullable
+              as String,
+      payList: null == payList
+          ? _value.payList
+          : payList // ignore: cast_nullable_to_non_nullable
+              as List<PayInfo>,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$PayListImplCopyWith<$Res> implements $PayListCopyWith<$Res> {
+  factory _$$PayListImplCopyWith(
+          _$PayListImpl value, $Res Function(_$PayListImpl) then) =
+      __$$PayListImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String time, List<PayInfo> payList});
 }
 
+/// @nodoc
+class __$$PayListImplCopyWithImpl<$Res>
+    extends _$PayListCopyWithImpl<$Res, _$PayListImpl>
+    implements _$$PayListImplCopyWith<$Res> {
+  __$$PayListImplCopyWithImpl(
+      _$PayListImpl _value, $Res Function(_$PayListImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? time = null,
+    Object? payList = null,
+  }) {
+    return _then(_$PayListImpl(
+      time: null == time
+          ? _value.time
+          : time // ignore: cast_nullable_to_non_nullable
+              as String,
+      payList: null == payList
+          ? _value._payList
+          : payList // ignore: cast_nullable_to_non_nullable
+              as List<PayInfo>,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$PayListImpl implements _PayList {
+  const _$PayListImpl({this.time = "", final List<PayInfo> payList = const []})
+      : _payList = payList;
 
-class _PayList implements PayList {
-  const _PayList({this.time = "", final  List<PayInfo> payList = const []}): _payList = payList;
-  factory _PayList.fromJson(Map<String, dynamic> json) => _$PayListFromJson(json);
+  factory _$PayListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PayListImplFromJson(json);
 
-@override@JsonKey() final  String time;
- final  List<PayInfo> _payList;
-@override@JsonKey() List<PayInfo> get payList {
-  if (_payList is EqualUnmodifiableListView) return _payList;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_payList);
+  @override
+  @JsonKey()
+  final String time;
+  final List<PayInfo> _payList;
+  @override
+  @JsonKey()
+  List<PayInfo> get payList {
+    if (_payList is EqualUnmodifiableListView) return _payList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_payList);
+  }
+
+  @override
+  String toString() {
+    return 'PayList(time: $time, payList: $payList)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PayListImpl &&
+            (identical(other.time, time) || other.time == time) &&
+            const DeepCollectionEquality().equals(other._payList, _payList));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, time, const DeepCollectionEquality().hash(_payList));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PayListImplCopyWith<_$PayListImpl> get copyWith =>
+      __$$PayListImplCopyWithImpl<_$PayListImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PayListImplToJson(
+      this,
+    );
+  }
 }
 
+abstract class _PayList implements PayList {
+  const factory _PayList({final String time, final List<PayInfo> payList}) =
+      _$PayListImpl;
 
-/// Create a copy of PayList
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$PayListCopyWith<_PayList> get copyWith => __$PayListCopyWithImpl<_PayList>(this, _$identity);
+  factory _PayList.fromJson(Map<String, dynamic> json) = _$PayListImpl.fromJson;
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PayListToJson(this, );
+  @override
+  String get time;
+  @override
+  List<PayInfo> get payList;
+  @override
+  @JsonKey(ignore: true)
+  _$$PayListImplCopyWith<_$PayListImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PayList&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other._payList, _payList));
+PayInfo _$PayInfoFromJson(Map<String, dynamic> json) {
+  return _PayInfo.fromJson(json);
 }
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,time,const DeepCollectionEquality().hash(_payList));
-
-@override
-String toString() {
-  return 'PayList(time: $time, payList: $payList)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$PayListCopyWith<$Res> implements $PayListCopyWith<$Res> {
-  factory _$PayListCopyWith(_PayList value, $Res Function(_PayList) _then) = __$PayListCopyWithImpl;
-@override @useResult
-$Res call({
- String time, List<PayInfo> payList
-});
-
-
-
-
-}
-/// @nodoc
-class __$PayListCopyWithImpl<$Res>
-    implements _$PayListCopyWith<$Res> {
-  __$PayListCopyWithImpl(this._self, this._then);
-
-  final _PayList _self;
-  final $Res Function(_PayList) _then;
-
-/// Create a copy of PayList
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? time = null,Object? payList = null,}) {
-  return _then(_PayList(
-time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
-as String,payList: null == payList ? _self._payList : payList // ignore: cast_nullable_to_non_nullable
-as List<PayInfo>,
-  ));
-}
-
-
-}
-
 
 /// @nodoc
 mixin _$PayInfo {
+  String get nick => throw _privateConstructorUsedError;
+  String get amount => throw _privateConstructorUsedError;
 
- String get nick; String get amount;
-/// Create a copy of PayInfo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$PayInfoCopyWith<PayInfo> get copyWith => _$PayInfoCopyWithImpl<PayInfo>(this as PayInfo, _$identity);
-
-  /// Serializes this PayInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PayInfo&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.amount, amount) || other.amount == amount));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,nick,amount);
-
-@override
-String toString() {
-  return 'PayInfo(nick: $nick, amount: $amount)';
-}
-
-
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PayInfoCopyWith<PayInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $PayInfoCopyWith<$Res>  {
-  factory $PayInfoCopyWith(PayInfo value, $Res Function(PayInfo) _then) = _$PayInfoCopyWithImpl;
-@useResult
-$Res call({
- String nick, String amount
-});
-
-
-
-
+abstract class $PayInfoCopyWith<$Res> {
+  factory $PayInfoCopyWith(PayInfo value, $Res Function(PayInfo) then) =
+      _$PayInfoCopyWithImpl<$Res, PayInfo>;
+  @useResult
+  $Res call({String nick, String amount});
 }
+
 /// @nodoc
-class _$PayInfoCopyWithImpl<$Res>
+class _$PayInfoCopyWithImpl<$Res, $Val extends PayInfo>
     implements $PayInfoCopyWith<$Res> {
-  _$PayInfoCopyWithImpl(this._self, this._then);
+  _$PayInfoCopyWithImpl(this._value, this._then);
 
-  final PayInfo _self;
-  final $Res Function(PayInfo) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
-/// Create a copy of PayInfo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nick = null,Object? amount = null,}) {
-  return _then(_self.copyWith(
-nick: null == nick ? _self.nick : nick // ignore: cast_nullable_to_non_nullable
-as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nick = null,
+    Object? amount = null,
+  }) {
+    return _then(_value.copyWith(
+      nick: null == nick
+          ? _value.nick
+          : nick // ignore: cast_nullable_to_non_nullable
+              as String,
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
+/// @nodoc
+abstract class _$$PayInfoImplCopyWith<$Res> implements $PayInfoCopyWith<$Res> {
+  factory _$$PayInfoImplCopyWith(
+          _$PayInfoImpl value, $Res Function(_$PayInfoImpl) then) =
+      __$$PayInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String nick, String amount});
 }
 
+/// @nodoc
+class __$$PayInfoImplCopyWithImpl<$Res>
+    extends _$PayInfoCopyWithImpl<$Res, _$PayInfoImpl>
+    implements _$$PayInfoImplCopyWith<$Res> {
+  __$$PayInfoImplCopyWithImpl(
+      _$PayInfoImpl _value, $Res Function(_$PayInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nick = null,
+    Object? amount = null,
+  }) {
+    return _then(_$PayInfoImpl(
+      nick: null == nick
+          ? _value.nick
+          : nick // ignore: cast_nullable_to_non_nullable
+              as String,
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
 
 /// @nodoc
 @JsonSerializable()
+class _$PayInfoImpl implements _PayInfo {
+  const _$PayInfoImpl({this.nick = "", this.amount = ""});
 
-class _PayInfo implements PayInfo {
-  const _PayInfo({this.nick = "", this.amount = ""});
-  factory _PayInfo.fromJson(Map<String, dynamic> json) => _$PayInfoFromJson(json);
+  factory _$PayInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PayInfoImplFromJson(json);
 
-@override@JsonKey() final  String nick;
-@override@JsonKey() final  String amount;
+  @override
+  @JsonKey()
+  final String nick;
+  @override
+  @JsonKey()
+  final String amount;
 
-/// Create a copy of PayInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$PayInfoCopyWith<_PayInfo> get copyWith => __$PayInfoCopyWithImpl<_PayInfo>(this, _$identity);
+  @override
+  String toString() {
+    return 'PayInfo(nick: $nick, amount: $amount)';
+  }
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PayInfoToJson(this, );
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PayInfoImpl &&
+            (identical(other.nick, nick) || other.nick == nick) &&
+            (identical(other.amount, amount) || other.amount == amount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, nick, amount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PayInfoImplCopyWith<_$PayInfoImpl> get copyWith =>
+      __$$PayInfoImplCopyWithImpl<_$PayInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PayInfoImplToJson(
+      this,
+    );
+  }
 }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PayInfo&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.amount, amount) || other.amount == amount));
+abstract class _PayInfo implements PayInfo {
+  const factory _PayInfo({final String nick, final String amount}) =
+      _$PayInfoImpl;
+
+  factory _PayInfo.fromJson(Map<String, dynamic> json) = _$PayInfoImpl.fromJson;
+
+  @override
+  String get nick;
+  @override
+  String get amount;
+  @override
+  @JsonKey(ignore: true)
+  _$$PayInfoImplCopyWith<_$PayInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,nick,amount);
-
-@override
-String toString() {
-  return 'PayInfo(nick: $nick, amount: $amount)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$PayInfoCopyWith<$Res> implements $PayInfoCopyWith<$Res> {
-  factory _$PayInfoCopyWith(_PayInfo value, $Res Function(_PayInfo) _then) = __$PayInfoCopyWithImpl;
-@override @useResult
-$Res call({
- String nick, String amount
-});
-
-
-
-
-}
-/// @nodoc
-class __$PayInfoCopyWithImpl<$Res>
-    implements _$PayInfoCopyWith<$Res> {
-  __$PayInfoCopyWithImpl(this._self, this._then);
-
-  final _PayInfo _self;
-  final $Res Function(_PayInfo) _then;
-
-/// Create a copy of PayInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nick = null,Object? amount = null,}) {
-  return _then(_PayInfo(
-nick: null == nick ? _self.nick : nick // ignore: cast_nullable_to_non_nullable
-as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-// dart format on

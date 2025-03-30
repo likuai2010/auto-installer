@@ -6,27 +6,27 @@ part of '../DebugHistory.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_DebugHistory _$DebugHistoryFromJson(
-  Map<String, dynamic> json,
-) => _DebugHistory(
-  hapInfo: HapInfo.fromJson(json['hapInfo'] as Map<String, dynamic>),
-  finished: json['finished'] as bool? ?? false,
-  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
-  end: json['end'] == null ? null : DateTime.parse(json['end'] as String),
-  setps:
-      (json['setps'] as List<dynamic>?)
-          ?.map((e) => SetpInfo.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [
-        SetpInfo(name: "登录检查"),
-        SetpInfo(name: "连接状态检查"),
-        SetpInfo(name: "请求签名"),
-        SetpInfo(name: "签名应用"),
-        SetpInfo(name: "安装应用"),
-      ],
-);
+_$DebugHistoryImpl _$$DebugHistoryImplFromJson(Map<String, dynamic> json) =>
+    _$DebugHistoryImpl(
+      hapInfo: HapInfo.fromJson(json['hapInfo'] as Map<String, dynamic>),
+      finished: json['finished'] as bool? ?? false,
+      start: json['start'] == null
+          ? null
+          : DateTime.parse(json['start'] as String),
+      end: json['end'] == null ? null : DateTime.parse(json['end'] as String),
+      setps: (json['setps'] as List<dynamic>?)
+              ?.map((e) => SetpInfo.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [
+            SetpInfo(name: "登录检查"),
+            SetpInfo(name: "连接状态检查"),
+            SetpInfo(name: "请求签名"),
+            SetpInfo(name: "签名应用"),
+            SetpInfo(name: "安装应用")
+          ],
+    );
 
-Map<String, dynamic> _$DebugHistoryToJson(_DebugHistory instance) =>
+Map<String, dynamic> _$$DebugHistoryImplToJson(_$DebugHistoryImpl instance) =>
     <String, dynamic>{
       'hapInfo': instance.hapInfo,
       'finished': instance.finished,
@@ -35,14 +35,16 @@ Map<String, dynamic> _$DebugHistoryToJson(_DebugHistory instance) =>
       'setps': instance.setps,
     };
 
-_SetpInfo _$SetpInfoFromJson(Map<String, dynamic> json) => _SetpInfo(
-  name: json['name'] as String? ?? "",
-  error: json['error'] as String? ?? null,
-  loading: json['loading'] as bool? ?? null,
-);
+_$SetpInfoImpl _$$SetpInfoImplFromJson(Map<String, dynamic> json) =>
+    _$SetpInfoImpl(
+      name: json['name'] as String? ?? "",
+      error: json['error'] as String? ?? null,
+      loading: json['loading'] as bool? ?? null,
+    );
 
-Map<String, dynamic> _$SetpInfoToJson(_SetpInfo instance) => <String, dynamic>{
-  'name': instance.name,
-  'error': instance.error,
-  'loading': instance.loading,
-};
+Map<String, dynamic> _$$SetpInfoImplToJson(_$SetpInfoImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'error': instance.error,
+      'loading': instance.loading,
+    };

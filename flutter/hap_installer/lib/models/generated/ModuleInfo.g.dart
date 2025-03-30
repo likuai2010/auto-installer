@@ -6,46 +6,57 @@ part of '../ModuleInfo.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => _AppInfo(
-  bundleName: json['bundleName'] as String? ?? "",
-  compileSdkVersion: json['compileSdkVersion'] as String? ?? "",
-  versionName: json['versionName'] as String? ?? "",
-);
+_$AppInfoImpl _$$AppInfoImplFromJson(Map<String, dynamic> json) =>
+    _$AppInfoImpl(
+      bundleName: json['bundleName'] as String? ?? "",
+      compileSdkVersion: json['compileSdkVersion'] as String? ?? "",
+      versionName: json['versionName'] as String? ?? "",
+    );
 
-Map<String, dynamic> _$AppInfoToJson(_AppInfo instance) => <String, dynamic>{
-  'bundleName': instance.bundleName,
-  'compileSdkVersion': instance.compileSdkVersion,
-  'versionName': instance.versionName,
-};
+Map<String, dynamic> _$$AppInfoImplToJson(_$AppInfoImpl instance) =>
+    <String, dynamic>{
+      'bundleName': instance.bundleName,
+      'compileSdkVersion': instance.compileSdkVersion,
+      'versionName': instance.versionName,
+    };
 
-_RequestPermission _$RequestPermissionFromJson(Map<String, dynamic> json) =>
-    _RequestPermission(name: json['name'] as String? ?? "");
+_$RequestPermissionImpl _$$RequestPermissionImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RequestPermissionImpl(
+      name: json['name'] as String? ?? "",
+    );
 
-Map<String, dynamic> _$RequestPermissionToJson(_RequestPermission instance) =>
-    <String, dynamic>{'name': instance.name};
+Map<String, dynamic> _$$RequestPermissionImplToJson(
+        _$RequestPermissionImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+    };
 
-_Module _$ModuleFromJson(Map<String, dynamic> json) => _Module(
-  requestPermissions:
-      (json['requestPermissions'] as List<dynamic>?)
-          ?.map((e) => RequestPermission.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-);
+_$ModuleImpl _$$ModuleImplFromJson(Map<String, dynamic> json) => _$ModuleImpl(
+      requestPermissions: (json['requestPermissions'] as List<dynamic>?)
+              ?.map(
+                  (e) => RequestPermission.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
 
-Map<String, dynamic> _$ModuleToJson(_Module instance) => <String, dynamic>{
-  'requestPermissions': instance.requestPermissions,
-};
+Map<String, dynamic> _$$ModuleImplToJson(_$ModuleImpl instance) =>
+    <String, dynamic>{
+      'requestPermissions': instance.requestPermissions,
+    };
 
-_ModuleInfo _$ModuleInfoFromJson(Map<String, dynamic> json) => _ModuleInfo(
-  app:
-      json['app'] == null
+_$ModuleInfoImpl _$$ModuleInfoImplFromJson(Map<String, dynamic> json) =>
+    _$ModuleInfoImpl(
+      app: json['app'] == null
           ? null
           : AppInfo.fromJson(json['app'] as Map<String, dynamic>),
-  module:
-      json['module'] == null
+      module: json['module'] == null
           ? null
           : Module.fromJson(json['module'] as Map<String, dynamic>),
-);
+    );
 
-Map<String, dynamic> _$ModuleInfoToJson(_ModuleInfo instance) =>
-    <String, dynamic>{'app': instance.app, 'module': instance.module};
+Map<String, dynamic> _$$ModuleInfoImplToJson(_$ModuleInfoImpl instance) =>
+    <String, dynamic>{
+      'app': instance.app,
+      'module': instance.module,
+    };

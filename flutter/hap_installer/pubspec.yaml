@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^2.19.6
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,39 +34,40 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  url_launcher: ^6.3.1
-  json_annotation: ^4.9.0
-  freezed_annotation: ^3.0.0
-  path_provider: ^2.1.5
+  cupertino_icons: ^1.0.6
+  json_annotation: ^4.8.1
+  freezed_annotation: ^2.4.1
   provider: ^6.1.2
-  path: ^1.8.0
-  modal_bottom_sheet: ^3.0.0
-  package_info_plus: ^8.3.0
-  webview_flutter: ^4.10.0
-  archive: ^4.0.4
-  process_run: ^1.2.4
-  shared_preferences: ^2.5.2
+  path: ^1.8.2
+  #package_info_plus: ^4.2.0
   dio: ^5.8.0+1
   native_core:
     path: plugins/native_core
+  intl: ^0.18.1
+  url_launcher: ^6.1.11
+  process_run: ^0.13.0
+  path_provider: ^2.1.1
+  shared_preferences: ^2.2.2
+  file_picker: ^5.3.1
+  archive: ^3.4.10
+  webview_flutter: ^4.4.2
   ohos_adapter:
     path: plugins/ohos_adapter
-  intl: ^0.20.2
-  syncfusion_flutter_pdfviewer: ^29.1.33
-  file_picker: ^9.2.1
-  flutter_file_saver: ^0.8.1
-  # pdfx: ^2.8.0
- 
+  #syncfusion_flutter_pdfviewer: ^29.1.33
+  flutter_file_saver: ^0.6.2
+  pdf_render:
+    git:
+      url: "https://gitee.com/openharmony-sig/fluttertpc_pdf_render.git"
+      path: "."
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^5.0.0
-  build_runner: ^2.4.15
-  json_serializable: ^6.9.4
-  freezed: ^3.0.3
+  freezed: ^2.4.1
+  flutter_lints: ^2.0.3
+  build_runner: ^2.3.3
+  json_serializable: ^6.6.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
