@@ -54,7 +54,7 @@ dependencies:
   ohos_adapter:
     path: plugins/ohos_adapter
   #syncfusion_flutter_pdfviewer: ^29.1.33
-  flutter_file_saver: ^0.6.2
+  #flutter_file_saver: ^0.6.2
   pdf_render:
     git:
       url: "https://gitee.com/openharmony-sig/fluttertpc_pdf_render.git"

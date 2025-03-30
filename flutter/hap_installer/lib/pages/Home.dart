@@ -35,7 +35,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
 
     controller = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
       value: 0,
       vsync: this,
     );
@@ -157,7 +157,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-   
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {

@@ -19,7 +19,7 @@ import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_file_saver/flutter_file_saver.dart';
+// import 'package:flutter_file_saver/flutter_file_saver.dart';
 
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
@@ -142,10 +142,10 @@ class EcoViewModel extends ChangeNotifier {
   exportLog() async {
     final logPath = "${await getTempDir()}hdc.log";
 
-    FlutterFileSaver().writeFileAsString(
-      fileName: 'hdc_log.txt',
-      data: await File(logPath).readAsString(),
-    );
+    // FlutterFileSaver().writeFileAsString(
+    //   fileName: 'hdc_log.txt',
+    //   data: await File(logPath).readAsString(),
+    // );
   }
 
   toLogin(BuildContext context) async {

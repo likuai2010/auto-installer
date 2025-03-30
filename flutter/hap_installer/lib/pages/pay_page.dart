@@ -18,9 +18,8 @@ class PayPage extends StatelessWidget {
       crossAxisSpacing: 5,
       childAspectRatio: 1.5,
       crossAxisCount: columns.toInt(),
-
       children: List.generate(model.payList.payList.length, (i) {
-        return Card.filled(
+        return Card(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Row(
@@ -45,14 +44,13 @@ class PayPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('充电支持'),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () {
               showDialog(
                 context: context,
-
                 builder: (_) {
                   return AlertDialog(
-                    title: Text("充电"),
+                    title: const Text("充电"),
                     content: SizedBox(
                       width: 300,
                       height: 400,
@@ -71,7 +69,7 @@ class PayPage extends StatelessWidget {
                 },
               );
             },
-            child: Text("赞赏"),
+            icon: const Icon(Icons.payment),
           ),
         ],
       ),
@@ -91,7 +89,7 @@ class PayPage extends StatelessWidget {
                   style: texttheme.labelSmall,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(child: _payList(context, model)),
             ],
           );
