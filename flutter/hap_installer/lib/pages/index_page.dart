@@ -73,7 +73,7 @@ class DebugSteps extends StatelessWidget {
   String userName(EcoViewModel model) {
     var nickname = model.userInfo?.nickName ?? "匿名";
     if (model.teamList.isEmpty) {
-      nickname += "(未实名)";
+      nickname += "(未开发者实名)";
     }
     return model.isLogin ? nickname : "未登录";
   }
@@ -92,11 +92,25 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   viewmodel.toLogin(context);
                 },
-                child: !model.loading
-                    ? Text(model.isLogin ? "更换账号" : "登录账号")
-                    : CircularProgressIndicator(value: null),
+                child:
+                    !model.loading
+                        ? Text(model.isLogin ? "更换账号" : "登录账号")
+                        : CircularProgressIndicator(value: null),
               ),
             ),
+            model.teamList.isEmpty && model.isLogin
+                ? ListItem(
+                  leading: Icon(Icons.person),
+                  title: "未实名开发者",
+                  subTitle: "证书有效期将为14天",
+                  tailling: TextButton(
+                    onPressed: () {
+                      viewmodel.toAuthDev(context);
+                    },
+                    child: Text("去实名"),
+                  ),
+                )
+                : Container(),
             ListItem(
               leading: const Icon(
                 Icons.signal_wifi_off_outlined,
@@ -127,9 +141,10 @@ class DebugSteps extends StatelessWidget {
                     );
                   });
                 },
-                child: !model.deviceLoaing
-                    ? const Text("连接设备")
-                    : const CircularProgressIndicator(value: null),
+                child:
+                    !model.deviceLoaing
+                        ? const Text("连接设备")
+                        : const CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -140,9 +155,10 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   model.toSelectFile(context);
                 },
-                child: !model.fileLoading
-                    ? const Text("选择")
-                    : const CircularProgressIndicator(value: null),
+                child:
+                    !model.fileLoading
+                        ? const Text("选择")
+                        : const CircularProgressIndicator(value: null),
               ),
             ),
             // Platform.isAndroid

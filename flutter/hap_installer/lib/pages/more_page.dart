@@ -24,9 +24,9 @@ showTips(BuildContext context) {
           ),
           !Platform.isLinux
               ? FilledButton(
-                  child: const Text('查看使用教程'),
-                  onPressed: () => toPage(context, (_) => UserGuidePage()),
-                )
+                child: const Text('查看使用教程'),
+                onPressed: () => toPage(context, (_) => UserGuidePage()),
+              )
               : Container(),
         ],
       );
@@ -94,29 +94,31 @@ class MorePage extends StatelessWidget {
               ListItem(
                 leading: Icon(Icons.color_lens),
                 title: "清理缓存",
-                onClick: () => {
-                  showAlert(
-                    context,
-                    title: Text("是否清理缓存?"),
-                    onConfirm: () {
-                      viewmodel.clearCache(context);
+                onClick:
+                    () => {
+                      showAlert(
+                        context,
+                        title: Text("是否清理缓存?"),
+                        onConfirm: () {
+                          viewmodel.clearCache(context);
+                        },
+                      ),
                     },
-                  ),
-                },
               ),
               ListItem(
                 leading: Icon(Icons.color_lens),
                 title: "重置证书配置",
-                onClick: () => {
-                  showAlert(
-                    context,
-                    title: Text("是否还原默认证书配置?"),
-                    content: Text("使用自定义证书配置后，可通过此功能还原默认值证书配置"),
-                    onConfirm: () {
-                      viewmodel.resetSignConfig();
+                onClick:
+                    () => {
+                      showAlert(
+                        context,
+                        title: Text("是否还原默认证书配置?"),
+                        content: Text("使用自定义证书配置后，可通过此功能还原默认值证书配置"),
+                        onConfirm: () {
+                          viewmodel.resetSignConfig();
+                        },
+                      ),
                     },
-                  ),
-                },
               ),
             ],
           ),
@@ -130,25 +132,27 @@ class MorePage extends StatelessWidget {
               ),
               !Platform.isLinux
                   ? ListItem(
-                      leading: Icon(Icons.quiz),
-                      title: "使用教程",
-                      onClick: () => {
-                        toPage(context, (_) {
-                          return UserGuidePage();
-                        }),
-                      },
-                    )
+                    leading: Icon(Icons.quiz),
+                    title: "使用教程",
+                    onClick:
+                        () => {
+                          toPage(context, (_) {
+                            return UserGuidePage();
+                          }),
+                        },
+                  )
                   : Container(),
               Platform.isAndroid
                   ? ListItem(
-                      leading: Icon(Icons.privacy_tip),
-                      title: "免责声明",
-                      onClick: () => {
-                        toPage(context, (_) {
-                          return PrivacyPage();
-                        }),
-                      },
-                    )
+                    leading: Icon(Icons.privacy_tip),
+                    title: "免责声明",
+                    onClick:
+                        () => {
+                          toPage(context, (_) {
+                            return PrivacyPage();
+                          }),
+                        },
+                  )
                   : Container(),
             ],
           ),
@@ -159,7 +163,7 @@ class MorePage extends StatelessWidget {
                 title: "充电支持",
                 onClick: () => toPage(context, (_) => PayPage()),
               ),
-              ListItem(title: "应用版本", tailling: Text("2.0.0")),
+              ListItem(title: "应用版本", tailling: Text("2.1.0")),
             ],
           ),
         ],

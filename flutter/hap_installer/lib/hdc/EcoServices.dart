@@ -154,7 +154,11 @@ class EcoService {
     final params = {"csr": csr, "certName": name, "certType": type};
     final result = await base(uri, params, {}, "POST");
     if (result?.harmonyCert == null) {
-      throw FormatException("证书创建失败: ${result?.ret.msg}");
+      var msg = result?.ret.msg ?? "";
+      if (msg.contains("certList")) {
+        msg = "当前证书失效, 请点击下方重置证书";
+      }
+      throw FormatException("证书创建失败: $msg");
     }
     return result!.harmonyCert!;
   }
@@ -175,7 +179,6 @@ class EcoService {
       "certList": [certId],
       "packageName": packageName,
     };
-    print("createProfile ${params}");
     final result = await base(uri, params, {});
     if (result?.provisionFileUrl == null) {
       throw FormatException("Profile创建失败: ${result?.ret.msg}");
