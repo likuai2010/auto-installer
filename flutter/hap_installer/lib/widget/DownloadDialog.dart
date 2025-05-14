@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 
 import 'package:archive/archive_io.dart';
+import 'package:hap_installer/hdc/common.dart';
 
 class DownloadDialog extends StatefulWidget {
   const DownloadDialog({super.key, required this.javaPath});
@@ -57,25 +57,21 @@ class _DownloadDialogState extends State<DownloadDialog> {
       return;
     }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip";
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_${JavaVersion}.zip";
     if (Platform.isLinux) {
       url =
-          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_17.0.14_7.tar.gz";
+          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_${JavaVersion}.tar.gz";
     }
 
     try {
-      await download(
-        url,
-        savePath.path,
-        (received, total) {
-          if (total != -1) {
-            setState(() {
-              _progress = received / total;
-              _status = "下载中... ${((_progress!) * 100).toStringAsFixed(0)}%";
-            });
-          }
-        },
-      );
+      await download(url, savePath.path, (received, total) {
+        if (total != -1) {
+          setState(() {
+            _progress = received / total;
+            _status = "下载中... ${((_progress!) * 100).toStringAsFixed(0)}%";
+          });
+        }
+      });
       setState(() {
         _status = "下载完成";
       });
@@ -86,8 +82,11 @@ class _DownloadDialogState extends State<DownloadDialog> {
     }
   }
 
-  download(String url, String filePath,
-      Function(int received, int total) onReceiveProgress) async {
+  download(
+    String url,
+    String filePath,
+    Function(int received, int total) onReceiveProgress,
+  ) async {
     final httpClient = HttpClient();
     final uri = Uri.parse(url);
     final request = await httpClient.openUrl("GET", uri);

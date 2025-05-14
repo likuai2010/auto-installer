@@ -345,12 +345,26 @@ class EcoViewModel extends ChangeNotifier {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
     }
+    final javapath = await getJavaDir();
     if (Platform.isWindows) {
+      try {
+        await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
+      } catch (e) {}
+
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
       await copyAssert("windows", "hap-sign-tool.jar", hdcDir);
     }
     if (Platform.isLinux) {
+      try {
+        await copyAssert(
+          "windows",
+          "$JavaVersion.tar.gz",
+          "$javapath.tar.gz",
+          "",
+        );
+      } catch (e) {}
+
       await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);

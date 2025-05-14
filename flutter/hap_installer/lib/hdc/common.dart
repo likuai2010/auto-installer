@@ -7,6 +7,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final JavaVersion = "17.0.15_6";
+
+Future<String> getJavaDir() async {
+  final temp = await getTempDir();
+  return path.join(temp, "jdk-${JavaVersion.replaceAll("_", "+")}-jre");
+}
+
 Future<String> getTempDir() async {
   var tempDir = "";
   if (ohosAdapter.isOhos) {

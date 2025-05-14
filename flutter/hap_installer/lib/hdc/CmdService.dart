@@ -31,11 +31,6 @@ Future saveJsonToFile(String json, String filePath) async {
   await file.writeAsString(json, flush: true);
 }
 
-Future<String> getJavaDir() async {
-  final temp = await getTempDir();
-  return path.join(temp, "jdk-17.0.14+7-jre");
-}
-
 class CmdService {
   String _t = "";
 
