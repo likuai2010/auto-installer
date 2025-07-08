@@ -39,7 +39,7 @@ endif()
 
 
 include_directories(${libPath}/include)
-
+include_directories(${libPath}/include/darwin)
 
 add_library(native_core SHARED
   "native_core.c"

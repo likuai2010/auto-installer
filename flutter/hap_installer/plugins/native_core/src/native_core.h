@@ -21,3 +21,5 @@ FFI_PLUGIN_EXPORT int hdcServer(const char *tempPath);
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir);
 FFI_PLUGIN_EXPORT int unHap(const char *source, const char *fileName, const char *destination);
 FFI_PLUGIN_EXPORT int unApp(const char *source, const char *destination);
+
+FFI_PLUGIN_EXPORT const char* native_jvm(const char* optionsString, const char* mainClass, const char* args[], int argc, const char* libjvm_path);

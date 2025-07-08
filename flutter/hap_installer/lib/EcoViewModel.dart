@@ -148,6 +148,10 @@ class EcoViewModel extends ChangeNotifier {
     );
   }
 
+  fixHap(){
+    cmd.buildHap("/Users/fiber/Documents/entry-default-signed", "/Users/fiber/Documents/build.hap");
+  }
+
   toLogin(BuildContext context) async {
     if (firstUse) {
       showTips(context);
@@ -330,7 +334,7 @@ class EcoViewModel extends ChangeNotifier {
 
     await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     await copyAssert("jar", "app_packing_tool.jar", hdcDir);
-    await copyAssert("jar", "app_un_packing_tool.jar", hdcDir);
+    await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
 
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
@@ -376,12 +380,15 @@ class EcoViewModel extends ChangeNotifier {
 
   clearCache(BuildContext context) async {
     final temp = await getTempDir();
+    final hdc = await getHdcDir();
+    await Directory(hdc).delete(recursive: true);
     await Directory(temp).delete(recursive: true);
     try {
       await FilePicker.platform.clearTemporaryFiles();
+      
       // ignore: empty_catches
     } catch (e) {}
-    toask(context, "清理完成!");
+    toask(context, "清理完成! 请重启应用");
   }
 
   copyAssert(

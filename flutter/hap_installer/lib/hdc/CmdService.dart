@@ -52,12 +52,45 @@ class CmdService {
     return unHap(first, s, join);
   }
 
-  unpackage(String hapPath,){
+  unpackageHap(String hapPath, String outPath) async {
+    final result = await baseJavaCmd("--mode hap --hap-path ${hapPath}  --out-path ${outPath} --force true", "app_unpacking_tool.jar");
+    print("unpackageHap ${result}");
+  }
+ 
+
+  buildHap(String hapDir, String outPath) async {
+  
+    final dir = Directory(hapDir);
+    if(await dir.exists()){
+      var params = "--mode hap --out-path ${outPath}";
+      final List<FileSystemEntity> entities = await dir.list().toList();
+      for (var file in entities) {
+        final fullPath = file.absolute.path;
+        final filename = path.basename(file.path);
+        if (filename == "resources.index") {
+            params += " --index-path ${fullPath}";
+        }
+        else if (filename == "pack.info") {
+            params += " --pack-info-path ${fullPath}";
+        }
+        else if (filename == "module.json") {
+            params += " --json-path ${fullPath}";
+        }
+        else if (filename == "libs") {
+            params += " --lib-path ${fullPath}";
+        }
+        else {
+            params += " --${filename}-path ${fullPath}";
+        }
+      }
+      print("buildHap: ${params}");
+      final result = await nativeJava(params, "app_packing_tool.jar");
+      print("buildHap ${result}");
+    }
 
   }
-  buildHap(String hapPath){
 
-  }
+
 
   changeTarget(String device) {
     _t = "-t $device";
@@ -182,7 +215,6 @@ class CmdService {
             return results.first.outText;
           } else {
             final args = cmdToArgs(cmd.replaceFirst("hdc ", ""));
-            print("args $args");
             var result = await Process.run(path.join(hdcDir, "hdc.exe"), args);
             return result.outText + result.errText;
           }
@@ -199,34 +231,46 @@ class CmdService {
     if (ohosAdapter.isOhos) {
       return await ohosAdapter.signCmd(cmd) ?? "";
     }
-    if (!Platform.isWindows && !Platform.isLinux) {
+    if (Platform.isAndroid) {
       return await signCmd(cmdToArgs(cmd), await getTempDir());
     } else {
-      // window and linux
-      var shell = Shell(workingDirectory: path.join(await getJavaDir(), "bin"));
-      var hdcDir = await getHdcDir();
-      var java = "java.exe";
-      if (Platform.isLinux) {
-        java = "java";
-      }
-      final hasJava = await hasJavaBySys();
-      try {
-        final javaCmd =
-            !hasJava ? path.join(await getJavaDir(), "bin", java) : 'java';
-        final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
-        print("baseSign $javaCmd  $args");
-        var result = await Process.run(javaCmd, [
-          "-jar",
-          path.join(hdcDir, "hap-sign-tool.jar"),
-          ...args,
-        ]);
-        return result.outText + result.errText;
-      } catch (e) {
-        print("baseSign $e");
-        return "baseSign $e";
-      }
+      return await baseJavaCmd(cmd);
     }
   }
+}
+nativeJava(cmd, [jar = "hap-sign-tool.jar"]) async {
+  final args = cmdToArgs("package " + cmd);
+  var hdcDir = await getHdcDir();
+  var jarPath = path.join(hdcDir, jar);
+  final result = await nativeJvm("-Djava.class.path=${jarPath}:/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/plugins/native_core/src", "ohos/CompressEntrance", args, "/Users/fiber/Library/Java/JavaVirtualMachines/corretto-17.0.12/Contents/Home/lib/server/libjvm.dylib");
+  print(result);
+}
+
+baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
+    var hdcDir = await getHdcDir();
+    var java = "java";
+    if (Platform.isWindows) {
+      java = "java.exe";
+    }
+
+    try {
+      String javaCmd = path.join(await getJavaDir(), "bin", java);
+      final hasJava = await File(javaCmd).exists();
+      if (!hasJava) {
+        javaCmd = java;
+      }
+      final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
+      print("baseCmd: $javaCmd  $args");
+      var result = await Process.run(javaCmd, [
+        "-jar",
+        path.join(hdcDir, jar),
+        ...args,
+      ]);
+      return result.outText + result.errText;
+    } catch (e) {
+      print("baseCmd: $e");
+      return "baseCmd: $e";
+    }
 }
 
 Future<String> getArchitecture() async {

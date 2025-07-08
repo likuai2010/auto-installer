@@ -132,4 +132,37 @@ class NativeCoreBindings {
           .asFunction<
             int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
           >();
+
+  ffi.Pointer<ffi.Char> native_jvm(
+    ffi.Pointer<ffi.Char> optionsString,
+    ffi.Pointer<ffi.Char> mainClass,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> args,
+    int argc,
+    ffi.Pointer<ffi.Char> libjvm_path,
+  ) {
+    return _native_jvm(optionsString, mainClass, args, argc, libjvm_path);
+  }
+
+  late final _native_jvmPtr = _lookup<
+    ffi.NativeFunction<
+      ffi.Pointer<ffi.Char> Function(
+        ffi.Pointer<ffi.Char>,
+        ffi.Pointer<ffi.Char>,
+        ffi.Pointer<ffi.Pointer<ffi.Char>>,
+        ffi.Int,
+        ffi.Pointer<ffi.Char>,
+      )
+    >
+  >('native_jvm');
+  late final _native_jvm =
+      _native_jvmPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              int,
+              ffi.Pointer<ffi.Char>,
+            )
+          >();
 }

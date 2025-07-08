@@ -161,6 +161,15 @@ class DebugSteps extends StatelessWidget {
                         : const CircularProgressIndicator(value: null),
               ),
             ),
+            TextButton(
+                  onPressed: () {
+                    model.fixHap();
+                  },
+                  child:
+                      !model.fileLoading
+                          ? Text("test unpack")
+                          : CircularProgressIndicator(value: null),
+                )
             // Platform.isAndroid
             //     ? TextButton(
             //       onPressed: () {
