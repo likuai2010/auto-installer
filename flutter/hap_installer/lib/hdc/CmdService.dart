@@ -52,6 +52,13 @@ class CmdService {
     return unHap(first, s, join);
   }
 
+  unpackage(String hapPath,){
+
+  }
+  buildHap(String hapPath){
+
+  }
+
   changeTarget(String device) {
     _t = "-t $device";
   }

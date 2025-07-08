@@ -327,6 +327,11 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
     var hdcDir = await getHdcDir();
     print("hdcDir: ${hdcDir}");
+
+    await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
+    await copyAssert("jar", "app_packing_tool.jar", hdcDir);
+    await copyAssert("jar", "app_un_packing_tool.jar", hdcDir);
+
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
@@ -350,10 +355,8 @@ class EcoViewModel extends ChangeNotifier {
       try {
         await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
       } catch (e) {}
-
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
-      await copyAssert("windows", "hap-sign-tool.jar", hdcDir);
     }
     if (Platform.isLinux) {
       try {
@@ -364,8 +367,7 @@ class EcoViewModel extends ChangeNotifier {
           "",
         );
       } catch (e) {}
-
-      await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
+      
       await copyAssert("linux", "hdc", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
@@ -388,10 +390,13 @@ class EcoViewModel extends ChangeNotifier {
     String targetDir, [
     String? target,
   ]) async {
-    final bytes = await rootBundle.load('assets/$dir/$fileName');
-    File file = File(path.join(targetDir, target ?? fileName));
-    if (!await file.exists()) {
-      await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+    try{
+      final bytes = await rootBundle.load('assets/$dir/$fileName');
+      File file = File(path.join(targetDir, target ?? fileName));
+      if (!await file.exists()) {
+        await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+      }
+    }catch(_){
     }
   }
 
