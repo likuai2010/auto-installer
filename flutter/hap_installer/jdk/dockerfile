@@ -1,0 +1,27 @@
+FROM --platform=linux/amd64 ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt install -y build-essential cmake curl wget unzip python3 libncurses-dev \
+		git flex bison bash make autoconf libcurl4-openssl-dev tcl libfontconfig1-dev libfreetype6-dev \
+		gettext zip pigz meson  openjdk-17-jdk file libcups2-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+ENV BOOT_JDK=/usr/lib/jvm/java-17-openjdk-arm64/
+
+ENV OHOS_SDK_RELEASE_VERSION=5.1.0
+
+# Install OHOS SDK
+RUN curl -OL https://repo.huaweicloud.com/openharmony/os/${OHOS_SDK_RELEASE_VERSION}-Release/ohos-sdk-windows_linux-public.tar.gz && \
+    tar -xvf ohos-sdk-windows_linux-public.tar.gz -C /opt && \
+    rm ohos-sdk-windows_linux-public.tar.gz && \
+    rm -rf /opt/ohos-sdk/{ohos,windows} && \
+    cd /opt/ohos-sdk/linux && \
+    for file in $(find . -type f); do \ 
+        unzip $file && rm $file; \
+    done
+ENV OHOS_SDK_HOME=/opt/ohos-sdk/linux
+
+WORKDIR /opt/jdk17
+
+# run docker run -it -v .:/opt/jdk17 3cbc1903699d /bin/bash 

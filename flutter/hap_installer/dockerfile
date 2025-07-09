@@ -1,0 +1,26 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+# 安装构建工具和依赖
+RUN apt-get update && \
+    apt-get install -y \
+        build-essential \
+        autoconf \
+        zip unzip \
+        wget git \
+        libx11-dev libxext-dev libxrender-dev libxtst-dev libxt-dev \
+        libcups2-dev libfreetype6-dev libasound2-dev libffi-dev \
+        gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+        musl-tools \
+        openjdk-17-jdk \
+        make \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/openjdk/jdk17u.git /opt/jdk17
+WORKDIR /opt/jdk17
+
+RUN wget https://download.java.net/java/GA/jdk17/0d1cfde4252546c6931946de8db48ee2/35/GPL/openjdk-17_linux-x64_bin.tar.gz && tar -xzf openjdk-17_linux-x64_bin.tar.gz -C /opt
+ENV BOOT_JDK=/usr/lib/jvm/java-17-openjdk-arm64/
+
+

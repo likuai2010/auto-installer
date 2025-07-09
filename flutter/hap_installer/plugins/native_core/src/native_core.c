@@ -107,6 +107,7 @@ const char* native_jvm(const char* optionsString, const char* mainClass, const c
       dlclose(jvm_library);
       return "Error finding JNI_CreateJavaVM";
   }
+
   JavaVMOption options[2];
   options[0].optionString = optionsString;
   options[1].optionString = "-Djava.security.manager=allow";
@@ -119,25 +120,14 @@ const char* native_jvm(const char* optionsString, const char* mainClass, const c
   JNIEnv* env;
   jint result = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
   if (result != JNI_OK) {
+      printf(" Failed to create JVM %d \n", result);
       dlclose(jvm_library);
       return "Failed to create JVM";
   }
+  (*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL);
 
   createAndSetSecurityManager(env);
   jclass MainClass = (*env)->FindClass(env, mainClass);
-  // jclass systemClass = (*env)->FindClass(env, "java/lang/System");
-  // jmethodID exitMethod = (*env)->GetStaticMethodID(env, systemClass, "exit", "(I)V");
-  
-  // printf("Attempting to call System.exit(0)...\n");
-  // (*env)->CallStaticVoidMethod(env, systemClass, exitMethod, 0);
-  
-  // if ((*env)->ExceptionCheck(env)) {
-  //     printf("System.exit() was intercepted!\n");
-  //     (*env)->ExceptionDescribe(env);
-  //     (*env)->ExceptionClear(env);
-  // } else {
-  //     printf("Error: System.exit() was not intercepted\n");
-  // }
   if (MainClass != NULL) {
       jmethodID mainMethod = (*env)->GetStaticMethodID(env, MainClass, "main", "([Ljava/lang/String;)V");
       if (mainMethod != NULL) {
@@ -176,7 +166,13 @@ const char* native_jvm(const char* optionsString, const char* mainClass, const c
   } else {
       return "Could not find MainClass class\n";
   }
-  (*jvm)->DestroyJavaVM(jvm);
+  (*jvm)->DetachCurrentThread(jvm);
+
+  jint re = (*jvm)->DestroyJavaVM(jvm);
+  if (re != JNI_OK) {
+    printf("关闭 JVM 失败，错误码: %d\n", re);
+  }
+ 
   dlclose(jvm_library);
   return "Failed to create JVM";
 }
