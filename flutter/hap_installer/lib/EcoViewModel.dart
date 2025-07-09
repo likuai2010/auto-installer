@@ -149,7 +149,7 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   fixHap(){
-    cmd.buildHap("/Users/fiber/Documents/entry-default-signed", "/Users/fiber/Documents/build.hap");
+    cmd.buildHap("/Users/fiber/Documents/entry-default-unsigned", "/Users/fiber/Documents/build.hap");
   }
 
   toLogin(BuildContext context) async {

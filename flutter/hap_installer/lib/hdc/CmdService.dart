@@ -84,7 +84,7 @@ class CmdService {
         }
       }
       print("buildHap: ${params}");
-      final result = await nativeJava(params, "app_packing_tool.jar");
+      final result = await baseJavaCmd(params, "app_packing_tool.jar");
       print("buildHap ${result}");
     }
 
@@ -159,7 +159,12 @@ class CmdService {
       return "不能安装未签名的HAP包! (tip: HAP包没有签名)";
     } else if (result.contains("9568263")) {
       return "不支持降级安装! (tip: 设备上已有新版)";
-    } else {
+    } else if (result.contains("9568304")) {
+      return "hap包不支持当前设备安装!";
+    } else if (result.contains("9568407")) {
+      return "安装hnp包失败!（tip: hnp签名失败）";
+    } 
+     else {
       return "调试失败: $result";
     }
   }

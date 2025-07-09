@@ -167,7 +167,7 @@ class DebugSteps extends StatelessWidget {
                   },
                   child:
                       !model.fileLoading
-                          ? Text("test unpack")
+                          ? Text("test pack")
                           : CircularProgressIndicator(value: null),
                 )
             // Platform.isAndroid
