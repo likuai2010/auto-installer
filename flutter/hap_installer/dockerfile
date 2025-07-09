@@ -11,11 +11,9 @@ RUN apt-get update && \
         libx11-dev libxext-dev libxrender-dev libxtst-dev libxt-dev \
         libcups2-dev libfreetype6-dev libasound2-dev libffi-dev \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-        musl-tools \
-        openjdk-17-jdk \
         make \
         ca-certificates \
-        && rm -rf /var/lib/apt/lists/*
+RUN  openjdk-17-jdk      && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/openjdk/jdk17u.git /opt/jdk17
 WORKDIR /opt/jdk17
