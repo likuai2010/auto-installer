@@ -35,3 +35,5 @@ flutter/hap_installer/cpp/build_windows/
 flutter/hap_installer/cpp/build_linux/
 flutter/hap_installer/cpp/build_macos/
 
+flutter/hap_installer/assets/windows/17.0.15_6.zip
+flutter/hap_installer/assets/linux/17.0.15_6.tar.gz

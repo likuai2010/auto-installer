@@ -7,6 +7,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final JavaVersion = "17.0.15_6";
+
+Future<String> getJavaDir() async {
+  final temp = await getTempDir();
+  return path.join(temp, "jdk-${JavaVersion.replaceAll("_", "+")}-jre");
+}
+
 Future<String> getTempDir() async {
   var tempDir = "";
   if (ohosAdapter.isOhos) {
@@ -16,6 +23,16 @@ Future<String> getTempDir() async {
       tempDir = (await getApplicationCacheDirectory()).path;
     } else {
       tempDir = (await getTemporaryDirectory()).path;
+
+      if (Platform.isWindows) {
+        if (containsChinese(tempDir)) {
+          final dir = Directory("C:\\Temp");
+          if (!await dir.exists()) {
+            await dir.create();
+          }
+          tempDir = dir.path;
+        }
+      }
     }
   }
 
@@ -24,6 +41,12 @@ Future<String> getTempDir() async {
     appDir.create(recursive: true);
   }
   return appDir.path;
+}
+
+bool containsChinese(String path) {
+  // 正则匹配中文字符（包括简体、繁体、标点符号等）
+  final RegExp chineseRegex = RegExp(r'[\u4e00-\u9fa5]'); // Unicode 范围：常用汉字
+  return chineseRegex.hasMatch(path);
 }
 
 Future<String> getExternalDir() async {

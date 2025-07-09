@@ -105,6 +105,7 @@ class MorePage extends StatelessWidget {
                       ),
                     },
               ),
+          
               ListItem(
                 leading: Icon(Icons.color_lens),
                 title: "重置证书配置",
@@ -161,10 +162,9 @@ class MorePage extends StatelessWidget {
             children: [
               ListItem(
                 title: "充电支持",
-                tailling: Text(""),
                 onClick: () => toPage(context, (_) => PayPage()),
               ),
-              ListItem(title: "应用版本", tailling: Text("2.0.0")),
+              ListItem(title: "应用版本", tailling: Text("2.3.0")),
             ],
           ),
         ],

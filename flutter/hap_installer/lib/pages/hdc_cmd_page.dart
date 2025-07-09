@@ -29,7 +29,7 @@ class HdcCmdPageState extends State<HdcCmdPage> {
       setState(() {
         cmdResult.add(result);
       });
-      Future.delayed(Duration(milliseconds: 100));
+      Future.delayed(const Duration(milliseconds: 100));
       listControrller.jumpTo(listControrller.position.maxScrollExtent);
       // ignore: empty_catches
     } catch (e) {
@@ -59,7 +59,6 @@ class HdcCmdPageState extends State<HdcCmdPage> {
           ),
         ],
       ),
-      
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
@@ -77,20 +76,22 @@ class HdcCmdPageState extends State<HdcCmdPage> {
       bottomNavigationBar: AnimatedPadding(
         padding: MediaQuery.of(context).viewInsets,
         duration: const Duration(milliseconds: 100),
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10), child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: cmdControrller,
-                onSubmitted: (_) {
-                  sendCmd();
-                },
-              ),
-            ),
-            SizedBox(width: 10),
-            IconButton(onPressed: sendCmd, icon: Icon(Icons.check_circle)),
-          ],
-        )) ,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: cmdControrller,
+                    onSubmitted: (_) {
+                      sendCmd();
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                IconButton(onPressed: sendCmd, icon: Icon(Icons.check_circle)),
+              ],
+            )),
       ),
     );
   }

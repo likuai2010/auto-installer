@@ -249,6 +249,8 @@ class _NavigationBarsState extends State<NavigationBars> {
 }
 
 Future<bool> hasJavaBySys() async {
+  // 禁用系统java
+  return false;
   try {
     var result = await Process.run('java', ['-version']);
     // 检查命令的退出状态

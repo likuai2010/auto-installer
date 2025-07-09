@@ -114,6 +114,34 @@ Future<String> unApp(String hapPath, String outPath) async {
     return "失败";
   });
 }
+// const char* result = native_jvm(
+//   "-Djava.class.path=.xxx.jar", 
+//   "MainClass",
+//    NULL, 
+//    "/Library/Java/JavaVirtualMachines/graalvm-jdk-17.0.12+8.1/Contents/Home/lib/server/libjvm.dylib"
+// );
+// printf(result);
+Future<String> nativeJvm(String options, String mainClass, List<String> params, String jvmLib) async {
+  return await Isolate.run(() {
+    final optionsCString = options.toNativeUtf8();
+    final mainClassCString = mainClass.toNativeUtf8();
+    final jvmLibCString = jvmLib.toNativeUtf8();
+    final argsPtr = calloc<Pointer<Char>>(params.length);
+    for (var i = 0; i < params.length; i++) {
+      argsPtr[i] = params[i].toNativeUtf8().cast<Char>();
+    }
+    final result = _bindings.native_jvm(optionsCString.cast(), mainClassCString.cast(), argsPtr, params.length, jvmLibCString.cast());
+    calloc.free(optionsCString);
+    calloc.free(mainClassCString);
+    calloc.free(jvmLibCString);
+    for (var i = 0; i < params.length; i++) {
+      calloc.free(argsPtr[i]);
+    }
+    return result.cast<Utf8>().toDartString();
+  });
+}
+
+
 
 Future<String> sumAsync(int a, int b) async {
   final SendPort helperIsolateSendPort = await _helperIsolateSendPort;

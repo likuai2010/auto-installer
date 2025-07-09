@@ -148,6 +148,10 @@ class EcoViewModel extends ChangeNotifier {
     // );
   }
 
+  fixHap(){
+    cmd.buildHap("/Users/fiber/Documents/entry-default-unsigned", "/Users/fiber/Documents/build.hap");
+  }
+
   toLogin(BuildContext context) async {
     if (firstUse) {
       showTips(context);
@@ -162,6 +166,11 @@ class EcoViewModel extends ChangeNotifier {
     final authInfo = await huawei.getAuthInfo();
     loading = false;
     await loadUserInfo(context, authInfo);
+  }
+
+  toAuthDev(BuildContext context) async {
+    final huawei = LoginHuawei();
+    huawei.toDev();
   }
 
   toConnect(BuildContext context, Function() builder) async {
@@ -250,10 +259,11 @@ class EcoViewModel extends ChangeNotifier {
 
   checkDevices() async {
     final result = await cmd.targetList();
-    deviceList = result
-        .split("\n")
-        .where((d) => d != '' && !d.contains('[Empty]'))
-        .toList();
+    deviceList =
+        result
+            .split("\n")
+            .where((d) => d != '' && !d.contains('[Empty]'))
+            .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -284,10 +294,11 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList = await files
-          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-          .map((f) => f.path)
-          .toList();
+      pathList =
+          await files
+              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+              .map((f) => f.path)
+              .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
@@ -320,6 +331,11 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
     var hdcDir = await getHdcDir();
     print("hdcDir: ${hdcDir}");
+
+    await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
+    await copyAssert("jar", "app_packing_tool.jar", hdcDir);
+    await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
+
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
@@ -338,13 +354,24 @@ class EcoViewModel extends ChangeNotifier {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
     }
+    final javapath = await getJavaDir();
     if (Platform.isWindows) {
+      try {
+        await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
+      } catch (e) {}
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
-      await copyAssert("windows", "hap-sign-tool.jar", hdcDir);
     }
     if (Platform.isLinux) {
-      await copyAssert("linux", "hap-sign-tool.jar", hdcDir);
+      try {
+        await copyAssert(
+          "windows",
+          "$JavaVersion.tar.gz",
+          "$javapath.tar.gz",
+          "",
+        );
+      } catch (e) {}
+      
       await copyAssert("linux", "hdc", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
@@ -353,12 +380,15 @@ class EcoViewModel extends ChangeNotifier {
 
   clearCache(BuildContext context) async {
     final temp = await getTempDir();
+    final hdc = await getHdcDir();
+    await Directory(hdc).delete(recursive: true);
     await Directory(temp).delete(recursive: true);
     try {
       await FilePicker.platform.clearTemporaryFiles();
+      
       // ignore: empty_catches
     } catch (e) {}
-    toask(context, "清理完成!");
+    toask(context, "清理完成! 请重启应用");
   }
 
   copyAssert(
@@ -367,10 +397,13 @@ class EcoViewModel extends ChangeNotifier {
     String targetDir, [
     String? target,
   ]) async {
-    final bytes = await rootBundle.load('assets/$dir/$fileName');
-    File file = File(path.join(targetDir, target ?? fileName));
-    if (!await file.exists()) {
-      await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+    try{
+      final bytes = await rootBundle.load('assets/$dir/$fileName');
+      File file = File(path.join(targetDir, target ?? fileName));
+      if (!await file.exists()) {
+        await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+      }
+    }catch(_){
     }
   }
 

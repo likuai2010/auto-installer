@@ -13,7 +13,7 @@ execute_process(
 
 
 
-set(target_gen_dir ${CMAKE_CURRENT_SOURCE_DIR}/source/bzip2-1.0.8)
+set(target_gen_dir ${CMAKE_CURRENT_SOURCE_DIR}/source/)
 set(outputs
 "${target_gen_dir}/blocksort.c"
 "${target_gen_dir}/bzlib.c"

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
@@ -75,7 +73,7 @@ class DebugSteps extends StatelessWidget {
   String userName(EcoViewModel model) {
     var nickname = model.userInfo?.nickName ?? "匿名";
     if (model.teamList.isEmpty) {
-      nickname += "(未实名)";
+      nickname += "(未开发者实名)";
     }
     return model.isLogin ? nickname : "未登录";
   }
@@ -100,8 +98,21 @@ class DebugSteps extends StatelessWidget {
                         : CircularProgressIndicator(value: null),
               ),
             ),
+            model.teamList.isEmpty && model.isLogin
+                ? ListItem(
+                  leading: Icon(Icons.person),
+                  title: "未实名开发者",
+                  subTitle: "证书有效期将为14天",
+                  tailling: TextButton(
+                    onPressed: () {
+                      viewmodel.toAuthDev(context);
+                    },
+                    child: Text("去实名"),
+                  ),
+                )
+                : Container(),
             ListItem(
-              leading: Icon(
+              leading: const Icon(
                 Icons.signal_wifi_off_outlined,
               ), //Icon(Icons.signal_wifi_4_bar)
               title: model.currentDevice ?? "未连接",
@@ -132,8 +143,8 @@ class DebugSteps extends StatelessWidget {
                 },
                 child:
                     !model.deviceLoaing
-                        ? Text("连接设备")
-                        : CircularProgressIndicator(value: null),
+                        ? const Text("连接设备")
+                        : const CircularProgressIndicator(value: null),
               ),
             ),
             ListItem(
@@ -146,21 +157,30 @@ class DebugSteps extends StatelessWidget {
                 },
                 child:
                     !model.fileLoading
-                        ? Text("选择")
-                        : CircularProgressIndicator(value: null),
+                        ? const Text("选择")
+                        : const CircularProgressIndicator(value: null),
               ),
             ),
-            Platform.isAndroid
-                ? TextButton(
-                  onPressed: () {
-                    model.exportLog();
-                  },
-                  child:
-                      !model.fileLoading
-                          ? Text("导出Hdc日志")
-                          : CircularProgressIndicator(value: null),
-                )
-                : Container(),
+            // TextButton(
+            //       onPressed: () {
+            //         model.fixHap();
+            //       },
+            //       child:
+            //           !model.fileLoading
+            //               ? Text("test pack")
+            //               : CircularProgressIndicator(value: null),
+            //     )
+            // Platform.isAndroid
+            //     ? TextButton(
+            //       onPressed: () {
+            //         model.exportLog();
+            //       },
+            //       child:
+            //           !model.fileLoading
+            //               ? Text("导出Hdc日志")
+            //               : CircularProgressIndicator(value: null),
+            //     )
+            //     : Container(),
           ],
         );
       },

@@ -9,38 +9,38 @@ class CertPage extends StatelessWidget {
   const CertPage({super.key});
 
   Widget _certList(context, CertViewModel model) {
-    List<Widget> list =
-        model.certInfoList
-            .map(
-              (CertInfo d) => CertItem(
-                info: d,
-                currentId: model.currentId,
-                onclick: () {
-                  showAlert(
-                    context,
-                    title: Text("是否下载证书并应用?"),
-                    content: Text("注意: 需要使用对应的p12文件, 不一致将导致签名失败(p12是自己创建的密钥)"),
-                    onConfirm: () {
-                      model.useCert(context, d);
-                    },
-                  );
+    List<Widget> list = model.certInfoList
+        .map(
+          (CertInfo d) => CertItem(
+            info: d,
+            currentId: model.currentId,
+            onclick: () {
+              showAlert(
+                context,
+                title: const Text("是否下载证书并应用?"),
+                content:
+                    const Text("注意: 需要使用对应的p12文件, 不一致将导致签名失败(p12是自己创建的密钥)"),
+                onConfirm: () {
+                  model.useCert(context, d);
                 },
-                onDelete: () {
-                  showAlert(
-                    context,
-                    title: Text("是否删除当前证书?"),
-                    content: Text("注意: 删除后此证书签名的Profile将失效"),
-                    onConfirm: () {
-                      model.deleteCert(context, d);
-                    },
-                  );
+              );
+            },
+            onDelete: () {
+              showAlert(
+                context,
+                title: const Text("是否删除当前证书?"),
+                content: const Text("注意: 删除后此证书签名的Profile将失效"),
+                onConfirm: () {
+                  model.deleteCert(context, d);
                 },
-              ),
-            )
-            .toList();
+              );
+            },
+          ),
+        )
+        .toList();
     return model.isLogin
         ? ListView(children: list)
-        : Center(child: Text("未登录账号"));
+        : const Center(child: Text("未登录账号"));
   }
 
   @override
@@ -58,11 +58,11 @@ class CertPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: Text(
-                    "提示: 未实名开发者账号证书有效14天，实名后六个月。",
+                    "提示: 未实名开发者账号证书有效14天，实名后六个月。由于华为服务器的限制，目前无法在中国大陆以外签名、安装软件，请您在中国大陆使用本软件或使用代理等方法使用中国大陆IP进行签名",
                     style: texttheme.labelSmall,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(child: _certList(context, model)),
               ],
             ),

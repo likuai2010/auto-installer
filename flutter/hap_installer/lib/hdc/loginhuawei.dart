@@ -11,18 +11,15 @@ import 'package:ohos_adapter/ohos_adapter.dart';
 const String EcoUrl =
     "https://cn.devecostudio.huawei.com/console/DevEcoIDE/apply?port=8888&appid=1007&code=20698961dd4f420c8b44f49010c6f0cc";
 
- Future<void> openByUrl(String url) async {
-    if (ohosAdapter.isOhos) {
-      ohosAdapter.openUrl(url);
-    }
-    if (Platform.isAndroid) {
-      await launchUrl(
-        Uri.parse(url),
-        mode: LaunchMode.externalApplication,
-      );
-    }  else {
-      await launchUrl( Uri.parse(url));
-    }
+Future<void> openByUrl(String url) async {
+  if (ohosAdapter.isOhos) {
+    ohosAdapter.openUrl(url);
+  }
+  if (Platform.isAndroid) {
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  } else {
+    await launchUrl(Uri.parse(url));
+  }
 }
 
 class LoginHuawei {
@@ -30,10 +27,14 @@ class LoginHuawei {
   LoginHuawei() : port = 3333 + Random().nextInt(1000);
 
   Future<void> openUrl() async {
-   await openByUrl(EcoUrl.replaceAll("8888", "$port"));
+    await openByUrl(EcoUrl.replaceAll("8888", "$port"));
   }
-  
 
+  Future<void> toDev() async {
+    await openByUrl(
+      "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/harmonyOSDevPlatform/9249519184596237889",
+    );
+  }
 
   Future<AuthInfo?> getAuthInfo() async {
     AuthInfo? authInfo;

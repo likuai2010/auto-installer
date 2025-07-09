@@ -92,7 +92,7 @@ class DebugStepItem extends StatelessWidget {
 
   Widget _actions() {
     if (info.error != null && info.loading == false) {
-      return TextButton(onPressed: onClick, child: Text("重置证书和Profile"));
+      return TextButton(onPressed: onClick, child: Text("若签名失败请点击此处重置证书"));
     }
     return Container();
   }

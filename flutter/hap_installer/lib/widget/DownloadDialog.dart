@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 
 import 'package:archive/archive_io.dart';
+import 'package:hap_installer/hdc/common.dart';
 
 class DownloadDialog extends StatefulWidget {
   const DownloadDialog({super.key, required this.javaPath});
@@ -57,37 +57,52 @@ class _DownloadDialogState extends State<DownloadDialog> {
       return;
     }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_17.0.14_7.zip";
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_${JavaVersion}.zip";
     if (Platform.isLinux) {
       url =
-          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_17.0.14_7.tar.gz";
+          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_${JavaVersion}.tar.gz";
     }
 
     try {
-      Dio dio = Dio();
-      await dio.download(
-        url,
-        savePath.path,
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            setState(() {
-              _progress = received / total;
-              _status = "下载中... ${((_progress!) * 100).toStringAsFixed(0)}%";
-            });
-          }
-        },
-      );
-
+      await download(url, savePath.path, (received, total) {
+        if (total != -1) {
+          setState(() {
+            _progress = received / total;
+            _status = "下载中... ${((_progress!) * 100).toStringAsFixed(0)}%";
+          });
+        }
+      });
       setState(() {
         _status = "下载完成";
       });
-
-      // 下载完成后可以提示用户或进行其他操作
     } catch (e) {
       setState(() {
         _status = "下载失败: $e";
       });
     }
+  }
+
+  download(
+    String url,
+    String filePath,
+    Function(int received, int total) onReceiveProgress,
+  ) async {
+    final httpClient = HttpClient();
+    final uri = Uri.parse(url);
+    final request = await httpClient.openUrl("GET", uri);
+    final response = await request.close();
+    final contentLength = response.contentLength;
+    int receivedLength = 0;
+    final bytes = <int>[];
+    await for (var data in response) {
+      bytes.addAll(data);
+      receivedLength += data.length;
+      if (contentLength != -1) {
+        onReceiveProgress(receivedLength, contentLength);
+      }
+    }
+    final file = File(filePath);
+    await file.writeAsBytes(bytes, flush: true);
   }
 
   @override
