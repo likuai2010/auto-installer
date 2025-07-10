@@ -1,17 +1,15 @@
 #include "native_core.h"
 
-#ifndef _WIN32
-#include <libgen.h>
+#ifdef ANDROID
 #include "hdc.h"
-#include "un_hap.h"
 #include "hap_signer_tool.h"
-
+#include "un_hap.h"
+#else
+#include <libgen.h>
+#include "un_hap.h"
 #include <dlfcn.h>
 #include <stdio.h>
 #include <jni.h>
-
-#else
-#include "un_hap.h"
 
 #endif
 
@@ -22,11 +20,8 @@ FILE *sout = NULL;
 FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {
   int ret = 0;
-#ifdef _WIN32
-  ret = 404;
-#elif __OHOS__
-  ret = 404;
-#else
+#ifdef ANDROID
+
   FILE *sout = freopen(tempDir, "w", stdout);
   FILE *serr = freopen(tempDir, "w", stderr);
   const char *dir = dirname(tempDir);
@@ -34,27 +29,23 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
   fclose(sout);
   fclose(serr);
   freopen("/dev/tty", "w", stdout);
+#else
+    ret = 404;
 #endif
   return ret;
 }
 FFI_PLUGIN_EXPORT int hdcServer(const char *tempDir)
 {
-#ifdef _WIN32
-  return 404;
-#elif __OHOS__
-  return 404;
-#else
+#ifdef ANDROID
   return server(tempDir);
+#else
+  return 404;
 #endif
 }
 FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 {
   int ret = 0;
-#ifdef _WIN32
-  ret = 404;
-#elif __OHOS__
-  ret = 404;
-#else
+#ifdef ANDROID
   // FILE *sout = freopen(tempDir, "w", stdout);
   // FILE *serr = freopen(tempDir, "w", stderr);
   ret = sign_hap(argc, args);
