@@ -9,7 +9,7 @@ RUN apt-get update && \
         zip unzip \
         wget git \
         libx11-dev libxext-dev libxrender-dev libxtst-dev libxt-dev \
-        libcups2-dev libfreetype6-dev libasound2-dev libffi-dev \
+        libcups2-dev libfreetype-dev libasound2-dev libffi-dev \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
         make \
         ca-certificates \

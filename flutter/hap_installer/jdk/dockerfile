@@ -1,13 +1,13 @@
-FROM --platform=linux/amd64 ubuntu:22.04
+FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update 
-RUN apt install -y build-essential cmake curl wget unzip python3 libncurses-dev \
-		git flex bison bash make autoconf libcurl4-openssl-dev tcl libfontconfig1-dev libfreetype6-dev \
-		gettext zip pigz meson  ca-certificates 
-RUN apt install -y file libcups2-dev  openjdk-17-jdk  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt install -y build-essential cmake curl wget unzip python3 libncurses-dev \
+		git flex bison bash make autoconf libcurl4-openssl-dev tcl \
+		gettext zip pigz meson
+RUN apt install -y file libcups2-dev  openjdk-17-jdk libfontconfig1-dev  && rm -rf /var/lib/apt/lists/*
 
-ENV BOOT_JDK=/usr/lib/jvm/java-17-openjdk-arm64/
+ENV BOOT_JDK=/usr/lib/jvm/java-1.17.0-openjdk-amd64/
 
 ENV OHOS_SDK_RELEASE_VERSION=5.1.0
 
@@ -20,8 +20,11 @@ RUN curl -OL https://repo.huaweicloud.com/openharmony/os/${OHOS_SDK_RELEASE_VERS
     for file in $(find . -type f); do \ 
         unzip $file && rm $file; \
     done
+
+RUN rm -rf /opt/ohos-sdk/windows
 ENV OHOS_SDK_HOME=/opt/ohos-sdk/linux
 
 WORKDIR /opt/jdk17
 
-# run docker run -it -v .:/opt/jdk17 3cbc1903699d /bin/bash 
+# run 
+# docker  run -it -v .:/opt/jdk17 08a228d2744d /bin/bash 
