@@ -103,6 +103,7 @@ class CmdService {
       final dict = jsonDecode(json);
       return ModuleInfo.fromJson(dict);
     } catch (e) {
+      
       print("readModuleInfo: $e");
       throw FormatException("加载modlue.json失败: $e");
     }

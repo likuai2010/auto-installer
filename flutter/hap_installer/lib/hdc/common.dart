@@ -90,14 +90,14 @@ Future<String> getAppDir() async {
 Future<String?> selectFile() async {
   FilePickerResult? result;
   if (ohosAdapter.isOhos) {
-    return await ohosAdapter.selectFile(["app", "hsp", "hap"]);
+    return await ohosAdapter.selectFile(["app", "hsp", "hap", "hnp"]);
   }
   if (Platform.isAndroid) {
     result = await FilePicker.platform.pickFiles(type: FileType.any);
   } else {
     result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ["app", "hsp", "hap"],
+      allowedExtensions: ["app", "hsp", "hap", "hnp"],
     );
   }
   final filePath = result?.files.first.path;

@@ -32,6 +32,12 @@ export CC="$TOOLCHAIN/bin/clang"
 export CXX="$TOOLCHAIN/bin/clang++"
 export NM="$TOOLCHAIN/bin/llvm-nm"
 export LD="$TOOLCHAIN/bin/clang"
+export AR="$TOOLCHAIN/bin/llvm-ar"
+export OBJCOPY="$TOOLCHAIN/bin/llvm-objcopy"
+export STRIP="$TOOLCHAIN/bin/llvm-strip"
+export CXXFILT="$TOOLCHAIN/bin/llvm-cxxfilt"
+export OBJDUMP="$TOOLCHAIN/bin/llvm-objdump"
+
 
 
 # export CC=aarch64-linux-gnu-gcc
@@ -43,7 +49,7 @@ export LD="$TOOLCHAIN/bin/clang"
 # export PKG_CONFIG=aarch64-linux-gnu-pkg-config
 # export PKG_CONFIG_PATH=/usr/aarch64-linux-gnu/lib/pkgconfig
 
-pushd jdk-17.0.16
+pushd jdk-jdk-17-29
 # bash configure \
 # --openjdk-target=aarch64-linux-gnu \
 # --with-toolchain-type=gcc \
@@ -71,8 +77,16 @@ bash configure \
 BUILD_CC=${CC} \
 BUILD_CXX=${CXX} \
 BUILD_NM=${NM} \
-LD=${LD} \
-BUILD_LD=${LD}
+BUILD_AR=${AR} \
+BUILD_OBJCOPY=${OBJCOPY} \
+BUILD_STRIP=${STRIP} \
+BUILD_LD=${LD} \
+AR=${AR} \
+STRIP=${STRIP} \
+OBJCOPY=${OBJCOPY} \
+OBJDUMP=${OBJDUMP} \
+CXXFILT=${CXXFILT} \
+NM=${NM} 
 
 
 
