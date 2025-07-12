@@ -43,6 +43,13 @@ class EcoViewModel extends ChangeNotifier {
   bool loading = false;
   bool fileLoading = false;
   bool deviceLoaing = false;
+  
+  bool buildHnping = false;
+  bool buildHaping = false;
+  String hnpName = "base";
+  String hnpVersion = "1.0.0";
+  String hnpType = "Public";
+
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
@@ -162,10 +169,16 @@ class EcoViewModel extends ChangeNotifier {
     loading = true;
     notifyListeners();
     final huawei = LoginHuawei();
-    huawei.openUrl();
-    final authInfo = await huawei.getAuthInfo();
+    await huawei.openUrl();
+    try{
+      final authInfo = await huawei.getAuthInfo();
+      await loadUserInfo(context, authInfo);
+    } catch(_){
+
+    } 
     loading = false;
-    await loadUserInfo(context, authInfo);
+    notifyListeners();
+ 
   }
 
   toAuthDev(BuildContext context) async {
@@ -185,6 +198,10 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     builder();
   }
+  selectHnpType(String type){
+    hnpType = type;
+    notifyListeners();
+  }
 
   toSelectFile(BuildContext context) async {
     if (!await checkJava(context)) return;
@@ -200,6 +217,38 @@ class EcoViewModel extends ChangeNotifier {
       toask(context, "${e}");
     }
     fileLoading = false;
+    notifyListeners();
+  }
+  BuildHnp(BuildContext context) async {
+    if (!await checkJava(context)) return;
+    if (buildHnping) return;
+    buildHnping = true;
+    notifyListeners();
+    try {
+      final filePath = await selectDir();
+      if (filePath != null) {
+        var dd = await cmd.baseHnp("hnpcli pack -i ${filePath}  -n ${hnpName} -v ${hnpVersion}");
+        toask(context, "${dd}");
+      }else{
+        toask(context, "hnp目录不存在");
+      }
+    } catch (e) {
+      toask(context, "${e}");
+    }
+    buildHnping = false;
+    notifyListeners();
+  }
+  buildHap(BuildContext context) async{
+    if (!await checkJava(context)) return;
+      if (buildHaping) return;
+    buildHaping = true;
+    notifyListeners();
+    try {
+      fixHap();
+    } catch (e) {
+      toask(context, "${e}");
+    }
+    buildHaping = false;
     notifyListeners();
   }
 
@@ -348,10 +397,13 @@ class EcoViewModel extends ChangeNotifier {
         );
       } else {
         await copyAssert("macos", "hdc", hdcDir);
+        await copyAssert("macos", "hnpcli", hdcDir);
         await copyAssert("macos", "libusb_shared.dylib", hdcDir);
+        await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
       }
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+        
       }
     }
     final javapath = await getJavaDir();
@@ -360,6 +412,7 @@ class EcoViewModel extends ChangeNotifier {
         await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
       } catch (e) {}
       await copyAssert("windows", "hdc.exe", hdcDir);
+      await copyAssert("windows", "hnpcli", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
     }
     if (Platform.isLinux) {
@@ -371,10 +424,11 @@ class EcoViewModel extends ChangeNotifier {
           "",
         );
       } catch (e) {}
-      
+      await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
+      await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
     }
   }
 

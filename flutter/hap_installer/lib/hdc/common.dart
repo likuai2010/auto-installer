@@ -114,6 +114,14 @@ Future<String?> selectFile() async {
   return filePath;
 }
 
+Future<String?> selectDir() async {
+  String? result;
+  if (ohosAdapter.isOhos) {
+    return await ohosAdapter.selectFile([]);
+  }
+  result = await FilePicker.platform.getDirectoryPath();
+  return result;
+}
 Future<String?> selectStoreFile() async {
   FilePickerResult? result;
   if (ohosAdapter.isOhos) {

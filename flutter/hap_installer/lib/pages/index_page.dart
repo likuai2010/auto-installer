@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
+import 'package:hap_installer/widget/BuildHnpBox.dart';
 import 'package:hap_installer/widget/common.dart';
 
 import 'package:hap_installer/EcoViewModel.dart';
@@ -62,6 +63,7 @@ class IndexPage extends StatelessWidget {
               );
             },
           ),
+          BuildHnp()
         ],
       ),
     );
@@ -187,6 +189,54 @@ class DebugSteps extends StatelessWidget {
     );
   }
 }
+
+
+
+class BuildHnp extends StatelessWidget {
+  const BuildHnp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<EcoViewModel>(
+      builder: (context, model, child) {
+        return GroupDecoration(
+          children: [
+            ListItem(
+              leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+              title: "构建hnp包",
+              subTitle: "支持打包hnp到hap进行安装(仅支持鸿蒙pc)",
+              tailling: TextButton(
+                onPressed: () {
+                 showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      context: context,
+                      constraints: const BoxConstraints(maxHeight: 600),
+                      builder: (context) {
+                        return AnimatedPadding(
+                          padding: MediaQuery.of(context).viewInsets,
+                          duration: const Duration(milliseconds: 100),
+                          child: SizedBox(
+                            height: 300,
+                            child: BuildHnpBox(
+                              // ip: model.ip,
+                              // port: model.port,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                },
+                child:
+                   const Text("开始构建"),
+              ),
+            )
+          ]
+        );
+      },
+    );
+  }
+}
+
 
 class AppInfoBox extends StatelessWidget {
   const AppInfoBox({super.key, required this.name, required this.style});

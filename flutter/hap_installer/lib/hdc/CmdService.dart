@@ -213,17 +213,15 @@ class CmdService {
       return await hdcCmd(cmdToArgs(cmd), await getTempDir());
     } else {
       final hdcDir = await getHdcDir();
-      var shell = Shell(workingDirectory: hdcDir);
       return await Isolate.run(() async {
         try {
-          if (!Platform.isWindows) {
-            var results = await shell.run(cmd.replaceFirst("hdc", "./hdc"));
-            return results.first.outText;
-          } else {
-            final args = cmdToArgs(cmd.replaceFirst("hdc ", ""));
-            var result = await Process.run(path.join(hdcDir, "hdc.exe"), args);
-            return result.outText + result.errText;
+          var hdc = "hdc";
+          if (Platform.isWindows) {
+              hdc += ".exe";
           }
+          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
+          var result = await Process.run(path.join(hdcDir, hdc), args);
+          return result.outText + result.errText;
         } catch (e) {
           print("baseCmd $e");
           return "$e";
@@ -243,7 +241,31 @@ class CmdService {
       return await baseJavaCmd(cmd);
     }
   }
+  Future<String> baseHnp(String cmd) async {
+    if (Platform.isAndroid) {
+      throw const FormatException("暂不支持");
+    } else {
+      final hdcDir = await getHdcDir();
+      return await Isolate.run(() async {
+        try {
+          var hdc = "hnpcli";
+          if (Platform.isWindows) {
+              hdc += ".exe";
+          }
+          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
+          var result = await Process.run(path.join(hdcDir, hdc), args);
+          return result.outText + result.errText;
+        } catch (e) {
+          print("baseHnp $e");
+          return "$e";
+        }
+      });
+    }
+  }
 }
+
+
+
 nativeJava(cmd, [jar = "hap-sign-tool.jar"]) async {
   final args = cmdToArgs("package " + cmd);
   var hdcDir = await getHdcDir();

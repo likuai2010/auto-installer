@@ -40,6 +40,12 @@ class LoginHuawei {
     AuthInfo? authInfo;
     return Isolate.run(() async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
+      var isCompleted = false;
+      Timer(Duration(seconds: 60), () {
+        if (!isCompleted) {
+          server.close();
+        }
+      });
       await for (var request in server) {
         if (request.uri.path == '/callback') {
           final content = await utf8.decoder.bind(request).join();
