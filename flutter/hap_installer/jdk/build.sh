@@ -50,15 +50,11 @@ export OBJDUMP="$TOOLCHAIN/bin/llvm-objdump"
 # export PKG_CONFIG_PATH=/usr/aarch64-linux-gnu/lib/pkgconfig
 
 pushd jdk-jdk-17-29
-# bash configure \
-# --openjdk-target=aarch64-linux-gnu \
-# --with-toolchain-type=gcc \
-# --enable-headless-only \
-# --with-jvm-variants=server \
-# --disable-warnings-as-errors \
-# --with-freetype=bundled \
-# LD=${LD}
-# BUILD_LD=${LD} 
+
+OLD_PATH=$(pwd)
+SOURCE="/Users/xiaobai/git/auto-publish-harmonyos/flutter/hap_installer/jdk/jdk-jdk-17-29"
+
+
 bash configure \
 --openjdk-target=aarch64-unknown-linux-musl \
 --with-toolchain-type=clang \
@@ -67,13 +63,16 @@ bash configure \
 --with-toolchain-path=${TOOLCHAIN} \
 --with-jvm-variants=server \
 --disable-warnings-as-errors \
+--with-native-debug-symbols=internal \
+--with-debug-level=slowdebug \
 --with-freetype=bundled \
 --with-cups-include=/usr/include \
 --with-fontconfig-include=/usr/include/ \
 --with-alsa-include=/usr/include/ \
---with-extra-cflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot"  \
---with-extra-ldflags="-Wno-error -extld=$LD --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot"  \
---with-extra-cxxflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot" \
+--with-jvm-variants=zero \
+--with-extra-cflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O2 -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
+--with-extra-cxxflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O2 -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
+--with-extra-ldflags="-Wno-error  -extld=$LD --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot " \
 BUILD_CC=${CC} \
 BUILD_CXX=${CXX} \
 BUILD_NM=${NM} \
@@ -86,13 +85,15 @@ STRIP=${STRIP} \
 OBJCOPY=${OBJCOPY} \
 OBJDUMP=${OBJDUMP} \
 CXXFILT=${CXXFILT} \
-NM=${NM} 
+NM=${NM} \
+--with-jobs=$(nproc)
 
+make images
 
 
 popd
 
-
+echo ${BUILD_PATH}
 # bash configure \
 # --openjdk-target=aarch64-unknown-linux-musl \
 # --with-boot-jdk=/usr/lib/jvm/java-17-openjdk-arm64/ \

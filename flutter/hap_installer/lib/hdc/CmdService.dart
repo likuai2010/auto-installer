@@ -272,7 +272,10 @@ baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
         path.join(hdcDir, jar),
         ...args,
       ]);
-      return result.outText + result.errText;
+      if(result.errText != ""){
+        return result.errText;
+      }
+      return result.outText;
     } catch (e) {
       print("baseCmd: $e");
       return "baseCmd: $e";
