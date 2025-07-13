@@ -53,7 +53,7 @@ class CmdService {
   }
 
   unpackageHap(String hapPath, String outPath) async {
-    final result = await baseJavaCmd("--mode hap --hap-path ${hapPath}  --out-path ${outPath} --force true", "app_unpacking_tool.jar");
+    final result = await baseJavaCmd("--mode hap --hap-path \"${hapPath}\"  --out-path \"${outPath}\" --force true", "app_unpacking_tool.jar");
     print("unpackageHap ${result}");
   }
  
@@ -62,7 +62,7 @@ class CmdService {
   
     final dir = Directory(hapDir);
     if(await dir.exists()){
-      var params = "--mode hap --out-path ${outPath}";
+      var params = "--mode hap --out-path ${outPath} --force true";
       final List<FileSystemEntity> entities = await dir.list().toList();
       for (var file in entities) {
         final fullPath = file.absolute.path;
@@ -78,6 +78,15 @@ class CmdService {
         }
         else if (filename == "libs") {
             params += " --lib-path ${fullPath}";
+        }
+        else if (filename == "pkgContextInfo.json") {
+            params += " --pkg-context-path ${fullPath}";
+        }
+        else if (filename == "rpcid.sc") {
+            params += " --rpcid-path ${fullPath}";
+        }
+        else if (filename == "CAPABILITY.profile") {
+            params += " --profile-path ${fullPath}";
         }
         else {
             params += " --${filename}-path ${fullPath}";
@@ -288,7 +297,7 @@ baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
         javaCmd = java;
       }
       final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
-      print("baseCmd: $javaCmd  $args");
+      print("baseCmd: java -jar ${jar} $cmd ");
       var result = await Process.run(javaCmd, [
         "-jar",
         path.join(hdcDir, jar),
@@ -299,8 +308,8 @@ baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
       }
       return result.outText;
     } catch (e) {
-      print("baseCmd: $e");
-      return "baseCmd: $e";
+      print("baseCmd error: $e");
+      return "baseCmd error: $e";
     }
 }
 
@@ -322,7 +331,6 @@ List<String> cmdToArgs(String cmd) {
   for (var match in regExp.allMatches(cmd)) {
     matches.add(match.group(2) ?? match.group(1)!);
   }
-  print("cmdToArgs $matches");
   return matches;
 }
 

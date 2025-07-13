@@ -56,16 +56,7 @@ Future<String> getExternalDir() async {
 }
 
 Future<String> getHdcDir() async {
-  var tempDir = "";
-  if (ohosAdapter.isOhos) {
-    tempDir = (await ohosAdapter.tempDir()) ?? "";
-  } else {
-    if (Platform.isLinux) {
-      tempDir = (await getApplicationCacheDirectory()).path;
-    } else {
-      tempDir = (await getTemporaryDirectory()).path;
-    }
-  }
+  var tempDir = await getTempDir();
   final appDir = Directory(path.join(tempDir, "hdc_tools"));
   if (!await appDir.exists()) {
     appDir.create(recursive: true);

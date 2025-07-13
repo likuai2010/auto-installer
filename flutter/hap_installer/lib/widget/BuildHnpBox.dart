@@ -15,14 +15,13 @@ class BuildHnpBox extends StatelessWidget {
   Widget build(BuildContext context) {
    return Consumer<EcoViewModel>(
       builder: (context, model, child) {
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             AppBar(
               leading: Container(),
               leadingWidth: 10,
-              title: Text("构建hnp包"),
+              title: const Text("构建hnp包"),
               actions: [const CloseButton()],
             ),
             Padding(
@@ -30,12 +29,13 @@ class BuildHnpBox extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "请输入输入包名和版本",
+                    "将本地包文件夹封装成hap进行安装",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
               ),
             ),
+            Text(model.hnpOutPath),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -66,18 +66,12 @@ class BuildHnpBox extends StatelessWidget {
                     ),
                   ),
                 ),
-                TextButton(onPressed: (){
-                    model.BuildHnp(context);
-                }, 
-                  child: !model.buildHnping ? const Text("构建hnp") : const CircularProgressIndicator(value: null)
-                )
               ],
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Hnp安装类型: "),
                 GestureDetector(
                   onTap:(){
                      model.selectHnpType("public");
@@ -102,14 +96,14 @@ class BuildHnpBox extends StatelessWidget {
                   ]),
                 ),
                
-                TextButton(onPressed: (){
-                    model.buildHap(context);
-                }, 
-                  child: !model.buildHaping ? const Text("构建hap") : const CircularProgressIndicator(value: null)
-                )
+                
               ],
-              
             ),
+            TextButton(onPressed: (){
+                model.buildToHap(context);
+            }, 
+              child: !model.buildHaping ? const Text("构建hap") : const CircularProgressIndicator(value: null)
+            )
           ],
         );
       });

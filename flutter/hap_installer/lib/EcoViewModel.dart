@@ -49,6 +49,7 @@ class EcoViewModel extends ChangeNotifier {
   String hnpName = "base";
   String hnpVersion = "1.0.0";
   String hnpType = "Public";
+  String hnpOutPath = "";
 
 
   List<TeamInfo> teamList = [];
@@ -155,9 +156,7 @@ class EcoViewModel extends ChangeNotifier {
     // );
   }
 
-  fixHap(){
-    cmd.buildHap("/Users/fiber/Documents/entry-default-unsigned", "/Users/fiber/Documents/build.hap");
-  }
+
 
   toLogin(BuildContext context) async {
     if (firstUse) {
@@ -219,15 +218,17 @@ class EcoViewModel extends ChangeNotifier {
     fileLoading = false;
     notifyListeners();
   }
-  BuildHnp(BuildContext context) async {
+  buildHnp(BuildContext context) async {
     if (!await checkJava(context)) return;
     if (buildHnping) return;
     buildHnping = true;
     notifyListeners();
     try {
-      final filePath = await selectDir();
-      if (filePath != null) {
-        var dd = await cmd.baseHnp("hnpcli pack -i ${filePath}  -n ${hnpName} -v ${hnpVersion}");
+      final fileDir = await selectDir();
+      if (fileDir != null) {
+        hnpOutPath = Directory(fileDir).parent.path;
+        var dd = await cmd.baseHnp("hnpcli pack -i \"${fileDir}\" -o \"${hnpOutPath}\"   -n ${hnpName} -v ${hnpVersion}");
+        print("build hnp ${dd}");
         toask(context, "${dd}");
       }else{
         toask(context, "hnp目录不存在");
@@ -238,18 +239,39 @@ class EcoViewModel extends ChangeNotifier {
     buildHnping = false;
     notifyListeners();
   }
-  buildHap(BuildContext context) async{
+  buildToHap(BuildContext context) async{
+    buildHnp(context);
     if (!await checkJava(context)) return;
       if (buildHaping) return;
     buildHaping = true;
     notifyListeners();
     try {
-      fixHap();
+      final temp = await getTempDir();
+      final tempDir = path.join(temp, "entry-default-unsigned.hap");
+      final hnpInDir = path.join(temp, "hnp_in_hap");
+      final appsDir = path.join(temp, "apps");
+      await cmd.unpackageHap(tempDir, hnpInDir);
+      final hapInHnpDir = path.join(hnpInDir, "hnp", "arm64-v8a");
+      await Directory(path.join(hnpInDir, "hnp")).create(recursive: true);
+      await Directory(hapInHnpDir).create(recursive: true);
+    
+      final hapFile = File(path.join(hnpOutPath, "${hnpName}.hnp"));
+      hapFile.copy(path.join(hapInHnpDir,"${hnpName}.hnp"));
+
+      final moduleInfo = await cmd.readModuleInfo(hnpInDir);
+      hapInfo = HapInfo(
+        packageName: moduleInfo.app?.bundleName ?? "未知",
+        pathList: ["${appsDir}/base_hnp.hap"],
+        version: moduleInfo.app?.versionName,
+      );
+      await cmd.buildHap(hnpInDir, "${appsDir}/base_hnp.hap");
+
     } catch (e) {
       toask(context, "${e}");
     }
     buildHaping = false;
     notifyListeners();
+    Navigator.pop(context);
   }
 
   openFile(BuildContext context, String filePath) async {
@@ -378,12 +400,14 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
+    final hapDir = await getTempDir();
     var hdcDir = await getHdcDir();
     print("hdcDir: ${hdcDir}");
 
     await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     await copyAssert("jar", "app_packing_tool.jar", hdcDir);
     await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
+    await copyAssert("jar", "entry-default-unsigned.hap", hapDir);
 
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
@@ -403,7 +427,6 @@ class EcoViewModel extends ChangeNotifier {
       }
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
-        
       }
     }
     final javapath = await getJavaDir();
