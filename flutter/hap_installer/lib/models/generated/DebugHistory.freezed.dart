@@ -31,8 +31,12 @@ mixin _$DebugHistory {
   List<SetpInfo> get setps => throw _privateConstructorUsedError;
   set setps(List<SetpInfo> value) => throw _privateConstructorUsedError;
 
+  /// Serializes this DebugHistory to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DebugHistoryCopyWith<DebugHistory> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -63,6 +67,8 @@ class _$DebugHistoryCopyWithImpl<$Res, $Val extends DebugHistory>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -96,6 +102,8 @@ class _$DebugHistoryCopyWithImpl<$Res, $Val extends DebugHistory>
     ) as $Val);
   }
 
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HapInfoCopyWith<$Res> get hapInfo {
@@ -132,6 +140,8 @@ class __$$DebugHistoryImplCopyWithImpl<$Res>
       _$DebugHistoryImpl _value, $Res Function(_$DebugHistoryImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -205,7 +215,9 @@ class _$DebugHistoryImpl implements _DebugHistory {
     return 'DebugHistory(hapInfo: $hapInfo, finished: $finished, start: $start, end: $end, setps: $setps)';
   }
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DebugHistoryImplCopyWith<_$DebugHistoryImpl> get copyWith =>
@@ -245,8 +257,11 @@ abstract class _DebugHistory implements DebugHistory {
   @override
   List<SetpInfo> get setps;
   set setps(List<SetpInfo> value);
+
+  /// Create a copy of DebugHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DebugHistoryImplCopyWith<_$DebugHistoryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -261,8 +276,12 @@ mixin _$SetpInfo {
   String? get error => throw _privateConstructorUsedError;
   bool? get loading => throw _privateConstructorUsedError;
 
+  /// Serializes this SetpInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SetpInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SetpInfoCopyWith<SetpInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -285,6 +304,8 @@ class _$SetpInfoCopyWithImpl<$Res, $Val extends SetpInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SetpInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -328,6 +349,8 @@ class __$$SetpInfoImplCopyWithImpl<$Res>
       _$SetpInfoImpl _value, $Res Function(_$SetpInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SetpInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -386,11 +409,13 @@ class _$SetpInfoImpl implements _SetpInfo {
             (identical(other.loading, loading) || other.loading == loading));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, error, loading);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SetpInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SetpInfoImplCopyWith<_$SetpInfoImpl> get copyWith =>
@@ -419,8 +444,11 @@ abstract class _SetpInfo implements SetpInfo {
   String? get error;
   @override
   bool? get loading;
+
+  /// Create a copy of SetpInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SetpInfoImplCopyWith<_$SetpInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

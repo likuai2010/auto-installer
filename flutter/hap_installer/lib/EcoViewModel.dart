@@ -11,6 +11,7 @@ import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
+import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/Home.dart';
 import 'package:hap_installer/pages/more_page.dart';
@@ -48,7 +49,7 @@ class EcoViewModel extends ChangeNotifier {
   bool buildHaping = false;
   String hnpName = "base";
   String hnpVersion = "1.0.0";
-  String hnpType = "Public";
+  String hnpType = "public";
   String hnpOutPath = "";
 
 
@@ -191,7 +192,7 @@ class EcoViewModel extends ChangeNotifier {
     try {
       await checkDevices();
     } catch (e) {
-      toask(context, "检查设备失败 ${e}");
+      toask(context, "检查设备失败 $e");
     }
     deviceLoaing = false;
     notifyListeners();
@@ -213,36 +214,48 @@ class EcoViewModel extends ChangeNotifier {
         hapInfo = await _loadApp(context, filePath);
       }
     } catch (e) {
-      toask(context, "${e}");
+      toask(context, "$e");
     }
     fileLoading = false;
     notifyListeners();
   }
   buildHnp(BuildContext context) async {
-    if (!await checkJava(context)) return;
-    if (buildHnping) return;
+    if (!await checkJava(context)) return false;
+    if (buildHnping) return false;
     buildHnping = true;
     notifyListeners();
+    var hasHap = false;
     try {
       final fileDir = await selectDir();
       if (fileDir != null) {
         hnpOutPath = Directory(fileDir).parent.path;
-        var dd = await cmd.baseHnp("hnpcli pack -i \"${fileDir}\" -o \"${hnpOutPath}\"   -n ${hnpName} -v ${hnpVersion}");
-        print("build hnp ${dd}");
-        toask(context, "${dd}");
+        var message = await cmd.baseHnp("hnpcli pack -i \"$fileDir\" -o \"$hnpOutPath\"   -n $hnpName -v $hnpVersion");
+        if(!message.contains("ERROR")) {
+          hasHap = true;
+        } else{
+          toask(context, "$message");
+          hasHap = false;
+        }
       }else{
-        toask(context, "hnp目录不存在");
+        hasHap = false;
       }
     } catch (e) {
-      toask(context, "${e}");
+      print("buildHap error $e");
+      toask(context, "$e");
+      hasHap = false;
     }
     buildHnping = false;
+    
     notifyListeners();
+    return hasHap;
   }
   buildToHap(BuildContext context) async{
-    buildHnp(context);
+    final hasHnp = await buildHnp(context);
+    if(!hasHnp){
+      return; 
+    }
     if (!await checkJava(context)) return;
-      if (buildHaping) return;
+    if (buildHaping) return;
     buildHaping = true;
     notifyListeners();
     try {
@@ -255,24 +268,42 @@ class EcoViewModel extends ChangeNotifier {
       await Directory(path.join(hnpInDir, "hnp")).create(recursive: true);
       await Directory(hapInHnpDir).create(recursive: true);
     
-      final hapFile = File(path.join(hnpOutPath, "${hnpName}.hnp"));
-      hapFile.copy(path.join(hapInHnpDir,"${hnpName}.hnp"));
+      final hapFile = File(path.join(hnpOutPath, "$hnpName.hnp"));
+      hapFile.copy(path.join(hapInHnpDir,"$hnpName.hnp"));
 
-      final moduleInfo = await cmd.readModuleInfo(hnpInDir);
+      var moduleInfo = await cmd.readModuleInfo(hnpInDir);
+      print("moduleInfo: ${jsonEncode(moduleInfo.toJson())}");
+      // 追加当前信息
+      var currentHnp =  HnpPackage(package: "$hnpName.hnp", type:hnpType);
+      var hnpPackages = moduleInfo.module!.hnpPackages.toList();
+      hnpPackages.add(currentHnp);
+      final module = moduleInfo.module!.copyWith(hnpPackages: hnpPackages);
+      moduleInfo = moduleInfo.copyWith(module: module);
+   
+      moduleInfo = await cmd.updateModuleInfo(hnpInDir, moduleInfo);
+
       hapInfo = HapInfo(
         packageName: moduleInfo.app?.bundleName ?? "未知",
-        pathList: ["${appsDir}/base_hnp.hap"],
+        pathList: ["$appsDir/base_hnp.hap"],
         version: moduleInfo.app?.versionName,
+        deviceType: moduleInfo.module?.deviceTypes ?? []
       );
-      await cmd.buildHap(hnpInDir, "${appsDir}/base_hnp.hap");
 
+      final message = await cmd.buildHap(hnpInDir, "$appsDir/base_hnp.hap");
+      if (message != "") {
+        toask(context, "$message");
+      }
+      print("buildhap $message");
     } catch (e) {
-      toask(context, "${e}");
+      print("error $e");
+      toask(context, "$e");
     }
     buildHaping = false;
     notifyListeners();
     Navigator.pop(context);
+  
   }
+  
 
   openFile(BuildContext context, String filePath) async {
     if (fileLoading) return;
@@ -354,7 +385,7 @@ class EcoViewModel extends ChangeNotifier {
   Future<HapInfo> _loadApp(BuildContext context, String hapPath) async {
     final appFile = File(hapPath);
     if (!await appFile.exists()) {
-      throw FormatException("文件不存在: ${hapPath}");
+      throw FormatException("文件不存在: $hapPath");
     }
     final debugDir = Directory(debugPath);
     if (await debugDir.exists()) {
@@ -390,6 +421,7 @@ class EcoViewModel extends ChangeNotifier {
       packageName: moduleInfo.app?.bundleName ?? "未知",
       pathList: pathList,
       version: moduleInfo.app?.versionName,
+      deviceType: moduleInfo.module?.deviceTypes ?? []
     );
   }
 
@@ -402,7 +434,7 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
     final hapDir = await getTempDir();
     var hdcDir = await getHdcDir();
-    print("hdcDir: ${hdcDir}");
+    print("hdcDir: $hdcDir");
 
     await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     await copyAssert("jar", "app_packing_tool.jar", hdcDir);

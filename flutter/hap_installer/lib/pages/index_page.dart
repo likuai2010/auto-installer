@@ -151,8 +151,8 @@ class DebugSteps extends StatelessWidget {
             ),
             ListItem(
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
-              title: model.hapInfo?.packageName ?? "未选择",
-              subTitle: "支持.app,.hap,.hsp",
+              title: model.hapInfo?.packageName == null ? "未选择" : "包名: ${model.hapInfo?.packageName} 支持设备: ${model.hapInfo?.deviceType}",
+              subTitle: "文件格式: .app,.hap,.hsp",
               tailling: TextButton(
                 onPressed: () {
                   model.toSelectFile(context);
@@ -204,7 +204,7 @@ class BuildHnp extends StatelessWidget {
             ListItem(
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: "构建hnp包",
-              subTitle: "支持打包hnp到hap进行安装(仅支持鸿蒙pc)",
+              subTitle: "支持构建hnp到hap进行安装(仅鸿蒙pc)",
               tailling: TextButton(
                 onPressed: () {
                  showModalBottomSheet<void>(

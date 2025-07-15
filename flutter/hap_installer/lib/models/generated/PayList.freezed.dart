@@ -23,8 +23,12 @@ mixin _$PayList {
   String get time => throw _privateConstructorUsedError;
   List<PayInfo> get payList => throw _privateConstructorUsedError;
 
+  /// Serializes this PayList to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PayList
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PayListCopyWith<PayList> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -46,6 +50,8 @@ class _$PayListCopyWithImpl<$Res, $Val extends PayList>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PayList
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -83,6 +89,8 @@ class __$$PayListImplCopyWithImpl<$Res>
       _$PayListImpl _value, $Res Function(_$PayListImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PayList
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -137,12 +145,14 @@ class _$PayListImpl implements _PayList {
             const DeepCollectionEquality().equals(other._payList, _payList));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, time, const DeepCollectionEquality().hash(_payList));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PayList
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PayListImplCopyWith<_$PayListImpl> get copyWith =>
@@ -166,8 +176,11 @@ abstract class _PayList implements PayList {
   String get time;
   @override
   List<PayInfo> get payList;
+
+  /// Create a copy of PayList
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PayListImplCopyWith<_$PayListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -181,8 +194,12 @@ mixin _$PayInfo {
   String get nick => throw _privateConstructorUsedError;
   String get amount => throw _privateConstructorUsedError;
 
+  /// Serializes this PayInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PayInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PayInfoCopyWith<PayInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -204,6 +221,8 @@ class _$PayInfoCopyWithImpl<$Res, $Val extends PayInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PayInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -241,6 +260,8 @@ class __$$PayInfoImplCopyWithImpl<$Res>
       _$PayInfoImpl _value, $Res Function(_$PayInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PayInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -289,11 +310,13 @@ class _$PayInfoImpl implements _PayInfo {
             (identical(other.amount, amount) || other.amount == amount));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, nick, amount);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PayInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PayInfoImplCopyWith<_$PayInfoImpl> get copyWith =>
@@ -317,8 +340,11 @@ abstract class _PayInfo implements PayInfo {
   String get nick;
   @override
   String get amount;
+
+  /// Create a copy of PayInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PayInfoImplCopyWith<_$PayInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

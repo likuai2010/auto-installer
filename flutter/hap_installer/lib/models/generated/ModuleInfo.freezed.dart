@@ -24,8 +24,12 @@ mixin _$AppInfo {
   String get compileSdkVersion => throw _privateConstructorUsedError;
   String get versionName => throw _privateConstructorUsedError;
 
+  /// Serializes this AppInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AppInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppInfoCopyWith<AppInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -47,6 +51,8 @@ class _$AppInfoCopyWithImpl<$Res, $Val extends AppInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -89,6 +95,8 @@ class __$$AppInfoImplCopyWithImpl<$Res>
       _$AppInfoImpl _value, $Res Function(_$AppInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -162,12 +170,14 @@ class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
                 other.versionName == versionName));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, bundleName, compileSdkVersion, versionName);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppInfoImplCopyWith<_$AppInfoImpl> get copyWith =>
@@ -195,9 +205,189 @@ abstract class _AppInfo implements AppInfo {
   String get compileSdkVersion;
   @override
   String get versionName;
+
+  /// Create a copy of AppInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppInfoImplCopyWith<_$AppInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+HnpPackage _$HnpPackageFromJson(Map<String, dynamic> json) {
+  return _HnpPackage.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HnpPackage {
+  String get package => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
+
+  /// Serializes this HnpPackage to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of HnpPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $HnpPackageCopyWith<HnpPackage> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HnpPackageCopyWith<$Res> {
+  factory $HnpPackageCopyWith(
+          HnpPackage value, $Res Function(HnpPackage) then) =
+      _$HnpPackageCopyWithImpl<$Res, HnpPackage>;
+  @useResult
+  $Res call({String package, String type});
+}
+
+/// @nodoc
+class _$HnpPackageCopyWithImpl<$Res, $Val extends HnpPackage>
+    implements $HnpPackageCopyWith<$Res> {
+  _$HnpPackageCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of HnpPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? package = null,
+    Object? type = null,
+  }) {
+    return _then(_value.copyWith(
+      package: null == package
+          ? _value.package
+          : package // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HnpPackageImplCopyWith<$Res>
+    implements $HnpPackageCopyWith<$Res> {
+  factory _$$HnpPackageImplCopyWith(
+          _$HnpPackageImpl value, $Res Function(_$HnpPackageImpl) then) =
+      __$$HnpPackageImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String package, String type});
+}
+
+/// @nodoc
+class __$$HnpPackageImplCopyWithImpl<$Res>
+    extends _$HnpPackageCopyWithImpl<$Res, _$HnpPackageImpl>
+    implements _$$HnpPackageImplCopyWith<$Res> {
+  __$$HnpPackageImplCopyWithImpl(
+      _$HnpPackageImpl _value, $Res Function(_$HnpPackageImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of HnpPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? package = null,
+    Object? type = null,
+  }) {
+    return _then(_$HnpPackageImpl(
+      package: null == package
+          ? _value.package
+          : package // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HnpPackageImpl with DiagnosticableTreeMixin implements _HnpPackage {
+  const _$HnpPackageImpl({this.package = "", this.type = ""});
+
+  factory _$HnpPackageImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HnpPackageImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final String package;
+  @override
+  @JsonKey()
+  final String type;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'HnpPackage(package: $package, type: $type)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'HnpPackage'))
+      ..add(DiagnosticsProperty('package', package))
+      ..add(DiagnosticsProperty('type', type));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HnpPackageImpl &&
+            (identical(other.package, package) || other.package == package) &&
+            (identical(other.type, type) || other.type == type));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, package, type);
+
+  /// Create a copy of HnpPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HnpPackageImplCopyWith<_$HnpPackageImpl> get copyWith =>
+      __$$HnpPackageImplCopyWithImpl<_$HnpPackageImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HnpPackageImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HnpPackage implements HnpPackage {
+  const factory _HnpPackage({final String package, final String type}) =
+      _$HnpPackageImpl;
+
+  factory _HnpPackage.fromJson(Map<String, dynamic> json) =
+      _$HnpPackageImpl.fromJson;
+
+  @override
+  String get package;
+  @override
+  String get type;
+
+  /// Create a copy of HnpPackage
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$HnpPackageImplCopyWith<_$HnpPackageImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -209,8 +399,12 @@ RequestPermission _$RequestPermissionFromJson(Map<String, dynamic> json) {
 mixin _$RequestPermission {
   String get name => throw _privateConstructorUsedError;
 
+  /// Serializes this RequestPermission to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RequestPermission
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RequestPermissionCopyWith<RequestPermission> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -234,6 +428,8 @@ class _$RequestPermissionCopyWithImpl<$Res, $Val extends RequestPermission>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of RequestPermission
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -267,6 +463,8 @@ class __$$RequestPermissionImplCopyWithImpl<$Res>
       $Res Function(_$RequestPermissionImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RequestPermission
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -316,11 +514,13 @@ class _$RequestPermissionImpl
             (identical(other.name, name) || other.name == name));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RequestPermission
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RequestPermissionImplCopyWith<_$RequestPermissionImpl> get copyWith =>
@@ -344,8 +544,11 @@ abstract class _RequestPermission implements RequestPermission {
 
   @override
   String get name;
+
+  /// Create a copy of RequestPermission
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RequestPermissionImplCopyWith<_$RequestPermissionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -358,9 +561,15 @@ Module _$ModuleFromJson(Map<String, dynamic> json) {
 mixin _$Module {
   List<RequestPermission> get requestPermissions =>
       throw _privateConstructorUsedError;
+  List<String> get deviceTypes => throw _privateConstructorUsedError;
+  List<HnpPackage> get hnpPackages => throw _privateConstructorUsedError;
 
+  /// Serializes this Module to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Module
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ModuleCopyWith<Module> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -369,7 +578,10 @@ abstract class $ModuleCopyWith<$Res> {
   factory $ModuleCopyWith(Module value, $Res Function(Module) then) =
       _$ModuleCopyWithImpl<$Res, Module>;
   @useResult
-  $Res call({List<RequestPermission> requestPermissions});
+  $Res call(
+      {List<RequestPermission> requestPermissions,
+      List<String> deviceTypes,
+      List<HnpPackage> hnpPackages});
 }
 
 /// @nodoc
@@ -382,16 +594,28 @@ class _$ModuleCopyWithImpl<$Res, $Val extends Module>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Module
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? requestPermissions = null,
+    Object? deviceTypes = null,
+    Object? hnpPackages = null,
   }) {
     return _then(_value.copyWith(
       requestPermissions: null == requestPermissions
           ? _value.requestPermissions
           : requestPermissions // ignore: cast_nullable_to_non_nullable
               as List<RequestPermission>,
+      deviceTypes: null == deviceTypes
+          ? _value.deviceTypes
+          : deviceTypes // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      hnpPackages: null == hnpPackages
+          ? _value.hnpPackages
+          : hnpPackages // ignore: cast_nullable_to_non_nullable
+              as List<HnpPackage>,
     ) as $Val);
   }
 }
@@ -403,7 +627,10 @@ abstract class _$$ModuleImplCopyWith<$Res> implements $ModuleCopyWith<$Res> {
       __$$ModuleImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<RequestPermission> requestPermissions});
+  $Res call(
+      {List<RequestPermission> requestPermissions,
+      List<String> deviceTypes,
+      List<HnpPackage> hnpPackages});
 }
 
 /// @nodoc
@@ -414,16 +641,28 @@ class __$$ModuleImplCopyWithImpl<$Res>
       _$ModuleImpl _value, $Res Function(_$ModuleImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Module
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? requestPermissions = null,
+    Object? deviceTypes = null,
+    Object? hnpPackages = null,
   }) {
     return _then(_$ModuleImpl(
       requestPermissions: null == requestPermissions
           ? _value._requestPermissions
           : requestPermissions // ignore: cast_nullable_to_non_nullable
               as List<RequestPermission>,
+      deviceTypes: null == deviceTypes
+          ? _value._deviceTypes
+          : deviceTypes // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      hnpPackages: null == hnpPackages
+          ? _value._hnpPackages
+          : hnpPackages // ignore: cast_nullable_to_non_nullable
+              as List<HnpPackage>,
     ));
   }
 }
@@ -432,8 +671,12 @@ class __$$ModuleImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
   const _$ModuleImpl(
-      {final List<RequestPermission> requestPermissions = const []})
-      : _requestPermissions = requestPermissions;
+      {final List<RequestPermission> requestPermissions = const [],
+      final List<String> deviceTypes = const [],
+      final List<HnpPackage> hnpPackages = const []})
+      : _requestPermissions = requestPermissions,
+        _deviceTypes = deviceTypes,
+        _hnpPackages = hnpPackages;
 
   factory _$ModuleImpl.fromJson(Map<String, dynamic> json) =>
       _$$ModuleImplFromJson(json);
@@ -448,9 +691,27 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
     return EqualUnmodifiableListView(_requestPermissions);
   }
 
+  final List<String> _deviceTypes;
+  @override
+  @JsonKey()
+  List<String> get deviceTypes {
+    if (_deviceTypes is EqualUnmodifiableListView) return _deviceTypes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_deviceTypes);
+  }
+
+  final List<HnpPackage> _hnpPackages;
+  @override
+  @JsonKey()
+  List<HnpPackage> get hnpPackages {
+    if (_hnpPackages is EqualUnmodifiableListView) return _hnpPackages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_hnpPackages);
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Module(requestPermissions: $requestPermissions)';
+    return 'Module(requestPermissions: $requestPermissions, deviceTypes: $deviceTypes, hnpPackages: $hnpPackages)';
   }
 
   @override
@@ -458,7 +719,9 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Module'))
-      ..add(DiagnosticsProperty('requestPermissions', requestPermissions));
+      ..add(DiagnosticsProperty('requestPermissions', requestPermissions))
+      ..add(DiagnosticsProperty('deviceTypes', deviceTypes))
+      ..add(DiagnosticsProperty('hnpPackages', hnpPackages));
   }
 
   @override
@@ -467,15 +730,24 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
         (other.runtimeType == runtimeType &&
             other is _$ModuleImpl &&
             const DeepCollectionEquality()
-                .equals(other._requestPermissions, _requestPermissions));
+                .equals(other._requestPermissions, _requestPermissions) &&
+            const DeepCollectionEquality()
+                .equals(other._deviceTypes, _deviceTypes) &&
+            const DeepCollectionEquality()
+                .equals(other._hnpPackages, _hnpPackages));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_requestPermissions));
+      runtimeType,
+      const DeepCollectionEquality().hash(_requestPermissions),
+      const DeepCollectionEquality().hash(_deviceTypes),
+      const DeepCollectionEquality().hash(_hnpPackages));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Module
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ModuleImplCopyWith<_$ModuleImpl> get copyWith =>
@@ -490,15 +762,24 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
 }
 
 abstract class _Module implements Module {
-  const factory _Module({final List<RequestPermission> requestPermissions}) =
-      _$ModuleImpl;
+  const factory _Module(
+      {final List<RequestPermission> requestPermissions,
+      final List<String> deviceTypes,
+      final List<HnpPackage> hnpPackages}) = _$ModuleImpl;
 
   factory _Module.fromJson(Map<String, dynamic> json) = _$ModuleImpl.fromJson;
 
   @override
   List<RequestPermission> get requestPermissions;
   @override
-  @JsonKey(ignore: true)
+  List<String> get deviceTypes;
+  @override
+  List<HnpPackage> get hnpPackages;
+
+  /// Create a copy of Module
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ModuleImplCopyWith<_$ModuleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -512,8 +793,12 @@ mixin _$ModuleInfo {
   AppInfo? get app => throw _privateConstructorUsedError;
   Module? get module => throw _privateConstructorUsedError;
 
+  /// Serializes this ModuleInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ModuleInfoCopyWith<ModuleInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -540,6 +825,8 @@ class _$ModuleInfoCopyWithImpl<$Res, $Val extends ModuleInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -558,6 +845,8 @@ class _$ModuleInfoCopyWithImpl<$Res, $Val extends ModuleInfo>
     ) as $Val);
   }
 
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AppInfoCopyWith<$Res>? get app {
@@ -570,6 +859,8 @@ class _$ModuleInfoCopyWithImpl<$Res, $Val extends ModuleInfo>
     });
   }
 
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ModuleCopyWith<$Res>? get module {
@@ -607,6 +898,8 @@ class __$$ModuleInfoImplCopyWithImpl<$Res>
       _$ModuleInfoImpl _value, $Res Function(_$ModuleInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -664,11 +957,13 @@ class _$ModuleInfoImpl with DiagnosticableTreeMixin implements _ModuleInfo {
             (identical(other.module, module) || other.module == module));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, app, module);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ModuleInfoImplCopyWith<_$ModuleInfoImpl> get copyWith =>
@@ -693,8 +988,11 @@ abstract class _ModuleInfo implements ModuleInfo {
   AppInfo? get app;
   @override
   Module? get module;
+
+  /// Create a copy of ModuleInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ModuleInfoImplCopyWith<_$ModuleInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

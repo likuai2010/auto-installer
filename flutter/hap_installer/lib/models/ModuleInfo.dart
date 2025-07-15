@@ -16,6 +16,20 @@ abstract class AppInfo with _$AppInfo {
       _$AppInfoFromJson(json);
 }
 
+
+
+
+@freezed
+abstract class HnpPackage with _$HnpPackage {
+  const factory HnpPackage({
+    @Default("") String package,
+    @Default("") String type,
+  }) = _HnpPackage;
+  // 从JSON构建
+  factory HnpPackage.fromJson(Map<String, dynamic> json) =>
+      _$HnpPackageFromJson(json);
+}
+
 @freezed
 abstract class RequestPermission with _$RequestPermission {
   const factory RequestPermission({@Default("") String name}) =
@@ -29,6 +43,8 @@ abstract class RequestPermission with _$RequestPermission {
 abstract class Module with _$Module {
   const factory Module({
     @Default([]) List<RequestPermission> requestPermissions,
+    @Default([]) List<String> deviceTypes,
+    @Default([]) List<HnpPackage> hnpPackages,
   }) = _Module;
   // 从JSON构建
   factory Module.fromJson(Map<String, dynamic> json) => _$ModuleFromJson(json);

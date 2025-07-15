@@ -29,7 +29,7 @@ class BuildHnpBox extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "将本地包文件夹封装成hap进行安装",
+                    "1.请选择hnp结构的目录 \n2. 选择目录有将自动打包成hap",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
@@ -102,7 +102,7 @@ class BuildHnpBox extends StatelessWidget {
             TextButton(onPressed: (){
                 model.buildToHap(context);
             }, 
-              child: !model.buildHaping ? const Text("构建hap") : const CircularProgressIndicator(value: null)
+              child: !model.buildHaping ? const Text("开始构建") : const CircularProgressIndicator(value: null)
             )
           ],
         );

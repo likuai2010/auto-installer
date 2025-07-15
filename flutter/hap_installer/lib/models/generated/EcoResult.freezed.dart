@@ -29,8 +29,12 @@ mixin _$EcoResult {
   List<UrlInfo>? get urlsInfo => throw _privateConstructorUsedError;
   String? get provisionFileUrl => throw _privateConstructorUsedError;
 
+  /// Serializes this EcoResult to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $EcoResultCopyWith<EcoResult> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -64,6 +68,8 @@ class _$EcoResultCopyWithImpl<$Res, $Val extends EcoResult>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -112,6 +118,8 @@ class _$EcoResultCopyWithImpl<$Res, $Val extends EcoResult>
     ) as $Val);
   }
 
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $RetCopyWith<$Res> get ret {
@@ -120,6 +128,8 @@ class _$EcoResultCopyWithImpl<$Res, $Val extends EcoResult>
     });
   }
 
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $CertInfoCopyWith<$Res>? get harmonyCert {
@@ -165,6 +175,8 @@ class __$$EcoResultImplCopyWithImpl<$Res>
       _$EcoResultImpl _value, $Res Function(_$EcoResultImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -329,7 +341,7 @@ class _$EcoResultImpl with DiagnosticableTreeMixin implements _EcoResult {
                 other.provisionFileUrl == provisionFileUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -342,7 +354,9 @@ class _$EcoResultImpl with DiagnosticableTreeMixin implements _EcoResult {
       const DeepCollectionEquality().hash(_urlsInfo),
       provisionFileUrl);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$EcoResultImplCopyWith<_$EcoResultImpl> get copyWith =>
@@ -386,8 +400,11 @@ abstract class _EcoResult implements EcoResult {
   List<UrlInfo>? get urlsInfo;
   @override
   String? get provisionFileUrl;
+
+  /// Create a copy of EcoResult
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EcoResultImplCopyWith<_$EcoResultImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -401,8 +418,12 @@ mixin _$Ret {
   int get code => throw _privateConstructorUsedError;
   String get msg => throw _privateConstructorUsedError;
 
+  /// Serializes this Ret to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Ret
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RetCopyWith<Ret> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -423,6 +444,8 @@ class _$RetCopyWithImpl<$Res, $Val extends Ret> implements $RetCopyWith<$Res> {
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Ret
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -457,6 +480,8 @@ class __$$RetImplCopyWithImpl<$Res> extends _$RetCopyWithImpl<$Res, _$RetImpl>
   __$$RetImplCopyWithImpl(_$RetImpl _value, $Res Function(_$RetImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Ret
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -514,11 +539,13 @@ class _$RetImpl with DiagnosticableTreeMixin implements _Ret {
             (identical(other.msg, msg) || other.msg == msg));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, code, msg);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Ret
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RetImplCopyWith<_$RetImpl> get copyWith =>
@@ -541,8 +568,11 @@ abstract class _Ret implements Ret {
   int get code;
   @override
   String get msg;
+
+  /// Create a copy of Ret
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RetImplCopyWith<_$RetImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -555,8 +585,12 @@ UrlInfo _$UrlInfoFromJson(Map<String, dynamic> json) {
 mixin _$UrlInfo {
   String get newUrl => throw _privateConstructorUsedError;
 
+  /// Serializes this UrlInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UrlInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UrlInfoCopyWith<UrlInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -578,6 +612,8 @@ class _$UrlInfoCopyWithImpl<$Res, $Val extends UrlInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UrlInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -610,6 +646,8 @@ class __$$UrlInfoImplCopyWithImpl<$Res>
       _$UrlInfoImpl _value, $Res Function(_$UrlInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UrlInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -657,11 +695,13 @@ class _$UrlInfoImpl with DiagnosticableTreeMixin implements _UrlInfo {
             (identical(other.newUrl, newUrl) || other.newUrl == newUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, newUrl);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UrlInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UrlInfoImplCopyWith<_$UrlInfoImpl> get copyWith =>
@@ -682,8 +722,11 @@ abstract class _UrlInfo implements UrlInfo {
 
   @override
   String get newUrl;
+
+  /// Create a copy of UrlInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UrlInfoImplCopyWith<_$UrlInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -699,8 +742,12 @@ mixin _$TeamInfo {
   String get countryCode => throw _privateConstructorUsedError;
   String get lastLoginTime => throw _privateConstructorUsedError;
 
+  /// Serializes this TeamInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of TeamInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $TeamInfoCopyWith<TeamInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -723,6 +770,8 @@ class _$TeamInfoCopyWithImpl<$Res, $Val extends TeamInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of TeamInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -771,6 +820,8 @@ class __$$TeamInfoImplCopyWithImpl<$Res>
       _$TeamInfoImpl _value, $Res Function(_$TeamInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of TeamInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -854,12 +905,14 @@ class _$TeamInfoImpl with DiagnosticableTreeMixin implements _TeamInfo {
                 other.lastLoginTime == lastLoginTime));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, name, countryCode, lastLoginTime);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of TeamInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$TeamInfoImplCopyWith<_$TeamInfoImpl> get copyWith =>
@@ -891,8 +944,11 @@ abstract class _TeamInfo implements TeamInfo {
   String get countryCode;
   @override
   String get lastLoginTime;
+
+  /// Create a copy of TeamInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TeamInfoImplCopyWith<_$TeamInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -910,8 +966,12 @@ mixin _$DeviceInfo {
   String get createTime => throw _privateConstructorUsedError;
   int get status => throw _privateConstructorUsedError;
 
+  /// Serializes this DeviceInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DeviceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DeviceInfoCopyWith<DeviceInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -941,6 +1001,8 @@ class _$DeviceInfoCopyWithImpl<$Res, $Val extends DeviceInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DeviceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1005,6 +1067,8 @@ class __$$DeviceInfoImplCopyWithImpl<$Res>
       _$DeviceInfoImpl _value, $Res Function(_$DeviceInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DeviceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1111,12 +1175,14 @@ class _$DeviceInfoImpl with DiagnosticableTreeMixin implements _DeviceInfo {
             (identical(other.status, status) || other.status == status));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, deviceName, udid, deviceType, createTime, status);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DeviceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DeviceInfoImplCopyWith<_$DeviceInfoImpl> get copyWith =>
@@ -1154,8 +1220,11 @@ abstract class _DeviceInfo implements DeviceInfo {
   String get createTime;
   @override
   int get status;
+
+  /// Create a copy of DeviceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DeviceInfoImplCopyWith<_$DeviceInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1175,8 +1244,12 @@ mixin _$CertInfo {
   int get createTime => throw _privateConstructorUsedError;
   int get status => throw _privateConstructorUsedError;
 
+  /// Serializes this CertInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CertInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $CertInfoCopyWith<CertInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1207,6 +1280,8 @@ class _$CertInfoCopyWithImpl<$Res, $Val extends CertInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of CertInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1283,6 +1358,8 @@ class __$$CertInfoImplCopyWithImpl<$Res>
       _$CertInfoImpl _value, $Res Function(_$CertInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CertInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1414,12 +1491,14 @@ class _$CertInfoImpl with DiagnosticableTreeMixin implements _CertInfo {
             (identical(other.status, status) || other.status == status));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, certName, certObjectId,
       publicKeySha256, certType, expireTime, createTime, status);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CertInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CertInfoImplCopyWith<_$CertInfoImpl> get copyWith =>
@@ -1463,8 +1542,11 @@ abstract class _CertInfo implements CertInfo {
   int get createTime;
   @override
   int get status;
+
+  /// Create a copy of CertInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CertInfoImplCopyWith<_$CertInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1478,8 +1560,12 @@ mixin _$ProfileInfo {
   String get id => throw _privateConstructorUsedError;
   String get provisionFileUrl => throw _privateConstructorUsedError;
 
+  /// Serializes this ProfileInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ProfileInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ProfileInfoCopyWith<ProfileInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1503,6 +1589,8 @@ class _$ProfileInfoCopyWithImpl<$Res, $Val extends ProfileInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ProfileInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1541,6 +1629,8 @@ class __$$ProfileInfoImplCopyWithImpl<$Res>
       _$ProfileInfoImpl _value, $Res Function(_$ProfileInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ProfileInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1599,11 +1689,13 @@ class _$ProfileInfoImpl with DiagnosticableTreeMixin implements _ProfileInfo {
                 other.provisionFileUrl == provisionFileUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, provisionFileUrl);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ProfileInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ProfileInfoImplCopyWith<_$ProfileInfoImpl> get copyWith =>
@@ -1628,8 +1720,11 @@ abstract class _ProfileInfo implements ProfileInfo {
   String get id;
   @override
   String get provisionFileUrl;
+
+  /// Create a copy of ProfileInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProfileInfoImplCopyWith<_$ProfileInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -24,9 +24,14 @@ mixin _$HapInfo {
   List<String> get pathList => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
   String? get icon => throw _privateConstructorUsedError;
+  List<String> get deviceType => throw _privateConstructorUsedError;
 
+  /// Serializes this HapInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HapInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HapInfoCopyWith<HapInfo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -39,7 +44,8 @@ abstract class $HapInfoCopyWith<$Res> {
       {String packageName,
       List<String> pathList,
       String? version,
-      String? icon});
+      String? icon,
+      List<String> deviceType});
 }
 
 /// @nodoc
@@ -52,6 +58,8 @@ class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HapInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -59,6 +67,7 @@ class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
     Object? pathList = null,
     Object? version = freezed,
     Object? icon = freezed,
+    Object? deviceType = null,
   }) {
     return _then(_value.copyWith(
       packageName: null == packageName
@@ -77,6 +86,10 @@ class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
           ? _value.icon
           : icon // ignore: cast_nullable_to_non_nullable
               as String?,
+      deviceType: null == deviceType
+          ? _value.deviceType
+          : deviceType // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -92,7 +105,8 @@ abstract class _$$HapInfoImplCopyWith<$Res> implements $HapInfoCopyWith<$Res> {
       {String packageName,
       List<String> pathList,
       String? version,
-      String? icon});
+      String? icon,
+      List<String> deviceType});
 }
 
 /// @nodoc
@@ -103,6 +117,8 @@ class __$$HapInfoImplCopyWithImpl<$Res>
       _$HapInfoImpl _value, $Res Function(_$HapInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HapInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -110,6 +126,7 @@ class __$$HapInfoImplCopyWithImpl<$Res>
     Object? pathList = null,
     Object? version = freezed,
     Object? icon = freezed,
+    Object? deviceType = null,
   }) {
     return _then(_$HapInfoImpl(
       packageName: null == packageName
@@ -128,6 +145,10 @@ class __$$HapInfoImplCopyWithImpl<$Res>
           ? _value.icon
           : icon // ignore: cast_nullable_to_non_nullable
               as String?,
+      deviceType: null == deviceType
+          ? _value._deviceType
+          : deviceType // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -139,8 +160,10 @@ class _$HapInfoImpl implements _HapInfo {
       {this.packageName = "",
       final List<String> pathList = const [],
       this.version = null,
-      this.icon = null})
-      : _pathList = pathList;
+      this.icon = null,
+      final List<String> deviceType = const []})
+      : _pathList = pathList,
+        _deviceType = deviceType;
 
   factory _$HapInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$HapInfoImplFromJson(json);
@@ -163,10 +186,18 @@ class _$HapInfoImpl implements _HapInfo {
   @override
   @JsonKey()
   final String? icon;
+  final List<String> _deviceType;
+  @override
+  @JsonKey()
+  List<String> get deviceType {
+    if (_deviceType is EqualUnmodifiableListView) return _deviceType;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_deviceType);
+  }
 
   @override
   String toString() {
-    return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon)';
+    return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon, deviceType: $deviceType)';
   }
 
   @override
@@ -178,15 +209,24 @@ class _$HapInfoImpl implements _HapInfo {
                 other.packageName == packageName) &&
             const DeepCollectionEquality().equals(other._pathList, _pathList) &&
             (identical(other.version, version) || other.version == version) &&
-            (identical(other.icon, icon) || other.icon == icon));
+            (identical(other.icon, icon) || other.icon == icon) &&
+            const DeepCollectionEquality()
+                .equals(other._deviceType, _deviceType));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, packageName,
-      const DeepCollectionEquality().hash(_pathList), version, icon);
+  int get hashCode => Object.hash(
+      runtimeType,
+      packageName,
+      const DeepCollectionEquality().hash(_pathList),
+      version,
+      icon,
+      const DeepCollectionEquality().hash(_deviceType));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HapInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HapInfoImplCopyWith<_$HapInfoImpl> get copyWith =>
@@ -205,7 +245,8 @@ abstract class _HapInfo implements HapInfo {
       {final String packageName,
       final List<String> pathList,
       final String? version,
-      final String? icon}) = _$HapInfoImpl;
+      final String? icon,
+      final List<String> deviceType}) = _$HapInfoImpl;
 
   factory _HapInfo.fromJson(Map<String, dynamic> json) = _$HapInfoImpl.fromJson;
 
@@ -218,7 +259,12 @@ abstract class _HapInfo implements HapInfo {
   @override
   String? get icon;
   @override
-  @JsonKey(ignore: true)
+  List<String> get deviceType;
+
+  /// Create a copy of HapInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HapInfoImplCopyWith<_$HapInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

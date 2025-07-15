@@ -20,6 +20,18 @@ Map<String, dynamic> _$$AppInfoImplToJson(_$AppInfoImpl instance) =>
       'versionName': instance.versionName,
     };
 
+_$HnpPackageImpl _$$HnpPackageImplFromJson(Map<String, dynamic> json) =>
+    _$HnpPackageImpl(
+      package: json['package'] as String? ?? "",
+      type: json['type'] as String? ?? "",
+    );
+
+Map<String, dynamic> _$$HnpPackageImplToJson(_$HnpPackageImpl instance) =>
+    <String, dynamic>{
+      'package': instance.package,
+      'type': instance.type,
+    };
+
 _$RequestPermissionImpl _$$RequestPermissionImplFromJson(
         Map<String, dynamic> json) =>
     _$RequestPermissionImpl(
@@ -38,11 +50,21 @@ _$ModuleImpl _$$ModuleImplFromJson(Map<String, dynamic> json) => _$ModuleImpl(
                   (e) => RequestPermission.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      deviceTypes: (json['deviceTypes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      hnpPackages: (json['hnpPackages'] as List<dynamic>?)
+              ?.map((e) => HnpPackage.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$ModuleImplToJson(_$ModuleImpl instance) =>
     <String, dynamic>{
       'requestPermissions': instance.requestPermissions,
+      'deviceTypes': instance.deviceTypes,
+      'hnpPackages': instance.hnpPackages,
     };
 
 _$ModuleInfoImpl _$$ModuleInfoImplFromJson(Map<String, dynamic> json) =>

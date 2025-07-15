@@ -39,8 +39,12 @@ mixin _$SignConfig {
   String get keyAlias => throw _privateConstructorUsedError;
   set keyAlias(String value) => throw _privateConstructorUsedError;
 
+  /// Serializes this SignConfig to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SignConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SignConfigCopyWith<SignConfig> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -73,6 +77,8 @@ class _$SignConfigCopyWithImpl<$Res, $Val extends SignConfig>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SignConfig
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -155,6 +161,8 @@ class __$$SignConfigImplCopyWithImpl<$Res>
       _$SignConfigImpl _value, $Res Function(_$SignConfigImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SignConfig
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -275,7 +283,9 @@ class _$SignConfigImpl with DiagnosticableTreeMixin implements _SignConfig {
       ..add(DiagnosticsProperty('keyAlias', keyAlias));
   }
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SignConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SignConfigImplCopyWith<_$SignConfigImpl> get copyWith =>
@@ -331,8 +341,11 @@ abstract class _SignConfig implements SignConfig {
   @override
   String get keyAlias;
   set keyAlias(String value);
+
+  /// Create a copy of SignConfig
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SignConfigImplCopyWith<_$SignConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

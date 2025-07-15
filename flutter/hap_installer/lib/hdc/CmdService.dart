@@ -92,9 +92,7 @@ class CmdService {
             params += " --${filename}-path ${fullPath}";
         }
       }
-      print("buildHap: ${params}");
-      final result = await baseJavaCmd(params, "app_packing_tool.jar");
-      print("buildHap ${result}");
+      return await baseJavaCmd(params, "app_packing_tool.jar");
     }
 
   }
@@ -112,11 +110,30 @@ class CmdService {
       final dict = jsonDecode(json);
       return ModuleInfo.fromJson(dict);
     } catch (e) {
-      
-      print("readModuleInfo: $e");
+      print("readModuleInfo error: $e");
       throw FormatException("加载modlue.json失败: $e");
     }
   }
+  Future<ModuleInfo> updateModuleInfo(String debugDir, ModuleInfo info) async {
+    final modulePath = File(path.join(debugDir, "module.json"));
+    try {
+      final json = await modulePath.readAsString();
+      final dict = jsonDecode(json);
+      if(info.module?.hnpPackages != null){
+        dict["module"]["hnpPackages"] = info.module!.hnpPackages.toList().map((d){ return d.toJson(); }).toList();
+      }
+      if(info.module?.deviceTypes != null){
+        dict["module"]["deviceTypes"] = info.module!.deviceTypes;
+      }
+      modulePath.writeAsString(json, flush: true);
+      return ModuleInfo.fromJson(dict);
+    } catch (e) {
+      print("updateModuleInfo error: $e");
+      throw FormatException("修改modlue.json失败: $e");
+    }
+  }
+
+
 
   Future<String> getOutPath(String inPath) async {
     final outFile = path.join(
