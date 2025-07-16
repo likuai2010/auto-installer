@@ -99,6 +99,7 @@ class EcoViewModel extends ChangeNotifier {
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
     readHistory();
+    cmd.javaHome = await getJavaDir();
     return true;
   }
   recordIp(String ip) async {
@@ -156,7 +157,7 @@ class EcoViewModel extends ChangeNotifier {
     final hasJava = await hasJavaBySys();
     if (hasJava) return true;
 
-    var javaPath = await getJavaDir();
+    var javaPath = cmd.javaHome;
     if (!await Directory(javaPath).exists()) {
       showAlert(
         context,
@@ -626,6 +627,20 @@ class EcoViewModel extends ChangeNotifier {
     signConfig!.certPath = path.join(storeDir, "${info.certName}.cer");
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
     return signConfig;
+  }
+  changeJaveHome(BuildContext context) async{
+    final javahome = await selectDir();
+    if(javahome != null){
+      final java = await File(path.join(javahome, "bin", "java")).exists();
+      final javaExe = await File(path.join(javahome, "bin", "java.exe")).exists();
+      if (java || javaExe) {
+        cmd.javaHome = javahome;
+        toask(context, "指定成功");
+      }else{
+         toask(context, "不是有效的java目录");
+      }
+    }
+   
   }
 
   testSignHap(BuildContext context) async {

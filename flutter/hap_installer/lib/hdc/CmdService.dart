@@ -28,7 +28,8 @@ Future<AuthInfo?> readUserInfoFromFile(String filePath) async {
 Future<List<String>> readIpHistoryFromFile(String filePath) async {
   if (!await File(filePath).exists()) return [];
   final json = await File(filePath).readAsString();
-  return jsonDecode(json) as List<String>;
+  final list = jsonDecode(json) as List<dynamic>;
+  return list.map((d){ return d.toString(); }).toList();
 }
 
 Future saveJsonToFile(String json, String filePath) async {
@@ -38,6 +39,7 @@ Future saveJsonToFile(String json, String filePath) async {
 
 class CmdService {
   String _t = "";
+  String javaHome = "";
 
   startServer() async {
     if (ohosAdapter.isOhos) {
@@ -275,6 +277,38 @@ class CmdService {
       return await baseJavaCmd(cmd);
     }
   }
+
+baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
+    var hdcDir = await getHdcDir();
+    var java = "java";
+    if (Platform.isWindows) {
+      java = "java.exe";
+    }
+
+    try {
+      String javaCmd = path.join(javaHome, "bin", java);
+      final hasJava = await File(javaCmd).exists();
+      if (!hasJava) {
+        javaCmd = java;
+      }
+      final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
+      print("baseCmd: java -jar ${jar} $cmd ");
+      var result = await Process.run(javaCmd, [
+        "-jar",
+        path.join(hdcDir, jar),
+        ...args,
+      ]);
+      if(result.errText != ""){
+        return result.errText;
+      }
+      return result.outText;
+    } catch (e) {
+      print("baseCmd error: $e");
+      return "baseCmd error: $e";
+    }
+}
+
+
   Future<String> baseHnp(String cmd) async {
     if (Platform.isAndroid) {
       throw const FormatException("暂不支持");
@@ -306,36 +340,6 @@ nativeJava(cmd, [jar = "hap-sign-tool.jar"]) async {
   var jarPath = path.join(hdcDir, jar);
   final result = await nativeJvm("-Djava.class.path=${jarPath}:/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/plugins/native_core/src", "ohos/CompressEntrance", args, "/Users/fiber/Library/Java/JavaVirtualMachines/corretto-17.0.12/Contents/Home/lib/server/libjvm.dylib");
   print(result);
-}
-
-baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
-    var hdcDir = await getHdcDir();
-    var java = "java";
-    if (Platform.isWindows) {
-      java = "java.exe";
-    }
-
-    try {
-      String javaCmd = path.join(await getJavaDir(), "bin", java);
-      final hasJava = await File(javaCmd).exists();
-      if (!hasJava) {
-        javaCmd = java;
-      }
-      final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
-      print("baseCmd: java -jar ${jar} $cmd ");
-      var result = await Process.run(javaCmd, [
-        "-jar",
-        path.join(hdcDir, jar),
-        ...args,
-      ]);
-      if(result.errText != ""){
-        return result.errText;
-      }
-      return result.outText;
-    } catch (e) {
-      print("baseCmd error: $e");
-      return "baseCmd error: $e";
-    }
 }
 
 Future<String> getArchitecture() async {

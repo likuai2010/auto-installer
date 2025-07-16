@@ -38,7 +38,20 @@ showTips(BuildContext context) {
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
-
+  Widget ChangeJavaHome(BuildContext context){
+      if(Platform.isWindows || Platform.isMacOS || Platform.isLinux){
+          return  ListItem(
+              leading: Icon(Icons.color_lens),
+              title: "指定JavaHome",
+              onClick:
+                  ()  {
+                    viewmodel.changeJaveHome(context);
+                  },
+            );
+      }
+      return Container();
+  
+  }
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(
@@ -146,6 +159,7 @@ class MorePage extends StatelessWidget {
                       );
                     },
               ),
+              ChangeJavaHome(context),
             ],
           ),
           GroupDecoration(
@@ -189,7 +203,7 @@ class MorePage extends StatelessWidget {
                 title: "充电支持",
                 onClick: () => toPage(context, (_) => PayPage()),
               ),
-              ListItem(title: "应用版本", tailling: Text("2.3.0")),
+              ListItem(title: "应用版本", tailling: Text("2.4.0")),
             ],
           ),
         ],
