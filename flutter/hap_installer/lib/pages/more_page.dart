@@ -133,7 +133,7 @@ class MorePage extends StatelessWidget {
                       final temp = await getTempDir();
                       showAlert(
                         context,
-                        title: Text("缓存目录"),
+                        title: const Text("缓存路径"),
                         content: SizedBox(height: 300,child: Column(children: [
                             SelectableText("appDir: ${appDir}"),
                             SelectableText("tempDir: ${temp}"),

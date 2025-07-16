@@ -17,14 +17,14 @@ class SignConfigPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
               ),
-              child: Text(
+              child: const Text(
                 "签名配置",
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
             ListTile(
-              title: Text("p12"),
-              subtitle: Text("证书密钥，用于创建csr,cer,p7b等文件"),
+              title: const Text("p12"),
+              subtitle: const Text("证书密钥，用于创建csr,cer,p7b等文件"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(

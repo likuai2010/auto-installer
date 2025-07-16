@@ -51,10 +51,12 @@ class EcoViewModel extends ChangeNotifier {
   String hnpVersion = "1.0.0";
   String hnpType = "public";
   String hnpOutPath = "";
+  String? hnpBaseHap;
 
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
+  List<String> historyList = [];
   AuthInfo? userInfo;
   HapInfo? hapInfo;
   String? currentDevice;
@@ -62,6 +64,7 @@ class EcoViewModel extends ChangeNotifier {
   String storeDir = "";
   String signConfigPath = "";
   String userInfoPath = "";
+  String ipHistoryPath = "";
   String debugPath = "";
   String ip = "192.168.3.47";
   String port = "39549";
@@ -85,6 +88,7 @@ class EcoViewModel extends ChangeNotifier {
     this.storeDir = storeDir.path;
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
+    ipHistoryPath = path.join(await getAppDir(), "history.json");
 
     await initSignConfig();
     await tarnsformAssert();
@@ -94,10 +98,30 @@ class EcoViewModel extends ChangeNotifier {
     await setFirstUse();
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
-    print("eco init");
+    readHistory();
     return true;
   }
-
+  recordIp(String ip) async {
+    if(historyList.contains(ip)){
+      return;
+    }
+    historyList.add(ip);
+    saveJsonToFile(jsonEncode(historyList), ipHistoryPath);
+  }
+  resetHistory(){
+    historyList = [];
+    saveJsonToFile(jsonEncode(historyList), ipHistoryPath);
+  }
+  readHistory() async{
+    historyList = await readIpHistoryFromFile(ipHistoryPath);
+    notifyListeners();
+  }
+  String? baseHap() {
+    if(hnpBaseHap == null) {
+      return null;
+    }
+    return path.basename(hnpBaseHap!);
+  }
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
     if (authInfo != null) {
       saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
@@ -125,7 +149,7 @@ class EcoViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+  
   // only windows and linux
   checkJava(BuildContext context) async {
     if (!Platform.isWindows && !Platform.isLinux) return true;
@@ -190,6 +214,7 @@ class EcoViewModel extends ChangeNotifier {
     deviceLoaing = true;
     notifyListeners();
     try {
+      await connectDevice(context, ip, port);
       await checkDevices();
     } catch (e) {
       toask(context, "检查设备失败 $e");
@@ -219,6 +244,15 @@ class EcoViewModel extends ChangeNotifier {
     fileLoading = false;
     notifyListeners();
   }
+  selectBaseHap(BuildContext context) async{
+    hnpBaseHap = null;
+    final filePath = await selectFile();
+    if (filePath?.endsWith(".hap") == true){
+        hnpBaseHap = filePath!;
+    }
+    notifyListeners();
+  }
+
   buildHnp(BuildContext context) async {
     if (!await checkJava(context)) return false;
     if (buildHnping) return false;
@@ -249,6 +283,7 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     return hasHap;
   }
+ 
   buildToHap(BuildContext context) async{
     final hasHnp = await buildHnp(context);
     if(!hasHnp){
@@ -260,16 +295,25 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final temp = await getTempDir();
-      final tempDir = path.join(temp, "base_hnp.hap");
+      
+      final tempDir = hnpBaseHap ?? path.join(temp, "base_hnp.hap");
+      
       final hnpInDir = path.join(temp, "base_hnp_in");
       final appsDir = path.join(temp, "apps");
       await cmd.unpackageHap(tempDir, hnpInDir);
-      final hapInHnpDir = path.join(hnpInDir, "hnp", "arm64-v8a");
-      await Directory(path.join(hnpInDir, "hnp")).create(recursive: true);
-      await Directory(hapInHnpDir).create(recursive: true);
+      final hnpDir = Directory(path.join(hnpInDir, "hnp"));
+      final hapInHnpDir =  Directory( path.join(hnpInDir, "hnp", "arm64-v8a"));
+
+      try{
+        await hnpDir.create(recursive: true);
+      }catch(_){
+        hnpDir.delete(recursive: true);
+        await hnpDir.create(recursive: true);
+      }
+      await hapInHnpDir.create(recursive: true);
     
       final hapFile = File(path.join(hnpOutPath, "$hnpName.hnp"));
-      hapFile.copy(path.join(hapInHnpDir,"$hnpName.hnp"));
+      hapFile.copy(path.join(hapInHnpDir.path,"$hnpName.hnp"));
 
       var moduleInfo = await cmd.readModuleInfo(hnpInDir);
       print("moduleInfo: ${jsonEncode(moduleInfo.toJson())}");
@@ -334,11 +378,32 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  tryConnectToDevice(BuildContext context, String id) async {
+    if(deviceList.contains(id)){
+        currentDevice = id;
+        cmd.changeTarget(id);
+        notifyListeners();
+    }else{
+      Navigator.pop(context);
+      deviceLoaing = true;
+      notifyListeners();
+      final ips = id.split(":");
+      await connectDevice(context, ips.first,ips.last);
+      deviceLoaing = false;
+      notifyListeners();
+    }
+   
+  }
+
   Future connectDevice(BuildContext context, String ip, String port) async {
     this.ip = ip;
     this.port = port;
+    final deviceIp = "$ip:$port";
     await setLocalUrl("$ip:$port");
-    var result = await _connectHdc("$ip:$port");
+    var result = await _connectHdc(deviceIp);
+    if (result == "连接成功") {
+        recordIp(deviceIp);
+    }
     toask(context, result);
   }
 
@@ -353,7 +418,7 @@ class EcoViewModel extends ChangeNotifier {
       } else if (result.contains("failed")) {
         return "连接失败: 请检查ip和端口是否正确";
       } else if (result.contains("repeat")) {
-        return "设备已经连接";
+        return "连接成功";
       } else {
         return result;
       }
@@ -495,7 +560,7 @@ class EcoViewModel extends ChangeNotifier {
     await Directory(temp).delete(recursive: true);
     try {
       await FilePicker.platform.clearTemporaryFiles();
-      
+      resetHistory();
       // ignore: empty_catches
     } catch (e) {}
     toask(context, "清理完成! 请重启应用");

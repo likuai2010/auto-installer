@@ -25,6 +25,11 @@ Future<AuthInfo?> readUserInfoFromFile(String filePath) async {
   final config = AuthInfo.fromJson(jsonDecode(json));
   return config;
 }
+Future<List<String>> readIpHistoryFromFile(String filePath) async {
+  if (!await File(filePath).exists()) return [];
+  final json = await File(filePath).readAsString();
+  return jsonDecode(json) as List<String>;
+}
 
 Future saveJsonToFile(String json, String filePath) async {
   final file = File(filePath);
@@ -190,6 +195,9 @@ class CmdService {
       return "hap包不支持当前设备安装!";
     } else if (result.contains("9568407")) {
       return "安装hnp包失败!（tip: hnp签名失败）";
+    } 
+    else if (result.contains("E001005")) {
+      return "当前设备(${_t.replaceAll("-t ","")})未连接,请重新连接设备!";
     } 
      else {
       return "调试失败: $result";

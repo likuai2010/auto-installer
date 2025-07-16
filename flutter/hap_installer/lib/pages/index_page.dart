@@ -22,7 +22,7 @@ class IndexPage extends StatelessWidget {
           }
         } else {
           if (context != null) {
-            viewmodel.openFile(context!, call.arguments.toString());
+            viewmodel.openFile(context!, call.arguments["path"]);
           }
         }
       }

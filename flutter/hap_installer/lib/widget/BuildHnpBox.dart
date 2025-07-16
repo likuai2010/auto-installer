@@ -25,17 +25,16 @@ class BuildHnpBox extends StatelessWidget {
               actions: [const CloseButton()],
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Column(
                 children: [
                   Text(
-                    "1.请选择hnp结构的目录 \n2. 选择目录有将自动打包成hap",
+                    "1.请选着hnp结构的目录 \n2.点击开始构建将自动打包成hap包",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
               ),
             ),
-            Text(model.hnpOutPath),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -66,12 +65,6 @@ class BuildHnpBox extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
                 GestureDetector(
                   onTap:(){
                      model.selectHnpType("public");
@@ -95,10 +88,20 @@ class BuildHnpBox extends StatelessWidget {
                       Text("Private")
                   ]),
                 ),
-               
-                
               ],
             ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("hap基座: ${model.baseHap() ?? "默认hap"}"),
+                TextButton(onPressed: () {
+                    model.selectBaseHap(context);
+                  }, child: const Text("更换hap")
+                )
+              ],
+            ),
+            SizedBox(height: 20),
             TextButton(onPressed: (){
                 model.buildToHap(context);
             }, 

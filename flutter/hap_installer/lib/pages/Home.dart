@@ -147,10 +147,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Widget? buildDrawer(PageSelected pageSelected) {
     if (pageSelected == PageSelected.home) {
-      return Drawer(child: TeamDevicePage());
+      return const Drawer(child: TeamDevicePage());
     }
     if (pageSelected == PageSelected.cert) {
-      return Drawer(child: SignConfigPage());
+      return const Drawer(child: SignConfigPage());
     }
     return null;
   }
