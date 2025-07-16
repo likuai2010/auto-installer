@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
+import 'package:provider/provider.dart';
 
 showTips(BuildContext context) {
   showDialog(
@@ -119,6 +121,29 @@ class MorePage extends StatelessWidget {
                           viewmodel.resetSignConfig();
                         },
                       ),
+                    },
+              ),
+              ListItem(
+                leading: Icon(Icons.color_lens),
+                title: "查看目录",
+                onClick:
+                    () async {
+                      final appDir = await getAppDir();
+                      final hdc = await getHdcDir();
+                      final temp = await getTempDir();
+                      showAlert(
+                        context,
+                        title: Text("缓存目录"),
+                        content: SizedBox(height: 300,child: Column(children: [
+                            SelectableText("appDir: ${appDir}"),
+                            SelectableText("tempDir: ${temp}"),
+                            SelectableText("hdcDir: ${hdc}"),
+                          ],
+                        ),) ,
+                        onConfirm: () {
+                          viewmodel.resetSignConfig();
+                        },
+                      );
                     },
               ),
             ],

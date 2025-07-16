@@ -125,7 +125,7 @@ class CmdService {
       if(info.module?.deviceTypes != null){
         dict["module"]["deviceTypes"] = info.module!.deviceTypes;
       }
-      modulePath.writeAsString(json, flush: true);
+      await modulePath.writeAsString(jsonEncode(dict), flush: true);
       return ModuleInfo.fromJson(dict);
     } catch (e) {
       print("updateModuleInfo error: $e");

@@ -260,8 +260,8 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final temp = await getTempDir();
-      final tempDir = path.join(temp, "entry-default-unsigned.hap");
-      final hnpInDir = path.join(temp, "hnp_in_hap");
+      final tempDir = path.join(temp, "base_hnp.hap");
+      final hnpInDir = path.join(temp, "base_hnp_in");
       final appsDir = path.join(temp, "apps");
       await cmd.unpackageHap(tempDir, hnpInDir);
       final hapInHnpDir = path.join(hnpInDir, "hnp", "arm64-v8a");
@@ -274,14 +274,15 @@ class EcoViewModel extends ChangeNotifier {
       var moduleInfo = await cmd.readModuleInfo(hnpInDir);
       print("moduleInfo: ${jsonEncode(moduleInfo.toJson())}");
       // 追加当前信息
-      var currentHnp =  HnpPackage(package: "$hnpName.hnp", type:hnpType);
+      var currentHnp = HnpPackage(package: "$hnpName.hnp", type:hnpType);
       var hnpPackages = moduleInfo.module!.hnpPackages.toList();
       hnpPackages.add(currentHnp);
       final module = moduleInfo.module!.copyWith(hnpPackages: hnpPackages);
       moduleInfo = moduleInfo.copyWith(module: module);
    
       moduleInfo = await cmd.updateModuleInfo(hnpInDir, moduleInfo);
-
+      // 签名需要
+      await File(path.join(hnpInDir, "module.json")).copy(path.join(appsDir, "module.json"));
       hapInfo = HapInfo(
         packageName: moduleInfo.app?.bundleName ?? "未知",
         pathList: ["$appsDir/base_hnp.hap"],
@@ -439,7 +440,7 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     await copyAssert("jar", "app_packing_tool.jar", hdcDir);
     await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
-    await copyAssert("jar", "entry-default-unsigned.hap", hapDir);
+    await copyAssert("jar", "base_hnp.hap", hapDir);
 
     if (Platform.isMacOS) {
       final arch = await getArchitecture();
