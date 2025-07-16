@@ -534,7 +534,7 @@ class EcoViewModel extends ChangeNotifier {
         await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
       } catch (e) {}
       await copyAssert("windows", "hdc.exe", hdcDir);
-      await copyAssert("windows", "hnpcli", hdcDir);
+      await copyAssert("windows", "hnpcli.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
     }
     if (Platform.isLinux) {
