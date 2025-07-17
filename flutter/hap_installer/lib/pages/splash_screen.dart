@@ -11,8 +11,8 @@ class SplashScreen extends StatelessWidget{
       future: viewmodel.init(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return const Scaffold(
+            body: Center(child: Column(children: [CircularProgressIndicator(), Text("请稍等...")], crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,)),
           );
         } else {
           return const Home();

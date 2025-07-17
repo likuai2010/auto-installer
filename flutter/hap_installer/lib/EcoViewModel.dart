@@ -167,7 +167,7 @@ class EcoViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  installJava(filePath, javaHome) async{
+  installJava(filePath, javaHome) async {
     final savePath = File("$filePath");
     if(await savePath.exists() && ! await Directory(javaHome).exists()){
       await extractFileToDisk(savePath.path, savePath.parent.path);
@@ -545,7 +545,8 @@ class EcoViewModel extends ChangeNotifier {
     if (Platform.isMacOS) {
         try {
         await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
-        installJava("$javapath.tar.gz", javapath);
+        await installJava("$javapath.tar.gz", javapath);
+        await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
       } catch (e) {}
 
       final arch = await getArchitecture();
@@ -586,6 +587,7 @@ class EcoViewModel extends ChangeNotifier {
           "",
         );
         installJava("$javapath.tar.gz", javapath);
+        await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
       } catch (e) {}
       await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
