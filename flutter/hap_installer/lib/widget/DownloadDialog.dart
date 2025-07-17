@@ -31,11 +31,12 @@ class _DownloadDialogState extends State<DownloadDialog> {
     }
     return TextButton(
       onPressed: () async {
-        final savePath = File("${widget.javaPath}$file");
+      
         setState(() {
           _progress = null;
           _status = "安装中...";
         });
+        final savePath = File("${widget.javaPath}$file");
         await extractFileToDisk(savePath.path, savePath.parent.path);
         setState(() {
           _progress = 1;

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/HistoryViewModel.dart';
@@ -62,6 +64,8 @@ class EcoViewModel extends ChangeNotifier {
   String? currentDevice;
   SignConfig? signConfig;
   String storeDir = "";
+  String hdcDir = "";
+  String tempDir = "";
   String signConfigPath = "";
   String userInfoPath = "";
   String ipHistoryPath = "";
@@ -75,8 +79,16 @@ class EcoViewModel extends ChangeNotifier {
 
   Future<bool> init() async {
     cmd.startServer();
+    
+
+    cmd.javaHome = await getJavaDir();
+    if(Platform.isMacOS){
+      cmd.javaHome = path.join(cmd.javaHome, "Contents", "Home");
+    }
+    tempDir = await getTempDir();
+    hdcDir = await getHdcDir();
     final storeDir = Directory(path.join(await getAppDir(), "store"));
-    final debugDir = Directory(path.join(await getTempDir(), "apps"));
+    final debugDir = Directory(path.join(tempDir, "apps"));
     if (!await storeDir.exists()) {
       await storeDir.create(recursive: true);
     }
@@ -86,12 +98,17 @@ class EcoViewModel extends ChangeNotifier {
 
     debugPath = debugDir.path;
     this.storeDir = storeDir.path;
+    
+
+
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
     ipHistoryPath = path.join(await getAppDir(), "history.json");
-
-    await initSignConfig();
-    await tarnsformAssert();
+    final javapath = await getJavaDir();
+    await Isolate.run(() async {
+      await initSignConfig();
+      await tarnsformAssert(javapath);
+    });
 
     final url = await getLocalUrl();
     firstUse = await getFirstUse() ?? true;
@@ -99,7 +116,7 @@ class EcoViewModel extends ChangeNotifier {
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
     readHistory();
-    cmd.javaHome = await getJavaDir();
+
     return true;
   }
   recordIp(String ip) async {
@@ -150,21 +167,27 @@ class EcoViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+  installJava(filePath, javaHome) async{
+    final savePath = File("$filePath");
+    if(await savePath.exists() && ! await Directory(javaHome).exists()){
+      await extractFileToDisk(savePath.path, savePath.parent.path);
+    }
+  }
   // only windows and linux
   checkJava(BuildContext context) async {
-    if (!Platform.isWindows && !Platform.isLinux) return true;
+    if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) return true;
     final hasJava = await hasJavaBySys();
     if (hasJava) return true;
 
-    var javaPath = cmd.javaHome;
+    var javaPath = await getJavaDir();
     if (!await Directory(javaPath).exists()) {
       showAlert(
         context,
         title: const Text("警告!"),
-        content: const Text("缺少java环境! 是否下载?"),
+        content: const Text("缺少java环境! 请指定java目录"),
         onConfirm: () {
-          showDownloadDialog(context, javaPath);
+          openByUrl("https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/");
+          changeJaveHome(context);
         },
       );
       return false;
@@ -505,23 +528,26 @@ class EcoViewModel extends ChangeNotifier {
     );
   }
 
-  tarnsformAssert() async {
+  tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
     // debug test
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
-    final hapDir = await getTempDir();
-    var hdcDir = await getHdcDir();
+ 
     print("hdcDir: $hdcDir");
-
     await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     await copyAssert("jar", "app_packing_tool.jar", hdcDir);
     await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
-    await copyAssert("jar", "base_hnp.hap", hapDir);
+    await copyAssert("jar", "base_hnp.hap", tempDir);
 
     if (Platform.isMacOS) {
+        try {
+        await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
+        installJava("$javapath.tar.gz", javapath);
+      } catch (e) {}
+
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
         await copyAssert("macos", "hdc_x86_64", hdcDir, "hdc");
@@ -541,10 +567,11 @@ class EcoViewModel extends ChangeNotifier {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
     }
-    final javapath = await getJavaDir();
+
     if (Platform.isWindows) {
       try {
         await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
+        installJava("$javapath.zip", javapath);
       } catch (e) {}
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "hnpcli.exe", hdcDir);
@@ -558,6 +585,7 @@ class EcoViewModel extends ChangeNotifier {
           "$javapath.tar.gz",
           "",
         );
+        installJava("$javapath.tar.gz", javapath);
       } catch (e) {}
       await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
@@ -650,7 +678,7 @@ class EcoViewModel extends ChangeNotifier {
         cmd.javaHome = javahome;
         toask(context, "指定成功");
       }else{
-         toask(context, "不是有效的java目录");
+        toask(context, "不是有效的java目录! (必须含有bin目录)");
       }
     }
    
