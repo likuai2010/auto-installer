@@ -58,6 +58,7 @@ dependencies:
     git:
       url: "https://gitee.com/openharmony-sig/fluttertpc_pdf_render.git"
       path: "."
+  desktop_drop: ^0.4.0
 
 dev_dependencies:
   flutter_test:

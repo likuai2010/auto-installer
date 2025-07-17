@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_drop
   syncfusion_pdfviewer_windows
   url_launcher_windows
 )
