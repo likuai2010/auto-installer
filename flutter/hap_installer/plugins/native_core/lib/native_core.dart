@@ -88,7 +88,7 @@ Future<String> unHap(String hapPath, String inFileName, String outPath) async {
       case 100:
         return "文件打开失败: ${hapPath}";
       case 101:
-        return "没有此文件: $inFileName";
+        return "文件不存在: $inFileName";
       case 102:
         return "打开内部文件失败";
     }

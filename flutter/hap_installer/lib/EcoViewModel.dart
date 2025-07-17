@@ -239,12 +239,17 @@ class EcoViewModel extends ChangeNotifier {
       if (filePath != null) {
         hapInfo = await _loadApp(context, filePath);
       }
-    } catch (e) {
+    } on FormatException catch (e) {
+      toask(context, "${e.message}");
+    } 
+    catch (e) {
       toask(context, "$e");
     }
     fileLoading = false;
     notifyListeners();
   }
+
+
   selectBaseHap(BuildContext context) async{
     hnpBaseHap = null;
     final filePath = await selectFile();
@@ -274,7 +279,10 @@ class EcoViewModel extends ChangeNotifier {
       }else{
         hasHap = false;
       }
-    } catch (e) {
+    } on FormatException catch (e) {
+      toask(context, "${e.message}");
+    } 
+    catch (e) {
       print("buildHap error $e");
       toask(context, "$e");
       hasHap = false;
@@ -340,9 +348,12 @@ class EcoViewModel extends ChangeNotifier {
         toask(context, "$message");
       }
       print("buildhap $message");
+    } on FormatException catch (e) {
+      print("error $e");
+      toask(context, "${e.message}");
     } catch (e) {
       print("error $e");
-      toask(context, "$e");
+      toask(context, "${e}");
     }
     buildHaping = false;
     notifyListeners();
@@ -357,8 +368,10 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       hapInfo = await _loadApp(context, filePath);
+    } on FormatException catch (e) {
+      toask(context, "${e.message}");
     } catch (e) {
-      toask(context, "$e");
+      toask(context, "${e}");
     }
     fileLoading = false;
     notifyListeners();

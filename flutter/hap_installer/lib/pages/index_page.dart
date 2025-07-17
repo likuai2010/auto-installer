@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/loginhuawei.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/BuildHnpBox.dart';
+import 'package:hap_installer/widget/FileDropArea.dart';
 import 'package:hap_installer/widget/common.dart';
 
 import 'package:hap_installer/EcoViewModel.dart';
@@ -149,7 +150,7 @@ class DebugSteps extends StatelessWidget {
                         : const CircularProgressIndicator(value: null),
               ),
             ),
-            ListItem(
+            FileDropArea(child: ListItem(
               leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: model.hapInfo?.packageName == null ? "未选择" : "包名: ${model.hapInfo?.packageName} 支持设备: ${model.hapInfo?.deviceType}",
               subTitle: "文件格式: .app,.hap,.hsp",
@@ -162,7 +163,12 @@ class DebugSteps extends StatelessWidget {
                         ? const Text("选择")
                         : const CircularProgressIndicator(value: null),
               ),
-            ),
+            ), onSearch: (file){
+              if(file.path != null){
+                model.openFile(context, file.path!);
+              }
+            },)
+            ,
             // TextButton(
             //       onPressed: () {
             //         model.fixHap();
