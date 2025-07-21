@@ -2,7 +2,11 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(hapInstaller)
 
-include(cmake/PatchUtils.cmake)
+
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+set(CMAKE_SKIP_RPATH TRUE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -66,8 +70,8 @@ endif()
 
 if(ANDROID OR OHOS)
 add_subdirectory(hdctools)
-add_subdirectory(hapsigner)
-add_subdirectory(unhap)
+# add_subdirectory(hapsigner)
+# add_subdirectory(unhap)
 else()
 add_subdirectory(unhap)
 add_subdirectory(hapsigner)
