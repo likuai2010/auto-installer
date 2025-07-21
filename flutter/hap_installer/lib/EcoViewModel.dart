@@ -70,8 +70,8 @@ class EcoViewModel extends ChangeNotifier {
   String userInfoPath = "";
   String ipHistoryPath = "";
   String debugPath = "";
-  String ip = "192.168.3.47";
-  String port = "39549";
+  String ip = "127.0.0.1";
+  String port = "12345";
 
   HistoryViewModel? historyViewModel;
 
@@ -105,12 +105,19 @@ class EcoViewModel extends ChangeNotifier {
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
     ipHistoryPath = path.join(await getAppDir(), "history.json");
     final javapath = await getJavaDir();
-    await Isolate.run(() async {
-      await initSignConfig();
-      await tarnsformAssert(javapath);
-    });
+    
+    await initSignConfig();
 
+    if(!ohosAdapter.isOhos){
+      await Isolate.run(() async {
+        await tarnsformAssert(javapath);
+      });
+    }else{
+        await tarnsformAssert(javapath);
+    }
+    print("getLocalUrl start");
     final url = await getLocalUrl();
+    print("getLocalUrl ${url}");
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
     ip = url?.split(":").first ?? ip;
@@ -217,7 +224,7 @@ class EcoViewModel extends ChangeNotifier {
     loading = true;
     notifyListeners();
     final huawei = LoginHuawei();
-    await huawei.openUrl();
+    huawei.openUrl();
     try{
       final authInfo = await huawei.getAuthInfo();
       await loadUserInfo(context, authInfo);
@@ -238,14 +245,16 @@ class EcoViewModel extends ChangeNotifier {
     deviceLoaing = true;
     notifyListeners();
     try {
-      await connectDevice(context, ip, port);
-      await checkDevices();
+      final result = await connectDevice(context, ip, port);
+      if(!result){
+        await checkDevices();
+        builder();
+      }
     } catch (e) {
       toask(context, "检查设备失败 $e");
     }
     deviceLoaing = false;
     notifyListeners();
-    builder();
   }
   selectHnpType(String type){
     hnpType = type;
@@ -442,7 +451,7 @@ class EcoViewModel extends ChangeNotifier {
         recordIp(deviceIp);
     }
     toask(context, result);
-  }
+    return result == "连接成功";  }
 
   _connectHdc(String url) async {
     if (!_checkUrlOrPort(url)) {
@@ -528,7 +537,7 @@ class EcoViewModel extends ChangeNotifier {
     );
   }
 
-  tarnsformAssert(javapath,) async {
+  tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
     // debug test
@@ -599,6 +608,7 @@ class EcoViewModel extends ChangeNotifier {
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
     }
+    return;
   }
 
   clearCache(BuildContext context) async {
@@ -626,7 +636,8 @@ class EcoViewModel extends ChangeNotifier {
       if (!await file.exists()) {
         await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
       }
-    }catch(_){
+    }catch(e){
+      print("copyAssert error ${e}");
     }
   }
 
@@ -648,6 +659,7 @@ class EcoViewModel extends ChangeNotifier {
       signConfig = defaultConfig;
     }
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
+    return true;
   }
 
   saveSignConfig() async {
@@ -705,7 +717,9 @@ class EcoViewModel extends ChangeNotifier {
       var signConfig = this.signConfig!;
       bool nextStep = true;
       final model = historyViewModel!;
+  
       model.createDebugHistory(hap);
+
       model.updateHistory((s) {
         s.finished = false;
       });

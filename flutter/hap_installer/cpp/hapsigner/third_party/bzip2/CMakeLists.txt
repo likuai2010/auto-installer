@@ -34,7 +34,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${cflags}")
 
 set(LD_FLAGS "-fPIC  -fstack-protector-all")
 if(OHOS)
-list(APPEND LD_FLAGS "-s -Wl,-z,relro,-z,now,")
+list(APPEND LD_FLAGS "-Wl,-z,relro,-z,now,")
 endif()
 
 add_library(bzip2 STATIC ${outputs})

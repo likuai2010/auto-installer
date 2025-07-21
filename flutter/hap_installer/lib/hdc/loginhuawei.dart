@@ -13,7 +13,7 @@ const String EcoUrl =
 
 Future<void> openByUrl(String url) async {
   if (ohosAdapter.isOhos) {
-    ohosAdapter.openUrl(url);
+    await ohosAdapter.openUrl(url);
   }
   if (Platform.isAndroid) {
     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -27,7 +27,7 @@ class LoginHuawei {
   LoginHuawei() : port = 3333 + Random().nextInt(1000);
 
   Future<void> openUrl() async {
-    await openByUrl(EcoUrl.replaceAll("8888", "$port"));
+     await openByUrl(EcoUrl.replaceAll("8888", "$port"));
   }
 
   Future<void> toDev() async {

@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\Administrator\\.ohos\\config\\default_ohos_BDFmYFPqtWDqJwk4okCMbeXV4VCKTLaiSvzQVJtkvWQ=.cer",
-          "storePassword": "0000001ABCE3324497E207556381ECF6CCFF8CB51D872B7E0E5AF3ECCC516F3990516AF70C6FF0994FC3",
+          "certpath": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A6A7B38B8794C5F0191BD6BAC0B83B2304B0B3B258CA87B61DDBCAC8384333E6647948BF1CAED",
-          "profile": "C:\\Users\\Administrator\\.ohos\\config\\default_ohos_BDFmYFPqtWDqJwk4okCMbeXV4VCKTLaiSvzQVJtkvWQ=.p7b",
+          "keyPassword": "0000001BF2DD4BD6C453C468C568C3DB49754FCCB48C6EA94BFFC652EEA9FC17AFC279E7F5230A12EC5A81",
+          "profile": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\Administrator\\.ohos\\config\\default_ohos_BDFmYFPqtWDqJwk4okCMbeXV4VCKTLaiSvzQVJtkvWQ=.p12"
+          "storeFile": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.p12",
+          "storePassword": "0000001BD3F55B8885860EE53845A9A02594BAC082F8EF1F0D4FBE31BB697CA07D9DFD6E852C0F7D297929"
         }
       }
     ],
@@ -28,42 +28,6 @@
     {
       "name": "entry",
       "srcPath": "./entry",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "pdf_render",
-      "srcPath": "../../../../../.pub-cache/git/fluttertpc_pdf_render-89f3208a7045600fb78ed539733c004f6bbe372d/ohos",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "native_core",
-      "srcPath": "../plugins/native_core/ohos",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "ohos_adapter",
-      "srcPath": "../plugins/ohos_adapter/ohos",
       "targets": [
         {
           "name": "default",

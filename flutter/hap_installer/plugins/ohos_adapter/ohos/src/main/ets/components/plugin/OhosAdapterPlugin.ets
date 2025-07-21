@@ -53,7 +53,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       let url = call.argument("url") as string;
       requestBackground()
       openUrl(url, context)
-      result.success(null)
+      result.success("")
     }
     else if(call.method == "selectFile") {
       let filter = call.argument("filter") as string[];
@@ -75,19 +75,25 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
           let out = await fs.readText(context.tempDir + "/hdc.out")
           result.success(out)
         }catch (e) {
-          result.success(e.message)
+          result.success("success")
         }
 
       })
     }
      else if(call.method == "signCmd") {
+      fs.unlink(context.tempDir + "/sign.out")
       const args = call.argument("args") as string;
-      signHap(args, (res: number)=>{
+      signHap(args, async (res: number)=>{
+        try {
+          let out = await fs.readText(context.tempDir + "/sign.out")
           if(res == 0){
             result.success("success")
           }else{
-            result.success("签名失败")
+            result.success(out)
           }
+        }catch (e) {
+          result.success(e.message)
+        }
       })
     } else if(call.method == "startServer") {
       hdcServer(context.tempDir + "/")

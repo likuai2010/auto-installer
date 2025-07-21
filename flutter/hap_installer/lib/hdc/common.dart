@@ -145,6 +145,7 @@ Future<void> setFirstUse() async {
   }
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool('firstUse', false);
+  return;
 }
 
 Future<void> setLocalUrl(url) async {
