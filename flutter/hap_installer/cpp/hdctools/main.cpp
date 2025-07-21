@@ -620,7 +620,7 @@ int cmd(int argc, const char *argv[], const char *tempPath)
         return 0;
     }
 
-    Hdc::Base::SetLogLevel(LOG_OFF);
+    Hdc::Base::SetLogLevel(LOG_DEBUG);
     // Base::SetLogLevel(LOG_ALL);
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
@@ -630,6 +630,7 @@ int cmd(int argc, const char *argv[], const char *tempPath)
 
 int server(const char *tempPath)
 {
+    Hdc::Base::SetLogLevel(LOG_DEBUG);
     Base::SetTempDir(tempPath);
     string server = "::ffff:127.0.0.1:18710";
     RunServerMode(server);

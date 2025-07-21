@@ -12,7 +12,7 @@ import {
 import fs from '@ohos.file.fs';
 import  { fileUri, picker } from '@kit.CoreFileKit';
 import { common, Want } from '@kit.AbilityKit';
-import { cmd, startServer } from 'libinstaller.so';
+import { hdcCmd, hdcServer } from 'libhdc_z.so';
 import { signHap } from 'libsigntool.so';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
@@ -69,14 +69,15 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     }
      else if(call.method == "hdcCmd") {
       const args = call.argument("args") as string;
-      cmd(args, (res: number)=>{
-          let out = fs.readTextSync(context.tempDir +"/hdc_out.txt")
-          let err = fs.readTextSync(context.tempDir +"/hdc_err.txt")
-          if (res == 0) {
-            result.success(out)
-          } else {
-            result.success(out + err)
-          }
+      fs.unlink(context.tempDir + "/hdc.out")
+      hdcCmd(args, context.tempDir + "/", async (res: number)=>{
+        try {
+          let out = await fs.readText(context.tempDir + "/hdc.out")
+          result.success(out)
+        }catch (e) {
+          result.success(e.message)
+        }
+
       })
     }
      else if(call.method == "signCmd") {
@@ -89,7 +90,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
           }
       })
     } else if(call.method == "startServer") {
-      startServer()
+      hdcServer(context.tempDir + "/")
     } else if(call.method == "getKey") {
       let ret = preferences.getPreferencesSync(context,{name:"hap_installer"})
       const key = call.argument("key") as string;

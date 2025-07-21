@@ -1426,7 +1426,7 @@ static void EchoLog(string &buf)
         char pidBuf[BUF_SIZE_TINY] = "";
         size_t size = sizeof(buf);
 #ifdef HOST_OHOS
-        if (uv_os_homedir(buf, &size) < 0) {
+        if (uv_os_tmpdir(buf, &size) < 0) {
             WRITE_LOG(LOG_FATAL, "Homepath failed");
             return ERR_API_FAIL;
         }

@@ -13,9 +13,9 @@ set(LIBRARY_PATHS )
 if(ANDROID)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/shared")
 list(APPEND LIBRARY_PATHS 
-hdc_z
-signtool
-unhap
+  hdc_z
+  signtool
+  unhap
 )
 elseif(WIN32)
   list(APPEND LIBRARY_PATHS
@@ -24,9 +24,9 @@ elseif(WIN32)
 elseif(OHOS)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
 list(APPEND LIBRARY_PATHS 
-# hdc_z
-# signtool
-unhap
+  # hdc_z
+  # signtool
+  unhap
 )
 else()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
