@@ -5,7 +5,6 @@
 extern "C"
 {
 #endif
-
     int extractFileByHap(const char *source, const char *fileName, const char *destination);
     int unzipByApp(const char *source, const char *destination);
 #ifdef __cplusplus

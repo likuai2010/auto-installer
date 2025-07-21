@@ -2,11 +2,6 @@
 #include "contrib/minizip/unzip.h"
 #include <string>
 
-// int main(int argc, char **args)
-// {
-//     return 0;
-// }
-
 int _extractFile(unzFile zipfile, const char *destPath)
 {
     if (unzOpenCurrentFile(zipfile) != UNZ_OK)

@@ -14,6 +14,7 @@
  */
 #include "server.h"
 #include "host_updater.h"
+#include "server_cmd_log.h"
 
 
 namespace Hdc {
@@ -100,17 +101,13 @@ bool HdcServer::Initial(const char *listenString)
         clsUSBClt->InitLogging(ctxUSB);
         clsTCPClt = new HdcHostTCP(true, this);
         clsUSBClt = new HdcHostUSB(true, this, ctxUSB);
-#ifdef HDC_SUPPORT_USB        
         if (clsUSBClt->Initial() != RET_SUCCESS) {
             WRITE_LOG(LOG_FATAL, "clsUSBClt Initial failed");
-            break;
+            //break;
         }
         if (!clsServerForClient || !clsTCPClt || !clsUSBClt) {
-#else
-        if (!clsServerForClient || !clsTCPClt) {
-#endif
             WRITE_LOG(LOG_FATAL, "Class init failed");
-            break;
+            //break;
         }
 #ifdef HDC_SUPPORT_UART
         clsUARTClt = new HdcHostUART(*this);
@@ -123,6 +120,7 @@ bool HdcServer::Initial(const char *listenString)
             break;
         }
 #endif
+        Base::ProcessCmdLogs();
         ret = true;
     } while (0);
     if (!ret) {
@@ -326,6 +324,7 @@ void HdcServer::AdminDaemonMapForWait(const string &connectKey, HDaemonInfo &hDa
 
 string HdcServer::AdminDaemonMap(uint8_t opType, const string &connectKey, HDaemonInfo &hDaemonInfoInOut)
 {
+    StartTraceScope("HdcServer::AdminDaemonMap");
     string sRet;
     switch (opType) {
         case OP_ADD: {
@@ -496,6 +495,13 @@ bool HdcServer::HandServerAuth(HSession hSession, SessionHandShake &handshake)
             WRITE_LOG(LOG_INFO, "response auth signture success");
             return true;
         }
+        case AUTH_SSL_TLS_PSK: {
+            if (hSession->classSSL == nullptr && !ServerSessionSSLInit(hSession, handshake)) {
+                WRITE_LOG(LOG_FATAL, "SSL init failed");
+                return false;
+            }
+            return ServerSSLHandshake(hSession, handshake);
+        }
         default:
             WRITE_LOG(LOG_FATAL, "invalid auth type %d", handshake.authType);
             return false;
@@ -550,6 +556,106 @@ void HdcServer::UpdateHdiInfo(Hdc::HdcSessionBase::SessionHandShake &handshake, 
     hdiNew->version = handshake.version;
     AdminDaemonMap(OP_UPDATE, hSession->connectKey, hdiNew);
 }
+
+#ifdef HDC_SUPPORT_ENCRYPT_TCP
+// host(  ) ---(TLS handshake client hello )--> hdcd(  ) step 1
+// host(  ) <--(TLS handshake server hello )--- hdcd(  ) step 2
+// host(ok) ---(TLS handshake change cipher)--> hdcd(  ) step 3
+// host(ok) <--(TLS handshake change cipher)--- hdcd(ok) step 4
+bool HdcServer::ServerSSLHandshake(HSession hSession, SessionHandShake &handshake)
+{
+    if (hSession->classSSL == nullptr) {
+        WRITE_LOG(LOG_DEBUG, "ssl is nullptr");
+        return false;
+    }
+    HdcSSLBase *hssl = static_cast<HdcSSLBase *>(hSession->classSSL);
+    if (hssl == nullptr) {
+        WRITE_LOG(LOG_WARN, "hssl is null");
+        return false;
+    }
+    if (handshake.buf.size() != 0) {
+        uint8_t *payload = reinterpret_cast<uint8_t*>(handshake.buf.data());
+        int payloadSize = handshake.buf.size();
+        int retw = hssl->DoBIOWrite(payload, payloadSize);
+        if (retw != payloadSize) {
+            WRITE_LOG(LOG_DEBUG, "BIO_write failed");
+            return false;
+        }
+    }
+    vector<uint8_t> buf;
+    int ret = hssl->PerformHandshake(buf);
+    if (ret == RET_SUCCESS) { // SSL handshake step 1 and step 3
+        if (buf.size() == 0) { // no handshake data
+            WRITE_LOG(LOG_WARN, "SSL PerformHandshake failed, buffer data size is 0");
+            return false;
+        }
+        handshake.buf.assign(buf.begin(), buf.end());
+        string bufString = SerialStruct::SerializeToString(handshake);
+        Send(hSession->sessionId, 0, CMD_KERNEL_HANDSHAKE,
+             reinterpret_cast<uint8_t *>(const_cast<char *>(bufString.c_str())), bufString.size());
+    }
+    if (ret == RET_SSL_HANDSHAKE_FINISHED) {
+        hssl->SetHandshakeLabel(hSession);
+        WRITE_LOG(LOG_DEBUG, "ssl handshake finished, SetHandshakeLabel");
+        if (!hssl->ClearPsk()) {
+            WRITE_LOG(LOG_WARN, "clear Pre Shared Key failed");
+            ret = ERR_GENERIC;
+        }
+    }
+    fill(buf.begin(), buf.end(), 0);
+    return ret >= RET_SUCCESS;
+}
+
+bool HdcServer::ServerSessionSSLInit(HSession hSession, SessionHandShake &handshake)
+{
+    WRITE_LOG(LOG_INFO, "ServerSession SSL Init");
+    int payloadSize = handshake.buf.size();
+    uint8_t *payload = reinterpret_cast<uint8_t*>(handshake.buf.data());
+    if (payloadSize < BUF_SIZE_PSK) {
+        WRITE_LOG(LOG_WARN, "Encrypted Pre-Shared-Key payloadSize is %d", payloadSize);
+        return false;
+    }
+    std::unique_ptr<unsigned char[]> out(std::make_unique<unsigned char[]>(BUF_SIZE_DEFAULT2));
+    if (!out) {
+        WRITE_LOG(LOG_WARN, "new buffer failed");
+        return false;
+    }
+    if (memset_s(out.get(), BUF_SIZE_DEFAULT2, 0, BUF_SIZE_DEFAULT2) != EOK) {
+        WRITE_LOG(LOG_WARN, "ServerSessionSSLInit memset_s failed");
+        return false;
+    }
+    SSLInfoPtr hSSLInfo = new (std::nothrow) HdcSSLInfo();
+    if (!hSSLInfo) {
+        WRITE_LOG(LOG_WARN, "new SSLInfoPtr failed");
+        return false;
+    }
+    HdcSSLBase::SetSSLInfo(hSSLInfo, hSession);
+    hSession->classSSL = new (std::nothrow) HdcHostSSL(hSSLInfo);
+    delete hSSLInfo;
+    HdcSSLBase *hssl = static_cast<HdcSSLBase *>(hSession->classSSL);
+    if (!hssl) {
+        WRITE_LOG(LOG_WARN, "new HdcHostSSL failed");
+        return false;
+    }
+    int outLen = hssl->RsaPrikeyDecrypt(reinterpret_cast<const unsigned char*>(payload),
+        payloadSize, out.get(), BUF_SIZE_DEFAULT2);
+    if (outLen <= 0) {
+        WRITE_LOG(LOG_WARN, "RsaPrivatekeyDecrypt failed, sid:%d", hSession->sessionId);
+        return false;
+    }
+    if (!hssl->InputPsk(out.get(), outLen)) {
+        WRITE_LOG(LOG_WARN, "InputPsk failed, sid:%d", hSession->sessionId);
+        return false;
+    }
+    int initRet = hssl->InitSSL();
+    if (initRet != RET_SUCCESS) {
+        WRITE_LOG(LOG_WARN, "InitSSL failed");
+        return false;
+    }
+    handshake.buf.clear();
+    return true;
+}
+#endif
 
 bool HdcServer::ServerSessionHandshake(HSession hSession, uint8_t *payload, int payloadSize)
 {
@@ -656,7 +762,15 @@ bool HdcServer::FetchCommand(HSession hSession, const uint32_t channelId, const 
             pdiNew->forwardDirection = (reinterpret_cast<char *>(payload))[0] == '1';
             pdiNew->taskString = reinterpret_cast<char *>(payload);
             AdminForwardMap(OP_ADD, STRING_EMPTY, pdiNew);
+#ifdef __OHOS__
+            if (hChannel->isUds) {
+                Base::TryCloseHandle((uv_handle_t *)&hChannel->hChildWorkUds);
+            } else {
+                Base::TryCloseHandle((uv_handle_t *)&hChannel->hChildWorkTCP);
+            }
+#else
             Base::TryCloseHandle((uv_handle_t *)&hChannel->hChildWorkTCP);  // detch client channel
+#endif
             break;
         }
         case CMD_FILE_INIT:
@@ -911,7 +1025,7 @@ int HdcServer::CreateConnect(const string &connectKey, bool isCheck)
         }
         uv_timer_init(&loopMain, waitTimeDoCmd);
         waitTimeDoCmd->data = hSession;
-        uv_timer_start(waitTimeDoCmd, UsbPreConnect, 5000, 5000);
+        uv_timer_start(waitTimeDoCmd, UsbPreConnect, UV_TIMEOUT, UV_REPEAT);
     }
     if (!hSession) {
         WRITE_LOG(LOG_FATAL, "CreateConnect hSession nullptr");
@@ -928,7 +1042,126 @@ int HdcServer::CreateConnect(const string &connectKey, bool isCheck)
     return RET_SUCCESS;
 }
 
+#ifdef HOST_OHOS
+void HdcServer::AttachChannelInnerForUds(HSession hSession, const uint32_t channelId)
+{
+    int ret = 0;
+    HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
+    HChannel hChannel = hSfc->AdminChannel(OP_QUERY_REF, channelId, nullptr);
+    if (!hChannel) {
+        WRITE_LOG(LOG_DEBUG, "AttachChannelInnerForUds hChannel null channelId:%u", channelId);
+        return;
+    }
+    uv_pipe_init(&hSession->childLoop, &hChannel->hChildWorkUds, 0);
+    hChannel->hChildWorkUds.data = hChannel;
+    hChannel->loopStatus = &hSession->childLoopStatus;
+    hChannel->targetSessionId = hSession->sessionId;
+    hSession->commandCount++;
+    if ((ret = uv_pipe_open((uv_pipe_t *)&hChannel->hChildWorkUds, hChannel->fdChildWorkTCP)) < 0) {
+        constexpr int bufSize = 1024;
+        char buf[bufSize] = { 0 };
+        uv_err_name_r(ret, buf, bufSize);
+        WRITE_LOG(LOG_WARN, "Hdcserver AttachChannel uv_tcp_open failed %s, channelid:%d fdChildWorkTCP:%d",
+                  buf, hChannel->channelId, hChannel->fdChildWorkTCP);
+        Base::TryCloseHandle((uv_handle_t *)&hChannel->hChildWorkUds);
+        --hChannel->ref;
+        return;
+    }
+    Base::SetUdsOptions((uv_pipe_t *)&hChannel->hChildWorkUds);
+    uv_read_start((uv_stream_t *)&hChannel->hChildWorkUds, hSfc->AllocCallback, hSfc->ReadStream);
+    --hChannel->ref;
+    WRITE_LOG(LOG_INFO, "AttachChannelInnerForUds");
+};
+
+void HdcServer::DeatchChannelInnerForUds(HSession hSession, const uint32_t channelId)
+{
+    HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
+    // childCleared has not set, no need OP_QUERY_REF
+    HChannel hChannel = hSfc->AdminChannel(OP_QUERY, channelId, nullptr);
+    if (!hChannel) {
+        ClearOwnTasks(hSession, channelId);
+        uint8_t count = 0;
+        Send(hSession->sessionId, channelId, CMD_KERNEL_CHANNEL_CLOSE, &count, 1);
+        WRITE_LOG(LOG_WARN, "DeatchChannelInnerForUds hChannel null channelId:%u", channelId);
+        return;
+    }
+    if (hChannel->childCleared) {
+        WRITE_LOG(LOG_DEBUG, "Childchannel has already freed, cid:%u", channelId);
+        return;
+    }
+    // The own task for this channel must be clear before free channel
+    ClearOwnTasks(hSession, channelId);
+    uint8_t count = 0;
+    Send(hSession->sessionId, hChannel->channelId, CMD_KERNEL_CHANNEL_CLOSE, &count, 1);
+    WRITE_LOG(LOG_DEBUG, "Childchannel begin close, cid:%u, sid:%u", hChannel->channelId, hSession->sessionId);
+    if (uv_is_closing((const uv_handle_t *)&hChannel->hChildWorkUds)) {
+        Base::DoNextLoop(&hSession->childLoop, hChannel, [](const uint8_t flag, string &msg, const void *data) {
+            HChannel hChannel = (HChannel)data;
+            hChannel->childCleared = true;
+            WRITE_LOG(LOG_DEBUG, "Childchannel free direct, cid:%u", hChannel->channelId);
+        });
+    } else {
+        if (hChannel->hChildWorkUds.loop == NULL) {
+            WRITE_LOG(LOG_DEBUG, "Childchannel loop is null, cid:%u", hChannel->channelId);
+        }
+        Base::TryCloseHandle((uv_handle_t *)&hChannel->hChildWorkUds, [](uv_handle_t *handle) -> void {
+            HChannel hChannel = (HChannel)handle->data;
+            hChannel->childCleared = true;
+            WRITE_LOG(LOG_DEBUG, "Childchannel free callback, cid:%u", hChannel->channelId);
+        });
+    }
+};
+
 void HdcServer::AttachChannel(HSession hSession, const uint32_t channelId)
+{
+    HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
+    HChannel hChannel = hSfc->AdminChannel(OP_QUERY, channelId, nullptr);
+    if (!hChannel) {
+        WRITE_LOG(LOG_DEBUG, "AttachChannel hChannel null channelId:%u", channelId);
+        return;
+    }
+    if (hChannel->isUds) {
+        AttachChannelInnerForUds(hSession, channelId);
+    } else {
+        AttachChannelInnerForTcp(hSession, channelId);
+    }
+}
+
+void HdcServer::DeatchChannel(HSession hSession, const uint32_t channelId)
+{
+    HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
+    // childCleared has not set, no need OP_QUERY_REF
+    HChannel hChannel = hSfc->AdminChannel(OP_QUERY, channelId, nullptr);
+    if (!hChannel) {
+        ClearOwnTasks(hSession, channelId);
+        uint8_t count = 0;
+        Send(hSession->sessionId, channelId, CMD_KERNEL_CHANNEL_CLOSE, &count, 1);
+        WRITE_LOG(LOG_WARN, "DeatchChannel hChannel null channelId:%u", channelId);
+        return;
+    }
+    if (hChannel->childCleared) {
+        WRITE_LOG(LOG_DEBUG, "Childchannel has already freed, cid:%u", channelId);
+        return;
+    }
+    if (hChannel->isUds) {
+        DeatchChannelInnerForUds(hSession, channelId);
+    } else {
+        DeatchChannelInnerForTcp(hSession, channelId);
+    }
+}
+#else
+void HdcServer::AttachChannel(HSession hSession, const uint32_t channelId)
+{
+    AttachChannelInnerForTcp(hSession, channelId);
+}
+
+void HdcServer::DeatchChannel(HSession hSession, const uint32_t channelId)
+{
+    DeatchChannelInnerForTcp(hSession, channelId);
+}
+#endif
+
+void HdcServer::AttachChannelInnerForTcp(HSession hSession, const uint32_t channelId)
 {
     int ret = 0;
     HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
@@ -941,6 +1174,7 @@ void HdcServer::AttachChannel(HSession hSession, const uint32_t channelId)
     hChannel->hChildWorkTCP.data = hChannel;
     hChannel->loopStatus = &hSession->childLoopStatus;
     hChannel->targetSessionId = hSession->sessionId;
+    hSession->commandCount++;
     if ((ret = uv_tcp_open((uv_tcp_t *)&hChannel->hChildWorkTCP, hChannel->fdChildWorkTCP)) < 0) {
         constexpr int bufSize = 1024;
         char buf[bufSize] = { 0 };
@@ -956,7 +1190,7 @@ void HdcServer::AttachChannel(HSession hSession, const uint32_t channelId)
     --hChannel->ref;
 };
 
-void HdcServer::DeatchChannel(HSession hSession, const uint32_t channelId)
+void HdcServer::DeatchChannelInnerForTcp(HSession hSession, const uint32_t channelId)
 {
     HdcServerForClient *hSfc = static_cast<HdcServerForClient *>(clsServerForClient);
     // childCleared has not set, no need OP_QUERY_REF
@@ -1097,4 +1331,38 @@ void HdcServer::EchoToClientsForSession(uint32_t targetSessionId, const string &
     WRITE_LOG(LOG_INFO, "%s:%u %s", __FUNCTION__, targetSessionId, echo.c_str());
     hSfc->EchoToAllChannelsViaSessionId(targetSessionId, echo);
 }
+
+void HdcServer::PrintCmdLogEx(const string& cmdStr)
+{
+    if (cmdStr.empty()) {
+        return;
+    }
+    Hdc::ServerCmdLog::GetInstance().PushCmdLogStr(cmdStr);
+}
+
+#ifdef HOST_OHOS
+void HdcServer::SessionSoftReset()
+{
+    uv_rwlock_rdlock(&daemonAdmin);
+    map<string, HDaemonInfo>::iterator iter;
+    for (iter = mapDaemon.begin(); iter != mapDaemon.end(); ++iter) {
+        HDaemonInfo di = iter->second;
+        if (di == nullptr) {
+            continue;
+        }
+        string devname = di->devName;
+        if (devname.empty()) {
+            continue;
+        }
+        if (di->connType == CONN_USB) {
+            HSession hSession = di->hSession;
+            if (hSession == nullptr) {
+                continue;
+            }
+            clsUSBClt->SendSoftResetToDaemon(hSession, 0);
+        }
+    }
+    uv_rwlock_rdunlock(&daemonAdmin);
+}
+#endif
 }  // namespace Hdc
