@@ -44,6 +44,7 @@ class BuildHnpBox extends StatelessWidget {
                   child: TextField(
                     maxLength: 15,
                     controller: name,
+                    onChanged: (value) => model.hnpName = value,
                     decoration: InputDecoration(
                       border: null,
                       counter: null,
@@ -57,6 +58,7 @@ class BuildHnpBox extends StatelessWidget {
                   child: TextField(
                     maxLength: 15,
                     controller: version,
+                     onChanged: (value) => model.hnpVersion = value,
                     decoration: InputDecoration(
                       border: null,
                       counter: null,

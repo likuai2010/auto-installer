@@ -528,7 +528,7 @@ class EcoViewModel extends ChangeNotifier {
     );
   }
 
-  tarnsformAssert(javapath) async {
+  tarnsformAssert(javapath,) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
     // debug test
@@ -543,10 +543,14 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("jar", "base_hnp.hap", tempDir);
 
     if (Platform.isMacOS) {
-        try {
+      try {
         await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
         await installJava("$javapath.tar.gz", javapath);
-        await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
+        final javaHome = "$javapath/Contents/Home/bin/java";
+        if (File(javaHome).existsSync()){
+            await Process.run('chmod', ['+x', javaHome]);
+        }
+        
       } catch (e) {}
 
       final arch = await getArchitecture();

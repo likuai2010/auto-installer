@@ -13,7 +13,7 @@ export default class EntryAbility extends FlutterAbility {
     this.chanel = new MethodChannel(flutterEngine.dartExecutor, "com.xiaobai.hap_instaler/openFile");
   }
   openFile(){
-    console.log('openFile', "xxx");
+
     this.chanel?.invokeMethod("openFile", {url: "test"},{
       success:() =>{
         console.log('openFile', "success");
