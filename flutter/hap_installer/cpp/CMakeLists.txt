@@ -1,6 +1,8 @@
 # the minimum version of CMake.
 cmake_minimum_required(VERSION 3.5.0)
-project(autoInstaller)
+project(hapInstaller)
+
+include(cmake/PatchUtils.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -62,7 +64,7 @@ if(ANDROID)
 add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
 endif()
 
-if(ANDROID)
+if(ANDROID OR OHOS)
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 add_subdirectory(unhap)

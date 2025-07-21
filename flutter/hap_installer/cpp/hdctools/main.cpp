@@ -666,7 +666,7 @@ int cmd(int argc, const char *argv[], const char *tempPath)
         return 0;
     }
 
-    Base::SetLogLevel(LOG_OFF);
+    Hdc::Base::SetLogLevel(LOG_OFF);
     // Base::SetLogLevel(LOG_ALL);
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);

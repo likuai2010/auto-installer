@@ -5,43 +5,45 @@ project(libusb C)
 
 include_directories(include)
 set(target_gen_dir ${CMAKE_CURRENT_SOURCE_DIR}/source)
+set(version libusb-1.0.28)
+message(xxxx "${target_gen_dir}/${version}/libusb/core.c")
 set(LIBUSB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(libs)
 set(outputs
-    "${target_gen_dir}/libusb-1.0.26/libusb/core.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/descriptor.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/hotplug.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/io.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/sync.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/strerror.c"
+    "${target_gen_dir}/${version}/libusb/core.c"
+    "${target_gen_dir}/${version}/libusb/descriptor.c"
+    "${target_gen_dir}/${version}/libusb/hotplug.c"
+    "${target_gen_dir}/${version}/libusb/io.c"
+    "${target_gen_dir}/${version}/libusb/sync.c"
+    "${target_gen_dir}/${version}/libusb/strerror.c"
 )
 if(APPLE)
 list(APPEND outputs
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/darwin_usb.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/events_posix.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/threads_posix.c"
+    "${target_gen_dir}/${version}/libusb/os/darwin_usb.c"
+    "${target_gen_dir}/${version}/libusb/os/events_posix.c"
+    "${target_gen_dir}/${version}/libusb/os/threads_posix.c"
 )
 
 elseif(MINGW OR WIN32)
 list(APPEND outputs
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/events_windows.c"
-     "${target_gen_dir}/libusb-1.0.26/libusb/os/threads_windows.c"
-     "${target_gen_dir}/libusb-1.0.26/libusb/os/windows_common.c"
-     "${target_gen_dir}/libusb-1.0.26/libusb/os/windows_usbdk.c"
-     "${target_gen_dir}/libusb-1.0.26/libusb/os/windows_winusb.c"
+    "${target_gen_dir}/${version}/libusb/os/events_windows.c"
+     "${target_gen_dir}/${version}/libusb/os/threads_windows.c"
+     "${target_gen_dir}/${version}/libusb/os/windows_common.c"
+     "${target_gen_dir}/${version}/libusb/os/windows_usbdk.c"
+     "${target_gen_dir}/${version}/libusb/os/windows_winusb.c"
 )
 elseif(UNIX OR OHOS)
 list(APPEND outputs
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/events_posix.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/linux_netlink.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/linux_usbfs.c"
-    "${target_gen_dir}/libusb-1.0.26/libusb/os/threads_posix.c"
+    "${target_gen_dir}/${version}/libusb/os/events_posix.c"
+    "${target_gen_dir}/${version}/libusb/os/linux_netlink.c"
+    "${target_gen_dir}/${version}/libusb/os/linux_usbfs.c"
+    "${target_gen_dir}/${version}/libusb/os/threads_posix.c"
 )
 endif()
 
 set(include_dirs
-${target_gen_dir}/libusb-1.0.26/libusb
-${target_gen_dir}/libusb-1.0.26/libusb/os
+${target_gen_dir}/${version}/libusb
+${target_gen_dir}/${version}/libusb/os
 )
 
 set(cflags
