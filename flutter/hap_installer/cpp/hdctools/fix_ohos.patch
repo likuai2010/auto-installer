@@ -1,0 +1,49 @@
+diff --git a/src/common/base.h b/src/common/base.h
+index f593960c..c17a0d4b 100644
+--- a/src/common/base.h
++++ b/src/common/base.h
+@@ -42,6 +42,8 @@ namespace Base {
+     extern bool g_isBackgroundServer;
+     extern uint8_t g_logLevel;
+     void SetLogLevel(const uint8_t logLevel);
++    void SetTempDir(string tempDir);
++    
+     uint8_t GetLogLevelByEnv();
+     void PrintMessage(const char *fmt, ...);
+     void PrintMessageAndWriteLog(const char *fmt, ...);
+diff --git a/src/common/define.h b/src/common/define.h
+index 1210ef10..7d929502 100644
+--- a/src/common/define.h
++++ b/src/common/define.h
+@@ -45,7 +45,7 @@ const string ENV_ENCRYPT_CHANNEL = "OHOS_HDC_ENCRYPT_CHANNEL"; // 1: turn on enc
+ const string STR_PSK_IDENTITY = "Client_identity";
+ const string TLS_AES_128_GCM_SHA256 = "TLS_AES_128_GCM_SHA256";
+ #ifdef __OHOS__
+-const string UDS_PATH = "/data/hdc/hdc_debug/hdc_server";
++const string UDS_PATH = "/data/storage/el2/base/haps/entry/temp/hdc_server";
+ const string UDS_STR = "uds";
+ #endif
+ 
+diff --git a/src/host/client.cpp b/src/host/client.cpp
+index 9e573b5f..0a71639b 100755
+--- a/src/host/client.cpp
++++ b/src/host/client.cpp
+@@ -923,6 +923,7 @@ int HdcClient::ReadChannel(HChannel hChannel, uint8_t *buf, const int bytesIO)
+         fprintf(stdout, "%s", s.c_str());
+         fflush(stdout);
+ #else
++        Base::PrintMessage(s.c_str());
+         constexpr int len = 512;
+         int size = s.size() / len;
+         int left = s.size() % len;
+@@ -934,8 +935,10 @@ int HdcClient::ReadChannel(HChannel hChannel, uint8_t *buf, const int bytesIO)
+             }
+             fprintf(stdout, "%.*s", cnt, p);
+             fflush(stdout);
++           
+             std::this_thread::sleep_for(std::chrono::milliseconds(1));
+         }
++      
+ #endif
+     }
+     return 0;

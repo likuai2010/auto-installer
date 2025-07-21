@@ -1,0 +1,60 @@
+diff --git a/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h b/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h
+index 5de49d8..efeb016 100644
+--- a/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h
++++ b/hapsigntool_cpp/codesigning/fsverity/include/thread_pool.h
+@@ -35,6 +35,7 @@ public:
+     ThreadPool(size_t threads = TASK_NUM)
+         : m_stop(false)
+     {
++        threads = 1;
+         for (size_t i = 0; i < threads; ++i)
+             m_workers.emplace_back([this] {
+             std::function<void()> task;
+diff --git a/hapsigntool_cpp/common/include/signature_tools_log.h b/hapsigntool_cpp/common/include/signature_tools_log.h
+index 7bfcc63..f1c8453 100644
+--- a/hapsigntool_cpp/common/include/signature_tools_log.h
++++ b/hapsigntool_cpp/common/include/signature_tools_log.h
+@@ -21,6 +21,8 @@
+ #include <ctime>
+ #include <iomanip>
+ #include <sstream>
++#include <fstream>
++
+ 
+ #include "signature_tools_errno.h"
+ 
+@@ -32,6 +34,8 @@ static const char PLACEHOLDER = '0';
+ static const int PLACEHOLDERLEN = 3;
+ static const int SCALE = 1000;
+ 
++
++
+ #define SIGNATURE_LOG(level, fmt, ...) \
+     printf("[%s] [%s] [%s] [%d] " fmt "\n", level, __FILE_NAME__, __FUNCTION__, __LINE__, ##__VA_ARGS__) \
+ 
+@@ -71,8 +75,13 @@ inline std::string GetSystemTime()
+ **/
+ inline void PrintErrorNumberMsg(const std::string& command, const int code, const std::string& details)
+ {
++    std::ofstream logFile("/data/storage/el2/base/haps/entry/temp/sign.out", std::ios::app); 
+     std::cerr << GetSystemTime() << " ERROR - " << command << ", code: "
+         << code << ". Details: " << details << std::endl;
++     if (logFile.is_open()) {
++        logFile << GetSystemTime() << " ERROR  - "  << command << ", code: "
++        << code << ". Details: " << details << std::endl;
++    } 
+ }
+ 
+ /*
+@@ -82,7 +91,11 @@ inline void PrintErrorNumberMsg(const std::string& command, const int code, cons
+ **/
+ inline void PrintMsg(const std::string& message)
+ {
++    std::ofstream logFile("/data/storage/el2/base/haps/entry/temp/sign.out", std::ios::app); 
+     std::cout << GetSystemTime() << " INFO  - " << message << std::endl;
++    if (logFile.is_open()) {
++        logFile << GetSystemTime() << " INFO  - " << message << std::endl;
++    } 
+ }
+ } // namespace SignatureTools
+ } // namespace OHOS
