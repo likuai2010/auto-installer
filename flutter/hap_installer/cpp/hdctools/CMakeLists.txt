@@ -16,7 +16,7 @@ add_subdirectory(third_party/lz4)
 add_subdirectory(third_party/libusb)
 #-DHDC_SUPPORT_USB
 if(OHOS)
-    add_definitions(-DHILOG -DHOST_OHOS -DHDC_SUPPORT_ENCRYPT_TCP)
+    add_definitions(-DHILOG -DHOST_OHOS -DHDC_SUPPORT_ENCRYPT_TCP -DHDC_SUPPORT_UART)
 else()
     add_subdirectory(third_party/libuv)
 endif()
@@ -44,7 +44,16 @@ list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/auth.c
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/hdc_huks.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/password.cpp")
 
-set(FixSource main.cpp hdc.h base.cpp server.cpp auth.cpp)
+configure_file(
+  base.h
+  ${CMAKE_CURRENT_LIST_DIR}/source/src/common/base.h
+  COPYONLY
+  @ONLY
+  FORCE  # 强制覆盖
+)
+
+
+set(FixSource main.cpp hdc.h   base.cpp server.cpp auth.cpp)
 if(OHOS)
 list(APPEND FixSource napi.cpp)
 endif()
