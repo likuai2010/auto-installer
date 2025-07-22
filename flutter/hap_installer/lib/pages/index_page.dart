@@ -8,6 +8,7 @@ import 'package:hap_installer/widget/common.dart';
 
 import 'package:hap_installer/EcoViewModel.dart';
 import 'package:hap_installer/pages/debug_detail_page.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:provider/provider.dart';
 
 class IndexPage extends StatelessWidget {
@@ -203,12 +204,15 @@ class BuildHnp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(ohosAdapter.isOhos){
+      return Container();
+    }
     return Consumer<EcoViewModel>(
       builder: (context, model, child) {
         return GroupDecoration(
           children: [
             ListItem(
-              leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+              leading: const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: "构建hnp包",
               subTitle: "支持构建hnp到hap进行安装(仅鸿蒙pc)",
               tailling: TextButton(

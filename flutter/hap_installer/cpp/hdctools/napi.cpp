@@ -76,7 +76,6 @@ static napi_value HdcCmd(napi_env env, napi_callback_info info)
     napi_create_string_latin1(env, "hdcCmd'", NAPI_AUTO_LENGTH, &resourceName);
     napi_threadsafe_function tsfn;
     napi_create_threadsafe_function(env, args[2], NULL, resourceName, 0, 1, NULL, NULL, NULL, [](napi_env env, napi_value js_callback, void *context, void *data){
-       
         napi_value params[1];
         napi_create_int32(env, 0, &params[0]);
         napi_call_function(env, nullptr, js_callback, 1, params, nullptr);

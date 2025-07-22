@@ -705,8 +705,8 @@ static void EchoLog(string &buf)
         if (vfprintf(stdout, fmt, ap) > 0) {
             fprintf(stdout, "\n");
         }
-        string path = GetLogDirName() + "hdc.out";
-        LogToPath(path.c_str(), fmt);
+        string outPath = g_tempDir + "hdc.out";
+        LogToPath(outPath.c_str(), fmt);
         va_end(ap);
     }
 

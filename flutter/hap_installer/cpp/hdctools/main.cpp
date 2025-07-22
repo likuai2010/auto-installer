@@ -605,6 +605,7 @@
 #include "hdc.h"
 int cmd(int argc, const char *argv[], const char *tempPath)
 {
+    uv_os_setenv("USERPROFILE", tempPath);
     string options;
     string commands;
     Base::SetTempDir(tempPath);
@@ -630,6 +631,7 @@ int cmd(int argc, const char *argv[], const char *tempPath)
 
 int server(const char *tempPath)
 {
+    uv_os_setenv("USERPROFILE", tempPath);
     Hdc::Base::SetLogLevel(LOG_DEBUG);
     Base::SetTempDir(tempPath);
     string server = "::ffff:127.0.0.1:18710";
