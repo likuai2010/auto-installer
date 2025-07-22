@@ -245,8 +245,12 @@ class EcoViewModel extends ChangeNotifier {
     deviceLoaing = true;
     notifyListeners();
     try {
-      final result = await connectDevice(context, ip, port);
-      if(!result){
+      if (currentDevice == null){
+          final result = await connectDevice(context, ip, port);
+          if (!result) {
+            builder();
+          }
+      }else{
         await checkDevices();
         builder();
       }
@@ -448,10 +452,11 @@ class EcoViewModel extends ChangeNotifier {
     await setLocalUrl("$ip:$port");
     var result = await _connectHdc(deviceIp);
     if (result == "连接成功") {
-        recordIp(deviceIp);
+      recordIp(deviceIp);
     }
     toask(context, result);
-    return result == "连接成功";  }
+    return result == "连接成功"; 
+  }
 
   _connectHdc(String url) async {
     if (!_checkUrlOrPort(url)) {
