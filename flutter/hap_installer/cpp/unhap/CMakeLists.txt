@@ -23,7 +23,12 @@ link_libraries(
 if(WIN32)
 add_library(unhap SHARED ${outputs})
 elseif(OHOS)
+list(APPEND outputs napi.cpp)
 add_library(unhap SHARED ${outputs})
+target_link_libraries(
+ unhap
+ libace_napi.z.so
+)
 else()
 add_library(unhap STATIC ${outputs})
 endif()
