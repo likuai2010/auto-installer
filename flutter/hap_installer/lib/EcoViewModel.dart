@@ -108,16 +108,16 @@ class EcoViewModel extends ChangeNotifier {
     
     await initSignConfig();
 
-    if(!ohosAdapter.isOhos){
-      await Isolate.run(() async {
-        await tarnsformAssert(javapath);
-      });
-    }else{
-        await tarnsformAssert(javapath);
-    }
-    print("getLocalUrl start");
+    await tarnsformAssert(javapath);
+    await initJavaRuntme(javapath);
+    // if(!ohosAdapter.isOhos){
+    //   await Isolate.run(() async {
+    //     await tarnsformAssert(javapath);
+    //   });
+    // }else{
+      
+    // }
     final url = await getLocalUrl();
-    print("getLocalUrl ${url}");
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
     ip = url?.split(":").first ?? ip;
@@ -536,7 +536,24 @@ class EcoViewModel extends ChangeNotifier {
       deviceType: moduleInfo.module?.deviceTypes ?? []
     );
   }
-
+  initJavaRuntme(javapath) async {
+    try {
+      if(Platform.isMacOS){
+        await installJava("$javapath.tar.gz", javapath);
+        final javaHome = "$javapath/Contents/Home/bin/java";
+        if (File(javaHome).existsSync()){
+            await Process.run('chmod', ['+x', javaHome]);
+        }
+      }
+      if(Platform.isWindows){
+          installJava("$javapath.zip", javapath);
+      }
+      if(Platform.isLinux){
+          installJava("$javapath.tar.gz", javapath);
+          await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
+      }
+    } catch (e) {}
+  }
   tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
@@ -552,16 +569,7 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("jar", "base_hnp.hap", tempDir);
 
     if (Platform.isMacOS) {
-      try {
-        await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
-        await installJava("$javapath.tar.gz", javapath);
-        final javaHome = "$javapath/Contents/Home/bin/java";
-        if (File(javaHome).existsSync()){
-            await Process.run('chmod', ['+x', javaHome]);
-        }
-        
-      } catch (e) {}
-
+      await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
         await copyAssert("macos", "hdc_x86_64", hdcDir, "hdc");
@@ -583,25 +591,18 @@ class EcoViewModel extends ChangeNotifier {
     }
 
     if (Platform.isWindows) {
-      try {
-        await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
-        installJava("$javapath.zip", javapath);
-      } catch (e) {}
+      await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "hnpcli.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
     }
     if (Platform.isLinux) {
-      try {
-        await copyAssert(
+       await copyAssert(
           "windows",
           "$JavaVersion.tar.gz",
           "$javapath.tar.gz",
           "",
         );
-        installJava("$javapath.tar.gz", javapath);
-        await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
-      } catch (e) {}
       await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);
