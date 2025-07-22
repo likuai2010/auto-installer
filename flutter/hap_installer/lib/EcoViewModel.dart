@@ -22,6 +22,7 @@ import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
+import 'package:process_run/shell.dart';
 // import 'package:flutter_file_saver/flutter_file_saver.dart';
 
 void toask(BuildContext context, [String message = ""]) {
@@ -98,8 +99,6 @@ class EcoViewModel extends ChangeNotifier {
 
     debugPath = debugDir.path;
     this.storeDir = storeDir.path;
-    
-
 
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
@@ -109,11 +108,12 @@ class EcoViewModel extends ChangeNotifier {
     await initSignConfig();
 
     await tarnsformAssert(javapath);
-    await initJavaRuntme(javapath);
+   
+    await Isolate.run(() async {
+        await initJavaRuntme(javapath, tempDir);
+    });
     // if(!ohosAdapter.isOhos){
-    //   await Isolate.run(() async {
-    //     await tarnsformAssert(javapath);
-    //   });
+    //  
     // }else{
       
     // }
@@ -536,23 +536,32 @@ class EcoViewModel extends ChangeNotifier {
       deviceType: moduleInfo.module?.deviceTypes ?? []
     );
   }
-  initJavaRuntme(javapath) async {
+  initJavaRuntme(javapath, tempDir) async {
     try {
       if(Platform.isMacOS){
-        await installJava("$javapath.tar.gz", javapath);
+        try {
+        
+          var result = await Process.run('tar', ['-xzvf', "$javapath.tar.gz", "-C", tempDir]);
+          var ret =  result.outText + result.errText;
+          print("tar: ${ret}");
+        }catch (_){
+            await installJava("$javapath.tar.gz", javapath);
+        }
         final javaHome = "$javapath/Contents/Home/bin/java";
         if (File(javaHome).existsSync()){
             await Process.run('chmod', ['+x', javaHome]);
         }
       }
       if(Platform.isWindows){
-          installJava("$javapath.zip", javapath);
+          await installJava("$javapath.zip", javapath);
       }
       if(Platform.isLinux){
-          installJava("$javapath.tar.gz", javapath);
+          await  installJava("$javapath.tar.gz", javapath);
           await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
       }
-    } catch (e) {}
+    } catch (e) {
+      print("initJavaRuntme error: $e");
+    }
   }
   tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
