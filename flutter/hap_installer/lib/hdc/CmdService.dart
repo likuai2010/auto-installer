@@ -252,10 +252,10 @@ class CmdService {
       return await Isolate.run(() async {
         try {
           var hdc = "hdc";
+          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
           if (Platform.isWindows) {
               hdc += ".exe";
           }
-          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
           var result = await Process.run(path.join(hdcDir, hdc), args);
           return result.outText + result.errText;
         } catch (e) {
@@ -317,10 +317,10 @@ baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
       return await Isolate.run(() async {
         try {
           var hdc = "hnpcli";
+          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
           if (Platform.isWindows) {
               hdc += ".exe";
           }
-          final args = cmdToArgs(cmd.replaceFirst(hdc, ""));
           var result = await Process.run(path.join(hdcDir, hdc), args);
           return result.outText + result.errText;
         } catch (e) {
