@@ -42,17 +42,11 @@ std::string napi_to_string(napi_env env, napi_value value) {
     return std::string(buffer.data());
 }
 const char** vector_to_const_argv(const std::vector<std::string>& vec) {
-    // 分配指针数组 (多分配一个用于NULL终止)
     const char** argv = new const char*[vec.size() + 1];
-    
     for (size_t i = 0; i < vec.size(); ++i) {
-        // 直接指向std::string的内部缓冲区
         argv[i] = vec[i].c_str();
     }
-    
-    // 添加NULL终止符
     argv[vec.size()] = nullptr;
-    
     return argv;
 }
 

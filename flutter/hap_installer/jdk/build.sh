@@ -49,11 +49,12 @@ export OBJDUMP="$TOOLCHAIN/bin/llvm-objdump"
 # export PKG_CONFIG=aarch64-linux-gnu-pkg-config
 # export PKG_CONFIG_PATH=/usr/aarch64-linux-gnu/lib/pkgconfig
 
-pushd jdk-jdk-17-29
+pushd bishengjdk-17
 
 OLD_PATH=$(pwd)
-SOURCE="/Users/xiaobai/git/auto-publish-harmonyos/flutter/hap_installer/jdk/jdk-jdk-17-29"
+SOURCE="/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/jdk/bishengjdk-17"
 
+COMMON_FLAGS="-fdata-sections -fno-emulated-tls -fno-omit-frame-pointer -ffunction-sections -funwind-tables -no-canonical-prefixes "
 
 bash configure \
 --openjdk-target=aarch64-unknown-linux-musl \
@@ -69,10 +70,9 @@ bash configure \
 --with-cups-include=/usr/include \
 --with-fontconfig-include=/usr/include/ \
 --with-alsa-include=/usr/include/ \
---with-jvm-variants=zero \
---with-extra-cflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O2 -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
---with-extra-cxxflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O2 -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
---with-extra-ldflags="-Wno-error  -extld=$LD --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot " \
+--with-extra-cflags="-Wno-error $COMMON_FLAGS --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
+--with-extra-cxxflags="-Wno-error $COMMON_FLAGS --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
+--with-extra-ldflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot " \
 BUILD_CC=${CC} \
 BUILD_CXX=${CXX} \
 BUILD_NM=${NM} \
@@ -88,7 +88,7 @@ CXXFILT=${CXXFILT} \
 NM=${NM} \
 --with-jobs=$(nproc)
 
-make images
+make images 
 
 
 popd
