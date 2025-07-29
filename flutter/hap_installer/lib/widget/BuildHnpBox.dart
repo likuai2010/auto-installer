@@ -13,8 +13,11 @@ class BuildHnpBox extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    
    return Consumer<EcoViewModel>(
       builder: (context, model, child) {
+        name.text = model.hnpName;
+        version.text = model.hnpVersion;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -29,7 +32,7 @@ class BuildHnpBox extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "1.请选着hnp结构的目录 \n2.点击开始构建将自动打包成hap包",
+                    "1.请选择hnp结构的目录 \n2.点击开始构建将自动打包成hap包",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],

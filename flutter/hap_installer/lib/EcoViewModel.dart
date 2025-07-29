@@ -330,14 +330,19 @@ class EcoViewModel extends ChangeNotifier {
   }
  
   buildToHap(BuildContext context) async{
-    final hasHnp = await buildHnp(context);
-    if(!hasHnp){
-      return; 
-    }
     if (!await checkJava(context)) return;
     if (buildHaping) return;
     buildHaping = true;
     notifyListeners();
+   
+    final hasHnp = await buildHnp(context);
+    if(!hasHnp){
+      buildHaping = false;
+      notifyListeners();
+      return; 
+    }
+   
+   
     try {
       final temp = await getTempDir();
       
@@ -463,7 +468,7 @@ class EcoViewModel extends ChangeNotifier {
       return "请输入正确端口或地址";
     } else {
       final result = await cmd.connectHdc(url);
-      await checkDevices();
+      await checkDevices(url);
       if (result.contains("Connect OK")) {
         return "连接成功";
       } else if (result.contains("failed")) {
@@ -476,7 +481,7 @@ class EcoViewModel extends ChangeNotifier {
     }
   }
 
-  checkDevices() async {
+  checkDevices(String? url) async {
     final result = await cmd.targetList();
     deviceList =
         result
@@ -488,9 +493,11 @@ class EcoViewModel extends ChangeNotifier {
         if (deviceList.first.contains("server failed")) {
           currentDevice = "hdc服务启动失败，请重启应用!";
         } else {
-          currentDevice = deviceList.first;
-          changeDevice(currentDevice!);
+          changeDevice(deviceList.first);
         }
+      }
+      if(url != null && deviceList.any((d) => d == url)){
+          changeDevice(url);
       }
     } else {
       currentDevice = null;
@@ -718,10 +725,10 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   testSignHap(BuildContext context) async {
-    String filePath = path.join(storeDir, "unsigned-test.hap");
+    String filePath = path.join(storeDir, "unsigned.hap");
     var error = await cmd.signHap(filePath, signConfig!);
     toask(context, error ?? "");
-    error = await cmd.installHap(await cmd.getOutPath(filePath));
+    //error = await cmd.installHap(await cmd.getOutPath(filePath));
     print("installHap: $error");
     toask(context, error ?? "");
   }
