@@ -3,18 +3,16 @@ cmake_minimum_required(VERSION 3.5.0)
 project(hapInstaller)
 
 
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_SKIP_INSTALL_RPATH TRUE)
-set(CMAKE_SKIP_RPATH TRUE)
 
 set(CMAKE_CXX_STANDARD 17)
 
 set(NATIVERENDER_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
 set(LIBS_DIR ${NATIVERENDER_ROOT_PATH}/third_party)
 set(OPENSSL_ROOT_DIR ${LIBS_DIR}/openssl)
 set(OPENSSL_INCLUDE_DIR ${OPENSSL_ROOT_DIR}/include)
+
+
+
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 set(LINUX 1)
@@ -59,8 +57,10 @@ endif()
 add_subdirectory(third_party/bounds_checking_function)
 add_subdirectory(third_party/cJSON/source)
 
-include_directories(include
+include_directories(
+include
 ${OPENSSL_INCLUDE_DIR}
+${CMAKE_CURRENT_SOURCE_DIR}
 hdctools/
 third_party/bounds_checking_function/source/include
 third_party/cJSON/source/
@@ -75,6 +75,8 @@ add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 add_subdirectory(unhap)
 add_subdirectory(hnp_tools)
+add_subdirectory(java_cmd)
+add_subdirectory(http_server)
 else()
 add_subdirectory(unhap)
 add_subdirectory(hapsigner)
