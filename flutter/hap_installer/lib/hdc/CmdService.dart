@@ -152,7 +152,7 @@ class CmdService {
 
   Future<String?> signHap(String inPath, SignConfig signConfig) async {
     if (!await File(inPath).exists()) {
-      return "hap文件不存在";
+      return "hap文件不存在 ${inPath}";
     }
     final outPath = await getOutPath(inPath);
     var cmd = "";
