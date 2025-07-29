@@ -7,11 +7,11 @@
         "material": {
           "certpath": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF2DD4BD6C453C468C568C3DB49754FCCB48C6EA94BFFC652EEA9FC17AFC279E7F5230A12EC5A81",
+          "keyPassword": "0000001B34E3BEA42BCB58B402A0CCF6C5CE03742670DFE3BC2B997B5A1AE03CC3B6B9B3E5AB4EDEAEA46B",
           "profile": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/xiaobai/.ohos/config/default_ohos_GTRRQg73_8qbnwo4FmKX_kjg9fPzkCi3v68LcoBgUjU=.p12",
-          "storePassword": "0000001BD3F55B8885860EE53845A9A02594BAC082F8EF1F0D4FBE31BB697CA07D9DFD6E852C0F7D297929"
+          "storePassword": "0000001B73E337C6B1107DAFA138BA96EAD96CB3B74E9BD9D861328BC54971A5EA1312385EC170E992FA2E"
         }
       }
     ],
@@ -28,6 +28,42 @@
     {
       "name": "entry",
       "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdf_render",
+      "srcPath": "../../../../../.pub-cache/git/fluttertpc_pdf_render-89f3208a7045600fb78ed539733c004f6bbe372d/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "native_core",
+      "srcPath": "../plugins/native_core/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ohos_adapter",
+      "srcPath": "../plugins/ohos_adapter/ohos",
       "targets": [
         {
           "name": "default",

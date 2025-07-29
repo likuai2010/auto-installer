@@ -55,7 +55,10 @@
       {"name" :  "ohos.permission.INTERNET"},
       {
         "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
-      }
+      },
+      {
+        "name": "ohos.permission.kernel.ALLOW_EXECUTABLE_FORT_MEMORY"
+      },
     ]
   }
 }

@@ -170,7 +170,7 @@ class EcoViewModel extends ChangeNotifier {
       isLogin = false;
     }
     if (!Platform.isAndroid && !ohosAdapter.isOhos) {
-      await checkDevices();
+      await checkDevices(null);
     }
     notifyListeners();
   }
@@ -251,7 +251,7 @@ class EcoViewModel extends ChangeNotifier {
             builder();
           }
       }else{
-        await checkDevices();
+        await checkDevices("$ip:$port");
         builder();
       }
     } catch (e) {

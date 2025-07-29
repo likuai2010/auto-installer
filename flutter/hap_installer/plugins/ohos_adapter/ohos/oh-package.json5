@@ -9,5 +9,6 @@
     "@ohos/flutter_ohos": "file:./har/flutter.har",
     "libinstaller.so": "file:./src/main/cpp/libinstaller",
     "libsigntool.so": "file:./src/main/cpp/libsigntool",
+    "libjavacmd.so": "file:./src/main/cpp/libjavacmd"
   }
 }

@@ -1,0 +1,1 @@
+export const javaCmd: (jarString: string, mainClass: string, cmd:string, callabck:(number)=>void) => number;

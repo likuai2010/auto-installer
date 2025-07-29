@@ -100,7 +100,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         IconButton(
           onPressed: () {
             scaffoldKey.currentState?.openEndDrawer();
-            viewmodel.checkDevices();
+            viewmodel.checkDevices(null);
           },
           icon: Icon(Icons.mode_edit),
         ),

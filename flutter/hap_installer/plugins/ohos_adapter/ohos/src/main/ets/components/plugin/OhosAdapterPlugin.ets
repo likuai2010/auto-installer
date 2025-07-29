@@ -12,10 +12,11 @@ import {
 import fs from '@ohos.file.fs';
 import  { fileUri, picker } from '@kit.CoreFileKit';
 import { common, Want } from '@kit.AbilityKit';
-import { hdcCmd, hdcServer } from 'libhdc_z.so';
-import { signHap } from 'libsigntool.so';
+import { hdcServer } from 'libhdc_z.so';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
+import HdcUtils from './HdcUtils';
+
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -67,33 +68,16 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     else if(call.method == "appDir") {
       result.success(context.filesDir)
     }
-     else if(call.method == "hdcCmd") {
+    else if(call.method == "hdcCmd") {
       const args = call.argument("args") as string;
-      fs.unlink(context.tempDir + "/hdc.out")
-      hdcCmd(args, context.tempDir + "/", async (res: number)=>{
-        try {
-          let out = await fs.readText(context.tempDir + "/hdc.out")
-          result.success(out)
-        }catch (e) {
-          result.success("success")
-        }
-
+      HdcUtils.hdcCmd(context, args).then((res)=>{
+        result.success(res)
       })
     }
      else if(call.method == "signCmd") {
-      fs.unlink(context.tempDir + "/sign.out")
       const args = call.argument("args") as string;
-      signHap(args, async (res: number)=>{
-        try {
-          let out = await fs.readText(context.tempDir + "/sign.out")
-          if(res == 0){
-            result.success("success")
-          }else{
-            result.success(out)
-          }
-        }catch (e) {
-          result.success(e.message)
-        }
+      HdcUtils.signCmd(context, args).then((res)=>{
+        result.success(res)
       })
     } else if(call.method == "startServer") {
       hdcServer(context.tempDir + "/")
