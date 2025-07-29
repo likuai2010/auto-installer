@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
-    "libinstaller.so": "file:./src/main/cpp/libinstaller",
+    "libhdc_z.so": "file:./src/main/cpp/libhdc_z",
     "libsigntool.so": "file:./src/main/cpp/libsigntool",
     "libjavacmd.so": "file:./src/main/cpp/libjavacmd"
   }

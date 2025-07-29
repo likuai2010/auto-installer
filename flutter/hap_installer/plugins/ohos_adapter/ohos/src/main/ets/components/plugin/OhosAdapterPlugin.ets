@@ -16,6 +16,8 @@ import { hdcServer } from 'libhdc_z.so';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import HdcUtils from './HdcUtils';
+import { deviceInfo } from '@kit.BasicServicesKit';
+
 
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
@@ -64,6 +66,12 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     }
     else if(call.method == "tempDir") {
       result.success(context.tempDir)
+    }
+    else if(call.method == "deviceType") {
+      result.success(deviceInfo.deviceType)
+    }
+    else if(call.method == "hasJit") {
+      result.success(false)
     }
     else if(call.method == "appDir") {
       result.success(context.filesDir)

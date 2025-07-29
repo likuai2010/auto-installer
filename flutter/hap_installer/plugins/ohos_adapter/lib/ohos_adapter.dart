@@ -32,6 +32,14 @@ class OhosAdapter {
   Future<String?> signCmd(String cmd) {
     return OhosAdapterPlatform.instance.signCmd(cmd);
   }
+  Future<String?> deviceType() {
+    return OhosAdapterPlatform.instance.deviceType();
+  }
+
+  Future<bool?> hasJit(String cmd) {
+    return OhosAdapterPlatform.instance.hasJit();
+  }
+
 
   Future<void> startServer() {
     return OhosAdapterPlatform.instance.startServer();

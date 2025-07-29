@@ -164,7 +164,7 @@ class CmdService {
           'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
     }
     final error = await baseSign(cmd);
-    if (error.contains("success")) {
+    if (error.contains("success") || error.contains("签名成功")) {
       return null;
     } else {
       return "签名失败: $error";
@@ -269,7 +269,14 @@ class CmdService {
   Future<String> baseSign(String cmd) async {
     // ohos ffi 会卡线程，采用bridge
     if (ohosAdapter.isOhos) {
-      return await ohosAdapter.signCmd(cmd) ?? "";
+      final deviceType = await ohosAdapter.deviceType();
+      print("deviceType: ${deviceType}");
+      if(deviceType == "2in1"){
+        return await ohosJavaCmd(cmd);
+      }else{
+        return await ohosAdapter.signCmd(cmd) ?? "";
+      }
+     
     }
     if (Platform.isAndroid) {
       return await signCmd(cmdToArgs(cmd), await getTempDir());
@@ -277,14 +284,32 @@ class CmdService {
       return await baseJavaCmd(cmd);
     }
   }
+  ohosJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
+    var hdcDir = await getHdcDir();
+    try {
+      final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
+      print("baseCmd: java -jar ${jar} $cmd ");
+      var result = await Process.run("/data/service/hnp/bin/java", [
+        "-jar",
+        path.join(hdcDir, jar),
+        ...args,
+      ]);
+      if(result.errText != ""){
+        return result.errText;
+      }
+      return result.outText;
+    } catch (e) {
+      print("baseCmd error: $e");
+      return "baseCmd error: $e";
+    }
+  }
 
-baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
+  baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
     var hdcDir = await getHdcDir();
     var java = "java";
     if (Platform.isWindows) {
       java = "java.exe";
     }
-
     try {
       String javaCmd = path.join(javaHome, "bin", java);
       final hasJava = await File(javaCmd).exists();
@@ -306,7 +331,7 @@ baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
       print("baseCmd error: $e");
       return "baseCmd error: $e";
     }
-}
+  }
 
 
   Future<String> baseHnp(String cmd) async {

@@ -43,10 +43,13 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<String?> hdcCmd(String cmd) async {}
 
   Future<String?> signCmd(String cmd) async {}
+  
+  Future<String?> deviceType() async {}
+  Future<bool?> hasJit() async {}
+
   Future<void> startServer() async {}
 
   Future<void> setLocalKey(String key, String value) async {}
   Future<String?> getLocalKey(String key) async {
-    throw UnimplementedError('getLocalUrl() has not been implemented.');
   }
 }

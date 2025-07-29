@@ -48,7 +48,14 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   Future<String?> hdcCmd(String cmd) async {
     return await methodChannel.invokeMethod<String>('hdcCmd', {"args": cmd});
   }
-
+  @override
+  Future<String?> deviceType() async {
+      return await methodChannel.invokeMethod<String>('deviceType');
+  }
+  @override
+  Future<bool?> hasJit() async {
+    return await methodChannel.invokeMethod<bool>('hasJit');
+  }
   @override
   Future<String?> signCmd(
     String cmd,
