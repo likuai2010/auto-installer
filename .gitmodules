@@ -31,3 +31,6 @@
 [submodule "flutter/hap_installer/cpp/hnp_tools/source"]
 	path = flutter/hap_installer/cpp/hnp_tools/source
 	url = https://gitee.com/openharmony/startup_appspawn.git
+[submodule "flutter/hap_installer/cpp/third_party/cJSON/source"]
+	path = flutter/hap_installer/cpp/third_party/cJSON/source
+	url = https://gitee.com/openharmony/third_party_cJSON.git

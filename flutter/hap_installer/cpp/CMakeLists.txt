@@ -57,11 +57,13 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 endif()
 
 add_subdirectory(third_party/bounds_checking_function)
+add_subdirectory(third_party/cJSON/source)
 
 include_directories(include
 ${OPENSSL_INCLUDE_DIR}
 hdctools/
 third_party/bounds_checking_function/source/include
+third_party/cJSON/source/
 )
 
 if(ANDROID)
@@ -72,6 +74,7 @@ if(ANDROID OR OHOS)
 add_subdirectory(hdctools)
 add_subdirectory(hapsigner)
 add_subdirectory(unhap)
+add_subdirectory(hnp_tools)
 else()
 add_subdirectory(unhap)
 add_subdirectory(hapsigner)
