@@ -48,11 +48,12 @@ export OBJDUMP="$TOOLCHAIN/bin/llvm-objdump"
 # export STRIP=aarch64-linux-gnu-strip
 # export PKG_CONFIG=aarch64-linux-gnu-pkg-config
 # export PKG_CONFIG_PATH=/usr/aarch64-linux-gnu/lib/pkgconfig
+jdkDir=jdk17-jdk-17-35
 
-pushd bishengjdk-17
+pushd ${jdkDir}
 
 OLD_PATH=$(pwd)
-SOURCE="/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/jdk/bishengjdk-17"
+SOURCE="/Users/xiaobai/git/auto-publish-harmonyos/flutter/hap_installer/jdk/${jdkDir}"
 
 COMMON_FLAGS="-fdata-sections -fno-emulated-tls -fno-omit-frame-pointer -ffunction-sections -funwind-tables -no-canonical-prefixes "
 
@@ -67,7 +68,6 @@ bash configure \
 --with-native-debug-symbols=internal \
 --with-debug-level=slowdebug \
 --with-freetype=bundled \
---with-jvm-features=cds \
 --with-extra-cflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
 --with-extra-cxxflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
 --with-extra-ldflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot" \
