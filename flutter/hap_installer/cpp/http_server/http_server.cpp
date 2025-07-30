@@ -10,23 +10,50 @@
 
 
 #define PORT 8080
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 4096
 
+static CallbackData callbackData;
 
+void parse_post_params(const char *request, char *params) {
+    const char *content_type = strstr(request, "Content-Type: application/x-www-form-urlencoded");
+    if (!content_type) {
+        strcpy(params, "No POST data or wrong Content-Type");
+        return;
+    }
+
+    const char *post_data = strstr(request, "\r\n\r\n");
+    if (!post_data) {
+        strcpy(params, "Malformed POST request");
+        return;
+    }
+    post_data += 4; // Skip past \r\n\r\n
+
+    // 简单示例：直接复制POST数据（实际应做URL解码等处理）
+    strncpy(params, post_data, BUFFER_SIZE - 1);
+    params[BUFFER_SIZE - 1] = '\0';
+}
 
 void handle_client(int client_socket) {
     char buffer[BUFFER_SIZE] = {0};
-    char *response = "HTTP/1.1 200 OK\r\n"
-                     "Content-Type: text/html\r\n"
+    const char *response = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: text/html; charset=UTF-8\r\n"
                      "Connection: close\r\n\r\n"
-                     "<html><body><h1>Hello from C HTTP Server!</h1></body></html>";
-    
-    // 读取客户端请求
+                     "<html><body><h1>登录成功，请返回</h1></body></html>";
+    const char *error = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: text/html; charset=UTF-8\r\n"
+                     "Connection: close\r\n\r\n"
+                     "<html><body><h1>登录失败，请重新登录</h1></body></html>";
+   
     read(client_socket, buffer, BUFFER_SIZE);
-    printf("Received request:\n%s\n", buffer);
-    // 发送HTTP响应
-    write(client_socket, response, strlen(response));
-    printf("Response sent\n");
+    char post_params[BUFFER_SIZE] = {0};
+    
+    if (strstr(buffer, "POST") != NULL) {
+        parse_post_params(buffer, post_params);
+        callbackData.message = std::string(post_params);
+        write(client_socket, response, strlen(response));
+    }else{
+        write(client_socket, error, strlen(error));
+    }
     // 关闭连接
     close(client_socket);
 }
@@ -68,7 +95,6 @@ int starHttp(int port){
     close(server_fd);
     return 0;
 }
-static CallbackData callbackData;
 napi_value HttpServer(napi_env env, napi_callback_info info){
 
     size_t argc = 2;
@@ -84,7 +110,7 @@ napi_value HttpServer(napi_env env, napi_callback_info info){
         if (cd == nullptr)
             return ;
         napi_value params[1];
-        napi_create_int32(env, cd->result, &params[0]);
+        napi_create_string_utf8(env, cd->message.c_str(),cd->message.size(), &params[0]);
         napi_call_function(env, nullptr, js_callback, 1, params, nullptr);
     }, &tsfn);
     std::thread t([](int port, napi_threadsafe_function tsfn){

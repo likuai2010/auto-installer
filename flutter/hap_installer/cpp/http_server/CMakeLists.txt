@@ -8,5 +8,5 @@ ${NATIVERENDER_ROOT_PATH}/include/linux
                     ${NATIVERENDER_ROOT_PATH}/include)
 
 
-add_library(httpServer SHARED http_server.cpp)
-target_link_libraries(httpServer PUBLIC libace_napi.z.so libpthread.a libhilog_ndk.z.so)
+add_library(http_server SHARED http_server.cpp)
+target_link_libraries(http_server PUBLIC libace_napi.z.so libpthread.a libhilog_ndk.z.so)

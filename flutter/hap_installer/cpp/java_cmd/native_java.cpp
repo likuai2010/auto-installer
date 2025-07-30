@@ -9,9 +9,32 @@
 #include <jni.h>
 #include <thread>
 #include "napi_utils.h"
+#include <sys/mman.h>  // mmap, mprotect
 
 
 
+bool canJit(){
+    unsigned char code[] = {
+        0xc0, 0x03, 0x5f, 0xd6      // ret                    (返回)
+    };
+    size_t code_size = sizeof(code);
+    void *mem = mmap(NULL, code_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (mem == MAP_FAILED) {
+        return false;
+    }
+    memcpy(mem, code, code_size);
+    if (mprotect(mem, code_size, PROT_READ | PROT_EXEC) == -1) {
+        munmap(code, code_size);
+        return false;
+    } else {
+       return true;
+    }
+}
+napi_value HasJit(napi_env env, napi_callback_info info){
+    napi_value sum;
+    napi_create_double(env, canJit() ? 1 : 0, &sum);
+    return sum;
+}
 
 static CallbackData callbackData;
 napi_value JavaCmd(napi_env env, napi_callback_info info)
@@ -83,7 +106,7 @@ const char * init_jvm(const char* optionsString){
         JavaVMOption options[4];
         options[0].optionString = (char*)optionsString;
         options[1].optionString = "-Djava.security.manager=allow";
-        options[2].optionString = "-Xmx126m";
+        options[2].optionString = "-Xint";
         options[3].optionString = "-XX:+AggressiveHeap";
         JavaVMInitArgs vm_args;
         vm_args.version = JNI_VERSION_1_8;
@@ -167,6 +190,7 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "javaCmd", nullptr, JavaCmd, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "hasJit", nullptr, HasJit, nullptr, nullptr, nullptr, napi_default, nullptr },
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
