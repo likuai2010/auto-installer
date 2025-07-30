@@ -62,17 +62,19 @@ bash configure \
 --enable-headless-only \
 --with-sysroot=${SYSROOT} \
 --with-toolchain-path=${TOOLCHAIN} \
---with-jvm-variants=server \
+--with-jvm-variants=zero \
 --disable-warnings-as-errors \
 --with-native-debug-symbols=internal \
 --with-debug-level=slowdebug \
 --with-freetype=bundled \
---with-cups-include=/usr/include \
---with-fontconfig-include=/usr/include/ \
---with-alsa-include=/usr/include/ \
---with-extra-cflags="-Wno-error $COMMON_FLAGS --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
---with-extra-cxxflags="-Wno-error $COMMON_FLAGS --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
---with-extra-ldflags="-Wno-error  --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot " \
+--with-jvm-features=cds \
+--with-extra-cflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
+--with-extra-cxxflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
+--with-extra-ldflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot" \
+--with-cups-include=/opt/jdk17/deps \
+--with-fontconfig-include=/opt/jdk17/deps \
+--with-alsa-include=/opt/jdk17/deps \
+--with-libffi-include=/opt/jdk17/deps \
 BUILD_CC=${CC} \
 BUILD_CXX=${CXX} \
 BUILD_NM=${NM} \
