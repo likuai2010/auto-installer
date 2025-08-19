@@ -5,7 +5,6 @@ import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
-import 'package:hap_installer/pages/Home.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
@@ -60,8 +59,8 @@ class CmdService {
   }
 
   unpackageHap(String hapPath, String outPath) async {
-    final result = await baseJavaCmd("--mode hap --hap-path \"$hapPath\"  --out-path \"$outPath\" --force true", "app_unpacking_tool.jar");
-    print("unpackageHap $result");
+    var result = await baseUnPackCmd("-xvf \"${hapPath}\" -C \"${outPath}\"");
+    print("unpackageHap   $result");
   }
  
 
@@ -99,11 +98,10 @@ class CmdService {
             params += " --$filename-path $fullPath";
         }
       }
-      return await baseJavaCmd(params, "app_packing_tool.jar");
+      return await basePackCmd(params);
     }
 
   }
-
 
 
   changeTarget(String device) {
@@ -365,7 +363,7 @@ class CmdService {
   }
 }
 
-  Future<String> baseSignerCmd(String cmd) async {
+Future<String> baseSignerCmd(String cmd) async {
     if (Platform.isAndroid) {
       throw const FormatException("暂不支持");
     } else {
@@ -386,6 +384,50 @@ class CmdService {
       });
   }
 }
+
+Future<String> basePackCmd(String cmd) async {
+    if (Platform.isAndroid) {
+      throw const FormatException("暂不支持");
+    } else {
+      final hdcDir = await getHdcDir();
+      return await Isolate.run(() async {
+        try {
+          var hdc = "packing_tool";
+          final args = cmdToArgs(cmd);
+          if (Platform.isWindows) {
+              hdc += ".exe";
+          }
+          var result = await Process.run(path.join(hdcDir, hdc), args);
+          return result.outText + result.errText;
+        } catch (e) {
+          print("packing_tool $e");
+          return "$e";
+        }
+      });
+  }
+}
+
+Future<String> baseUnPackCmd(String cmd) async {
+    if (Platform.isAndroid) {
+      throw const FormatException("暂不支持");
+    } else {
+      return await Isolate.run(() async {
+        try {
+          var hdc = "tar";
+          final args = cmdToArgs(cmd);
+          if (Platform.isWindows) {
+              hdc += ".exe";
+          }
+          var result = await Process.run(hdc, args);
+          return result.outText + result.errText;
+        } catch (e) {
+          print("baseUnPackCmd $e");
+          return "$e";
+        }
+      });
+  }
+}
+
 
 
 

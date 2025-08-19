@@ -55,7 +55,12 @@ class TeamDevicePage extends StatelessWidget {
               ...teamList(model),
               const Padding(padding: EdgeInsets.all(10), child: Text("可用设备")),
               ...deviceList(model),
-              const Padding(padding: EdgeInsets.all(10), child: Text("历史连接")),
+              Padding(padding: const EdgeInsets.all(10), child: Row(children: [
+                const  Expanded(child: Text("历史连接")),
+                TextButton(onPressed: (){
+                  model.resetHistory();
+                }, child:  const Text("清除"))
+              ],)),
               ...historyList(context, model),
           ]);
     });

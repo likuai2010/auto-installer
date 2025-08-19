@@ -23,8 +23,8 @@ class SignConfigPage extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: const Text("p12"),
-              subtitle: const Text("证书密钥，用于创建csr,cer,p7b等文件"),
+              title: const Text("证书私钥(自己创建的私钥)"),
+              subtitle: const Text("导出命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -47,8 +47,8 @@ class SignConfigPage extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: const Text("csr"),
-              subtitle: const Text("通过p12创建, 用于申请cer证书"),
+              title: const Text("csr (用于申请华为证书)"),
+              subtitle: const Text("创建命令: openssl req -new -key xiaobai.key -out xiaobai.csr"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -70,54 +70,54 @@ class SignConfigPage extends StatelessWidget {
                 child: const Text("更换"),
               ),
             ),
-            ListTile(
-              title: const Text("keyAlias"),
-              subtitle: const Text("密钥别名"),
-              onTap: () {
-                toask(context, "已复制到剪贴板");
-                Clipboard.setData(
-                  ClipboardData(text: "${model.signConfig?.keyAlias}"),
-                );
-              },
-              trailing: TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder:
-                        (_) => EditConfigDialog(
-                          name: "keyAlias",
-                          value: model.signConfig?.keyAlias ?? "",
-                          onChange: (p0) => model.signConfig?.keyAlias = p0,
-                        ),
-                  );
-                },
-                child: const Text("更换"),
-              ),
-            ),
-            ListTile(
-              title: const Text("keyPwd"),
-              subtitle: const Text("密钥密码"),
-              onTap: () {
-                toask(context, "已复制到剪贴板");
-                Clipboard.setData(
-                  ClipboardData(text: "${model.signConfig?.keystorePwd}"),
-                );
-              },
-              trailing: TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder:
-                        (_) => EditConfigDialog(
-                          name: "keystorePwd",
-                          value: model.signConfig?.keystorePwd ?? "",
-                          onChange: (p0) => model.signConfig?.keyAlias = p0,
-                        ),
-                  );
-                },
-                child: const Text("更换"),
-              ),
-            ),
+            // ListTile(
+            //   title: const Text("keyAlias"),
+            //   subtitle: const Text("密钥别名"),
+            //   onTap: () {
+            //     toask(context, "已复制到剪贴板");
+            //     Clipboard.setData(
+            //       ClipboardData(text: "${model.signConfig?.keyAlias}"),
+            //     );
+            //   },
+            //   trailing: TextButton(
+            //     onPressed: () {
+            //       showDialog(
+            //         context: context,
+            //         builder:
+            //             (_) => EditConfigDialog(
+            //               name: "keyAlias",
+            //               value: model.signConfig?.keyAlias ?? "",
+            //               onChange: (p0) => model.signConfig?.keyAlias = p0,
+            //             ),
+            //       );
+            //     },
+            //     child: const Text("更换"),
+            //   ),
+            // ),
+            // ListTile(
+            //   title: const Text("keyPwd"),
+            //   subtitle: const Text("密钥密码"),
+            //   onTap: () {
+            //     toask(context, "已复制到剪贴板");
+            //     Clipboard.setData(
+            //       ClipboardData(text: "${model.signConfig?.keystorePwd}"),
+            //     );
+            //   },
+            //   trailing: TextButton(
+            //     onPressed: () {
+            //       showDialog(
+            //         context: context,
+            //         builder:
+            //             (_) => EditConfigDialog(
+            //               name: "keystorePwd",
+            //               value: model.signConfig?.keystorePwd ?? "",
+            //               onChange: (p0) => model.signConfig?.keyAlias = p0,
+            //             ),
+            //       );
+            //     },
+            //     child: const Text("更换"),
+            //   ),
+            // ),
           ],
         );
       },

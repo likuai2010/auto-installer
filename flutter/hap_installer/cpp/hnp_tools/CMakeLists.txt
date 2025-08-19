@@ -31,13 +31,13 @@ set(hnpSources
 )
 
 
-# add_library(hnp_cli SHARED ${cliSources} )
-# target_link_libraries(
-#     hnp_cli
-#     boundscheck
-#     zlib
-#     cjson
-# )
+add_library(libhnp SHARED ${cliSources} )
+target_link_libraries(
+    libhnp
+    boundscheck
+    zlib
+    cjson
+)
 
 add_executable(hnpcli ${cliSources})
 target_link_libraries(

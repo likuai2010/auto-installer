@@ -168,17 +168,16 @@ class DebugSteps extends StatelessWidget {
               if(file.path != null){
                 model.openFile(context, file.path!);
               }
-            },)
-            ,
-            TextButton(
-                  onPressed: () {
-                    model.testSignHap(context);
-                  },
-                  child:
-                      !model.fileLoading
-                          ? const Text("test sign")
-                          : const CircularProgressIndicator(value: null),
-                )
+            },),
+            // TextButton(
+            //       onPressed: () {
+            //         model.testSignHap(context);
+            //       },
+            //       child:
+            //           !model.fileLoading
+            //               ? const Text("test sign")
+            //               : const CircularProgressIndicator(value: null),
+            //     )
             // Platform.isAndroid
             //     ? TextButton(
             //       onPressed: () {

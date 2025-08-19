@@ -4,13 +4,11 @@
 if [ "$1" = "macos" ]; then
 cmake  -G Ninja \
   -DCMAKE_BUILD_TYPE=DEBUG \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -B build_macos \
   -S .
 pushd build_macos
 ninja
-cp -f hdctools/libhdc_z.a ../../plugins/native_core/macos/Classes/libs/libhdc_z.a
-cp -f hapsigner/libsigntool.a ../../plugins/native_core/macos/Classes/libs/libsigntool.a
-cp -f unhap/libunhap.a ../../plugins/native_core/macos/Classes/libs/libunhap.a
 popd
 fi
 

@@ -77,7 +77,6 @@ class EcoViewModel extends ChangeNotifier {
   HistoryViewModel? historyViewModel;
 
   EcoViewModel();
-
   Future<bool> init() async {
     cmd.startServer();
     
@@ -135,6 +134,7 @@ class EcoViewModel extends ChangeNotifier {
   }
   resetHistory(){
     historyList = [];
+    notifyListeners();
     saveJsonToFile(jsonEncode(historyList), ipHistoryPath);
   }
   readHistory() async{
@@ -182,25 +182,26 @@ class EcoViewModel extends ChangeNotifier {
   }
   // only windows and linux
   checkJava(BuildContext context) async {
-    if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) return true;
-    final hasJava = await hasJavaBySys();
-    if (hasJava) return true;
+    return true;
+    // if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) return true;
+    // final hasJava = await hasJavaBySys();
+    // if (hasJava) return true;
 
-    var javaPath = await getJavaDir();
-    if (!await Directory(javaPath).exists()) {
-      showAlert(
-        context,
-        title: const Text("警告!"),
-        content: const Text("缺少java环境! 请指定java目录"),
-        onConfirm: () {
-          openByUrl("https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/");
-          changeJaveHome(context);
-        },
-      );
-      return false;
-    } else {
-      return true;
-    }
+    // var javaPath = await getJavaDir();
+    // if (!await Directory(javaPath).exists()) {
+    //   showAlert(
+    //     context,
+    //     title: const Text("警告!"),
+    //     content: const Text("缺少java环境! 请指定java目录"),
+    //     onConfirm: () {
+    //       openByUrl("https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/");
+    //       changeJaveHome(context);
+    //     },
+    //   );
+    //   return false;
+    // } else {
+    //   return true;
+    // }
   }
 
   exportLog() async {
@@ -583,7 +584,10 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("jar", "base_hnp.hap", tempDir);
 
     if (Platform.isMacOS) {
-      await copyAssert("macos", "$JavaVersion.tar.gz", "$javapath.tar.gz", "");
+      // 双架构
+      await copyAssert("macos", "signer", hdcDir);
+      await copyAssert("macos", "packing_tool", hdcDir);
+      await copyAssert("macos", "hnpcli", hdcDir);
       final arch = await getArchitecture();
       if (arch.contains("x86_64")) {
         await copyAssert("macos", "hdc_x86_64", hdcDir, "hdc");
@@ -595,11 +599,10 @@ class EcoViewModel extends ChangeNotifier {
         );
       } else {
         await copyAssert("macos", "hdc", hdcDir);
-        await copyAssert("macos", "hnpcli", hdcDir);
-        await copyAssert("macos", "signer", hdcDir);
         await copyAssert("macos", "libusb_shared.dylib", hdcDir);
         await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
-          await Process.run('chmod', ['+x', "$hdcDir/signer"]);
+        await Process.run('chmod', ['+x', "$hdcDir/signer"]);
+        await Process.run('chmod', ['+x', "$hdcDir/packing_tool"]);
       }
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);

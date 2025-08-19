@@ -203,7 +203,7 @@ class MorePage extends StatelessWidget {
                 title: "充电支持",
                 onClick: () => toPage(context, (_) => const PayPage()),
               ),
-              const ListItem(title: "应用版本", tailling: Text("2.4.0")),
+              const ListItem(title: "应用版本", tailling: Text("2.5.0")),
             ],
           ),
         ],
