@@ -91,7 +91,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           onPressed: () {
             scaffoldKey.currentState?.openEndDrawer();
           },
-          icon: Icon(Icons.settings),
+          icon: const Icon(Icons.settings),
         ),
       );
     }
@@ -102,7 +102,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             scaffoldKey.currentState?.openEndDrawer();
             viewmodel.checkDevices(null);
           },
-          icon: Icon(Icons.mode_edit),
+          icon: const Icon(Icons.mode_edit),
         ),
       );
     }
@@ -131,11 +131,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       case PageSelected.home:
         return IndexPage();
       case PageSelected.cert:
-        return CertPage();
+        return const CertPage();
       case PageSelected.history:
-        return HistoryPage();
+        return const HistoryPage();
       case PageSelected.more:
-        return MorePage();
+        return const MorePage();
     }
   }
 

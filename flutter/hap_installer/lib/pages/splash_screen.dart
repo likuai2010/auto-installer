@@ -12,7 +12,7 @@ class SplashScreen extends StatelessWidget{
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: Column(children: [CircularProgressIndicator(), Text("请稍等...")], crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,)),
+            body: Center(child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,children: [CircularProgressIndicator(), Text("请稍等...")],)),
           );
         } else {
           return const Home();

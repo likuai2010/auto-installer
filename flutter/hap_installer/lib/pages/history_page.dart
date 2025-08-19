@@ -34,13 +34,13 @@ class HistoryItem extends StatelessWidget {
     return GroupDecoration(
       children: [
         ListItem(
-          leading: Icon(Icons.check_circle),
+          leading: const Icon(Icons.check_circle),
           title: info.hapInfo.packageName,
           subTitle: info.hapInfo.version ?? "0.0.0",
           tailling: Container(),
           onClick: () {
             model.selectDebugHistory(info);
-            toPage(context, (_) => DebugDetailPage());
+            toPage(context, (_) => const DebugDetailPage());
           },
         ),
       ],

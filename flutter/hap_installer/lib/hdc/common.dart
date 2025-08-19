@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final JavaVersion = "17.0.15_6";
+const JavaVersion = "17.0.15_6";
 
 Future<String> getJavaDir() async {
   final temp = await getTempDir();
@@ -51,7 +51,7 @@ bool containsChinese(String path) {
 
 Future<String> getExternalDir() async {
   final path = (await getDownloadsDirectory())?.path;
-  print("getExternalDir ${path}");
+  print("getExternalDir $path");
   return path ?? "";
 }
 

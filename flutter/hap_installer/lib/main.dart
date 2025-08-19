@@ -41,7 +41,7 @@ class _AppState extends State<App> {
           colorSchemeSeed: Colors.black,
           brightness: Brightness.dark,
         ),
-        home: SplashScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

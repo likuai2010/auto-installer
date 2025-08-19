@@ -76,7 +76,7 @@ class EcoViewModel extends ChangeNotifier {
 
   HistoryViewModel? historyViewModel;
 
-  EcoViewModel() {}
+  EcoViewModel();
 
   Future<bool> init() async {
     cmd.startServer();
@@ -276,7 +276,7 @@ class EcoViewModel extends ChangeNotifier {
         hapInfo = await _loadApp(context, filePath);
       }
     } on FormatException catch (e) {
-      toask(context, "${e.message}");
+      toask(context, e.message);
     } 
     catch (e) {
       toask(context, "$e");
@@ -309,14 +309,14 @@ class EcoViewModel extends ChangeNotifier {
         if(!message.contains("ERROR")) {
           hasHap = true;
         } else{
-          toask(context, "$message");
+          toask(context, message);
           hasHap = false;
         }
       }else{
         hasHap = false;
       }
     } on FormatException catch (e) {
-      toask(context, "${e.message}");
+      toask(context, e.message);
     } 
     catch (e) {
       print("buildHap error $e");
@@ -391,10 +391,10 @@ class EcoViewModel extends ChangeNotifier {
       print("buildhap $message");
     } on FormatException catch (e) {
       print("error $e");
-      toask(context, "${e.message}");
+      toask(context, e.message);
     } catch (e) {
       print("error $e");
-      toask(context, "${e}");
+      toask(context, "$e");
     }
     buildHaping = false;
     notifyListeners();
@@ -410,9 +410,9 @@ class EcoViewModel extends ChangeNotifier {
     try {
       hapInfo = await _loadApp(context, filePath);
     } on FormatException catch (e) {
-      toask(context, "${e.message}");
+      toask(context, e.message);
     } catch (e) {
-      toask(context, "${e}");
+      toask(context, "$e");
     }
     fileLoading = false;
     notifyListeners();
@@ -469,15 +469,8 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       final result = await cmd.connectHdc(url);
       await checkDevices(url);
-      if (result.contains("Connect OK")) {
-        return "连接成功";
-      } else if (result.contains("failed")) {
-        return "连接失败: 请检查ip和端口是否正确";
-      } else if (result.contains("repeat")) {
-        return "连接成功";
-      } else {
-        return result;
-      }
+      
+      return result;
     }
   }
 
@@ -555,7 +548,7 @@ class EcoViewModel extends ChangeNotifier {
         
           var result = await Process.run('tar', ['-xzvf', "$javapath.tar.gz", "-C", tempDir]);
           var ret =  result.outText + result.errText;
-          print("tar: ${ret}");
+          print("tar: $ret");
         }catch (_){
             await installJava("$javapath.tar.gz", javapath);
         }
@@ -603,8 +596,10 @@ class EcoViewModel extends ChangeNotifier {
       } else {
         await copyAssert("macos", "hdc", hdcDir);
         await copyAssert("macos", "hnpcli", hdcDir);
+        await copyAssert("macos", "signer", hdcDir);
         await copyAssert("macos", "libusb_shared.dylib", hdcDir);
         await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
+          await Process.run('chmod', ['+x', "$hdcDir/signer"]);
       }
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
@@ -659,7 +654,7 @@ class EcoViewModel extends ChangeNotifier {
         await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
       }
     }catch(e){
-      print("copyAssert error ${e}");
+      print("copyAssert error $e");
     }
   }
 
@@ -668,7 +663,7 @@ class EcoViewModel extends ChangeNotifier {
       udids: List.empty(),
       certId: "",
       csrPath: path.join(storeDir, "xiaobai.csr"),
-      keystoreFile: path.join(storeDir, "xiaobai.p12"),
+      keystoreFile: path.join(storeDir, "key.pem"),
       keystorePwd: "xiaobai123",
       keyAlias: "xiaobai",
       profilePath: path.join(storeDir, "xiaobai-debug.p7b"),
@@ -693,7 +688,7 @@ class EcoViewModel extends ChangeNotifier {
       udids: List.empty(),
       certId: "",
       csrPath: path.join(storeDir, "xiaobai.csr"),
-      keystoreFile: path.join(storeDir, "xiaobai.p12"),
+      keystoreFile: path.join(storeDir, "key.pem"),
       keystorePwd: "xiaobai123",
       keyAlias: "xiaobai",
       profilePath: path.join(storeDir, "xiaobai-debug.p7b"),

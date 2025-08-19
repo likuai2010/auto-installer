@@ -107,7 +107,7 @@ class CertItem extends StatelessWidget {
         );
       }
     }
-    return Row(children: [useText, deleteText, SizedBox(width: 6)]);
+    return Row(children: [useText, deleteText, const SizedBox(width: 6)]);
   }
 
   @override
@@ -118,15 +118,15 @@ class CertItem extends StatelessWidget {
     return GroupDecoration(
       children: [
         ListItem(
-          leading: Icon(Icons.key_outlined),
+          leading: const Icon(Icons.key_outlined),
           title: "${info.certType == 2 ? '发布' : '调试'}: ${info.certName}",
           subTitle: "于${formatTime(info.expireTime)}过期",
           tailling: _actions(textTheme),
           onLongPress: () {
             showMenu(
               context: context,
-              position: RelativeRect.fromLTRB(100, 100, 0, 0), // 菜单位置
-              items: [PopupMenuItem(child: Text('删除'), onTap: onDelete)],
+              position: const RelativeRect.fromLTRB(100, 100, 0, 0), // 菜单位置
+              items: [PopupMenuItem(onTap: onDelete, child: Text('删除'))],
             );
           },
         ),

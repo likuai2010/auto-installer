@@ -37,19 +37,33 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
 
   bool get isOhos => false;
 
-  Future<String?> tempDir() async {}
+  Future<String?> tempDir() async {
+    return null;
+  }
 
-  Future<String?> appDir() async {}
-  Future<String?> hdcCmd(String cmd) async {}
+  Future<String?> appDir() async {
+    return null;
+  }
+  Future<String?> hdcCmd(String cmd) async {
+    return null;
+  }
 
-  Future<String?> signCmd(String cmd) async {}
+  Future<String?> signCmd(String cmd) async {
+    return null;
+  }
   
-  Future<String?> deviceType() async {}
-  Future<bool?> hasJit() async {}
+  Future<String?> deviceType() async {
+    return null;
+  }
+  Future<bool?> hasJit() async {
+    return null;
+  }
 
   Future<void> startServer() async {}
 
   Future<void> setLocalKey(String key, String value) async {}
   Future<String?> getLocalKey(String key) async {
+    return null;
+  
   }
 }

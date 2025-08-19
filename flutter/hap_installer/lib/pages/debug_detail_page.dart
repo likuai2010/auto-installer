@@ -15,7 +15,7 @@ class DebugDetailPage extends StatelessWidget {
       body: Consumer<HistoryViewModel>(
         builder: (_, model, child) {
           if (model.current == null) {
-            return Center(child: Text("暂无调试信息"));
+            return const Center(child: Text("暂无调试信息"));
           }
           return ListView(
             children:
@@ -33,7 +33,7 @@ class DebugDetailPage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Consumer<HistoryViewModel>(
           builder: (_, model, child) {
             return FilledButton(
@@ -58,22 +58,22 @@ class DebugStepItem extends StatelessWidget {
   final Function()? onClick;
   Widget getIcon() {
     if (info.loading == null) {
-      return SizedBox(
+      return const SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(value: 0.7),
       );
     } else if (info.loading == true) {
-      return SizedBox(
+      return const SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(value: null),
       );
     }
     if (info.error == null) {
-      return Icon(Icons.check_circle);
+      return const Icon(Icons.check_circle);
     } else {
-      return Icon(Icons.warning);
+      return const Icon(Icons.warning);
     }
   }
 
@@ -92,7 +92,7 @@ class DebugStepItem extends StatelessWidget {
 
   Widget _actions() {
     if (info.error != null && info.loading == false) {
-      return TextButton(onPressed: onClick, child: Text("若签名失败请点击此处重置证书"));
+      return TextButton(onPressed: onClick, child: const Text("若签名失败请点击此处重置证书"));
     }
     return Container();
   }
@@ -109,7 +109,7 @@ class DebugStepItem extends StatelessWidget {
         ),
         info.error != null
             ? Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Text(
                 "${info.error}",
                 style: Theme.of(context).textTheme.bodySmall,

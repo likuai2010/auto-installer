@@ -25,10 +25,10 @@ class BuildHnpBox extends StatelessWidget {
               leading: Container(),
               leadingWidth: 10,
               title: const Text("构建hnp包"),
-              actions: [const CloseButton()],
+              actions: const [CloseButton()],
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Column(
                 children: [
                   Text(
@@ -79,7 +79,7 @@ class BuildHnpBox extends StatelessWidget {
                     Radio(value: "public", toggleable: false, groupValue: model.hnpType, onChanged: (v){
                         model.selectHnpType("public");
                     }),
-                    Text("Public"),
+                    const Text("Public"),
                   ]),
                 ),
                 GestureDetector(
@@ -90,7 +90,7 @@ class BuildHnpBox extends StatelessWidget {
                       Radio(value: "private",  groupValue: model.hnpType, onChanged: (v){
                           model.selectHnpType("private");
                       }),
-                      Text("Private")
+                      const Text("Private")
                   ]),
                 ),
               ],
@@ -106,7 +106,7 @@ class BuildHnpBox extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextButton(onPressed: (){
                 model.buildToHap(context);
             }, 

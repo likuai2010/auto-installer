@@ -60,8 +60,8 @@ class CmdService {
   }
 
   unpackageHap(String hapPath, String outPath) async {
-    final result = await baseJavaCmd("--mode hap --hap-path \"${hapPath}\"  --out-path \"${outPath}\" --force true", "app_unpacking_tool.jar");
-    print("unpackageHap ${result}");
+    final result = await baseJavaCmd("--mode hap --hap-path \"$hapPath\"  --out-path \"$outPath\" --force true", "app_unpacking_tool.jar");
+    print("unpackageHap $result");
   }
  
 
@@ -69,34 +69,34 @@ class CmdService {
   
     final dir = Directory(hapDir);
     if(await dir.exists()){
-      var params = "--mode hap --out-path ${outPath} --force true";
+      var params = "--mode hap --out-path $outPath --force true";
       final List<FileSystemEntity> entities = await dir.list().toList();
       for (var file in entities) {
         final fullPath = file.absolute.path;
         final filename = path.basename(file.path);
         if (filename == "resources.index") {
-            params += " --index-path ${fullPath}";
+            params += " --index-path $fullPath";
         }
         else if (filename == "pack.info") {
-            params += " --pack-info-path ${fullPath}";
+            params += " --pack-info-path $fullPath";
         }
         else if (filename == "module.json") {
-            params += " --json-path ${fullPath}";
+            params += " --json-path $fullPath";
         }
         else if (filename == "libs") {
-            params += " --lib-path ${fullPath}";
+            params += " --lib-path $fullPath";
         }
         else if (filename == "pkgContextInfo.json") {
-            params += " --pkg-context-path ${fullPath}";
+            params += " --pkg-context-path $fullPath";
         }
         else if (filename == "rpcid.sc") {
-            params += " --rpcid-path ${fullPath}";
+            params += " --rpcid-path $fullPath";
         }
         else if (filename == "CAPABILITY.profile") {
-            params += " --profile-path ${fullPath}";
+            params += " --profile-path $fullPath";
         }
         else {
-            params += " --${filename}-path ${fullPath}";
+            params += " --$filename-path $fullPath";
         }
       }
       return await baseJavaCmd(params, "app_packing_tool.jar");
@@ -152,7 +152,7 @@ class CmdService {
 
   Future<String?> signHap(String inPath, SignConfig signConfig) async {
     if (!await File(inPath).exists()) {
-      return "hap文件不存在 ${inPath}";
+      return "hap文件不存在 $inPath";
     }
     final outPath = await getOutPath(inPath);
     var cmd = "";
@@ -212,7 +212,15 @@ class CmdService {
     }
     final cmd = "hdc tconn $url";
     try {
-      return await baseCmd(cmd);
+      final result = await baseCmd(cmd);
+      if (result.contains("Connect OK")) {
+        return "连接成功";
+      } else if (result.contains("failed")) {
+        return "连接失败: 请检查ip和端口是否正确";
+      } else if (result.contains("repeat")) {
+        return "连接成功";
+      } 
+      return result;
     } catch (e) {
       return "$e";
     }
@@ -240,7 +248,7 @@ class CmdService {
   }
 
   Future<String> baseCmd(String cmd) async {
-    print("baseCmd ${cmd}");
+    print("baseCmd $cmd");
     if (ohosAdapter.isOhos) {
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
@@ -270,7 +278,7 @@ class CmdService {
     // ohos ffi 会卡线程，采用bridge
     if (ohosAdapter.isOhos) {
       final deviceType = await ohosAdapter.deviceType();
-      print("deviceType: ${deviceType}");
+      print("deviceType: $deviceType");
       if(deviceType == "2in1"){
         return await ohosJavaCmd(cmd);
       }else{
@@ -281,14 +289,15 @@ class CmdService {
     if (Platform.isAndroid) {
       return await signCmd(cmdToArgs(cmd), await getTempDir());
     } else {
-      return await baseJavaCmd(cmd);
+      return await baseSignerCmd(cmd);
+      //return await baseJavaCmd(cmd);
     }
   }
   ohosJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
     var hdcDir = await getHdcDir();
     try {
       final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
-      print("baseCmd: java -jar ${jar} $cmd ");
+      print("baseCmd: java -jar $jar $cmd ");
       var result = await Process.run("/data/service/hnp/bin/java", [
         "-jar",
         path.join(hdcDir, jar),
@@ -303,7 +312,6 @@ class CmdService {
       return "baseCmd error: $e";
     }
   }
-
   baseJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {
     var hdcDir = await getHdcDir();
     var java = "java";
@@ -317,7 +325,7 @@ class CmdService {
         javaCmd = java;
       }
       final args = cmdToArgs(cmd.replaceFirst("signtool ", ""));
-      print("baseCmd: java -jar ${jar} $cmd ");
+      print("baseCmd: java -jar $jar $cmd ");
       var result = await Process.run(javaCmd, [
         "-jar",
         path.join(hdcDir, jar),
@@ -357,13 +365,35 @@ class CmdService {
   }
 }
 
+  Future<String> baseSignerCmd(String cmd) async {
+    if (Platform.isAndroid) {
+      throw const FormatException("暂不支持");
+    } else {
+      final hdcDir = await getHdcDir();
+      return await Isolate.run(() async {
+        try {
+          var hdc = "signer";
+          final args = cmdToArgs(cmd.replaceFirst("signtool", ""));
+          if (Platform.isWindows) {
+              hdc += ".exe";
+          }
+          var result = await Process.run(path.join(hdcDir, hdc), args);
+          return result.outText + result.errText;
+        } catch (e) {
+          print("signer $e");
+          return "$e";
+        }
+      });
+  }
+}
+
 
 
 nativeJava(cmd, [jar = "hap-sign-tool.jar"]) async {
   final args = cmdToArgs("package " + cmd);
   var hdcDir = await getHdcDir();
   var jarPath = path.join(hdcDir, jar);
-  final result = await nativeJvm("-Djava.class.path=${jarPath}:/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/plugins/native_core/src", "ohos/CompressEntrance", args, "/Users/fiber/Library/Java/JavaVirtualMachines/corretto-17.0.12/Contents/Home/lib/server/libjvm.dylib");
+  final result = await nativeJvm("-Djava.class.path=$jarPath:/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/plugins/native_core/src", "ohos/CompressEntrance", args, "/Users/fiber/Library/Java/JavaVirtualMachines/corretto-17.0.12/Contents/Home/lib/server/libjvm.dylib");
   print(result);
 }
 

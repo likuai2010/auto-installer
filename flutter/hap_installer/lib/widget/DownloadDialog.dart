@@ -44,7 +44,7 @@ class _DownloadDialogState extends State<DownloadDialog> {
         });
         Navigator.pop(context);
       },
-      child: Text("安装"),
+      child: const Text("安装"),
     );
   }
 
@@ -58,10 +58,10 @@ class _DownloadDialogState extends State<DownloadDialog> {
       return;
     }
     String url =
-        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_${JavaVersion}.zip";
+        "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/windows/OpenJDK17U-jre_x64_windows_hotspot_$JavaVersion.zip";
     if (Platform.isLinux) {
       url =
-          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_${JavaVersion}.tar.gz";
+          "https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jre/x64/linux/OpenJDK17U-jre_x64_linux_hotspot_$JavaVersion.tar.gz";
     }
 
     try {

@@ -11,7 +11,7 @@ import 'package:hap_installer/models/PayList.dart';
 class HistoryViewModel extends ChangeNotifier {
   List<DebugHistory> historyList = [];
 
-  PayList payList = PayList();
+  PayList payList = const PayList();
 
   DebugHistory? current;
 

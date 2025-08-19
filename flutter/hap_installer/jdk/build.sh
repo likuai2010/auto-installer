@@ -70,11 +70,12 @@ bash configure \
 --with-freetype=bundled \
 --with-extra-cflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE "  \
 --with-extra-cxxflags="-Wno-error $COMMON_FLAGS -DOHOS -I/opt/jdk17/deps --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -O0 -g -fdebug-prefix-map=${OLD_PATH}=$SOURCE " \
---with-extra-ldflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot" \
+--with-extra-ldflags="-Wno-error --target=aarch64-linux-ohos --sysroot=$NDK_HOME/sysroot -L/opt/jdk17/deps -lffi" \
 --with-cups-include=/opt/jdk17/deps \
 --with-fontconfig-include=/opt/jdk17/deps \
 --with-alsa-include=/opt/jdk17/deps \
 --with-libffi-include=/opt/jdk17/deps \
+--with-libffi-lib=/opt/jdk17/deps \
 BUILD_CC=${CC} \
 BUILD_CXX=${CXX} \
 BUILD_NM=${NM} \
@@ -90,7 +91,7 @@ CXXFILT=${CXXFILT} \
 NM=${NM} \
 --with-jobs=$(nproc)
 
-make images 
+make images
 
 
 popd

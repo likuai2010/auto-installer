@@ -43,12 +43,12 @@ class SignConfigPage extends StatelessWidget {
                         ),
                   );
                 },
-                child: Text("更换"),
+                child: const Text("更换"),
               ),
             ),
             ListTile(
-              title: Text("csr"),
-              subtitle: Text("通过p12创建, 用于申请cer证书"),
+              title: const Text("csr"),
+              subtitle: const Text("通过p12创建, 用于申请cer证书"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -67,12 +67,12 @@ class SignConfigPage extends StatelessWidget {
                         ),
                   );
                 },
-                child: Text("更换"),
+                child: const Text("更换"),
               ),
             ),
             ListTile(
-              title: Text("keyAlias"),
-              subtitle: Text("密钥别名"),
+              title: const Text("keyAlias"),
+              subtitle: const Text("密钥别名"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -91,12 +91,12 @@ class SignConfigPage extends StatelessWidget {
                         ),
                   );
                 },
-                child: Text("更换"),
+                child: const Text("更换"),
               ),
             ),
             ListTile(
-              title: Text("keyPwd"),
-              subtitle: Text("密钥密码"),
+              title: const Text("keyPwd"),
+              subtitle: const Text("密钥密码"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -115,7 +115,7 @@ class SignConfigPage extends StatelessWidget {
                         ),
                   );
                 },
-                child: Text("更换"),
+                child: const Text("更换"),
               ),
             ),
           ],
@@ -190,7 +190,7 @@ class EditConfigDialog extends StatelessWidget {
             controller.text = filePath;
           }
         },
-        child: Text("选择文件"),
+        child: const Text("选择文件"),
       );
     }
     return Container();

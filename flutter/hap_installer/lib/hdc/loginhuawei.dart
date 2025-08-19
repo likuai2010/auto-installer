@@ -41,7 +41,7 @@ class LoginHuawei {
     return Isolate.run(() async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
       var isCompleted = false;
-      Timer(Duration(seconds: 60), () {
+      Timer(const Duration(seconds: 60), () {
         if (!isCompleted) {
           server.close();
         }

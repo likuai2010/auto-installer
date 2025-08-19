@@ -50,11 +50,11 @@ class ListItem extends StatelessWidget {
       onTap: onClick,
       onLongPress: onLongPress,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: leading ?? Container(),
             ),
             Expanded(
@@ -71,7 +71,7 @@ class ListItem extends StatelessWidget {
                 ],
               ),
             ),
-            tailling ?? Icon(Icons.keyboard_arrow_right_outlined),
+            tailling ?? const Icon(Icons.keyboard_arrow_right_outlined),
           ],
         ),
       ),
@@ -88,7 +88,7 @@ class GroupDecoration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 14),
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 14),
       elevation: 1,
       shadowColor: Colors.black,
       color: Colors.white,
@@ -167,14 +167,14 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
         AppBar(
           leading: Container(),
           leadingWidth: 10,
-          title: Text("连接设备"),
-          actions: [const CloseButton()],
+          title: const Text("连接设备"),
+          actions: const [CloseButton()],
         ),
         Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              Text("请到开发者选择项-开启无线调试"),
+              const Text("请到开发者选择项-开启无线调试"),
               Text(
                 "提示: 第一次可能失败，需要等待手机提示授权",
                 style: Theme.of(context).textTheme.labelSmall,

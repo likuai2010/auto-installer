@@ -92,7 +92,7 @@ class EcoService {
           return EcoResult(ret: Ret(code: 0, msg: strResult));
         }
       } else if (response.statusCode == 401) {
-        return EcoResult(ret: Ret(code: 401, msg: "登录信息过期"));
+        return const EcoResult(ret: Ret(code: 401, msg: "登录信息过期"));
       }
     } catch (e) {
       print('Error: $e');
@@ -117,7 +117,7 @@ class EcoService {
         await sink.close();
         return true;
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        throw FormatException("登陆信息失效");
+        throw const FormatException("登陆信息失效");
       }
     } catch (e) {
       print('Error: $e');
@@ -135,10 +135,10 @@ class EcoService {
     final params = Uri.splitQueryString(tokenUrl);
     final tempToken = params["tempToken"];
     var uri =
-        "https://cn.devecostudio.huawei.com/authrouter/auth/api/temptoken/check?site=CN&tempToken=${tempToken}&appid=1007&version=0.0.0";
+        "https://cn.devecostudio.huawei.com/authrouter/auth/api/temptoken/check?site=CN&tempToken=$tempToken&appid=1007&version=0.0.0";
     final jwtToken = await base(uri, {}, {}, "GET");
     if (jwtToken == null) {
-      throw FormatException("tempToken 无效");
+      throw const FormatException("tempToken 无效");
     }
     uri =
         "https://cn.devecostudio.huawei.com/authrouter/auth/api/jwToken/check";
@@ -147,13 +147,13 @@ class EcoService {
       "jwtToken": jwtToken.ret.msg,
     }, "GET");
     if (result?.userInfo == null) {
-      throw FormatException("登陆失败");
+      throw const FormatException("登陆失败");
     }
     return result?.userInfo;
   }
 
   Future<List<TeamInfo>?> getUserTeamList() async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/ups/user-permission-service/v1/user-team-list";
     final result = await base(uri, {}, {}, "GET");
     // 没有权限获取
@@ -167,21 +167,21 @@ class EcoService {
   }
 
   Future<List<CertInfo>> getCertList() async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/list";
     final result = await base(uri, {}, {}, "GET");
     return result?.certList ?? List.empty();
   }
 
   deleteCertList(List<String> certIds) {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/delete";
     return base(uri, {"certIds": certIds}, {}, "DELETE");
   }
 
   // type 1 debug 2 prod
   Future<CertInfo> createCert(name, type, csr) async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/harmony-cert-manage/v1/cert/add";
     final params = {"csr": csr, "certName": name, "certType": type};
     final result = await base(uri, params, {}, "POST");
@@ -202,7 +202,7 @@ class EcoService {
     ModuleInfo? moduleJson, [
     String packageName = "com.xiaobai.testgo",
   ]) async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/provision-manage/v1/ide/test/provision/add";
     final params = {
       "provisionName": name,
@@ -219,7 +219,7 @@ class EcoService {
   }
 
   Future<List<UrlInfo>> downloadObj(String objId) async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/amis/app-manage/v1/objects/url/reapply";
     final params = {"sourceUrls": objId};
     final result = await base(uri, params, {});
@@ -227,14 +227,14 @@ class EcoService {
   }
 
   Future<List<DeviceInfo>> deviceList() async {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/device-manage/v1/device/list?start=1&pageSize=100&encodeFlag=0";
     final result = await base(uri, {}, {}, "GET");
     return result?.list ?? List.empty();
   }
 
   createDevice(deviceName, uuid) {
-    final uri =
+    const uri =
         "https://connect-api.cloud.huawei.com/api/cps/device-manage/v1/device/add";
     final params = {"deviceName": deviceName, "udid": uuid, "deviceType": 4};
     return base(uri, params, {});
@@ -263,7 +263,7 @@ class EcoService {
     if (config.certId.isEmpty) {
       print(" EcoService create cert");
       if (unLogin()) {
-        throw FormatException("请登录华为账号");
+        throw const FormatException("请登录华为账号");
       }
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
@@ -294,7 +294,7 @@ class EcoService {
     var udid = config.udids.first;
     if (udid.isNotEmpty) {
       if (unLogin()) {
-        throw FormatException("请登录华为账号");
+        throw const FormatException("请登录华为账号");
       }
       var deviceList = await this.deviceList();
       if (deviceList.where((d) => d.udid == udid).isEmpty) {
@@ -320,9 +320,9 @@ class EcoService {
         config.packageName,
       );
       await downloadFile(provisionFileUrl, config.profilePath);
-      print(" ${profileName} profile 创建成功");
+      print(" $profileName profile 创建成功");
     } else {
-      print(" ${profileName} profile 存在");
+      print(" $profileName profile 存在");
     }
     return true;
   }

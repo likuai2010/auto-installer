@@ -13,7 +13,7 @@ class PayPage extends StatelessWidget {
     // );
     final columns = MediaQuery.of(context).size.width / 120;
     return GridView.count(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       mainAxisSpacing: 5,
       crossAxisSpacing: 5,
       childAspectRatio: 1.5,
@@ -21,7 +21,7 @@ class PayPage extends StatelessWidget {
       children: List.generate(model.payList.payList.length, (i) {
         return Card(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
                 Text(model.payList.payList[i].nick),
@@ -56,7 +56,7 @@ class PayPage extends StatelessWidget {
                       height: 400,
                       child: Column(
                         children: [
-                          Text("如果您觉得我们的软件对您有帮助，欢迎扫码赞赏。"),
+                          const Text("如果您觉得我们的软件对您有帮助，欢迎扫码赞赏。"),
                           SizedBox(
                             width: 240,
                             height: 240,

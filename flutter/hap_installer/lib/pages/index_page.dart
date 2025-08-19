@@ -40,7 +40,7 @@ class IndexPage extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           AppInfoBox(name: "小白调试助手", style: textTheme.titleLarge!),
-          DebugSteps(),
+          const DebugSteps(),
           Consumer<EcoViewModel>(
             builder: (context, model, child) {
               if (model.hapInfo?.packageName == null ||
@@ -53,7 +53,7 @@ class IndexPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => DebugDetailPage()),
+                      MaterialPageRoute(builder: (_) => const DebugDetailPage()),
                     );
                     model.installHap();
                   },
@@ -65,7 +65,7 @@ class IndexPage extends StatelessWidget {
               );
             },
           ),
-          BuildHnp()
+          const BuildHnp()
         ],
       ),
     );
@@ -89,7 +89,7 @@ class DebugSteps extends StatelessWidget {
         return GroupDecoration(
           children: [
             ListItem(
-              leading: Icon(Icons.person),
+              leading: const Icon(Icons.person),
               title: userName(model),
               subTitle: "华为账号",
               tailling: TextButton(
@@ -99,19 +99,19 @@ class DebugSteps extends StatelessWidget {
                 child:
                     !model.loading
                         ? Text(model.isLogin ? "更换账号" : "登录账号")
-                        : CircularProgressIndicator(value: null),
+                        : const CircularProgressIndicator(value: null),
               ),
             ),
             model.teamList.isEmpty && model.isLogin
                 ? ListItem(
-                  leading: Icon(Icons.person),
+                  leading: const Icon(Icons.person),
                   title: "未实名开发者",
                   subTitle: "证书有效期将为14天",
                   tailling: TextButton(
                     onPressed: () {
                       viewmodel.toAuthDev(context);
                     },
-                    child: Text("去实名"),
+                    child: const Text("去实名"),
                   ),
                 )
                 : Container(),
@@ -152,7 +152,7 @@ class DebugSteps extends StatelessWidget {
               ),
             ),
             FileDropArea(child: ListItem(
-              leading: Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+              leading: const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
               title: model.hapInfo?.packageName == null ? "未选择" : "包名: ${model.hapInfo?.packageName} 支持设备: ${model.hapInfo?.deviceType}",
               subTitle: "文件格式: .app,.hap,.hsp",
               tailling: TextButton(
@@ -176,8 +176,8 @@ class DebugSteps extends StatelessWidget {
                   },
                   child:
                       !model.fileLoading
-                          ? Text("test sign")
-                          : CircularProgressIndicator(value: null),
+                          ? const Text("test sign")
+                          : const CircularProgressIndicator(value: null),
                 )
             // Platform.isAndroid
             //     ? TextButton(
@@ -261,7 +261,7 @@ class AppInfoBox extends StatelessWidget {
       label: "",
       children: [
         Center(child: Text(name, style: style)),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
@@ -269,15 +269,15 @@ class AppInfoBox extends StatelessWidget {
                 onPressed: () {
                   openByUrl("https://github.com/likuai2010/auto-installer/");
                 },
-                child: Text("GitHub"),
+                child: const Text("GitHub"),
               ),
             ),
             Expanded(
               child: TextButton(
                 onPressed: () {
-                  toPage(context, (_) => UserGuidePage());
+                  toPage(context, (_) => const UserGuidePage());
                 },
-                child: Text("使用教程"),
+                child: const Text("使用教程"),
               ),
             ),
           ],

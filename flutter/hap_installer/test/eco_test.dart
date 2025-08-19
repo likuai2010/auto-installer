@@ -16,11 +16,11 @@ void main() {
     test("test base", () async {
       eco.initUserInfo(TestAuthInfo);
       final deviceList = await eco.deviceList();
-      print("deviceList:" + deviceList.toString());
+      print("deviceList:$deviceList");
       final teams = await eco.getUserTeamList();
-      print("getUserTeamList:" + teams.toString());
+      print("getUserTeamList:$teams");
       final result = await eco.getCertList();
-      print("getCertList:" + result.toString());
+      print("getCertList:$result");
     });
   });
 }

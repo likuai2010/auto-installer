@@ -49,7 +49,7 @@ napi_value JavaCmd(napi_env env, napi_callback_info info)
     napi_value resourceName;
     napi_create_string_latin1(env, "javaCmd", NAPI_AUTO_LENGTH, &resourceName);
     napi_threadsafe_function tsfn;
-    napi_create_threadsafe_function(env, args[1], NULL, resourceName, 0, 1, NULL, NULL, NULL, [](napi_env env, napi_value js_callback, void *context, void *data){
+    napi_create_threadsafe_function(env, args[3], NULL, resourceName, 0, 1, NULL, NULL, NULL, [](napi_env env, napi_value js_callback, void *context, void *data){
        CallbackData* cd = (CallbackData *)data;
         if (cd == nullptr)
             return ;
@@ -77,8 +77,10 @@ typedef void (*set_javaHome)(const char *);
 
 // 禁用 System.exit
 void fixSecurityManager(JNIEnv* env) {
+     jclass interceptLogClass = (env)->FindClass("InterceptLogManager");
+    
      // 查找 NoExitSecurityManager 类
-     jclass securityManagerClass = (env)->FindClass( "ExitBlockingSecurityManager");
+     jclass securityManagerClass = (env)->FindClass("ExitBlockingSecurityManager");
      if (securityManagerClass == NULL) {
          return;
      }

@@ -55,20 +55,20 @@ class HdcCmdPageState extends State<HdcCmdPage> {
                 cmdResult = [];
               });
             },
-            icon: Icon(Icons.clear),
+            icon: const Icon(Icons.clear),
           ),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Container(
-          constraints: BoxConstraints.expand(),
+          constraints: const BoxConstraints.expand(),
           color: Colors.black,
           child: ListView.builder(
             itemCount: cmdResult.length,
             controller: listControrller,
             itemBuilder: (_, i) {
-              return Text(cmdResult[i], style: TextStyle(color: Colors.white));
+              return Text(cmdResult[i], style: const TextStyle(color: Colors.white));
             },
           ),
         ),
@@ -77,7 +77,7 @@ class HdcCmdPageState extends State<HdcCmdPage> {
         padding: MediaQuery.of(context).viewInsets,
         duration: const Duration(milliseconds: 100),
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Row(
               children: [
                 Expanded(
@@ -88,8 +88,8 @@ class HdcCmdPageState extends State<HdcCmdPage> {
                     },
                   ),
                 ),
-                SizedBox(width: 10),
-                IconButton(onPressed: sendCmd, icon: Icon(Icons.check_circle)),
+                const SizedBox(width: 10),
+                IconButton(onPressed: sendCmd, icon: const Icon(Icons.check_circle)),
               ],
             )),
       ),
