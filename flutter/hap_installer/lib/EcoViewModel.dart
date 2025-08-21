@@ -600,10 +600,10 @@ class EcoViewModel extends ChangeNotifier {
       } else {
         await copyAssert("macos", "hdc", hdcDir);
         await copyAssert("macos", "libusb_shared.dylib", hdcDir);
-        await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
-        await Process.run('chmod', ['+x', "$hdcDir/signer"]);
-        await Process.run('chmod', ['+x', "$hdcDir/packing_tool"]);
       }
+      await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
+      await Process.run('chmod', ['+x', "$hdcDir/signer"]);
+      await Process.run('chmod', ['+x', "$hdcDir/packing_tool"]);
       if (!Platform.isWindows) {
         await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       }
@@ -611,6 +611,7 @@ class EcoViewModel extends ChangeNotifier {
 
     if (Platform.isWindows) {
       await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
+      await copyAssert("windows", "signer.exe", hdcDir);
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "hnpcli.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
