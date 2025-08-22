@@ -579,9 +579,9 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
  
     print("hdcDir: $hdcDir");
-    await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
-    await copyAssert("jar", "app_packing_tool.jar", hdcDir);
-    await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
+    // await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
+    // await copyAssert("jar", "app_packing_tool.jar", hdcDir);
+    // await copyAssert("jar", "app_unpacking_tool.jar", hdcDir);
     await copyAssert("jar", "base_hnp.hap", tempDir);
 
     if (Platform.isMacOS) {
@@ -611,10 +611,10 @@ class EcoViewModel extends ChangeNotifier {
     }
 
     if (Platform.isWindows) {
-      await copyAssert("windows", "$JavaVersion.zip", "$javapath.zip", "");
       await copyAssert("windows", "signer.exe", hdcDir);
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "hnpcli.exe", hdcDir);
+      await copyAssert("windows", "packing_tool.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
     }
     if (Platform.isLinux) {
@@ -624,11 +624,15 @@ class EcoViewModel extends ChangeNotifier {
           "$javapath.tar.gz",
           "",
         );
+      await copyAssert("linux", "signer", hdcDir);
       await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
+      await copyAssert("linux", "packing_tool", hdcDir);
       await copyAssert("linux", "libusb_shared.so", hdcDir);
       await Process.run('chmod', ['+x', "$hdcDir/hdc"]);
       await Process.run('chmod', ['+x', "$hdcDir/hnpcli"]);
+      await Process.run('chmod', ['+x', "$hdcDir/signer"]);
+      await Process.run('chmod', ['+x', "$hdcDir/packing_tool"]);
     }
     return;
   }
