@@ -572,6 +572,7 @@ class EcoViewModel extends ChangeNotifier {
   tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
+    await copyAssert("store", "key.pem", storeDir);
     // debug test
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
