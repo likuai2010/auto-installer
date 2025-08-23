@@ -14,7 +14,7 @@ fi
 
 if [ "$1" = "linux" ]; then
 cmake  -G Ninja \
-  -DCMAKE_BUILD_TYPE=DEBUG \
+  -DCMAKE_BUILD_TYPE=RELEASE \
   -B build_linux \
   -S .
 pushd build_linux
@@ -25,7 +25,8 @@ fi
 #windows  use MSYS2 build
 if [ "$1" = "windows" ]; then
 cmake  -G Ninja \
-  -DCMAKE_BUILD_TYPE=DEBUG \
+  -DCMAKE_BUILD_TYPE=RELEASE \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -B build_windows \
   -S .
 pushd build_windows

@@ -178,7 +178,7 @@ class CmdService {
     if (result.contains("success")) {
       return null;
     } else if (result.contains("9568322")) {
-      return "Profile验证失败: 请检查Profile文件 (tip: Profile中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
+      return "Profile和证书不匹配，请重置证书和Profile文件 (tip: Profile中未包含该调试设备的UDID; 签名证书和创建Profile的证书不一致; 签名时使用了发布证书和发布profile文件)";
     } else if (result.contains("9568289")) {
       return "权限请求失败导致安装失败! (tip: 如果使用了system_basic或system_core等级的权限，将导致报错)";
     } else if (result.contains("9568297")) {
@@ -288,7 +288,6 @@ class CmdService {
       return await signCmd(cmdToArgs(cmd), await getTempDir());
     } else {
       return await baseSignerCmd(cmd);
-      //return await baseJavaCmd(cmd);
     }
   }
   ohosJavaCmd(cmd, [jar = "hap-sign-tool.jar"]) async {

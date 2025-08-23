@@ -15,10 +15,8 @@ import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
-import 'package:hap_installer/pages/Home.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
-import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
@@ -108,14 +106,10 @@ class EcoViewModel extends ChangeNotifier {
 
     await tarnsformAssert(javapath);
    
-    await Isolate.run(() async {
-        await initJavaRuntme(javapath, tempDir);
-    });
-    // if(!ohosAdapter.isOhos){
-    //  
-    // }else{
-      
-    // }
+    // await Isolate.run(() async {
+    //     await initJavaRuntme(javapath, tempDir);
+    // });
+    
     final url = await getLocalUrl();
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
@@ -614,8 +608,13 @@ class EcoViewModel extends ChangeNotifier {
       await copyAssert("windows", "signer.exe", hdcDir);
       await copyAssert("windows", "hdc.exe", hdcDir);
       await copyAssert("windows", "hnpcli.exe", hdcDir);
-      await copyAssert("windows", "packing_tool.exe", hdcDir);
       await copyAssert("windows", "libusb_shared.dll", hdcDir);
+      await copyAssert("windows", "packing_tool.exe", hdcDir);
+      await copyAssert("windows", "libcjson.dll", hdcDir);
+      await copyAssert("windows", "libcrypto-3-x64.dll", hdcDir);
+      await copyAssert("windows", "libgcc_s_seh-1.dll", hdcDir);
+      await copyAssert("windows", "libstdc++-6.dll", hdcDir);
+      await copyAssert("windows", "libwinpthread-1.dll", hdcDir);
     }
     if (Platform.isLinux) {
        await copyAssert(
