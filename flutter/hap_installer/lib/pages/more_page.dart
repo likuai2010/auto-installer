@@ -158,8 +158,7 @@ class MorePage extends StatelessWidget {
                         },
                       );
                     },
-              ),
-              ChangeJavaHome(context),
+              )
             ],
           ),
           GroupDecoration(

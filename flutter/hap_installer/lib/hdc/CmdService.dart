@@ -393,6 +393,7 @@ Future<String> basePackCmd(String cmd) async {
         try {
           var hdc = "packing_tool";
           final args = cmdToArgs(cmd);
+          args.add("pack");
           if (Platform.isWindows) {
               hdc += ".exe";
           }
