@@ -94,6 +94,8 @@ class CmdService {
         else if (filename == "CAPABILITY.profile") {
             params += " --profile-path $fullPath";
         }
+        else if (filename == "pages.info") {
+        }
         else {
             params += " --$filename-path $fullPath";
         }
@@ -392,8 +394,7 @@ Future<String> basePackCmd(String cmd) async {
       return await Isolate.run(() async {
         try {
           var hdc = "packing_tool";
-          final args = cmdToArgs(cmd);
-          args.add("pack");
+          final args = cmdToArgs("pack $cmd");
           if (Platform.isWindows) {
               hdc += ".exe";
           }
