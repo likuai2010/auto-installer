@@ -94,6 +94,8 @@ class CmdService {
         else if (filename == "CAPABILITY.profile") {
             params += " --profile-path $fullPath";
         }
+        else if (filename == "pages.info") {
+        }
         else {
             params += " --$filename-path $fullPath";
         }

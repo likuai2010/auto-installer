@@ -345,10 +345,8 @@ class EcoViewModel extends ChangeNotifier {
       
       final hnpInDir = path.join(temp, "base_hnp_in");
       final appsDir = path.join(temp, "apps");
-      await cmd.unpackageHap(tempDir, hnpInDir);
       final hnpDir = Directory(path.join(hnpInDir, "hnp"));
       final hapInHnpDir =  Directory( path.join(hnpInDir, "hnp", "arm64-v8a"));
-
       try{
         await hnpDir.create(recursive: true);
       }catch(_){
@@ -356,7 +354,7 @@ class EcoViewModel extends ChangeNotifier {
         await hnpDir.create(recursive: true);
       }
       await hapInHnpDir.create(recursive: true);
-    
+      await cmd.unpackageHap(tempDir, hnpInDir);
       final hapFile = File(path.join(hnpOutPath, "$hnpName.hnp"));
       hapFile.copy(path.join(hapInHnpDir.path,"$hnpName.hnp"));
 

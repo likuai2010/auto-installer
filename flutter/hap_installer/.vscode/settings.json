@@ -100,6 +100,6 @@
         "xutility": "cpp",
         "un_hap.h": "c"
     },
-    "cmake.sourceDirectory": "/Users/fiber/auto-publish-harmonyos/flutter/hap_installer/cpp",
+    "cmake.sourceDirectory": "C:/Users/User/Documents/auto-publish-harmonyos/flutter/hap_installer/cpp",
     "dart.flutterSdkPath": "~/git/flutter_flutter"
 }

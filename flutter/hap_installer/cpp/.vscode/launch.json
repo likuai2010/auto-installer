@@ -1,0 +1,51 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/packing_tool/packing_tool.exe",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "args":[
+                "pack",
+                "--mode",
+                "hap",
+                "--out-path",
+                "C:\\Users\\User\\Documents\\base_hnp.hap",
+                "--force",
+                "true",
+                "--pack-info-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\pack.info",
+                "--resources-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\resources",
+                "--json-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\module.json",
+                "--pkg-context-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\pkgContextInfo.json",
+                "--ets-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\ets",
+                "--index-path",
+                "C:\\Users\\User\\Documents\\auto-publish-harmonyos\\flutter\\hap_installer\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\assets\\jar\\base_hnp\\resources.index"
+            ]
+        }
+
+    ]
+}

@@ -67,7 +67,7 @@ class IndexPage extends StatelessWidget {
               );
             },
           ),
-          const BuildHnp()
+          Platform.isMacOS ? const BuildHnp(): Container()
         ],
       ),
     );
