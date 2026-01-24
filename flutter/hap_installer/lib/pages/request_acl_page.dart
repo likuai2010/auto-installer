@@ -3,46 +3,41 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/common.dart';
+import 'package:hap_installer/hdc/EcoServices.dart';
 
-class HdcCmdPage extends StatefulWidget {
-  const HdcCmdPage({super.key});
+class RequestACLPage extends StatefulWidget {
+  const RequestACLPage({super.key});
 
   @override
-  State<HdcCmdPage> createState() => HdcCmdPageState();
+  State<RequestACLPage> createState() => RequestACLPageState();
 }
 
-class HdcCmdPageState extends State<HdcCmdPage> {
+class RequestACLPageState extends State<RequestACLPage> {
   late TextEditingController cmdControrller;
   late ScrollController listControrller;
-  List<String> cmdResult = [];
+  List<String> cmdResult = eco.aclList;
   bool loading = false;
   @override
   void initState() {
     super.initState();
-    cmdControrller = TextEditingController(text: "hdc list targets");
+    cmdControrller = TextEditingController(text: "");
     listControrller = ScrollController();
+    cmdResult = eco.aclList;
   }
 
   void sendCmd() async {
-    setState(() {
-      loading = true;
-    });
     try {
-      var result = await cmd.baseCmd(cmdControrller.text);
-      setState(() {
-        cmdResult.add(result);
-      });
-      Future.delayed(const Duration(milliseconds: 100));
-      listControrller.jumpTo(listControrller.position.maxScrollExtent);
+      if(cmdControrller.text.isNotEmpty){
+        setState(() {
+          cmdResult.add(cmdControrller.text);
+          eco.aclList.add(cmdControrller.text);
+        });
+        listControrller.jumpTo(listControrller.position.maxScrollExtent);
+      }
+    
       // ignore: empty_catches
     } catch (e) {
-      setState(() {
-        cmdResult.add("$e");
-      });
     }
-    setState(() {
-      loading = false;
-    });
   }
 
   @override
@@ -50,25 +45,16 @@ class HdcCmdPageState extends State<HdcCmdPage> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('命令行工具'),
+        title: const Text('ACL权限列表'),
         actions: [
           IconButton(
             onPressed: () async {
-              final logPath = "${await getTempDir()}hdc.log";
-              var log = await File(logPath).readAsString();
               setState(() {
-                cmdResult = [log];
+                eco.aclList = [...defaultAcl];
+                cmdResult = [...defaultAcl];
               });
             },
             icon: const Icon(Icons.abc),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                cmdResult = [];
-              });
-            },
-            icon: const Icon(Icons.clear),
           ),
           
         ],

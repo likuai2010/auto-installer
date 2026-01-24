@@ -259,12 +259,12 @@ bool GetUserKeyPath(string &path)
     struct stat status;
     const char harmoneyPath[] = ".harmony";
     const char hdcKeyFile[] = "hdckey";
-    char buf[BUF_SIZE_DEFAULT];
-    size_t len = BUF_SIZE_DEFAULT;
+//    char buf[BUF_SIZE_DEFAULT];
+//    size_t len = BUF_SIZE_DEFAULT;
     // $home
-    if (uv_os_tmpdir(buf, &len) < 0)
-        return false;
-    string dir = string(buf) + Base::GetPathSep() + string(harmoneyPath) + Base::GetPathSep();
+//    if (uv_os_tmpdir(buf, &len) < 0)
+//        return false;
+    string dir = Base::GetTmpDir() + Base::GetPathSep() + string(harmoneyPath) + Base::GetPathSep();
     path = Base::CanonicalizeSpecPath(dir);
     if (path.empty()) {
         path = dir;

@@ -40,7 +40,7 @@ Future<String> getTempDir() async {
   if (!await appDir.exists()) {
     appDir.create(recursive: true);
   }
-  return appDir.path;
+  return appDir.path + "/";
 }
 
 bool containsChinese(String path) {

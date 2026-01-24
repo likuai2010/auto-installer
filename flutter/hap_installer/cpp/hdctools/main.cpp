@@ -605,10 +605,8 @@
 #include "hdc.h"
 int cmd(int argc, const char *argv[], const char *tempPath)
 {
-    uv_os_setenv("USERPROFILE", tempPath);
     string options;
     string commands;
-    Base::SetTempDir(tempPath);
     Hdc::SplitOptionAndCommand(argc, argv, options, commands);
     uv_setup_args(argc, const_cast<char **>(argv));
     int optArgc = 0;
@@ -621,16 +619,14 @@ int cmd(int argc, const char *argv[], const char *tempPath)
         return 0;
     }
 
-    Hdc::Base::SetLogLevel(LOG_DEBUG);
-    // Base::SetLogLevel(LOG_ALL);
+    Base::SetLogLevel(LOG_DEBUG);
     string g_serverListenString = "127.0.0.1:18710";
     Hdc::RunClientMode(commands, g_serverListenString, g_connectKey, g_isPullServer);
     Hdc::Base::RemoveLogCache();
     return 0;
 }
 
-int server(const char *tempPath)
-{
+int server(const char *tempPath) {
     uv_os_setenv("USERPROFILE", tempPath);
     Hdc::Base::SetLogLevel(LOG_DEBUG);
     Base::SetTempDir(tempPath);

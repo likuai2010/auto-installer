@@ -1426,15 +1426,18 @@ static void EchoLog(string &buf)
         char pidBuf[BUF_SIZE_TINY] = "";
         size_t size = sizeof(buf);
 #ifdef HOST_OHOS
+       
         if (uv_os_tmpdir(buf, &size) < 0) {
             WRITE_LOG(LOG_FATAL, "Homepath failed");
             return ERR_API_FAIL;
         }
 #else
-        if (uv_os_tmpdir(buf, &size) < 0) {
-            WRITE_LOG(LOG_FATAL, "Tmppath failed");
-            return ERR_API_FAIL;
-        }
+        strncpy(buf, g_tempDir.c_str(), BUF_SIZE_DEFAULT - 1);
+        buf[BUF_SIZE_DEFAULT - 1] = '\0';
+        // if (uv_os_tmpdir(buf, &size) < 0) {
+        //     WRITE_LOG(LOG_FATAL, "Tmppath failed");
+        //     return ERR_API_FAIL;
+        // }
 #endif
         if (snprintf_s(bufPath, sizeof(bufPath), sizeof(bufPath) - 1, "%s%c.%s.pid", buf, Base::GetPathSep(), procname)
             < 0) {

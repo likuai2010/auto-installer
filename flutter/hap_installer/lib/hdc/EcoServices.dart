@@ -5,10 +5,8 @@ import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
-
-class EcoService {
-  var aclList = [
-     "ohos.permission.SYSTEM_FLOAT_WINDOW",
+final defaultAcl = [
+    "ohos.permission.SYSTEM_FLOAT_WINDOW",
     "ohos.permission.READ_CONTACTS",
     "ohos.permission.WRITE_CONTACTS",
     "ohos.permission.READ_AUDIO",
@@ -26,6 +24,7 @@ class EcoService {
     "ohos.permission.READ_WRITE_USER_FILE",
     "ohos.permission.READ_WRITE_USB_DEV",
     "ohos.permission.GET_WIFI_PEERS_MAC",
+    "ohos.permission.SET_TELEPHONY_ESIM_STATE_OPEN",
     "ohos.permission.kernel.DISABLE_CODE_MEMORY_PROTECTION",
     "ohos.permission.kernel.ALLOW_WRITABLE_CODE_MEMORY",
     "ohos.permission.kernel.ALLOW_EXECUTABLE_FORT_MEMORY",
@@ -43,17 +42,37 @@ class EcoService {
     "ohos.permission.MANAGE_APN_SETTING",
     "ohos.permission.GET_WIFI_LOCAL_MAC",
     "ohos.permission.kernel.ALLOW_USE_JITFORT_INTERFACE",
+    "ohos.permission.GET_ETHERNET_LOCAL_MAC",
     "ohos.permission.kernel.DISABLE_GOTPLT_RO_PROTECTION",
     "ohos.permission.USE_FRAUD_APP_PICKER",
     "ohos.permission.ACCESS_DDK_DRIVERS",
+    "ohos.permission.ACCESS_DDK_SCSI_PERIPHERAL",
     "ohos.permission.kernel.SUPPORT_PLUGIN",
     "ohos.permission.CUSTOM_SANDBOX",
     "ohos.permission.MANAGE_SCREEN_TIME_GUARD",
     "ohos.permission.CUSTOMIZE_SAVE_BUTTON",
     "ohos.permission.GET_ABILITY_INFO",
     "ohos.permission.ACCESS_FIDO2_ONLINEAUTH",
-    "ohos.permission.DLP_GET_HIDE_STATUS"
-  ];
+    "ohos.permission.USE_FLOAT_BALL",
+    "ohos.permission.DLP_GET_HIDE_STATUS",
+    "ohos.permission.READ_LOCAL_DEVICE_NAME",
+    "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM",
+    "ohos.permission.LINKTURBO",
+    "ohos.permission.ACCESS_NET_TRACE_INFO",
+    "ohos.permission.READ_WHOLE_CALENDAR",
+    "ohos.permission.WRITE_WHOLE_CALENDAR",
+    "ohos.permission.SET_SYSTEMSHARE_APPLAUNCHTRUSTLIST",
+    "ohos.permission.HOOK_KEY_EVENT",
+    "ohos.permission.WEB_NATIVE_MESSAGING",
+    "ohos.permission.SUBSCRIBE_NOTIFICATION",
+    "ohos.permission.CUSTOM_SCREEN_RECORDING",
+    "ohos.permission.GET_IP_MAC_INFO",
+    "ohos.permission.ACCESS_USER_FULL_DISK",
+    "ohos.permission.kernel.LOAD_INDEPENDENT_LIBRARY",
+    "ohos.permission.CRYPTO_EXTENSION_REGISTER"
+];
+class EcoService {
+  var aclList = defaultAcl;
   AuthInfo? authInfo;
 
   Future<EcoResult?> base(

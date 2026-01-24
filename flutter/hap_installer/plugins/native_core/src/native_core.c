@@ -5,6 +5,8 @@
 #include "hap_signer_tool.h"
 #include "un_hap.h"
 #include <libgen.h>
+#include <jni.h>
+
 #elif _WIN32
 #include "un_hap.h"
 #include <stdio.h>
@@ -12,7 +14,7 @@
 #include "un_hap.h"
 #include <dlfcn.h>
 #include <stdio.h>
- #include <jni.h>
+
 
 #endif
 
@@ -24,14 +26,8 @@ FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir)
 {
   int ret = 0;
 #ifdef ANDROID
-
-  FILE *sout = freopen(tempDir, "w", stdout);
-  FILE *serr = freopen(tempDir, "w", stderr);
   const char *dir = dirname(tempDir);
   ret = cmd(argc, args, dir);
-  fclose(sout);
-  fclose(serr);
-  freopen("/dev/tty", "w", stdout);
 #else
     ret = 404;
 #endif
@@ -51,7 +47,7 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 #ifdef ANDROID
   // FILE *sout = freopen(tempDir, "w", stdout);
   // FILE *serr = freopen(tempDir, "w", stderr);
-  ret = sign_hap(argc, args);
+  // ret = sign_hap(argc, args);
   // if (sout != NULL)
   //   fclose(sout);
   // if (serr != NULL)

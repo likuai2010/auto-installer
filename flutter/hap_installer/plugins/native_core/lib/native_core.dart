@@ -9,8 +9,12 @@ import 'native_core_bindings_generated.dart';
 
 Future<String> hdcCmd(List<String> args, String tempDir) async {
   return await Isolate.run(() {
-    final logPath = path.join(tempDir, "hdc_out.log");
-    _hdcCmd(args, logPath);
+    final logPath = path.join(tempDir, "hdc.out");
+    final logfile = File(logPath);
+    if (logfile.existsSync()){
+        File(logPath).deleteSync();
+    }
+    _hdcCmd(args, tempDir);
     return File(logPath).readAsString();
   });
 }

@@ -251,7 +251,6 @@ class CmdService {
       return await ohosAdapter.hdcCmd(cmd) ?? "";
     }
     if (Platform.isAndroid) {
-      getExternalDir();
       return await hdcCmd(cmdToArgs(cmd), await getTempDir());
     } else {
       final hdcDir = await getHdcDir();
@@ -392,8 +391,9 @@ Future<String> basePackCmd(String cmd) async {
       return await Isolate.run(() async {
         try {
           var hdc = "packing_tool";
-          final args = cmdToArgs(cmd);
-          args.add("pack");
+          print("basePackCmd: pack $cmd");
+          final args = cmdToArgs("pack $cmd");
+          args.add("");
           if (Platform.isWindows) {
               hdc += ".exe";
           }

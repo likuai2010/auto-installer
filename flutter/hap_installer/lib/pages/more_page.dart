@@ -7,6 +7,7 @@ import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
+import 'package:hap_installer/pages/request_acl_page.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
 import 'package:provider/provider.dart';
 
@@ -73,11 +74,16 @@ class MorePage extends StatelessWidget {
                   );
                 },
               ),
-              // ListItem(
-              //   leading: Icon(Icons.settings_cell),
-              //   title: "重启设备",
-              //   onClick: () {},
-              // ),
+              ListItem(
+                leading: Icon(Icons.settings_cell),
+                title: "ACL权限",
+                onClick: () {
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RequestACLPage()),
+                  );
+                },
+              ),
             ],
           ),
           GroupDecoration(

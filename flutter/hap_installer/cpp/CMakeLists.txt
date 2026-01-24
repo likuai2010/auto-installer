@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.0)
 project(hapInstaller)
 
 
-
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
 set(NATIVERENDER_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
@@ -41,6 +41,9 @@ if(ANDROID)
 add_library(libcrypto STATIC IMPORTED)
 set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android/arm64-v8a/libcrypto.a)
 set_target_properties(libcrypto PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+add_library(libssl STATIC IMPORTED)
+set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_ROOT_DIR}/android/arm64-v8a/libssl.a)
+set_target_properties(libssl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
 endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 add_library(libcrypto STATIC IMPORTED)
@@ -56,6 +59,7 @@ endif()
 
 add_subdirectory(third_party/bounds_checking_function)
 add_subdirectory(third_party/cJSON/source)
+add_subdirectory(hapsigner/third_party/zlib)
 
 include_directories(
 include
@@ -69,14 +73,17 @@ third_party/cJSON/source/
 if(ANDROID)
 add_definitions(-DANDROID_PLATFORM=android-24 -D_GNU_SOURCE=1)
 endif()
-add_subdirectory(hapsigner/third_party/zlib)
+
+
 if(ANDROID OR OHOS)
-add_subdirectory(hdctools)
-#add_subdirectory(hapsigner)
-add_subdirectory(unhap)
-add_subdirectory(hnp_tools)
-add_subdirectory(java_cmd)
-add_subdirectory(http_server)
+    add_subdirectory(hdctools)
+    #add_subdirectory(hapsigner)
+    add_subdirectory(unhap)
+    if(OHOS)
+    add_subdirectory(hnp_tools)
+    add_subdirectory(http_server)
+    add_subdirectory(java_cmd)
+    endif()
 else()
 add_subdirectory(packing_tool)
 #add_subdirectory(hnp_tools)
