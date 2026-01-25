@@ -18,7 +18,7 @@
 FFI_PLUGIN_EXPORT int hdcCmd(int argc, const char *args[], const char *tempDir);
 FFI_PLUGIN_EXPORT int hdcServer(const char *tempPath);
 
-FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir);
+FFI_PLUGIN_EXPORT char* signCmd(int argc, const char *args[], const char *tempDir);
 FFI_PLUGIN_EXPORT int unHap(const char *source, const char *fileName, const char *destination);
 FFI_PLUGIN_EXPORT int unApp(const char *source, const char *destination);
 

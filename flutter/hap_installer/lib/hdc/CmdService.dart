@@ -286,7 +286,7 @@ class CmdService {
      
     }
     if (Platform.isAndroid) {
-      return await signCmd(cmdToArgs(cmd), await getTempDir());
+      return await signCmd(cmdToArgs(cmd.replaceFirst("signtool", "")), await getTempDir());
     } else {
       return await baseSignerCmd(cmd);
     }

@@ -54,7 +54,7 @@ Future<String> signCmd(List<String> args, String tempDir) async {
   return await Isolate.run(() {
     print("signCmd args: $args  $tempDir");
     // final logPath = path.join(tempDir, "sign_out.log");
-    return _signCmd(args, "");
+    return _signCmd(args, tempDir);
   });
 }
 
@@ -67,10 +67,11 @@ _signCmd(List<String> args, String tempDir) {
   final result = _bindings.signCmd(
       params.length, charArray, tempDir.toNativeUtf8().cast());
   calloc.free(charArray);
-  if (result == 0) {
+  final res = result.cast<Utf8>().toDartString();
+  if (res == "") {
     return "success";
   } else {
-    return "签名失败";
+    return res;
   }
 }
 
