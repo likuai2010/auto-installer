@@ -45,14 +45,14 @@ FFI_PLUGIN_EXPORT int signCmd(int argc, const char *args[], const char *tempDir)
 {
   int ret = 0;
 #ifdef ANDROID
-  // FILE *sout = freopen(tempDir, "w", stdout);
-  // FILE *serr = freopen(tempDir, "w", stderr);
-  // ret = sign_hap(argc, args);
-  // if (sout != NULL)
-  //   fclose(sout);
-  // if (serr != NULL)
-  //   fclose(serr);
-  // freopen("/dev/tty", "w", stdout);
+   FILE *sout = freopen(tempDir, "w", stdout);
+   FILE *serr = freopen(tempDir, "w", stderr);
+   ret = sign_hap(argc, args);
+   if (sout != NULL)
+     fclose(sout);
+   if (serr != NULL)
+     fclose(serr);
+   freopen("/dev/tty", "w", stdout);
 #endif
   return ret;
 }

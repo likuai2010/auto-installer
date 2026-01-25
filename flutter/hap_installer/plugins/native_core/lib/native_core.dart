@@ -52,6 +52,7 @@ Future<String> signCmd(List<String> args, String tempDir) async {
   // helperIsolateSendPort.send(request);
   // return completer.future;
   return await Isolate.run(() {
+    print("signCmd args: $args  $tempDir");
     // final logPath = path.join(tempDir, "sign_out.log");
     return _signCmd(args, "");
   });

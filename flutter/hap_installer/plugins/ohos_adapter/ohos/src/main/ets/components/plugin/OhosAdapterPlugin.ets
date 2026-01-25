@@ -84,7 +84,8 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     }
      else if(call.method == "signCmd") {
       const args = call.argument("args") as string;
-      HdcUtils.signCmd(context, args).then((res)=>{
+
+      HdcUtils.GoSign(args).then((res)=>{
         result.success(res)
       })
     } else if(call.method == "startServer") {

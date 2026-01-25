@@ -1,10 +1,11 @@
 import { hdcCmd, hdcServer } from 'libhdc_z.so';
-import { signHap } from 'libsigntool.so';
+
 import { unHap, unApp } from 'libunhap.so';
 import { common } from '@kit.AbilityKit';
 import fs from '@ohos.file.fs';
-import List from '@ohos.util.List';
 import { javaCmd } from 'libjavacmd.so';
+import { go_sign } from 'libgo_signer.so';
+import signtool from 'libsigntool.so';
 
 class HdcUtils{
   startHdc(context:common.Context){
@@ -28,7 +29,7 @@ class HdcUtils{
     let outPath = context.tempDir + "/sign.out";
     return new Promise((res,rej)=>{
       fs.unlink(outPath)
-      signHap(cmd, async (ret)=>{
+      signtool.signHap(cmd, async (ret)=>{
         if(ret == 0){
           res("签名成功")
         }else{
@@ -42,27 +43,45 @@ class HdcUtils{
       })
     })
   }
+  async GoSign( cmd: string): Promise<string>{
 
-  async JavaSign(context: common.Context, jarPath: String, cmd: string): Promise<string>{
-    let outPath = context.tempDir + "/sign.out";
+    return new Promise((res, rej)=>{
+      console.debug("signCmd", cmd)
+      go_sign(
+        cmd.replace("signtool", ""), async (out)=>{
+        try {
+          if(out.indexOf("success") > -1){
+            res("签名成功")
+          } else {
+            res(out)
+          }
+        }catch (e) {
+          res(e.message)
+        }
+      })
+    })
+  }
+  async JavaSign(context: common.Context, cmd: string, jarPath: String | undefined = undefined): Promise<string>{
+    let outPath = context.tempDir + "/output.txt";
+    let errorPath = context.tempDir + "/error.txt";
     return new Promise((res, rej)=>{
       fs.unlink(outPath)
+      let jar = `${jarPath ? jarPath : (context.resourceDir)}/hap-sign-tool.jar`;
       javaCmd(
-        `-Djava.class.path=/data/storage/el1/bundle/entry/resources/resfile:${jarPath}/hap-sign-tool.jar`,
+        `-Djava.class.path=${context.resourceDir}:${jar}`,
         "com/ohos/hapsigntool/HapSignTool",
-        cmd, ()=>{
-      })
-      signHap(cmd, async (ret)=>{
-        if(ret == 0){
-          res("签名成功")
-        }else{
+        cmd.replace("signtool", ""), async ()=>{
           try {
             let out = await fs.readText(outPath)
-            res(out)
+            let error = await fs.readText(errorPath)
+            if(out.indexOf("success") > -1){
+              res("签名成功")
+            } else {
+              res(out + error)
+            }
           }catch (e) {
             res(e.message)
           }
-        }
       })
     })
   }

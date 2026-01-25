@@ -279,7 +279,7 @@ class CmdService {
       final deviceType = await ohosAdapter.deviceType();
       print("deviceType: $deviceType");
       if(deviceType == "2in1"){
-        return await ohosJavaCmd(cmd);
+        return await ohosAdapter.signCmd(cmd) ?? "";
       }else{
         return await ohosAdapter.signCmd(cmd) ?? "";
       }

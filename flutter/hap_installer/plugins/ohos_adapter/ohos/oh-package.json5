@@ -8,7 +8,6 @@
   "dependencies": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
     "libhdc_z.so": "file:./src/main/cpp/libhdc_z",
-    "libsigntool.so": "file:./src/main/cpp/libsigntool",
-    "libjavacmd.so": "file:./src/main/cpp/libjavacmd"
+    "libgo_signer.so": "file:./src/main/cpp/libgo_signer"
   }
 }
