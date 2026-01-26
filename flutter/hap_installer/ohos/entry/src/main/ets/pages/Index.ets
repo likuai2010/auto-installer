@@ -18,6 +18,9 @@ struct Index {
   }
 
   onBackPress(): boolean {
+    // hdcCmd("hdc conn -t 192.168.3.47:44433", this.context.tempDir, ()=>{
+    //
+    // })
     this.context.eventHub.emit(EVENT_BACK_PRESS)
     return true
   }

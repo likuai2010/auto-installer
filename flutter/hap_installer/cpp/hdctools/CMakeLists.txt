@@ -38,22 +38,10 @@ get_filename_component(MY_RESULT_ABSOLUTE_PATH_VAR
                        "${CMAKE_CURRENT_LIST_DIR}/source/src/host/${MY_RELATIVE_PATH_VAR}"
                        ABSOLUTE)
 list(REMOVE_ITEM HOST_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/host/main.cpp")
-list(REMOVE_ITEM HOST_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/host/server.cpp")
-list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/base.cpp")
-list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/auth.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/hdc_huks.cpp")
 list(REMOVE_ITEM COMMON_SRCS "${CMAKE_CURRENT_LIST_DIR}/source/src/common/password.cpp")
 
-configure_file(
-  base.h
-  ${CMAKE_CURRENT_LIST_DIR}/source/src/common/base.h
-  COPYONLY
-  @ONLY
-  FORCE  # 强制覆盖
-)
-
-
-set(FixSource main.cpp hdc.h   base.cpp server.cpp auth.cpp)
+set(FixSource main.cpp hdc.h )
 if(OHOS)
 list(APPEND FixSource napi.cpp)
 endif()

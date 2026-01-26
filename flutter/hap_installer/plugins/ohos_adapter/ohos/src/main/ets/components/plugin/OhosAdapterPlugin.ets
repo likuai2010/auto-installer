@@ -89,7 +89,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
         result.success(res)
       })
     } else if(call.method == "startServer") {
-      hdcServer(context.tempDir + "/")
+      hdcServer(context.tempDir)
     } else if(call.method == "getKey") {
       let ret = preferences.getPreferencesSync(context,{name:"hap_installer"})
       const key = call.argument("key") as string;

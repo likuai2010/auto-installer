@@ -9,7 +9,7 @@ import signtool from 'libsigntool.so';
 
 class HdcUtils{
   startHdc(context:common.Context){
-    hdcServer(context.tempDir + "/")
+    hdcServer(context.tempDir)
   }
   async hdcCmd(context: common.Context, cmd: string): Promise<string>{
     let outPath = context.tempDir + "/hdc.out";
