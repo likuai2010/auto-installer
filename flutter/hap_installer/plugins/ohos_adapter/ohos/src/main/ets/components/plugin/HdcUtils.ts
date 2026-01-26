@@ -15,7 +15,7 @@ class HdcUtils{
     let outPath = context.tempDir + "/hdc.out";
     return new Promise((res, rej)=>{
       fs.unlink(outPath)
-      hdcCmd(cmd, context.tempDir + "/", async ()=>{
+      hdcCmd(cmd, context.tempDir, async ()=>{
         try {
           let out = await fs.readText(outPath)
           res(out)
