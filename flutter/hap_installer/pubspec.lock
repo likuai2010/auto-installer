@@ -566,6 +566,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  pdf_render:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "5f6b852c2507914ad67bd982b9507bda0eaf223a"
+      url: "https://gitee.com/openharmony-sig/fluttertpc_pdf_render.git"
+    source: git
+    version: "1.4.7"
   petitparser:
     dependency: transitive
     description:

@@ -282,7 +282,7 @@ class EcoService {
     if (config.certId.isEmpty) {
       print(" EcoService create cert");
       if (unLogin()) {
-        throw const FormatException("请登录华为账号");
+       throw const FormatException("请登录华为账号");
       }
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
@@ -310,7 +310,7 @@ class EcoService {
     } else {
       print(" EcoService cert 存在");
     }
-    var udid = config.udids.first;
+    var udid = config.udids.last;
     if (udid.isNotEmpty) {
       if (unLogin()) {
         throw const FormatException("请登录华为账号");

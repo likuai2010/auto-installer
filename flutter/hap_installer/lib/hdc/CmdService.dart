@@ -60,6 +60,7 @@ class CmdService {
 
   unpackageHap(String hapPath, String outPath) async {
     var result = await baseUnPackCmd("-xvf \"${hapPath}\" -C \"${outPath}\"");
+  
     print("unpackageHap   $result");
   }
  
@@ -170,7 +171,11 @@ class CmdService {
       return "签名失败: $error";
     }
   }
-
+  // "org.xbstudio.gitstorebox"
+  Future toApp(String packageName) async{
+    var cmd = "hdc $_t shell aa start -U 'https://appgallery.huawei.com/app/detail?id=$packageName' --pb appLinkingOnly true";
+    return await baseCmd(cmd);
+  }
   Future<String?> installHap(String filePath) async {
     if (!await File(filePath).exists()) {
       return "文件不存在 $filePath";

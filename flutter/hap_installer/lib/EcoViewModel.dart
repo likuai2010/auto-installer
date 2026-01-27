@@ -724,7 +724,9 @@ class EcoViewModel extends ChangeNotifier {
     }
    
   }
-
+  toGitStore(){
+    cmd.toApp("org.xbstudio.gitstorebox");
+  }
   testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned.hap");
     var error = await cmd.signHap(filePath, signConfig!);
@@ -734,7 +736,7 @@ class EcoViewModel extends ChangeNotifier {
     toask(context, error ?? "");
   }
 
-  installHap() async {
+  installHap(BuildContext context) async {
     if (hapInfo != null) {
       var hap = hapInfo!;
       var signConfig = this.signConfig!;
@@ -763,6 +765,9 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final udid = await cmd.getUdid();
+          if(udid.length != 64){
+            throw FormatException("UDID不合法: " + udid);
+          }
           var udids = signConfig.udids.toList();
           if (!udids.contains(udid)) {
             udids.add(udid);

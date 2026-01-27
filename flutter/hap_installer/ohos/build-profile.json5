@@ -36,6 +36,42 @@
           ]
         }
       ]
+    },
+    {
+      "name": "pdf_render",
+      "srcPath": "../../../../../.pub-cache/git/fluttertpc_pdf_render-5f6b852c2507914ad67bd982b9507bda0eaf223a/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "native_core",
+      "srcPath": "../plugins/native_core/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ohos_adapter",
+      "srcPath": "../plugins/ohos_adapter/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }

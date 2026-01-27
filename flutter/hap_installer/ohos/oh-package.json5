@@ -14,9 +14,9 @@
   },
   "overrides": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
-    "ohos_adapter": "file:./har/ohos_adapter.har",
+    "ohos_adapter": "../plugins/ohos_adapter/ohos",
     "@ohos/flutter_module": "file:./entry",
-    "native_core": "file:./har/native_core.har",
-    "pdf_render": "file:./har/pdf_render.har"
+    "native_core": "../plugins/native_core/ohos",
+    "pdf_render": "../../../../../.pub-cache/git/fluttertpc_pdf_render-5f6b852c2507914ad67bd982b9507bda0eaf223a/ohos"
   }
 }

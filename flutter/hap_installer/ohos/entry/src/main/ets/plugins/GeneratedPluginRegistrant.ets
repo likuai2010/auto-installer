@@ -1,4 +1,5 @@
 import { FlutterEngine, Log } from '@ohos/flutter_ohos';
+import PdfRenderPlugin from 'pdf_render';
 import OhosAdapterPlugin from 'ohos_adapter';
 
 /**
@@ -13,6 +14,7 @@ export class GeneratedPluginRegistrant {
 
   static registerWith(flutterEngine: FlutterEngine) {
     try {
+      flutterEngine.getPlugins()?.add(new PdfRenderPlugin());
       flutterEngine.getPlugins()?.add(new OhosAdapterPlugin());
     } catch (e) {
       Log.e(

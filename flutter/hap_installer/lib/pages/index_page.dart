@@ -57,11 +57,30 @@ class IndexPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (_) => const DebugDetailPage()),
                     );
-                    model.installHap();
+                    model.installHap(context);
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(8),
                     child: Text("开始调试"),
+                  ),
+                ),
+              );
+            },
+          ),
+          Container(height: 20),
+           Consumer<EcoViewModel>(
+            builder: (context, model, child) {
+              if (model.currentDevice == null) {
+                return Container();
+              }
+              return Center(
+                child: FilledButton(
+                  onPressed: (){
+                    model.toGitStore();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Text("下载小白盒子"),
                   ),
                 ),
               );
