@@ -57,9 +57,9 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
 set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 endif()
 
-# add_subdirectory(third_party/bounds_checking_function)
-# add_subdirectory(third_party/cJSON/source)
-# add_subdirectory(hapsigner/third_party/zlib)
+add_subdirectory(third_party/bounds_checking_function)
+add_subdirectory(third_party/cJSON)
+add_subdirectory(hapsigner/third_party/zlib)
 
 include_directories(
 include
@@ -84,7 +84,7 @@ elseif(OHOS)
     # add_subdirectory(hnp_tools)
     # add_subdirectory(http_server)
 else()
-#add_subdirectory(packing_tool)
+add_subdirectory(packing_tool)
 #add_subdirectory(hnp_tools)
 #add_subdirectory(unhap)
 #add_subdirectory(hapsigner)
