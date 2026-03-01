@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
         activeIcon: 'lib/assets/account_login.svg',
         buttonLabel: vm.isLogin ? '更换账号' : '登录账号',
         isActive: vm.isLogin,
-        onButtonTap: vm.isLogin ? null : () => vm.toLogin(context),
+        onButtonTap: () => vm.toLogin(context), // 始终可点击
       ),
       // 2. 设备连接
       HomeSettingItem(
@@ -92,7 +92,9 @@ class HomePage extends StatelessWidget {
         buttonLabel: vm.currentDevice != null ? '更换地址' : '无线调试',
         isActive: vm.currentDevice != null,
         isVisible: vm.isLogin,
-        onButtonTap: vm.currentDevice != null
+        // USB连接时禁用（地址不含"."），无线连接时可点击
+        onButtonTap: vm.currentDevice != null &&
+                !vm.currentDevice!.contains('.')
             ? null
             : () => vm.toConnect(context, () {}),
       ),
@@ -105,7 +107,7 @@ class HomePage extends StatelessWidget {
         buttonLabel: vm.hapInfo != null ? '更换' : '选择',
         isActive: vm.hapInfo != null,
         isVisible: vm.currentDevice != null,
-        onButtonTap: vm.hapInfo != null ? null : () => vm.toSelectFile(context),
+        onButtonTap: () => vm.toSelectFile(context), // 始终可点击
       ),
     ];
   }
@@ -126,7 +128,7 @@ class HomePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(100),
@@ -135,7 +137,7 @@ class HomePage extends StatelessWidget {
             child: Text(
               '开始调试',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
               ),

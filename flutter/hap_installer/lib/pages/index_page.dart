@@ -55,7 +55,8 @@ class IndexPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const DebugDetailPage()),
+                      MaterialPageRoute(
+                          builder: (_) => const DebugDetailPage()),
                     );
                     model.installHap(context);
                   },
@@ -68,14 +69,14 @@ class IndexPage extends StatelessWidget {
             },
           ),
           Container(height: 20),
-           Consumer<EcoViewModel>(
+          Consumer<EcoViewModel>(
             builder: (context, model, child) {
               if (model.currentDevice == null) {
                 return Container();
               }
               return Center(
                 child: FilledButton(
-                  onPressed: (){
+                  onPressed: () {
                     model.toGitStore();
                   },
                   child: const Padding(
@@ -86,7 +87,7 @@ class IndexPage extends StatelessWidget {
               );
             },
           ),
-          Platform.isMacOS ? const BuildHnp(): Container()
+          Platform.isMacOS ? const BuildHnp() : Container()
         ],
       ),
     );
@@ -117,24 +118,23 @@ class DebugSteps extends StatelessWidget {
                 onPressed: () {
                   viewmodel.toLogin(context);
                 },
-                child:
-                    !model.loading
-                        ? Text(model.isLogin ? "更换账号" : "登录账号")
-                        : const CircularProgressIndicator(value: null),
+                child: !model.loading
+                    ? Text(model.isLogin ? "切换账号" : "登录账号")
+                    : const CircularProgressIndicator(value: null),
               ),
             ),
             model.teamList.isEmpty && model.isLogin
                 ? ListItem(
-                  leading: const Icon(Icons.person),
-                  title: "未实名开发者",
-                  subTitle: "证书有效期将为14天",
-                  tailling: TextButton(
-                    onPressed: () {
-                      viewmodel.toAuthDev(context);
-                    },
-                    child: const Text("去实名"),
-                  ),
-                )
+                    leading: const Icon(Icons.person),
+                    title: "开发者认证",
+                    subTitle: "该账号未进行开发者认证",
+                    tailling: TextButton(
+                      onPressed: () {
+                        viewmodel.toAuthDev(context);
+                      },
+                      child: const Text("开发者认证"),
+                    ),
+                  )
                 : Container(),
             ListItem(
               leading: const Icon(
@@ -144,52 +144,60 @@ class DebugSteps extends StatelessWidget {
               subTitle:
                   model.currentDevice?.contains(".") == true ? "无线连接" : "USB连接",
               tailling: TextButton(
-                onPressed: () {
-                  model.toConnect(context, () {
-                    showModalBottomSheet<void>(
-                      isScrollControlled: true,
-                      context: context,
-                      constraints: const BoxConstraints(maxHeight: 600),
-                      builder: (context) {
-                        return AnimatedPadding(
-                          padding: MediaQuery.of(context).viewInsets,
-                          duration: const Duration(milliseconds: 100),
-                          child: SizedBox(
-                            height: 300,
-                            child: ConnectDeviceBox(
-                              ip: model.ip,
-                              port: model.port,
-                            ),
-                          ),
-                        );
+                // USB连接时禁用按钮（地址不含"."），无线连接时可点击
+                onPressed: model.currentDevice != null &&
+                        !model.currentDevice!.contains(".")
+                    ? null
+                    : () {
+                        model.toConnect(context, () {
+                          showModalBottomSheet<void>(
+                            isScrollControlled: true,
+                            context: context,
+                            constraints: const BoxConstraints(maxHeight: 600),
+                            builder: (context) {
+                              return AnimatedPadding(
+                                padding: MediaQuery.of(context).viewInsets,
+                                duration: const Duration(milliseconds: 100),
+                                child: SizedBox(
+                                  height: 300,
+                                  child: ConnectDeviceBox(
+                                    ip: model.ip,
+                                    port: model.port,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        });
                       },
-                    );
-                  });
-                },
-                child:
-                    !model.deviceLoaing
-                        ? const Text("连接设备")
-                        : const CircularProgressIndicator(value: null),
+                child: !model.deviceLoaing
+                    ? Text(model.currentDevice != null ? "切换设备" : "连接设备")
+                    : const CircularProgressIndicator(value: null),
               ),
             ),
-            FileDropArea(child: ListItem(
-              leading: const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
-              title: model.hapInfo?.packageName == null ? "未选择" : "包名: ${model.hapInfo?.packageName} 支持设备: ${model.hapInfo?.deviceType}",
-              subTitle: "文件格式: .app,.hap,.hsp",
-              tailling: TextButton(
-                onPressed: () {
-                  model.toSelectFile(context);
-                },
-                child:
-                    !model.fileLoading
-                        ? const Text("选择")
-                        : const CircularProgressIndicator(value: null),
+            FileDropArea(
+              child: ListItem(
+                leading:
+                    const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+                title: model.hapInfo?.packageName == null
+                    ? "未选择"
+                    : "包名: ${model.hapInfo?.packageName} 支持设备: ${model.hapInfo?.deviceType}",
+                subTitle: "文件格式: .app,.hap,.hsp",
+                tailling: TextButton(
+                  onPressed: () {
+                    model.toSelectFile(context);
+                  },
+                  child: !model.fileLoading
+                      ? Text(model.hapInfo?.packageName != null ? "更换" : "选择")
+                      : const CircularProgressIndicator(value: null),
+                ),
               ),
-            ), onSearch: (file){
-              if(file.path != null){
-                model.openFile(context, file.path!);
-              }
-            },),
+              onSearch: (file) {
+                if (file.path != null) {
+                  model.openFile(context, file.path!);
+                }
+              },
+            ),
             // TextButton(
             //       onPressed: () {
             //         model.testSignHap(context);
@@ -217,56 +225,50 @@ class DebugSteps extends StatelessWidget {
   }
 }
 
-
-
 class BuildHnp extends StatelessWidget {
   const BuildHnp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if(ohosAdapter.isOhos){
+    if (ohosAdapter.isOhos) {
       return Container();
     }
     return Consumer<EcoViewModel>(
       builder: (context, model, child) {
-        return GroupDecoration(
-          children: [
-            ListItem(
-              leading: const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
-              title: "构建hnp包",
-              subTitle: "支持构建hnp到hap进行安装(仅鸿蒙pc)",
-              tailling: TextButton(
-                onPressed: () {
-                 showModalBottomSheet<void>(
-                      isScrollControlled: true,
-                      context: context,
-                      constraints: const BoxConstraints(maxHeight: 600),
-                      builder: (context) {
-                        return AnimatedPadding(
-                          padding: MediaQuery.of(context).viewInsets,
-                          duration: const Duration(milliseconds: 100),
-                          child: SizedBox(
-                            height: 300,
-                            child: BuildHnpBox(
-                              // ip: model.ip,
-                              // port: model.port,
+        return GroupDecoration(children: [
+          ListItem(
+            leading: const Icon(Icons.apps_outage), //Icon(Icons.apps_outlined)
+            title: "构建hnp包",
+            subTitle: "支持构建hnp到hap进行安装(仅鸿蒙pc)",
+            tailling: TextButton(
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  constraints: const BoxConstraints(maxHeight: 600),
+                  builder: (context) {
+                    return AnimatedPadding(
+                      padding: MediaQuery.of(context).viewInsets,
+                      duration: const Duration(milliseconds: 100),
+                      child: SizedBox(
+                        height: 300,
+                        child: BuildHnpBox(
+                            // ip: model.ip,
+                            // port: model.port,
                             ),
-                          ),
-                        );
-                      },
+                      ),
                     );
-                },
-                child:
-                   const Text("开始构建"),
-              ),
-            )
-          ]
-        );
+                  },
+                );
+              },
+              child: const Text("开始构建"),
+            ),
+          )
+        ]);
       },
     );
   }
 }
-
 
 class AppInfoBox extends StatelessWidget {
   const AppInfoBox({super.key, required this.name, required this.style});
