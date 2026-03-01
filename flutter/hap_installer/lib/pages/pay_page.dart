@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/HistoryViewModel.dart';
+import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:provider/provider.dart';
 
 class PayPage extends StatelessWidget {

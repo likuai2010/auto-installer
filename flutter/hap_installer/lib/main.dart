@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/EcoViewModel.dart';
-import 'package:hap_installer/HistoryViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 

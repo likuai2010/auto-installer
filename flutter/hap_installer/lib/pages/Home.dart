@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/cert_page.dart';
 import 'package:hap_installer/pages/history_page.dart';
-import 'package:hap_installer/pages/index_page.dart';
+import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/pages/sign_config_page.dart';
 import 'package:hap_installer/pages/team_device_page.dart';
@@ -129,7 +129,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget createScreenFor(PageSelected pageSelected) {
     switch (pageSelected) {
       case PageSelected.home:
-        return IndexPage();
+        return const HomePage();
       case PageSelected.cert:
         return const CertPage();
       case PageSelected.history:

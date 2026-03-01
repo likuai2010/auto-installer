@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/CertViewModel.dart';
+import 'package:hap_installer/viewmodels/CertViewModel.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:intl/intl.dart';

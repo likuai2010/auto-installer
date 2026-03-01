@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/HistoryViewModel.dart';
+import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:hap_installer/widget/common.dart';

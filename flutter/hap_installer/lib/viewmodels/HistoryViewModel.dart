@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/PayList.dart';

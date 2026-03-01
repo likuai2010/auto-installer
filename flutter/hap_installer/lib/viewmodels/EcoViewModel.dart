@@ -5,7 +5,7 @@ import 'dart:isolate';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hap_installer/HistoryViewModel.dart';
+import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/hdc/common.dart';
@@ -45,7 +45,7 @@ class EcoViewModel extends ChangeNotifier {
   bool loading = false;
   bool fileLoading = false;
   bool deviceLoaing = false;
-  
+
   bool buildHnping = false;
   bool buildHaping = false;
   String hnpName = "base";
@@ -53,7 +53,6 @@ class EcoViewModel extends ChangeNotifier {
   String hnpType = "public";
   String hnpOutPath = "";
   String? hnpBaseHap;
-
 
   List<TeamInfo> teamList = [];
   List<String> deviceList = [];
@@ -77,10 +76,9 @@ class EcoViewModel extends ChangeNotifier {
   EcoViewModel();
   Future<bool> init() async {
     cmd.startServer();
-    
 
     cmd.javaHome = await getJavaDir();
-    if(Platform.isMacOS){
+    if (Platform.isMacOS) {
       cmd.javaHome = path.join(cmd.javaHome, "Contents", "Home");
     }
     tempDir = await getTempDir();
@@ -101,15 +99,15 @@ class EcoViewModel extends ChangeNotifier {
     userInfoPath = path.join(await getAppDir(), "userInfo.json");
     ipHistoryPath = path.join(await getAppDir(), "history.json");
     final javapath = await getJavaDir();
-    
+
     await initSignConfig();
 
     await tarnsformAssert(javapath);
-   
+
     // await Isolate.run(() async {
     //     await initJavaRuntme(javapath, tempDir);
     // });
-    
+
     final url = await getLocalUrl();
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
@@ -119,28 +117,33 @@ class EcoViewModel extends ChangeNotifier {
 
     return true;
   }
+
   recordIp(String ip) async {
-    if(historyList.contains(ip)){
+    if (historyList.contains(ip)) {
       return;
     }
     historyList.add(ip);
     saveJsonToFile(jsonEncode(historyList), ipHistoryPath);
   }
-  resetHistory(){
+
+  resetHistory() {
     historyList = [];
     notifyListeners();
     saveJsonToFile(jsonEncode(historyList), ipHistoryPath);
   }
-  readHistory() async{
+
+  readHistory() async {
     historyList = await readIpHistoryFromFile(ipHistoryPath);
     notifyListeners();
   }
+
   String? baseHap() {
-    if(hnpBaseHap == null) {
+    if (hnpBaseHap == null) {
       return null;
     }
     return path.basename(hnpBaseHap!);
   }
+
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
     if (authInfo != null) {
       saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
@@ -168,12 +171,14 @@ class EcoViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
   installJava(filePath, javaHome) async {
     final savePath = File("$filePath");
-    if(await savePath.exists() && ! await Directory(javaHome).exists()){
+    if (await savePath.exists() && !await Directory(javaHome).exists()) {
       await extractFileToDisk(savePath.path, savePath.parent.path);
     }
   }
+
   // only windows and linux
   checkJava(BuildContext context) async {
     return true;
@@ -207,8 +212,6 @@ class EcoViewModel extends ChangeNotifier {
     // );
   }
 
-
-
   toLogin(BuildContext context) async {
     if (firstUse) {
       showTips(context);
@@ -220,15 +223,12 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     final huawei = LoginHuawei();
     huawei.openUrl();
-    try{
+    try {
       final authInfo = await huawei.getAuthInfo();
       await loadUserInfo(context, authInfo);
-    } catch(_){
-
-    } 
+    } catch (_) {}
     loading = false;
     notifyListeners();
- 
   }
 
   toAuthDev(BuildContext context) async {
@@ -240,12 +240,12 @@ class EcoViewModel extends ChangeNotifier {
     deviceLoaing = true;
     notifyListeners();
     try {
-      if (currentDevice == null){
-          final result = await connectDevice(context, ip, port);
-          if (!result) {
-            builder();
-          }
-      }else{
+      if (currentDevice == null) {
+        final result = await connectDevice(context, ip, port);
+        if (!result) {
+          builder();
+        }
+      } else {
         await checkDevices("$ip:$port");
         builder();
       }
@@ -255,7 +255,8 @@ class EcoViewModel extends ChangeNotifier {
     deviceLoaing = false;
     notifyListeners();
   }
-  selectHnpType(String type){
+
+  selectHnpType(String type) {
     hnpType = type;
     notifyListeners();
   }
@@ -272,20 +273,18 @@ class EcoViewModel extends ChangeNotifier {
       }
     } on FormatException catch (e) {
       toask(context, e.message);
-    } 
-    catch (e) {
+    } catch (e) {
       toask(context, "$e");
     }
     fileLoading = false;
     notifyListeners();
   }
 
-
-  selectBaseHap(BuildContext context) async{
+  selectBaseHap(BuildContext context) async {
     hnpBaseHap = null;
     final filePath = await selectFile();
-    if (filePath?.endsWith(".hap") == true){
-        hnpBaseHap = filePath!;
+    if (filePath?.endsWith(".hap") == true) {
+      hnpBaseHap = filePath!;
     }
     notifyListeners();
   }
@@ -300,82 +299,81 @@ class EcoViewModel extends ChangeNotifier {
       final fileDir = await selectDir();
       if (fileDir != null) {
         hnpOutPath = Directory(fileDir).parent.path;
-        var message = await cmd.baseHnp("hnpcli pack -i \"$fileDir\" -o \"$hnpOutPath\"   -n $hnpName -v $hnpVersion");
-        if(!message.contains("ERROR")) {
+        var message = await cmd.baseHnp(
+            "hnpcli pack -i \"$fileDir\" -o \"$hnpOutPath\"   -n $hnpName -v $hnpVersion");
+        if (!message.contains("ERROR")) {
           hasHap = true;
-        } else{
+        } else {
           toask(context, message);
           hasHap = false;
         }
-      }else{
+      } else {
         hasHap = false;
       }
     } on FormatException catch (e) {
       toask(context, e.message);
-    } 
-    catch (e) {
+    } catch (e) {
       print("buildHap error $e");
       toask(context, "$e");
       hasHap = false;
     }
     buildHnping = false;
-    
+
     notifyListeners();
     return hasHap;
   }
- 
-  buildToHap(BuildContext context) async{
+
+  buildToHap(BuildContext context) async {
     if (!await checkJava(context)) return;
     if (buildHaping) return;
     buildHaping = true;
     notifyListeners();
-   
+
     final hasHnp = await buildHnp(context);
-    if(!hasHnp){
+    if (!hasHnp) {
       buildHaping = false;
       notifyListeners();
-      return; 
+      return;
     }
-   
-   
+
     try {
       final temp = await getTempDir();
-      
+
       final tempDir = hnpBaseHap ?? path.join(temp, "base_hnp.hap");
-      
+
       final hnpInDir = path.join(temp, "base_hnp_in");
       final appsDir = path.join(temp, "apps");
       final hnpDir = Directory(path.join(hnpInDir, "hnp"));
-      final hapInHnpDir =  Directory( path.join(hnpInDir, "hnp", "arm64-v8a"));
-      try{
+      final hapInHnpDir = Directory(path.join(hnpInDir, "hnp", "arm64-v8a"));
+      try {
         await hnpDir.create(recursive: true);
-      }catch(_){
+      } catch (_) {
         hnpDir.delete(recursive: true);
         await hnpDir.create(recursive: true);
       }
       await hapInHnpDir.create(recursive: true);
       await cmd.unpackageHap(tempDir, hnpInDir);
       final hapFile = File(path.join(hnpOutPath, "$hnpName.hnp"));
-      hapFile.copy(path.join(hapInHnpDir.path,"$hnpName.hnp"));
+      hapFile.copy(path.join(hapInHnpDir.path, "$hnpName.hnp"));
 
       var moduleInfo = await cmd.readModuleInfo(hnpInDir);
       print("moduleInfo: ${jsonEncode(moduleInfo.toJson())}");
       // 追加当前信息
-      var currentHnp = HnpPackage(package: "$hnpName.hnp", type:hnpType);
+      var currentHnp = HnpPackage(package: "$hnpName.hnp", type: hnpType);
       var hnpPackages = moduleInfo.module!.hnpPackages.toList();
       hnpPackages.add(currentHnp);
       final module = moduleInfo.module!.copyWith(hnpPackages: hnpPackages);
       moduleInfo = moduleInfo.copyWith(module: module);
-   
+
       moduleInfo = await cmd.updateModuleInfo(hnpInDir, moduleInfo);
       // 签名需要
-      await File(path.join(hnpInDir, "module.json")).copy(path.join(appsDir, "module.json"));
+      await File(path.join(hnpInDir, "module.json"))
+          .copy(path.join(appsDir, "module.json"));
       hapInfo = HapInfo(
-        packageName: moduleInfo.app?.bundleName ?? "未知",
-        pathList: ["$appsDir/base_hnp.hap"],
-        version: moduleInfo.app?.versionName,
-        deviceType: moduleInfo.module?.deviceTypes ?? []
-      );
+          packageName: moduleInfo.app?.bundleName ?? "未知",
+          pathList: ["$appsDir/base_hnp.hap"],
+          version: moduleInfo.app?.versionName,
+          deviceType: moduleInfo.module?.deviceTypes ?? []);
 
       final message = await cmd.buildHap(hnpInDir, "$appsDir/base_hnp.hap");
       if (message != "") {
@@ -392,9 +390,7 @@ class EcoViewModel extends ChangeNotifier {
     buildHaping = false;
     notifyListeners();
     Navigator.pop(context);
-  
   }
-  
 
   openFile(BuildContext context, String filePath) async {
     if (fileLoading) return;
@@ -427,20 +423,19 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   tryConnectToDevice(BuildContext context, String id) async {
-    if(deviceList.contains(id)){
-        currentDevice = id;
-        cmd.changeTarget(id);
-        notifyListeners();
-    }else{
+    if (deviceList.contains(id)) {
+      currentDevice = id;
+      cmd.changeTarget(id);
+      notifyListeners();
+    } else {
       Navigator.pop(context);
       deviceLoaing = true;
       notifyListeners();
       final ips = id.split(":");
-      await connectDevice(context, ips.first,ips.last);
+      await connectDevice(context, ips.first, ips.last);
       deviceLoaing = false;
       notifyListeners();
     }
-   
   }
 
   Future connectDevice(BuildContext context, String ip, String port) async {
@@ -453,7 +448,7 @@ class EcoViewModel extends ChangeNotifier {
       recordIp(deviceIp);
     }
     toask(context, result);
-    return result == "连接成功"; 
+    return result == "连接成功";
   }
 
   _connectHdc(String url) async {
@@ -462,18 +457,17 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       final result = await cmd.connectHdc(url);
       await checkDevices(url);
-      
+
       return result;
     }
   }
 
   checkDevices(String? url) async {
     final result = await cmd.targetList();
-    deviceList =
-        result
-            .split("\n")
-            .where((d) => d != '' && !d.contains('[Empty]'))
-            .toList();
+    deviceList = result
+        .split("\n")
+        .where((d) => d != '' && !d.contains('[Empty]'))
+        .toList();
     if (deviceList.isNotEmpty) {
       if (currentDevice == null || !deviceList.any((d) => d == currentDevice)) {
         if (deviceList.first.contains("server failed")) {
@@ -482,8 +476,8 @@ class EcoViewModel extends ChangeNotifier {
           changeDevice(deviceList.first);
         }
       }
-      if(url != null && deviceList.any((d) => d == url)){
-          changeDevice(url);
+      if (url != null && deviceList.any((d) => d == url)) {
+        changeDevice(url);
       }
     } else {
       currentDevice = null;
@@ -506,11 +500,10 @@ class EcoViewModel extends ChangeNotifier {
     if (path.extension(hapPath, 1).contains("app")) {
       await cmd.unzip_App(hapPath, debugPath);
       final files = Directory(debugPath).list();
-      pathList =
-          await files
-              .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
-              .map((f) => f.path)
-              .toList();
+      pathList = await files
+          .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
+          .map((f) => f.path)
+          .toList();
       pathList.sort((a, b) {
         return path.extension(b).compareTo(path.extension(a));
       });
@@ -528,39 +521,40 @@ class EcoViewModel extends ChangeNotifier {
     print("readModuleInfo  $hapPath  $err");
     final moduleInfo = await cmd.readModuleInfo(debugPath);
     return HapInfo(
-      packageName: moduleInfo.app?.bundleName ?? "未知",
-      pathList: pathList,
-      version: moduleInfo.app?.versionName,
-      deviceType: moduleInfo.module?.deviceTypes ?? []
-    );
+        packageName: moduleInfo.app?.bundleName ?? "未知",
+        pathList: pathList,
+        version: moduleInfo.app?.versionName,
+        deviceType: moduleInfo.module?.deviceTypes ?? []);
   }
+
   initJavaRuntme(javapath, tempDir) async {
     try {
-      if(Platform.isMacOS){
+      if (Platform.isMacOS) {
         try {
-        
-          var result = await Process.run('tar', ['-xzvf', "$javapath.tar.gz", "-C", tempDir]);
-          var ret =  result.outText + result.errText;
+          var result = await Process.run(
+              'tar', ['-xzvf', "$javapath.tar.gz", "-C", tempDir]);
+          var ret = result.outText + result.errText;
           print("tar: $ret");
-        }catch (_){
-            await installJava("$javapath.tar.gz", javapath);
+        } catch (_) {
+          await installJava("$javapath.tar.gz", javapath);
         }
         final javaHome = "$javapath/Contents/Home/bin/java";
-        if (File(javaHome).existsSync()){
-            await Process.run('chmod', ['+x', javaHome]);
+        if (File(javaHome).existsSync()) {
+          await Process.run('chmod', ['+x', javaHome]);
         }
       }
-      if(Platform.isWindows){
-          await installJava("$javapath.zip", javapath);
+      if (Platform.isWindows) {
+        await installJava("$javapath.zip", javapath);
       }
-      if(Platform.isLinux){
-          await  installJava("$javapath.tar.gz", javapath);
-          await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
+      if (Platform.isLinux) {
+        await installJava("$javapath.tar.gz", javapath);
+        await Process.run('chmod', ['+x', "${cmd.javaHome}/bin/java"]);
       }
     } catch (e) {
       print("initJavaRuntme error: $e");
     }
   }
+
   tarnsformAssert(javapath) async {
     await copyAssert("store", "xiaobai.csr", storeDir);
     await copyAssert("store", "xiaobai.p12", storeDir);
@@ -569,7 +563,7 @@ class EcoViewModel extends ChangeNotifier {
     await copyAssert("store", "unsigned.hap", storeDir);
     await copyAssert("store", "xiaobai-debug.cer", storeDir);
     await copyAssert("store", "xiaobai-debug.p7b", storeDir);
- 
+
     print("hdcDir: $hdcDir");
     // await copyAssert("jar", "hap-sign-tool.jar", hdcDir);
     // await copyAssert("jar", "app_packing_tool.jar", hdcDir);
@@ -615,12 +609,12 @@ class EcoViewModel extends ChangeNotifier {
       await copyAssert("windows", "libwinpthread-1.dll", hdcDir);
     }
     if (Platform.isLinux) {
-       await copyAssert(
-          "windows",
-          "$JavaVersion.tar.gz",
-          "$javapath.tar.gz",
-          "",
-        );
+      await copyAssert(
+        "windows",
+        "$JavaVersion.tar.gz",
+        "$javapath.tar.gz",
+        "",
+      );
       await copyAssert("linux", "signer", hdcDir);
       await copyAssert("linux", "hnpcli", hdcDir);
       await copyAssert("linux", "hdc", hdcDir);
@@ -653,13 +647,13 @@ class EcoViewModel extends ChangeNotifier {
     String targetDir, [
     String? target,
   ]) async {
-    try{
+    try {
       final bytes = await rootBundle.load('assets/$dir/$fileName');
       File file = File(path.join(targetDir, target ?? fileName));
       if (!await file.exists()) {
         await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
       }
-    }catch(e){
+    } catch (e) {
       print("copyAssert error $e");
     }
   }
@@ -710,23 +704,26 @@ class EcoViewModel extends ChangeNotifier {
     await saveJsonToFile(jsonEncode(signConfig!.toJson()), signConfigPath);
     return signConfig;
   }
-  changeJaveHome(BuildContext context) async{
+
+  changeJaveHome(BuildContext context) async {
     final javahome = await selectDir();
-    if(javahome != null){
+    if (javahome != null) {
       final java = await File(path.join(javahome, "bin", "java")).exists();
-      final javaExe = await File(path.join(javahome, "bin", "java.exe")).exists();
+      final javaExe =
+          await File(path.join(javahome, "bin", "java.exe")).exists();
       if (java || javaExe) {
         cmd.javaHome = javahome;
         toask(context, "指定成功");
-      }else{
+      } else {
         toask(context, "不是有效的java目录! (必须含有bin目录)");
       }
     }
-   
   }
-  toGitStore(){
+
+  toGitStore() {
     cmd.toApp("org.xbstudio.gitstorebox");
   }
+
   testSignHap(BuildContext context) async {
     String filePath = path.join(storeDir, "unsigned.hap");
     var error = await cmd.signHap(filePath, signConfig!);
@@ -742,7 +739,7 @@ class EcoViewModel extends ChangeNotifier {
       var signConfig = this.signConfig!;
       bool nextStep = true;
       final model = historyViewModel!;
-  
+
       model.createDebugHistory(hap);
 
       model.updateHistory((s) {
@@ -765,7 +762,7 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final udid = await cmd.getUdid();
-          if(udid.length != 64){
+          if (udid.length != 64) {
             throw FormatException("UDID不合法: " + udid);
           }
           var udids = signConfig.udids.toList();

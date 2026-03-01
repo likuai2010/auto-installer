@@ -62,7 +62,7 @@ class _NavigationTransitionState extends State<NavigationTransition> {
             backgroundColor: colorScheme.surface,
             child: widget.navigationRail,
           ),
-          widget.body,
+          Expanded(child: widget.body),
         ],
       ),
       bottomNavigationBar: BarTransition(

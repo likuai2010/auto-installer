@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/Home.dart';
 
 class SplashScreen extends StatelessWidget{

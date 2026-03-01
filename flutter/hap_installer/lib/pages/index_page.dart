@@ -8,7 +8,7 @@ import 'package:hap_installer/widget/BuildHnpBox.dart';
 import 'package:hap_installer/widget/FileDropArea.dart';
 import 'package:hap_installer/widget/common.dart';
 
-import 'package:hap_installer/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:provider/provider.dart';

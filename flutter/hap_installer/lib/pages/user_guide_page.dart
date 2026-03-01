@@ -2,18 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 
 class UserGuidePage extends StatelessWidget {
   const UserGuidePage({super.key});
   Widget? buildPage() {
-    if(Platform.isOhos){
+    if (Platform.isOhos) {
       return PdfViewer.openAsset('assets/html/guide.pdf');
-    }else{
-      return SfPdfViewer.asset('assets/html/guide.pdf');
+    } else {
+      // return SfPdfViewer.asset('assets/html/guide.pdf');
     }
-    
   }
 
   @override
