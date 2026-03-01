@@ -76,7 +76,6 @@ class EcoViewModel extends ChangeNotifier {
   EcoViewModel();
   Future<bool> init() async {
     cmd.startServer();
-
     cmd.javaHome = await getJavaDir();
     if (Platform.isMacOS) {
       cmd.javaHome = path.join(cmd.javaHome, "Contents", "Home");
@@ -146,12 +145,15 @@ class EcoViewModel extends ChangeNotifier {
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
     if (authInfo != null) {
-      saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
+      await saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
     }
     userInfo = await readUserInfoFromFile(userInfoPath);
     if (userInfo == null) return;
+    await eco.initUserInfo(userInfo);
+    if (await eco.autoRefreshToken()){
+      await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
+    }  
     try {
-      await eco.initUserInfo(userInfo);
       final list = await eco.getUserTeamList();
       if (list != null) {
         teamList = list;
@@ -773,6 +775,9 @@ class EcoViewModel extends ChangeNotifier {
           return null;
         }, "获取设备udid");
       }
+      if (await eco.autoRefreshToken()){
+          await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
+      }  
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final module = await cmd.readModuleInfo(debugPath);

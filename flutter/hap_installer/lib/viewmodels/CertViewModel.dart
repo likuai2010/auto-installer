@@ -11,6 +11,7 @@ class CertViewModel extends ChangeNotifier {
   }
   bool get isLogin => viewmodel.isLogin;
   fetchCertList() async {
+    eco.autoRefreshToken();
     certInfoList =
         (await eco.getCertList()).where((c) => c.certType == 1).toList();
     notifyListeners();

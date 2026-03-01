@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
 
@@ -168,6 +169,30 @@ class EcoService {
     if (result?.userInfo == null) {
       throw const FormatException("登陆失败");
     }
+    result?.userInfo?.setJwtToken(jwtToken.ret.msg);
+    return result?.userInfo;
+  }
+ Future<bool> autoRefreshToken() async{
+    try {
+      await getUserTeamList();
+      return false;
+    } catch (e) {
+      authInfo = await refreshToken(authInfo);
+      return true;
+    }
+  
+  }
+  Future<AuthInfo?> refreshToken(AuthInfo? authInfo) async {
+    var uri =
+        "https://cn.devecostudio.huawei.com/authrouter/auth/api/jwToken/check";
+    final result = await base(uri, {}, {
+      "refresh": "true",
+      "jwtToken": authInfo?.jwtToken ?? "",
+    }, "GET");
+    if (result?.userInfo == null) {
+      throw const FormatException("token失效, 重新登录");
+    }
+    result?.userInfo?.setJwtToken(authInfo?.jwtToken ?? "");
     return result?.userInfo;
   }
 
