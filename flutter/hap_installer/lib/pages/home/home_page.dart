@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:hap_installer/pages/home/home_setting_item.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/viewmodels/HomeViewModel.dart';
@@ -159,6 +160,12 @@ class HomePage extends StatelessWidget {
   ///
   /// 将 HAP 安装到设备
   void _startDebug(BuildContext context, EcoViewModel vm) {
-    // TODO: 实现开始调试逻辑
+    // 导航到调试详情页
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const DebugDetailPage()),
+    );
+    // 安装 HAP 到设备
+    vm.installHap(context);
   }
 }
