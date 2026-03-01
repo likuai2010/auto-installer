@@ -53,12 +53,12 @@ dependencies:
   webview_flutter: ^4.4.2
   ohos_adapter:
     path: plugins/ohos_adapter
-  syncfusion_flutter_pdfviewer: ^29.1.33
   pdf_render:
     git:
       url: "https://gitee.com/openharmony-sig/fluttertpc_pdf_render.git"
       path: "."
   desktop_drop: ^0.4.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +87,7 @@ flutter:
     - assets/windows/
     - assets/linux/
     - assets/jar/
+    - lib/assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
