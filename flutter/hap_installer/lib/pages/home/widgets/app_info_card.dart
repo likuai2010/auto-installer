@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -93,22 +92,19 @@ class AppInfoCard extends StatelessWidget {
           SizedBox(
             width: 80,
             height: 80,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: SvgPicture.asset(
-                iconPath,
-                width: 80,
-                height: 80,
-                fit: BoxFit.contain,
-                placeholderBuilder: (context) => const Icon(
-                  Icons.apps,
-                  size: 80,
-                  color: AppColors.primary,
-                ),
+            child: Image.asset(
+              'lib/assets/Icon.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.apps,
+                size: 80,
+                color: AppColors.primary,
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           // 标题
           Text(
             title,
@@ -132,7 +128,7 @@ class AppInfoCard extends StatelessWidget {
           // 按钮行
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 12,
+            spacing: 16,
             children: buttons.map((button) => _buildButton(button)).toList(),
           ),
         ],
@@ -158,6 +154,8 @@ class AppInfoCard extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Icon(button.icon, size: 14, color: AppColors.buttonLabelText),
+            const SizedBox(width: 6),
             Text(
               button.label,
               style: const TextStyle(
