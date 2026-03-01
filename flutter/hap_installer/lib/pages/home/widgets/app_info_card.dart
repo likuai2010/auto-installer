@@ -128,7 +128,8 @@ class AppInfoCard extends StatelessWidget {
           // 按钮行
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 16,
+            spacing: 12,
+            runSpacing: 8,
             children: buttons.map((button) => _buildButton(button)).toList(),
           ),
         ],
@@ -136,37 +137,50 @@ class AppInfoCard extends StatelessWidget {
     );
   }
 
-  /// 构建按钮
+  /// 构建按钮（响应式：小屏幕隐藏图标）
   Widget _buildButton(AppInfoButton button) {
-    return InkWell(
-      onTap: button.onTap,
-      borderRadius: BorderRadius.circular(100),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 使用卡片宽度判断是否为小屏幕
+        // 卡片宽度 < 280 认为是移动端，隐藏图标
+        final isSmallScreen = constraints.maxWidth < 280;
+
+        return InkWell(
+          onTap: button.onTap,
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: AppColors.buttonBorderLight,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(button.icon, size: 14, color: AppColors.buttonLabelText),
-            const SizedBox(width: 6),
-            Text(
-              button.label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: AppColors.buttonLabelText,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 12 : 16,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: AppColors.buttonBorderLight,
+                width: 1,
               ),
             ),
-          ],
-        ),
-      ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isSmallScreen) ...[
+                  Icon(button.icon, size: 14, color: AppColors.buttonLabelText),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  button.label,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.buttonLabelText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
