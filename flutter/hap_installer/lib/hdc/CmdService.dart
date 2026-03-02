@@ -182,6 +182,7 @@ class CmdService {
     }
     print("installHap $filePath");
     final result = await baseCmd('hdc $_t install "$filePath"');
+    print("installHap failure: $result");
     if (result.contains("success")) {
       return null;
     } else if (result.contains("9568322")) {

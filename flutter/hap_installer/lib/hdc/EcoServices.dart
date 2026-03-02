@@ -294,7 +294,7 @@ class EcoService {
     final intersectionList = Set<String>.from(
       pers,
     ).intersection(Set<String>.from(aclList));
-    print("found acl ${intersectionList.toList()}");
+    print("found acl  ${intersectionList.toList()} ${pers}");
     return intersectionList.toList();
   }
 
