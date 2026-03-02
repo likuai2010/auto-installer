@@ -513,7 +513,7 @@ class EcoViewModel extends ChangeNotifier {
       pathList = [hapPath];
     }
     final err = await cmd.unzip_Hap(
-      pathList.first,
+      pathList.last,
       "module.json",
       path.join(debugPath, "module.json"),
     );
