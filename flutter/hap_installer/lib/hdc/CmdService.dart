@@ -95,7 +95,8 @@ class CmdService {
         else if (filename == "CAPABILITY.profile") {
             params += " --profile-path $fullPath";
         }
-        else if (filename == "pages.info") {
+        else if (filename == ".DS_Store") {
+          continue;
         }
         else {
             params += " --$filename-path $fullPath";
@@ -406,9 +407,10 @@ Future<String> basePackCmd(String cmd) async {
               hdc += ".exe";
           }
           var result = await Process.run(path.join(hdcDir, hdc), args);
+          print("packing_tool ${result.outText + result.errText}");
           return result.outText + result.errText;
         } catch (e) {
-          print("packing_tool $e");
+          print("packing_tool failure $e");
           return "$e";
         }
       });
