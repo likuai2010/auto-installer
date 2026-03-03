@@ -7,8 +7,8 @@ import 'home_setting_item_widget.dart';
 /// 首页设置卡片容器组件
 ///
 /// 自动处理子项之间的分隔线
-/// 根据 Pixso 设计稿 (item-id: 5:16387) 实现
-/// 分隔线: 1px，颜色 rgba(0, 0, 0, 0.1)
+/// 根据 Pixso 设计稿 (item-id: 5:16382) 实现
+/// 分隔线: 下边框样式，1px，颜色 rgba(0, 0, 0, 0.1)，左边距 80px
 class HomeSettingCard extends StatelessWidget {
   /// 设置项数据列表
   final List<HomeSettingItem> items;
@@ -43,18 +43,16 @@ class HomeSettingCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: ListView.separated(
+        child: ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: visibleItems.length,
-          separatorBuilder: (context, index) => Divider(
-            height: 1,
-            thickness: 1,
-            color: dividerColor,
-            indent: 80,
-          ),
           itemBuilder: (context, index) {
-            return HomeSettingItemWidget(item: visibleItems[index]);
+            return HomeSettingItemWidget(
+              item: visibleItems[index],
+              showDivider: index < visibleItems.length - 1,
+              dividerColor: dividerColor,
+            );
           },
         ),
       ),

@@ -7,77 +7,107 @@ import '../home_setting_item.dart';
 /// 首页设置列表项组件
 ///
 /// 用于显示带图标、标题、描述和按钮的设置项
-/// 根据 Pixso 设计稿 (item-id: 5:16387) 实现
+/// 根据 Pixso 设计稿 (item-id: 5:16382) 实现
 /// 列表项高度: 76px
 /// 左侧图标: 24x24，padding 16px（无背景）
 /// 右侧按钮: 80x30，圆角100（胶囊形），背景 rgba(57,107,223,0.08)，文字蓝色 12px
+/// 下边框: 1px，颜色 rgba(0, 0, 0, 0.1)，左边距 80px
 class HomeSettingItemWidget extends StatelessWidget {
   /// 设置项数据
   final HomeSettingItem item;
 
+  /// 是否显示下边框
+  final bool showDivider;
+
+  /// 下边框颜色
+  final Color dividerColor;
+
   const HomeSettingItemWidget({
     super.key,
     required this.item,
+    this.showDivider = true,
+    this.dividerColor = AppColors.dividerColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    // 下边框左边距 80px（从卡片左边缘开始计算）
+    // 外层已有 16px padding，所以内容区域需要额外 64px 左边距
+    const dividerIndent = 64.0;
+
     return SizedBox(
       height: 76,
       child: InkWell(
         onTap: item.onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              // 图标（无背景容器）
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: SvgPicture.asset(
-                  item.currentIcon,
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.iconColor,
-                    BlendMode.srcIn,
+        child: DecoratedBox(
+          decoration: showDivider
+              ? BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: dividerColor,
+                      width: 1,
+                    ),
                   ),
-                  placeholderBuilder: (context) => const Icon(
-                    Icons.circle_outlined,
-                    size: 24,
-                    color: AppColors.iconColor,
+                )
+              : const BoxDecoration(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // 图标（无背景容器）
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 0,
+                    right: 16,
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  child: SvgPicture.asset(
+                    item.currentIcon,
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.iconColor,
+                      BlendMode.srcIn,
+                    ),
+                    placeholderBuilder: (context) => const Icon(
+                      Icons.circle_outlined,
+                      size: 24,
+                      color: AppColors.iconColor,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 0),
-              // 文字区域
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.description,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(0, 0, 0, 0.9),
+                const SizedBox(width: 0),
+                // 文字区域
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.description,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromRGBO(0, 0, 0, 0.9),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromRGBO(0, 0, 0, 0.6),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              // 右侧胶囊按钮
-              _buildCapsuleButton(),
-            ],
+                // 右侧胶囊按钮
+                _buildCapsuleButton(),
+              ],
+            ),
           ),
         ),
       ),
@@ -115,9 +145,8 @@ class HomeSettingItemWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: buttonEnabled
-                  ? AppColors.buttonLabelText
-                  : disabledTextColor,
+              color:
+                  buttonEnabled ? AppColors.buttonLabelText : disabledTextColor,
             ),
           ),
         ),
