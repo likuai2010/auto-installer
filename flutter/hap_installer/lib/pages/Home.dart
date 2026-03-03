@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/cert/cert_page.dart';
 import 'package:hap_installer/pages/history_page.dart';
@@ -91,7 +92,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           onPressed: () {
             scaffoldKey.currentState?.openEndDrawer();
           },
-          icon: const Icon(Icons.settings),
+          icon: SvgPicture.asset("lib/assets/edit.svg"),
         ),
       );
     }
@@ -102,12 +103,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             scaffoldKey.currentState?.openEndDrawer();
             viewmodel.checkDevices(null);
           },
-          icon: const Icon(Icons.mode_edit),
+          icon: const Icon(Icons.settings),
         ),
       );
     }
     return AppBar(
       title: Text(appBarTitleFor(pageSelected)),
+      backgroundColor: const Color.fromRGBO(241, 243, 245, 0.6),
       centerTitle: false,
       actions: actions,
     );
