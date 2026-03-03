@@ -19,15 +19,10 @@ class IndexPage extends StatelessWidget {
   IndexPage({super.key}) {
     platform.setMethodCallHandler((MethodCall call) async {
       if (call.method == "openFile") {
-        if (call.arguments is Map<String, dynamic>) {
-          var url = call.arguments['url'];
-          if (context != null) {
-            viewmodel.openFile(context!, url);
-          }
-        } else {
-          if (context != null) {
-            viewmodel.openFile(context!, call.arguments["path"]);
-          }
+        var url = call.arguments['url'];
+        print("openFile MethodCall ${url}");
+        if (context != null) {
+          viewmodel.openFile(context!, url);
         }
       }
     });
