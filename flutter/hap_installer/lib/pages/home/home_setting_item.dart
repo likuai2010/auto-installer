@@ -23,6 +23,9 @@ class HomeSettingItem {
   /// 是否可见
   final bool isVisible;
 
+  /// 是否正在加载
+  final bool isLoading;
+
   /// 按钮点击回调
   final VoidCallback? onButtonTap;
 
@@ -37,6 +40,7 @@ class HomeSettingItem {
     required this.buttonLabel,
     this.isActive = false,
     this.isVisible = true,
+    this.isLoading = false,
     this.onButtonTap,
     this.onTap,
   });
@@ -53,6 +57,7 @@ class HomeSettingItem {
     String? buttonLabel,
     bool? isActive,
     bool? isVisible,
+    bool? isLoading,
     VoidCallback? onButtonTap,
     VoidCallback? onTap,
   }) {
@@ -64,6 +69,7 @@ class HomeSettingItem {
       buttonLabel: buttonLabel ?? this.buttonLabel,
       isActive: isActive ?? this.isActive,
       isVisible: isVisible ?? this.isVisible,
+      isLoading: isLoading ?? this.isLoading,
       onButtonTap: onButtonTap ?? this.onButtonTap,
       onTap: onTap ?? this.onTap,
     );

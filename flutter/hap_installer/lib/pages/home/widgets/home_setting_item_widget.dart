@@ -120,7 +120,26 @@ class HomeSettingItemWidget extends StatelessWidget {
   /// 圆角: 100（胶囊形）
   /// 背景: rgba(57,107,223,0.08)
   /// 文字: 蓝色 12px
+  /// 加载中: 显示圆环加载条
   Widget _buildCapsuleButton() {
+    // 加载中状态：显示圆环加载条
+    if (item.isLoading) {
+      return const SizedBox(
+        width: 80,
+        height: 30,
+        child: Center(
+          child: SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.buttonLabelText),
+            ),
+          ),
+        ),
+      );
+    }
+
     final buttonEnabled = item.onButtonTap != null;
     // 禁用状态颜色：背景 4% 透明度，文字 50% 透明度
     const disabledBgColor = Color.fromRGBO(57, 107, 223, 0.04);

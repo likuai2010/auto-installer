@@ -105,6 +105,7 @@ class HomePage extends StatelessWidget {
         buttonLabel: vm.hapInfo != null ? '更换' : '选择',
         isActive: vm.hapInfo != null,
         isVisible: vm.currentDevice != null,
+        isLoading: vm.fileLoading,
         onButtonTap: () => vm.toSelectFile(context), // 始终可点击
       ),
     ];
