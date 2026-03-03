@@ -36,11 +36,22 @@ export default class EntryAbility extends FlutterAbility {
   }
 
   async sendFileUrl(targetUri: string){
-    console.log('openFile', 'onNewWant' + targetUri);
+    console.log('openFile', 'onNewWant ' + targetUri);
     const sl = targetUri.split("/")
     let hapPath = this.context.filesDir + "/" + sl[sl.length - 1].trim()
     await fs.copy(targetUri, fileUri.getUriFromPath(hapPath))
-    this.chanel?.invokeMethod("openFile", hapPath);
+    console.log('openFile', 'hapPath: ' + hapPath);
+    this.chanel?.invokeMethod("openFile",  {url: hapPath},{
+      success:() =>{
+        console.log('openFile', "success");
+      },
+      error: ()=>{
+        console.log('openFile', "error");
+      },
+      notImplemented: ()=>{
+        console.log('openFile', "notImplemented");
+      }
+    });
   }
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     await super.onCreate(want, launchParam)

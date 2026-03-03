@@ -398,6 +398,7 @@ class EcoViewModel extends ChangeNotifier {
   
 
   openFile(BuildContext context, String filePath) async {
+    print("openFile $filePath");
     if (fileLoading) return;
     fileLoading = true;
     notifyListeners();

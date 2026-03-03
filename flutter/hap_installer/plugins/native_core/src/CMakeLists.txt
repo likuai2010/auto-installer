@@ -22,11 +22,9 @@ elseif(WIN32)
     ${libPath}/windows/x86-64/libunhap.dll.a
   )
 elseif(OHOS)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../cpp "${CMAKE_CURRENT_BINARY_DIR}/unhap")
 list(APPEND LIBRARY_PATHS 
-  #hdc_z
-  #signtool
-  unhap
+    ${libPath}/ohos/libunhap.so
 )
 else()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
