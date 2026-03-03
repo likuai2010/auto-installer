@@ -59,6 +59,7 @@ dependencies:
       path: "."
   desktop_drop: ^0.4.0
   flutter_svg: ^2.0.10+1
+  # syncfusion_flutter_pdfviewer: ^29.1.33
 
 dev_dependencies:
   flutter_test:

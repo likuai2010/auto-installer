@@ -11,6 +11,7 @@ class UserGuidePage extends StatelessWidget {
     if (Platform.isOhos) {
       return PdfViewer.openAsset('assets/html/guide.pdf');
     } else {
+      // TODO：syncfusion_flutter_pdfviewer 依赖在 ohos 的 flutter 中不支持
       // return SfPdfViewer.asset('assets/html/guide.pdf');
     }
   }
