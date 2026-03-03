@@ -3,6 +3,7 @@ import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:hap_installer/widget/common.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 
 class HistoryPage extends StatelessWidget {
@@ -11,14 +12,17 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
-        return Expanded(
-          child: model.historyList.isNotEmpty
-              ? ListView.builder(
-                  itemCount: model.historyList.length,
-                  itemBuilder: (_, i) =>
-                      HistoryItem(info: model.historyList[i]),
-                )
-              : const Center(child: Text("没有调试记录")),
+        return Container(
+          color: AppColors.pageBackground,
+          child: Expanded(
+            child: model.historyList.isNotEmpty
+                ? ListView.builder(
+                    itemCount: model.historyList.length,
+                    itemBuilder: (_, i) =>
+                        HistoryItem(info: model.historyList[i]),
+                  )
+                : const Center(child: Text("没有调试记录")),
+          ),
         );
       },
     );

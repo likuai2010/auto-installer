@@ -9,6 +9,7 @@ import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/request_acl_page.dart';
 import 'package:hap_installer/pages/hdc_cmd_page.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 
 showTips(BuildContext context) {
@@ -58,9 +59,11 @@ class MorePage extends StatelessWidget {
     final textTheme = Theme.of(
       context,
     ).textTheme.apply(displayColor: Theme.of(context).colorScheme.onSurface);
-    return Expanded(
-      child: ListView(
-        children: <Widget>[
+    return Container(
+      color: AppColors.pageBackground,
+      child: Expanded(
+        child: ListView(
+          children: <Widget>[
           GroupDecoration(
             label: "小工具",
             children: [
@@ -213,6 +216,7 @@ class MorePage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

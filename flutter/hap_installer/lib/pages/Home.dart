@@ -12,6 +12,7 @@ import 'package:hap_installer/pages/team_device_page.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 
 const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
@@ -109,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
     return AppBar(
       title: Text(appBarTitleFor(pageSelected)),
-      backgroundColor: const Color.fromRGBO(241, 243, 245, 0.6),
+      backgroundColor: AppColors.pageBarBackground,
       centerTitle: false,
       actions: actions,
     );
@@ -244,6 +245,8 @@ class _NavigationBarsState extends State<NavigationBars> {
           widget.onSelectItem!(index);
         },
         destinations: appBarDestinations,
+        backgroundColor: AppColors.navBarBackground,
+        indicatorColor: AppColors.navBarIndicator,
       ),
     );
     return navigationBar;

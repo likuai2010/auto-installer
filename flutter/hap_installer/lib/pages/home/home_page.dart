@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
       builder: (context, vm, _) {
         return Container(
           height: double.infinity,
-          color: AppColors.scaffoldBackground,
+          color: AppColors.pageBackground,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(

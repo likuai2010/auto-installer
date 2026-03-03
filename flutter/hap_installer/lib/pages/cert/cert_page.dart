@@ -25,7 +25,7 @@ class CertPage extends StatelessWidget {
       child: Consumer<CertViewModel>(
         builder: (context, model, child) {
           return Container(
-            color: AppColors.scaffoldBackground,
+            color: AppColors.pageBackground,
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(

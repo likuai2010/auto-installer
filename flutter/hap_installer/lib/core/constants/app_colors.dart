@@ -56,4 +56,11 @@ class AppColors {
   // 页面标题栏
   static const Color pageBarBackground = Color.fromRGBO(241, 243, 245, 0.6);
   static const Color pageBarTitle = Color.fromARGB(255, 29, 27, 32);
+
+  // NavigationBar 相关
+  static const Color navBarBackground = Color.fromRGBO(57, 107, 223, 0.05);
+  static const Color navBarIndicator = Color.fromRGBO(57, 107, 223, 0.2);
+
+  // 页面背景（白色）
+  static const Color pageBackground = Color.fromRGBO(242, 243, 245, 1);
 }
