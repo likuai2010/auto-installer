@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../cert_item.dart';
@@ -39,8 +40,9 @@ class CertListItemWidget extends StatelessWidget {
       child: SizedBox(
         height: 76,
         child: InkWell(
-          onTap: item.onLongPress,
-          onLongPress: item.onLongPress,
+          onTap: item.onUse,
+          // TODO 用侧滑删除替代长按删除
+          // onLongPress: item.onLongPress,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -48,10 +50,10 @@ class CertListItemWidget extends StatelessWidget {
                 // 图标（无背景容器）
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Icon(
-                    Icons.key_outlined,
-                    size: 24,
-                    color: item.isExpired ? AppColors.hintText : AppColors.iconColor,
+                  child: SvgPicture.asset(
+                    "lib/assets/certkey.svg",
+                    width: 24,
+                    height: 24,
                   ),
                 ),
                 const SizedBox(width: 0),
