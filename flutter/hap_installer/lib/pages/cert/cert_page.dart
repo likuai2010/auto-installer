@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/viewmodels/CertViewModel.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:provider/provider.dart';
 
@@ -67,43 +69,80 @@ class CertPage extends StatelessWidget {
 
   /// 构建未登录提示
   ///
+  /// 根据 Pixso 设计稿 (item-id: 5:17648) 实现
+  /// 采用水平列表项样式，更符合 HarmonyOS 设计规范
+  ///
   /// [context] 构建上下文
   /// [model] 证书视图模型
   Widget _buildLoginPrompt(BuildContext context, CertViewModel model) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.account_circle_outlined,
-              size: 48,
-              color: AppColors.hintText,
-            ),
-            SizedBox(height: 16),
-            Text(
-              '未登录账号',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.secondaryText,
+      child: InkWell(
+        onTap: () => viewmodel.toLogin(context),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // 图标
+              SvgPicture.asset(
+                'lib/assets/account_un_login.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.iconColor,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              '请先登录华为开发者账号以查看证书',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.hintText,
+              const SizedBox(width: 16),
+              // 内容区域
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '您未登录华为账号',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '请登录以继续',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              // 登录按钮
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.buttonLightBackground,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: const Text(
+                  '登录账号',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.buttonLabelText,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
