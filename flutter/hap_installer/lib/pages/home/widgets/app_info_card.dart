@@ -1,34 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
-
-/// 打开 GitHub 仓库链接（顶级函数，可用于 const 上下文）
-Future<void> openGitHub() async {
-  const url = 'https://github.com/likuai2010/auto-installer';
-  final uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  }
-}
-
-/// 打开赞助我们页面链接（顶级函数，可用于 const 上下文）
-Future<void> openSponsor() async {
-  const url = 'https://github.com/likuai2010/auto-installer';
-  final uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  }
-}
-
-/// 打开使用教程页面链接（顶级函数，可用于 const 上下文）
-Future<void> openTutorial() async {
-  const url = 'https://github.com/likuai2010/auto-installer';
-  final uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  }
-}
 
 /// 应用信息按钮数据类
 class AppInfoButton {
@@ -69,12 +41,7 @@ class AppInfoCard extends StatelessWidget {
     this.iconPath = 'lib/assets/Icon.svg',
     this.title = '小白调试助手',
     this.description = '仅供开发调试使用',
-    this.buttons = const [
-      AppInfoButton(label: 'GitHub', icon: Icons.code, onTap: openGitHub),
-      AppInfoButton(label: '赞助我们', icon: Icons.favorite, onTap: openSponsor),
-      AppInfoButton(
-          label: '使用教程', icon: Icons.menu_book_outlined, onTap: openTutorial),
-    ],
+    required this.buttons,
   });
 
   @override

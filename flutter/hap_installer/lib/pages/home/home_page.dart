@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
-import 'package:hap_installer/pages/debug_detail_page.dart';
 import 'package:hap_installer/pages/home/home_setting_item.dart';
-import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/viewmodels/HomeViewModel.dart';
-import 'package:hap_installer/widget/common.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/app_info_card.dart';
@@ -46,7 +43,7 @@ class HomePage extends StatelessWidget {
                     AppInfoButton(
                       label: '使用教程',
                       icon: Icons.menu_book_outlined,
-                      onTap: () => _openTutorial(context),
+                      onTap: () => homeViewModel.openTutorial(context),
                     ),
                   ],
                 ),
@@ -94,10 +91,10 @@ class HomePage extends StatelessWidget {
         isActive: vm.currentDevice != null,
         isVisible: vm.isLogin,
         // USB连接时禁用（地址不含"."），无线连接时可点击
-        onButtonTap: vm.currentDevice != null &&
-                !vm.currentDevice!.contains('.')
-            ? null
-            : () => vm.toConnect(context, () {}),
+        onButtonTap:
+            vm.currentDevice != null && !vm.currentDevice!.contains('.')
+                ? null
+                : () => vm.toConnect(context, () {}),
       ),
       // 3. 安装包选择
       HomeSettingItem(
@@ -125,7 +122,7 @@ class HomePage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: InkWell(
-        onTap: () => _startDebug(context, vm),
+        onTap: () => homeViewModel.startDebug(context, vm),
         borderRadius: BorderRadius.circular(100),
         child: Container(
           width: double.infinity,
@@ -147,25 +144,5 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// 打开使用教程
-  ///
-  /// 跳转到用户引导页面
-  Future<void> _openTutorial(BuildContext context) async {
-    toPage(context, (_) => const UserGuidePage());
-  }
-
-  /// 开始调试
-  ///
-  /// 将 HAP 安装到设备
-  void _startDebug(BuildContext context, EcoViewModel vm) {
-    // 导航到调试详情页
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const DebugDetailPage()),
-    );
-    // 安装 HAP 到设备
-    vm.installHap(context);
   }
 }
