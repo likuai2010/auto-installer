@@ -3,17 +3,16 @@ import 'package:hap_installer/widget/bar_transition.dart';
 import 'package:hap_installer/widget/rail_transition.dart';
 
 class NavigationTransition extends StatefulWidget {
-  const NavigationTransition({
-    super.key,
-    required this.scaffoldKey,
-    required this.animationController,
-    // required this.railAnimation,
-    required this.navigationRail,
-    required this.navigationBar,
-    required this.appBar,
-    required this.body,
-    this.drawer
-  });
+  const NavigationTransition(
+      {super.key,
+      required this.scaffoldKey,
+      required this.animationController,
+      // required this.railAnimation,
+      required this.navigationRail,
+      required this.navigationBar,
+      required this.appBar,
+      required this.body,
+      this.drawer});
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final AnimationController animationController;
@@ -56,6 +55,8 @@ class _NavigationTransitionState extends State<NavigationTransition> {
       key: widget.scaffoldKey,
       appBar: widget.appBar,
       body: Row(
+        // TODO 待测试后续是否有页面受此影响
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           RailTransition(
             animation: railAnimation,

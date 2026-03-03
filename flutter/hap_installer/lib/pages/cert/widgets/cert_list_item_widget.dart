@@ -1,0 +1,205 @@
+import 'package:flutter/material.dart';
+
+import '../../../core/constants/app_colors.dart';
+import '../cert_item.dart';
+
+/// 证书列表项组件
+///
+/// 用于显示带图标、证书名称、过期时间和操作按钮的证书项
+/// 根据 Pixso 设计稿 (item-id: 5:16608) 实现
+/// 列表项高度: 76px
+/// 左侧图标: 24x24，padding 16px（无背景）
+/// 右侧按钮: 80x30，圆角100（胶囊形）
+/// 支持从右向左滑动显示删除按钮
+class CertListItemWidget extends StatelessWidget {
+  /// 证书项数据
+  final CertItem item;
+
+  const CertListItemWidget({
+    super.key,
+    required this.item,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: Key(item.certName),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) => _showDeleteConfirm(context),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        color: AppColors.error,
+        child: const Icon(
+          Icons.delete_outline,
+          color: Colors.white,
+          size: 24,
+        ),
+      ),
+      child: SizedBox(
+        height: 76,
+        child: InkWell(
+          onTap: item.onLongPress,
+          onLongPress: item.onLongPress,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // 图标（无背景容器）
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Icon(
+                    Icons.key_outlined,
+                    size: 24,
+                    color: item.isExpired ? AppColors.hintText : AppColors.iconColor,
+                  ),
+                ),
+                const SizedBox(width: 0),
+                // 文字区域
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${item.certTypeLabel}: ${item.certName}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: item.isExpired
+                              ? AppColors.hintText
+                              : AppColors.titleTextDark,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '于${item.formattedExpireTime}过期',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: item.isExpired
+                              ? AppColors.error
+                              : AppColors.descriptionTextLight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 右侧按钮
+                _buildActionButton(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 显示删除确认对话框
+  ///
+  /// 返回 true 确认删除，false 取消
+  Future<bool?> _showDeleteConfirm(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('确认删除'),
+        content: const Text('删除后此证书签名的Profile将失效，确定要删除吗？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+              item.onDelete?.call();
+            },
+            child: const Text(
+              '删除',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建操作按钮
+  ///
+  /// 根据证书状态显示不同按钮：
+  /// - 正在使用：显示"正在使用"文本
+  /// - 未过期且非当前：显示"使用"按钮
+  /// - 已过期：不显示按钮（通过滑动删除）
+  Widget _buildActionButton() {
+    // 正在使用：显示"正在使用"文本
+    if (item.isCurrent) {
+      return const SizedBox(
+        width: 80,
+        height: 30,
+        child: Center(
+          child: Text(
+            '正在使用',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.success,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 已过期：不显示按钮（统一通过滑动删除）
+    if (item.isExpired) {
+      return const SizedBox(width: 80, height: 30);
+    }
+
+    // 未过期且非当前：显示使用按钮
+    return _buildCapsuleButton(
+      label: '使用',
+      onTap: item.onUse,
+      backgroundColor: AppColors.buttonLightBackground,
+      textColor: AppColors.buttonLabelText,
+    );
+  }
+
+  /// 构建胶囊形按钮
+  ///
+  /// 按钮尺寸: 80x30
+  /// 圆角: 100（胶囊形）
+  Widget _buildCapsuleButton({
+    required String label,
+    required VoidCallback? onTap,
+    required Color backgroundColor,
+    required Color textColor,
+  }) {
+    final buttonEnabled = onTap != null;
+    // 禁用状态颜色：背景 4% 透明度，文字 50% 透明度
+    final disabledBgColor = backgroundColor.withValues(alpha: 0.04);
+    final disabledTextColor = textColor.withValues(alpha: 0.5);
+
+    return SizedBox(
+      width: 80,
+      height: 30,
+      child: InkWell(
+        onTap: buttonEnabled ? onTap : null,
+        borderRadius: BorderRadius.circular(100),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: buttonEnabled ? backgroundColor : disabledBgColor,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: buttonEnabled ? textColor : disabledTextColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
