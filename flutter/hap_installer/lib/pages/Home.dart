@@ -7,11 +7,11 @@ import 'package:hap_installer/pages/cert/cert_page.dart';
 import 'package:hap_installer/pages/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
-import 'package:hap_installer/pages/sign_config_page.dart';
 import 'package:hap_installer/pages/team_device_page.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
+import 'package:hap_installer/widget/sign_config_box.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 
 const double mediumWidthBreakpoint = 1000;
@@ -91,7 +91,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       actions.add(
         IconButton(
           onPressed: () {
-            scaffoldKey.currentState?.openEndDrawer();
+            showModalBottomSheet<void>(
+              isScrollControlled: true,
+              useSafeArea: true,
+              context: context,
+              builder: (context) => const SignConfigBox(),
+            );
           },
           icon: SvgPicture.asset("lib/assets/edit.svg"),
         ),
@@ -151,9 +156,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget? buildDrawer(PageSelected pageSelected) {
     if (pageSelected == PageSelected.home) {
       return const Drawer(child: TeamDevicePage());
-    }
-    if (pageSelected == PageSelected.cert) {
-      return const Drawer(child: SignConfigPage());
     }
     return null;
   }
