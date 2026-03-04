@@ -7,7 +7,7 @@ import '../cert_item.dart';
 /// 证书列表项组件
 ///
 /// 用于显示带图标、证书名称、过期时间和操作按钮的证书项
-/// 根据 Pixso 设计稿 (item-id: 5:16608) 实现
+/// 每一项都是独立的卡片，白色背景，16px 圆角
 /// 列表项高度: 76px
 /// 左侧图标: 24x24，padding 16px（无背景）
 /// 右侧按钮: 80x30，圆角100（胶囊形）
@@ -37,59 +37,73 @@ class CertListItemWidget extends StatelessWidget {
           size: 24,
         ),
       ),
-      child: SizedBox(
-        height: 76,
-        child: InkWell(
-          onTap: item.onUse,
-          // TODO 用侧滑删除替代长按删除
-          // onLongPress: item.onLongPress,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                // 图标（无背景容器）
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SvgPicture.asset(
-                    "lib/assets/certkey.svg",
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-                const SizedBox(width: 0),
-                // 文字区域
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${item.certTypeLabel}: ${item.certName}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: item.isExpired
-                              ? AppColors.hintText
-                              : AppColors.titleTextDark,
-                        ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            height: 76,
+            child: InkWell(
+              onTap: item.onUse,
+              // TODO 用侧滑删除替代长按删除
+              // onLongPress: item.onLongPress,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    // 图标（无背景容器）
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 0,
+                        right: 16,
+                        top: 16,
+                        bottom: 16,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '于${item.formattedExpireTime}过期',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: item.isExpired
-                              ? AppColors.error
-                              : AppColors.descriptionTextLight,
-                        ),
+                      child: SvgPicture.asset(
+                        "lib/assets/certkey.svg",
+                        width: 24,
+                        height: 24,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 0),
+                    // 文字区域
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${item.certTypeLabel}: ${item.certName}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: item.isExpired
+                                  ? AppColors.hintText
+                                  : AppColors.titleTextDark,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '于${item.formattedExpireTime}过期',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: item.isExpired
+                                  ? AppColors.error
+                                  : AppColors.descriptionTextLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 右侧按钮
+                    _buildActionButton(),
+                  ],
                 ),
-                // 右侧按钮
-                _buildActionButton(),
-              ],
+              ),
             ),
           ),
         ),
