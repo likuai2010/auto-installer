@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/pages/splash_screen.dart';
@@ -15,10 +16,17 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  static const platform = MethodChannel("com.xiaobai.hap_instaler/openFile");
   final ThemeMode _themeMode = ThemeMode.light;
 
   @override
   Widget build(BuildContext context) {
+     platform.setMethodCallHandler((MethodCall call) async {
+      if (call.method == "openFile") {
+        var url = call.arguments['url'];
+        viewmodel.openFile(context, url);
+      }
+    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HistoryViewModel()),

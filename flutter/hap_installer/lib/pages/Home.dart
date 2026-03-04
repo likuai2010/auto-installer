@@ -8,6 +8,7 @@ import 'package:hap_installer/pages/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/pages/team_device_page.dart';
+import 'package:hap_installer/viewmodels/HomeViewModel.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
@@ -35,13 +36,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   initState() {
     super.initState();
-
     controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       value: 0,
       vsync: this,
     );
-    viewmodel.loadUserInfo(context);
+
   }
 
   @override

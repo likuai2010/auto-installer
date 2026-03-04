@@ -32,7 +32,7 @@ class HdcCmdPageState extends State<HdcCmdPage> {
       setState(() {
         cmdResult.add(result);
       });
-      Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       listControrller.jumpTo(listControrller.position.maxScrollExtent);
       // ignore: empty_catches
     } catch (e) {

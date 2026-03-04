@@ -8,7 +8,7 @@ class SplashScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: viewmodel.init(),
+      future: viewmodel.init(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(

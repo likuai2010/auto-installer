@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +73,7 @@ class EcoViewModel extends ChangeNotifier {
   HistoryViewModel? historyViewModel;
 
   EcoViewModel();
-  Future<bool> init() async {
+  Future<bool> init(BuildContext context) async {
     cmd.startServer();
     cmd.javaHome = await getJavaDir();
     if (Platform.isMacOS) {
@@ -103,18 +102,29 @@ class EcoViewModel extends ChangeNotifier {
 
     await tarnsformAssert(javapath);
 
-    // await Isolate.run(() async {
-    //     await initJavaRuntme(javapath, tempDir);
-    // });
-
-    final url = await getLocalUrl();
+   
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
+    final url = await getLocalUrl();
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
+    loadUserInfo(context);
     readHistory();
 
     return true;
+  }
+  autoConnect(BuildContext context, Function() builder) async {
+    if (currentDevice == null) {
+        final url = await getLocalUrl();
+        if (url == null || url == ""){
+           builder();
+        } else {
+          var result = await tryConnectToDevice(context, url);
+          if(!result) {
+            builder();
+          }
+        }
+    }
   }
 
   recordIp(String ip) async {
@@ -142,6 +152,7 @@ class EcoViewModel extends ChangeNotifier {
     }
     return path.basename(hnpBaseHap!);
   }
+
 
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
     if (authInfo != null) {
@@ -425,23 +436,25 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  tryConnectToDevice(BuildContext context, String id) async {
+  Future tryConnectToDevice(BuildContext context, String id) async {
     if (deviceList.contains(id)) {
       currentDevice = id;
       cmd.changeTarget(id);
       notifyListeners();
+      return true;
     } else {
-      Navigator.pop(context);
-      deviceLoaing = true;
-      notifyListeners();
       final ips = id.split(":");
-      await connectDevice(context, ips.first, ips.last);
-      deviceLoaing = false;
-      notifyListeners();
+      var result = await connectDevice(context, ips.first, ips.last);
+      if(result) {
+        currentDevice = id;
+      }
+      return result;
     }
   }
 
   Future connectDevice(BuildContext context, String ip, String port) async {
+    deviceLoaing = true;
+    notifyListeners();
     this.ip = ip;
     this.port = port;
     final deviceIp = "$ip:$port";
@@ -450,6 +463,8 @@ class EcoViewModel extends ChangeNotifier {
     if (result == "连接成功") {
       recordIp(deviceIp);
     }
+    deviceLoaing = false;
+    notifyListeners();
     toask(context, result);
     return result == "连接成功";
   }
