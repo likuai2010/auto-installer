@@ -3,6 +3,7 @@ import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/pages/home/home_setting_item.dart';
 import 'package:hap_installer/viewmodels/HomeViewModel.dart';
+import 'package:hap_installer/widget/common.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/app_info_card.dart';
@@ -94,7 +95,26 @@ class HomePage extends StatelessWidget {
         onButtonTap:
             vm.currentDevice != null && !vm.currentDevice!.contains('.')
                 ? null
-                : () => vm.toConnect(context, () {}),
+                : () {
+                    showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      useSafeArea: true,
+                      context: context,
+                      builder: (context) {
+                        // 获取键盘高度
+                        final keyboardHeight =
+                            MediaQuery.of(context).viewInsets.bottom;
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: keyboardHeight),
+                          child: ConnectDeviceBox(
+                            ip: vm.ip,
+                            port: vm.port,
+                          ),
+                        );
+                      },
+                    );
+                  },
       ),
       // 3. 安装包选择
       HomeSettingItem(
