@@ -75,8 +75,9 @@ class SignConfigBox extends StatelessWidget {
           // p12 - 证书密钥
           _ConfigListItem(
             title: 'p12',
-            subtitle: '证书密钥',
-            supportingText: '用于创建csr、cer、p7b等文件',
+            subtitle: '(自己创建的私钥)',
+            supportingText:
+                '导出命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes',
             value: model.signConfig?.keystoreFile ?? '',
             name: 'p12',
             showFilePicker: true,
@@ -86,16 +87,18 @@ class SignConfigBox extends StatelessWidget {
           // csr - 通过p12创建
           _ConfigListItem(
             title: 'csr',
-            subtitle: '通过p12创建',
-            supportingText: '用于申请cer证书',
+            subtitle: '(用于申请华为证书)',
+            supportingText:
+                '创建命令: openssl req -new -key xiaobai.key -out xiaobai.csr',
             value: model.signConfig?.csrPath ?? '',
             name: 'csr',
             showFilePicker: true,
             model: model,
           ),
-          const SizedBox(height: 8),
+
+          // const SizedBox(height: 8),
           // keyAlias - 密钥别名
-          _ConfigListItem(
+          /* _ConfigListItem(
             title: 'keyAlias',
             subtitle: '密钥别名',
             supportingText: '',
@@ -103,10 +106,11 @@ class SignConfigBox extends StatelessWidget {
             name: 'keyAlias',
             showFilePicker: false,
             model: model,
-          ),
-          const SizedBox(height: 8),
+          ), */
+
+          // const SizedBox(height: 8),
           // keyPwd - 密钥密码
-          _ConfigListItem(
+          /* _ConfigListItem(
             title: 'keyPwd',
             subtitle: '密钥密码',
             supportingText: '',
@@ -115,6 +119,7 @@ class SignConfigBox extends StatelessWidget {
             showFilePicker: false,
             model: model,
           ),
+         */
         ],
       ),
     );
