@@ -121,7 +121,6 @@ class HomePage extends StatelessWidget {
             vm.currentDevice != null && !vm.currentDevice!.contains('.')
                 ? null
                 : () {
-               
                     showConnectDeviceBox(context, vm);
                 },
       ),

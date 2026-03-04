@@ -73,24 +73,29 @@ class EcoViewModel extends ChangeNotifier {
   HistoryViewModel? historyViewModel;
 
   EcoViewModel();
+  initDebugPath() async{
+    if(debugPath == ""){
+      tempDir = await getTempDir();
+      final debugDir = Directory(path.join(tempDir, "apps"));
+      if (!await debugDir.exists()) {
+        await debugDir.create(recursive: true);
+      }
+      debugPath = debugDir.path;
+    }
+  }
   Future<bool> init(BuildContext context) async {
     cmd.startServer();
     cmd.javaHome = await getJavaDir();
     if (Platform.isMacOS) {
       cmd.javaHome = path.join(cmd.javaHome, "Contents", "Home");
     }
-    tempDir = await getTempDir();
     hdcDir = await getHdcDir();
     final storeDir = Directory(path.join(await getAppDir(), "store"));
-    final debugDir = Directory(path.join(tempDir, "apps"));
+
     if (!await storeDir.exists()) {
       await storeDir.create(recursive: true);
     }
-    if (!await debugDir.exists()) {
-      await debugDir.create(recursive: true);
-    }
-
-    debugPath = debugDir.path;
+    await initDebugPath();
     this.storeDir = storeDir.path;
 
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
@@ -108,7 +113,7 @@ class EcoViewModel extends ChangeNotifier {
     final url = await getLocalUrl();
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
-    loadUserInfo(context);
+    await loadUserInfo(context);
     readHistory();
 
     return true;
@@ -413,8 +418,10 @@ class EcoViewModel extends ChangeNotifier {
     try {
       hapInfo = await _loadApp(context, filePath);
     } on FormatException catch (e) {
+      print("openFile error ${e.message}");
       toask(context, e.message);
     } catch (e) {
+      print("openFile error $e");
       toask(context, "$e");
     }
     fileLoading = false;
@@ -509,6 +516,7 @@ class EcoViewModel extends ChangeNotifier {
     if (!await appFile.exists()) {
       throw FormatException("文件不存在: $hapPath");
     }
+    await initDebugPath();
     final debugDir = Directory(debugPath);
     if (await debugDir.exists()) {
       await debugDir.delete(recursive: true);
