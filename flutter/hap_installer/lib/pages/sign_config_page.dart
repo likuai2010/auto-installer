@@ -1,3 +1,5 @@
+// TODO 未使用到的文件，后续考虑删除
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
@@ -24,7 +26,8 @@ class SignConfigPage extends StatelessWidget {
             ),
             ListTile(
               title: const Text("证书私钥(自己创建的私钥)"),
-              subtitle: const Text("导出命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes"),
+              subtitle: const Text(
+                  "导出命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -35,12 +38,11 @@ class SignConfigPage extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder:
-                        (_) => EditConfigDialog(
-                          name: "p12",
-                          value: model.signConfig?.keystoreFile ?? "",
-                          onChange: (p0) => model.signConfig?.keystoreFile = p0,
-                        ),
+                    builder: (_) => EditConfigDialog(
+                      name: "p12",
+                      value: model.signConfig?.keystoreFile ?? "",
+                      onChange: (p0) => model.signConfig?.keystoreFile = p0,
+                    ),
                   );
                 },
                 child: const Text("更换"),
@@ -48,7 +50,8 @@ class SignConfigPage extends StatelessWidget {
             ),
             ListTile(
               title: const Text("csr (用于申请华为证书)"),
-              subtitle: const Text("创建命令: openssl req -new -key xiaobai.key -out xiaobai.csr"),
+              subtitle: const Text(
+                  "创建命令: openssl req -new -key xiaobai.key -out xiaobai.csr"),
               onTap: () {
                 toask(context, "已复制到剪贴板");
                 Clipboard.setData(
@@ -59,12 +62,11 @@ class SignConfigPage extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder:
-                        (_) => EditConfigDialog(
-                          name: "csr",
-                          value: model.signConfig?.csrPath ?? "",
-                          onChange: (p0) => model.signConfig?.csrPath = p0,
-                        ),
+                    builder: (_) => EditConfigDialog(
+                      name: "csr",
+                      value: model.signConfig?.csrPath ?? "",
+                      onChange: (p0) => model.signConfig?.csrPath = p0,
+                    ),
                   );
                 },
                 child: const Text("更换"),
@@ -144,28 +146,27 @@ showConfigEditAlert(EcoViewModel model, BuildContext context, String name) {
   }
   showDialog(
     context: context,
-    builder:
-        (_) => EditConfigDialog(
-          name: name,
-          value: value,
-          onChange: (p0) {
-            switch (name) {
-              case "p12":
-                config?.keystoreFile = p0;
-                break;
-              case "csr":
-                config?.csrPath = p0;
-                break;
-              case "keyAlias":
-                config?.keyAlias = p0;
-                break;
-              case "keystorePwd":
-                config?.keystorePwd = p0;
-                break;
-            }
-            model.saveSignConfig();
-          },
-        ),
+    builder: (_) => EditConfigDialog(
+      name: name,
+      value: value,
+      onChange: (p0) {
+        switch (name) {
+          case "p12":
+            config?.keystoreFile = p0;
+            break;
+          case "csr":
+            config?.csrPath = p0;
+            break;
+          case "keyAlias":
+            config?.keyAlias = p0;
+            break;
+          case "keystorePwd":
+            config?.keystorePwd = p0;
+            break;
+        }
+        model.saveSignConfig();
+      },
+    ),
   );
 }
 
