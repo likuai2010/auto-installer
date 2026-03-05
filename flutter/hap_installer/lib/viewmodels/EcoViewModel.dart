@@ -14,7 +14,7 @@ import 'package:hap_installer/models/EcoResult.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
-import 'package:hap_installer/pages/more_page.dart';
+import 'package:hap_installer/pages/more/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
@@ -73,8 +73,8 @@ class EcoViewModel extends ChangeNotifier {
   HistoryViewModel? historyViewModel;
 
   EcoViewModel();
-  initDebugPath() async{
-    if(debugPath == ""){
+  initDebugPath() async {
+    if (debugPath == "") {
       tempDir = await getTempDir();
       final debugDir = Directory(path.join(tempDir, "apps"));
       if (!await debugDir.exists()) {
@@ -83,6 +83,7 @@ class EcoViewModel extends ChangeNotifier {
       debugPath = debugDir.path;
     }
   }
+
   Future<bool> init(BuildContext context) async {
     cmd.startServer();
     cmd.javaHome = await getJavaDir();
@@ -107,7 +108,6 @@ class EcoViewModel extends ChangeNotifier {
 
     await tarnsformAssert(javapath);
 
-   
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
     final url = await getLocalUrl();
@@ -118,17 +118,18 @@ class EcoViewModel extends ChangeNotifier {
 
     return true;
   }
+
   autoConnect(BuildContext context, Function() builder) async {
     if (currentDevice == null) {
-        final url = await getLocalUrl();
-        if (url == null || url == ""){
-           builder();
-        } else {
-          var result = await tryConnectToDevice(context, url);
-          if(!result) {
-            builder();
-          }
+      final url = await getLocalUrl();
+      if (url == null || url == "") {
+        builder();
+      } else {
+        var result = await tryConnectToDevice(context, url);
+        if (!result) {
+          builder();
         }
+      }
     }
   }
 
@@ -158,7 +159,6 @@ class EcoViewModel extends ChangeNotifier {
     return path.basename(hnpBaseHap!);
   }
 
-
   Future loadUserInfo(BuildContext context, [AuthInfo? authInfo]) async {
     if (authInfo != null) {
       await saveJsonToFile(jsonEncode(authInfo.toJson()), userInfoPath);
@@ -166,9 +166,9 @@ class EcoViewModel extends ChangeNotifier {
     userInfo = await readUserInfoFromFile(userInfoPath);
     if (userInfo == null) return;
     await eco.initUserInfo(userInfo);
-    if (await eco.autoRefreshToken()){
+    if (await eco.autoRefreshToken()) {
       await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
-    }  
+    }
     try {
       final list = await eco.getUserTeamList();
       if (list != null) {
@@ -452,7 +452,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       final ips = id.split(":");
       var result = await connectDevice(context, ips.first, ips.last);
-      if(result) {
+      if (result) {
         currentDevice = id;
       }
       return result;
@@ -799,9 +799,9 @@ class EcoViewModel extends ChangeNotifier {
           return null;
         }, "获取设备udid");
       }
-      if (await eco.autoRefreshToken()){
-          await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
-      }  
+      if (await eco.autoRefreshToken()) {
+        await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
+      }
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final module = await cmd.readModuleInfo(debugPath);
