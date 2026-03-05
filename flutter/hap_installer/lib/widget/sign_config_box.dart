@@ -77,7 +77,7 @@ class SignConfigBox extends StatelessWidget {
             title: 'p12',
             subtitle: '(自己创建的私钥)',
             supportingText:
-                '导出命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes',
+                '命令: openssl pkcs12 -in xiaobai.p12 -nocerts -out key.pem -nodes',
             value: model.signConfig?.keystoreFile ?? '',
             name: 'p12',
             showFilePicker: true,
@@ -89,7 +89,7 @@ class SignConfigBox extends StatelessWidget {
             title: 'csr',
             subtitle: '(用于申请华为证书)',
             supportingText:
-                '创建命令: openssl req -new -key xiaobai.key -out xiaobai.csr',
+                '命令: openssl req -new -key xiaobai.key -out xiaobai.csr',
             value: model.signConfig?.csrPath ?? '',
             name: 'csr',
             showFilePicker: true,
@@ -152,20 +152,19 @@ class _ConfigListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 96,
+      constraints: const BoxConstraints(minHeight: 96),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(255, 255, 255, 0.8),
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
         onTap: () {
-          Clipboard.setData(ClipboardData(text: value));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('已复制到剪贴板'),
-              duration: Duration(seconds: 1),
-            ),
-          );
+          if (supportingText.isNotEmpty) {
+            // 过滤 "命令: " 前缀，只复制实际命令
+            final command = supportingText.replaceFirst('命令: ', '');
+            Clipboard.setData(ClipboardData(text: command));
+            _showToast(context, '命令已复制到剪贴板');
+          }
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -180,7 +179,7 @@ class _ConfigListItem extends StatelessWidget {
                   children: [
                     // 标题
                     Text(
-                      title,
+                      '$title${subtitle.isNotEmpty ? ' $subtitle' : ''}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -189,27 +188,17 @@ class _ConfigListItem extends StatelessWidget {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    // 副标题
-                    if (subtitle.isNotEmpty)
-                      Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(73, 69, 79, 1),
-                          height: 20 / 14,
-                          letterSpacing: 0.25,
-                        ),
-                      ),
-                    // 支持文字
+                    // 支持文字（命令提示）
                     if (supportingText.isNotEmpty)
                       Text(
                         supportingText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(73, 69, 79, 1),
-                          height: 20 / 14,
+                          height: 16 / 12,
                           letterSpacing: 0.25,
                         ),
                       ),
@@ -274,6 +263,35 @@ class _ConfigListItem extends StatelessWidget {
     );
   }
 
+  /// 当前 Toast 的 OverlayEntry（防止叠加）
+  static OverlayEntry? _currentToastEntry;
+
+  /// 显示轻提示 Toast
+  ///
+  /// 使用 Overlay 显示 toast，避免被半模态遮挡
+  /// 包含淡入淡出动画，多次调用会替换之前的 toast
+  void _showToast(BuildContext context, String message) {
+    // 移除之前的 toast
+    _currentToastEntry?.remove();
+    _currentToastEntry = null;
+
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (context) => _ToastWidget(
+        message: message,
+        onDismiss: () {
+          if (_currentToastEntry == entry) {
+            entry.remove();
+            _currentToastEntry = null;
+          }
+        },
+      ),
+    );
+    _currentToastEntry = entry;
+    overlay.insert(entry);
+  }
+
   /// 更新配置项
   ///
   /// 根据配置名称更新对应的值并保存
@@ -328,6 +346,79 @@ class _ChangeButton extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Color.fromRGBO(57, 107, 223, 1),
               height: 14 / 12,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Toast 轻提示组件
+///
+/// 使用 Overlay 显示，避免被半模态遮挡
+/// 包含淡入淡出动画
+class _ToastWidget extends StatefulWidget {
+  const _ToastWidget({required this.message, required this.onDismiss});
+
+  final String message;
+  final VoidCallback onDismiss;
+
+  @override
+  State<_ToastWidget> createState() => _ToastWidgetState();
+}
+
+class _ToastWidgetState extends State<_ToastWidget> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 延迟一帧后开始淡入，避免抖动
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _opacity = 1.0);
+      }
+    });
+
+    // 2秒后淡出并移除
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() => _opacity = 0.0);
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (mounted) {
+            widget.onDismiss();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 100,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: AnimatedOpacity(
+          opacity: _opacity,
+          duration: const Duration(milliseconds: 200),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Text(
+                widget.message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
         ),
