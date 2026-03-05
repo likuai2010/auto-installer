@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../home_setting_item.dart';
+import 'home_setting_item.dart';
 
 /// 首页设置列表项组件
 ///
@@ -133,7 +133,8 @@ class HomeSettingItemWidget extends StatelessWidget {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.buttonLabelText),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(AppColors.buttonLabelText),
             ),
           ),
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
-import 'package:hap_installer/pages/home/home_setting_item.dart';
+import 'widgets/home_setting_item.dart';
 import 'package:hap_installer/viewmodels/HomeViewModel.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:provider/provider.dart';
@@ -18,10 +18,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    viewmodel.autoConnect(context, () => showConnectDeviceBox(context, viewmodel));
+    viewmodel.autoConnect(
+        context, () => showConnectDeviceBox(context, viewmodel));
     return Consumer<EcoViewModel>(
       builder: (context, vm, _) {
-     
         return Container(
           height: double.infinity,
           color: AppColors.pageBackground,
@@ -69,17 +69,16 @@ class HomePage extends StatelessWidget {
   }
 
   showConnectDeviceBox(BuildContext context, EcoViewModel vm) {
-    if(vm.deviceLoaing) {
+    if (vm.deviceLoaing) {
       return;
-    }else{
+    } else {
       showModalBottomSheet<void>(
         isScrollControlled: true,
         useSafeArea: true,
         context: context,
         builder: (context) {
           // 获取键盘高度
-          final keyboardHeight =
-              MediaQuery.of(context).viewInsets.bottom;
+          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
           return Padding(
             padding: EdgeInsets.only(bottom: keyboardHeight),
             child: ConnectDeviceBox(
@@ -91,6 +90,7 @@ class HomePage extends StatelessWidget {
       );
     }
   }
+
   /// 构建设置项列表
   ///
   /// 根据 EcoViewModel 状态生成设置项数据
@@ -113,7 +113,9 @@ class HomePage extends StatelessWidget {
         description: '设备',
         icon: 'lib/assets/link_off.svg',
         activeIcon: 'lib/assets/wifi_success.svg',
-        buttonLabel: vm.deviceLoaing ? "连接中..." : (vm.currentDevice != null ? '更换地址' : '无线调试'),
+        buttonLabel: vm.deviceLoaing
+            ? "连接中..."
+            : (vm.currentDevice != null ? '更换地址' : '无线调试'),
         isActive: vm.currentDevice != null,
         isVisible: vm.isLogin,
         // USB连接时禁用（地址不含"."），无线连接时可点击
@@ -122,7 +124,7 @@ class HomePage extends StatelessWidget {
                 ? null
                 : () {
                     showConnectDeviceBox(context, vm);
-                },
+                  },
       ),
       // 3. 安装包选择
       HomeSettingItem(

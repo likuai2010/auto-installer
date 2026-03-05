@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
-import 'package:hap_installer/pages/debug/widgets/debug_step_item_widget.dart';
+import 'widgets/debug_step_item_widget.dart';
 import 'package:provider/provider.dart';
 
 /// 调试详情页面

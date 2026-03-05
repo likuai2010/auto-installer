@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/cert/cert_page.dart';
-import 'package:hap_installer/pages/history_page.dart';
+import 'package:hap_installer/pages/history/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more_page.dart';
 import 'package:hap_installer/pages/team_device_page.dart';
-import 'package:hap_installer/viewmodels/HomeViewModel.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
@@ -18,14 +17,14 @@ import 'package:hap_installer/core/constants/app_colors.dart';
 const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Index extends StatefulWidget {
+  const Index({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Index> createState() => _IndexState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late final AnimationController controller;
   bool controllerInitialized = false;
@@ -41,7 +40,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       value: 0,
       vsync: this,
     );
-
   }
 
   @override

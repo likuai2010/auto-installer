@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
-import 'package:hap_installer/pages/Home.dart';
+import 'package:hap_installer/pages/Index.dart';
 
-class SplashScreen extends StatelessWidget{
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
@@ -12,10 +12,15 @@ class SplashScreen extends StatelessWidget{
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,children: [CircularProgressIndicator(), Text("请稍等...")],)),
+            body: Center(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator(), Text("请稍等...")],
+            )),
           );
         } else {
-          return const Home();
+          return const Index();
         }
       },
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../cert_item.dart';
+import 'cert_item.dart';
 import 'cert_list_item_widget.dart';
 
 /// 证书列表卡片容器组件

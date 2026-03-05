@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../home_setting_item.dart';
+import 'home_setting_item.dart';
 import 'home_setting_item_widget.dart';
 
 /// 首页设置卡片容器组件

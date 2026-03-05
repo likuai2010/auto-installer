@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../cert_item.dart';
+import 'cert_item.dart';
 
 /// 证书列表项组件
 ///
