@@ -6,8 +6,8 @@ import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/cert/cert_page.dart';
 import 'package:hap_installer/pages/history/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
-import 'package:hap_installer/pages/more_page.dart';
-import 'package:hap_installer/pages/team_device_page.dart';
+import 'package:hap_installer/pages/more/more_page.dart';
+import 'package:hap_installer/pages/team_device/team_device_page.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
@@ -153,6 +153,7 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
 
   Widget? buildDrawer(PageSelected pageSelected) {
     if (pageSelected == PageSelected.home) {
+      // TODO 重构 Drawer 为 半模态，内部组件为卡片样式以统一风格
       return const Drawer(child: TeamDevicePage());
     }
     return null;
