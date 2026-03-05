@@ -61,6 +61,13 @@ class AppColors {
   static const Color navBarBackground = Color.fromRGBO(57, 107, 223, 0.05);
   static const Color navBarIndicator = Color.fromRGBO(57, 107, 223, 0.2);
 
+  // Switch 开关颜色 (Pixso: 6:5661 选中, 6:5667 未选中)
+  static const Color switchActiveTrack = Color(0xFF396BDF); // 选中轨道
+  static const Color switchActiveThumb = Color(0xFFFFFFFF); // 选中滑块
+  static const Color switchInactiveTrack = Color.fromRGBO(57, 107, 223, 0.2); // 未选中轨道
+  static const Color switchInactiveThumb = Color.fromRGBO(255, 255, 255, 0.7); // 未选中滑块
+  static const Color switchTrackOutline = Color.fromRGBO(57, 107, 223, 0.6); // 未选中边框
+
   // 页面背景（白色）
   static const Color pageBackground = Color.fromRGBO(242, 243, 245, 1);
 }

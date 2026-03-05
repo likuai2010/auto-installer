@@ -118,7 +118,24 @@ class MoreItemWidget extends StatelessWidget {
         return Switch(
           value: item.switchValue,
           onChanged: item.onSwitchChanged,
-          activeColor: AppColors.primary,
+          // 选中状态
+          activeColor: AppColors.switchActiveThumb,
+          activeTrackColor: AppColors.switchActiveTrack,
+          // 未选中状态
+          inactiveThumbColor: AppColors.switchInactiveThumb,
+          inactiveTrackColor: AppColors.switchInactiveTrack,
+          trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Colors.transparent;
+            }
+            return AppColors.switchTrackOutline;
+          }),
+          trackOutlineWidth: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return 0;
+            }
+            return 2;
+          }),
         );
       case MoreItemType.text:
         return Text(
