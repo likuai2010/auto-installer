@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:hap_installer/widget/page_transitions.dart';
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
@@ -368,8 +369,10 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
 }
 
 /// 导航到新页面
+///
+/// 使用统一的淡入滑动过渡动画
 void toPage(BuildContext context, Widget Function(BuildContext) builder) {
-  Navigator.push(context, MaterialPageRoute(builder: builder));
+  Navigator.push(context, FadeSlidePageRoute(builder: builder));
 }
 
 /// 显示确认对话框
