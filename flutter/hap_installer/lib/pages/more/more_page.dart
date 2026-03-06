@@ -8,7 +8,7 @@ import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/request_acl_page.dart';
-import 'package:hap_installer/pages/hdc_cmd_page.dart';
+import 'package:hap_installer/pages/terminal/terminal_page.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 
 import 'widgets/more_card.dart';
@@ -92,7 +92,7 @@ class _MorePageState extends State<MorePage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const HdcCmdPage()),
+            MaterialPageRoute(builder: (_) => const TerminalPage()),
           );
         },
       ),
