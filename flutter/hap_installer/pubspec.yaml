@@ -47,7 +47,11 @@ dependencies:
   url_launcher: ^6.1.11
   process_run: ^0.13.0
   path_provider: ^2.1.1
-  shared_preferences: ^2.2.2
+  shared_preferences: 
+    git: 
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+      path: "packages/shared_preferences/shared_preferences"
+      ref: "br_shared_preferences-v2.5.3_ohos"
   file_picker: ^5.3.1
   archive: ^3.4.10
   webview_flutter: ^4.4.2
