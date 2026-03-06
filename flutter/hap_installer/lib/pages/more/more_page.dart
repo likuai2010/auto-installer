@@ -7,7 +7,7 @@ import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
-import 'package:hap_installer/pages/request_acl_page.dart';
+import 'package:hap_installer/pages/acl/acl_page.dart';
 import 'package:hap_installer/pages/terminal/terminal_page.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 
@@ -102,7 +102,7 @@ class _MorePageState extends State<MorePage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const RequestACLPage()),
+            MaterialPageRoute(builder: (_) => const AclPage()),
           );
         },
       ),
