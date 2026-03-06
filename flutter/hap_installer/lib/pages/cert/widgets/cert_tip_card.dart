@@ -42,7 +42,7 @@ class CertTipCard extends StatelessWidget {
       margin: margin,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -53,6 +53,10 @@ class CertTipCard extends StatelessWidget {
             iconPath,
             width: 24,
             height: 24,
+            colorFilter: ColorFilter.mode(
+              AppColors.iconPrimaryDynamic(context),
+              BlendMode.srcIn,
+            ),
           ),
           const SizedBox(width: 16),
           // 右侧内容
@@ -63,10 +67,10 @@ class CertTipCard extends StatelessWidget {
                 // 标题
                 Text(
                   headline,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Color.fromRGBO(0, 0, 0, 0.9),
+                    color: AppColors.fontPrimaryDynamic(context),
                     height: 24 / 16, // line-height: 24px
                     letterSpacing: 0.5,
                   ),
@@ -75,10 +79,10 @@ class CertTipCard extends StatelessWidget {
                 // 正文内容
                 Text(
                   contentLines.join('\n'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: Color.fromRGBO(0, 0, 0, 0.6),
+                    color: AppColors.fontSecondaryDynamic(context),
                     height: 20 / 14, // line-height: 20px
                     letterSpacing: 0.25,
                   ),

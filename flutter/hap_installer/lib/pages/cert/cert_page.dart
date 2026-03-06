@@ -25,7 +25,7 @@ class CertPage extends StatelessWidget {
       child: Consumer<CertViewModel>(
         builder: (context, model, child) {
           return Container(
-            color: AppColors.pageBackground,
+            color: AppColors.backgroundSecondaryDynamic(context),
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
@@ -78,7 +78,7 @@ class CertPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
@@ -93,14 +93,14 @@ class CertPage extends StatelessWidget {
                 'lib/assets/account_un_login.svg',
                 width: 24,
                 height: 24,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.iconColor,
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconPrimaryDynamic(context),
                   BlendMode.srcIn,
                 ),
               ),
               const SizedBox(width: 16),
               // 内容区域
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -110,15 +110,15 @@ class CertPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryText,
+                        color: AppColors.fontPrimaryDynamic(context),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       '请登录以继续',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.secondaryText,
+                        color: AppColors.fontSecondaryDynamic(context),
                       ),
                     ),
                   ],
@@ -129,15 +129,15 @@ class CertPage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.buttonLightBackground,
+                  color: AppColors.buttonLightBackgroundDynamic(context),
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: const Text(
+                child: Text(
                   '登录账号',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.buttonLabelText,
+                    color: AppColors.buttonLabelTextDynamic(context),
                   ),
                 ),
               ),

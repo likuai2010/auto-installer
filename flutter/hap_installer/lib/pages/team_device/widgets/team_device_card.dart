@@ -40,7 +40,7 @@ class TeamDeviceCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -48,10 +48,10 @@ class TeamDeviceCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // 标题栏
-          _buildHeader(),
+          _buildHeader(context),
           // 列表内容或空状态
           if (items.isEmpty)
-            _buildEmptyState()
+            _buildEmptyState(context)
           else
             _buildItemList(),
         ],
@@ -60,17 +60,17 @@ class TeamDeviceCard extends StatelessWidget {
   }
 
   /// 构建标题栏
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: AppColors.tertiaryText,
+              color: AppColors.fontTertiaryDynamic(context),
             ),
           ),
           const Spacer(),
@@ -82,11 +82,13 @@ class TeamDeviceCard extends StatelessWidget {
                 minimumSize: const Size(40, 28),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text(
-                actionText!,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.primary,
+              child: Builder(
+                builder: (context) => Text(
+                  actionText!,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.brandDynamic(context),
+                  ),
                 ),
               ),
             ),
@@ -96,15 +98,15 @@ class TeamDeviceCard extends StatelessWidget {
   }
 
   /// 构建空状态
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Center(
         child: Text(
           emptyText,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: AppColors.hintText,
+            color: AppColors.fontTertiaryDynamic(context),
           ),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
@@ -28,6 +29,9 @@ const List<NavigationDestination> appBarDestinations = [
   ),
 ];
 
+/// 列表项组件
+///
+/// 通用的列表项组件，支持前导图标、标题、副标题和尾部组件
 class ListItem extends StatelessWidget {
   const ListItem({
     super.key,
@@ -38,12 +42,14 @@ class ListItem extends StatelessWidget {
     this.onClick,
     this.onLongPress,
   });
+
   final Widget? leading;
   final String title;
   final String? subTitle;
   final Widget? tailling;
   final Function()? onClick;
   final Function()? onLongPress;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -61,7 +67,11 @@ class ListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title),
+                  Text(
+                    title,
+                    style:
+                        TextStyle(color: AppColors.fontPrimaryDynamic(context)),
+                  ),
                   subTitle != null
                       ? Text(
                           subTitle!,
@@ -71,7 +81,7 @@ class ListItem extends StatelessWidget {
                 ],
               ),
             ),
-            tailling ?? const Icon(Icons.keyboard_arrow_right_outlined),
+            tailling ?? Icon(Icons.keyboard_arrow_right_outlined),
           ],
         ),
       ),
@@ -79,6 +89,9 @@ class ListItem extends StatelessWidget {
   }
 }
 
+/// 分组装饰组件
+///
+/// 带标签的卡片容器，用于包装一组相关的列表项
 class GroupDecoration extends StatelessWidget {
   const GroupDecoration({super.key, this.label, required this.children});
 
@@ -90,8 +103,8 @@ class GroupDecoration extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 14),
       elevation: 1,
-      shadowColor: Colors.black,
-      color: Colors.white,
+      shadowColor: Colors.transparent,
+      color: AppColors.compBackgroundPrimaryDynamic(context),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Center(
@@ -143,9 +156,6 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
   late TextEditingController ipController;
   late TextEditingController portController;
   bool connecting = false;
-
-  /// 输入框背景色（淡蓝色）
-  static const Color inputBgColor = Color.fromRGBO(57, 107, 223, 0.2);
 
   @override
   void initState() {
@@ -200,7 +210,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
       child: Row(
         children: [
           // 左侧标题区域
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -211,17 +221,17 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
-                    color: Color.fromRGBO(0, 0, 0, 0.9),
+                    color: AppColors.fontPrimaryDynamic(context),
                     height: 32 / 24,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 // 提示文字
                 Text(
                   '初次使用请阅读首页顶部的《使用教程》',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Color.fromRGBO(0, 0, 0, 0.6),
+                    color: AppColors.fontSecondaryDynamic(context),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -237,26 +247,26 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
               IconButton(
                 onPressed: connecting ? null : () => connectHdc(context),
                 icon: connecting
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 26.67,
                         height: 26.67,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Color.fromRGBO(0, 0, 0, 0.9),
+                          color: AppColors.fontPrimaryDynamic(context),
                         ),
                       )
-                    : const Icon(
+                    : Icon(
                         Icons.check_circle,
-                        color: Color.fromRGBO(0, 0, 0, 0.9),
+                        color: AppColors.brandDynamic(context),
                         size: 32,
                       ),
               ),
               // 关闭按钮
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(
+                icon: Icon(
                   Icons.close,
-                  color: Color.fromRGBO(0, 0, 0, 0.6),
+                  color: AppColors.fontSecondaryDynamic(context),
                   size: 32,
                 ),
               ),
@@ -283,6 +293,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
           // IP 输入框
           Expanded(
             child: _buildInputField(
+              context: context,
               controller: ipController,
               placeholder: '输入IP地址...',
               maxLength: 15,
@@ -290,14 +301,14 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
             ),
           ),
           // 冒号分隔符
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               ':',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF49454F),
+                color: AppColors.fontPrimaryDynamic(context),
               ),
             ),
           ),
@@ -305,6 +316,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
           SizedBox(
             width: 111,
             child: _buildInputField(
+              context: context,
               controller: portController,
               placeholder: '输入端口...',
               maxLength: 5,
@@ -320,6 +332,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
   ///
   /// 圆角 28px，淡蓝色背景，无边框
   Widget _buildInputField({
+    required BuildContext context,
     required TextEditingController controller,
     required String placeholder,
     required int maxLength,
@@ -327,7 +340,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: inputBgColor,
+        color: AppColors.buttonLightBackgroundDynamic(context),
         borderRadius: BorderRadius.circular(28),
       ),
       child: TextField(
@@ -335,18 +348,18 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
         maxLength: maxLength,
         onSubmitted: onSubmitted,
         textAlign: TextAlign.center,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
-          color: Color.fromRGBO(0, 0, 0, 0.9),
+          color: AppColors.fontPrimaryDynamic(context),
         ),
         decoration: InputDecoration(
           counterText: '', // 隐藏字符计数
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           hintText: placeholder,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             fontSize: 16,
-            color: Color.fromRGBO(0, 0, 0, 0.4),
+            color: AppColors.fontTertiaryDynamic(context),
           ),
         ),
       ),
@@ -354,10 +367,12 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
   }
 }
 
+/// 导航到新页面
 void toPage(BuildContext context, Widget Function(BuildContext) builder) {
   Navigator.push(context, MaterialPageRoute(builder: builder));
 }
 
+/// 显示确认对话框
 void showAlert(
   BuildContext context, {
   Widget? title,
@@ -366,23 +381,31 @@ void showAlert(
 }) {
   showDialog(
     context: context,
-    builder: (_) {
+    builder: (ctx) {
       return AlertDialog(
+        backgroundColor: AppColors.compBackgroundPrimaryDynamic(context),
         title: title,
         content: content,
         actions: <Widget>[
           TextButton(
-            child: const Text('确认'),
+            child: Text(
+              '确认',
+              style: TextStyle(color: AppColors.fontSecondaryDynamic(context)),
+            ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(ctx).pop();
               if (onConfirm != null) {
                 onConfirm();
               }
             },
           ),
           FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.brandDynamic(context),
+              foregroundColor: AppColors.buttonTextPrimary,
+            ),
             child: const Text('取消'),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(ctx).pop(),
           ),
         ],
       );

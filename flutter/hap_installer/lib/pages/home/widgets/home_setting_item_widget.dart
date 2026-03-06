@@ -19,22 +19,14 @@ class HomeSettingItemWidget extends StatelessWidget {
   /// 是否显示下边框
   final bool showDivider;
 
-  /// 下边框颜色
-  final Color dividerColor;
-
   const HomeSettingItemWidget({
     super.key,
     required this.item,
     this.showDivider = true,
-    this.dividerColor = AppColors.dividerColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    // 下边框左边距 80px（从卡片左边缘开始计算）
-    // 外层已有 16px padding，所以内容区域需要额外 64px 左边距
-    const dividerIndent = 64.0;
-
     return SizedBox(
       height: 76,
       child: InkWell(
@@ -44,7 +36,7 @@ class HomeSettingItemWidget extends StatelessWidget {
               ? BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: dividerColor,
+                      color: AppColors.compDividerDynamic(context),
                       width: 1,
                     ),
                   ),
@@ -66,14 +58,14 @@ class HomeSettingItemWidget extends StatelessWidget {
                     item.currentIcon,
                     width: 24,
                     height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.iconColor,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.iconPrimaryDynamic(context),
                       BlendMode.srcIn,
                     ),
-                    placeholderBuilder: (context) => const Icon(
+                    placeholderBuilder: (context) => Icon(
                       Icons.circle_outlined,
                       size: 24,
-                      color: AppColors.iconColor,
+                      color: AppColors.iconPrimaryDynamic(context),
                     ),
                   ),
                 ),
@@ -86,26 +78,26 @@ class HomeSettingItemWidget extends StatelessWidget {
                     children: [
                       Text(
                         item.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Color.fromRGBO(0, 0, 0, 0.9),
+                          color: AppColors.fontPrimaryDynamic(context),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         item.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                          color: AppColors.fontSecondaryDynamic(context),
                         ),
                       ),
                     ],
                   ),
                 ),
                 // 右侧胶囊按钮
-                _buildCapsuleButton(),
+                _buildCapsuleButton(context),
               ],
             ),
           ),
@@ -121,10 +113,10 @@ class HomeSettingItemWidget extends StatelessWidget {
   /// 背景: rgba(57,107,223,0.08)
   /// 文字: 蓝色 12px
   /// 加载中: 显示圆环加载条
-  Widget _buildCapsuleButton() {
+  Widget _buildCapsuleButton(BuildContext context) {
     // 加载中状态：显示圆环加载条
     if (item.isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 80,
         height: 30,
         child: Center(
@@ -134,7 +126,7 @@ class HomeSettingItemWidget extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor:
-                  AlwaysStoppedAnimation<Color>(AppColors.buttonLabelText),
+                  AlwaysStoppedAnimation<Color>(AppColors.brandDynamic(context)),
             ),
           ),
         ),
@@ -143,8 +135,8 @@ class HomeSettingItemWidget extends StatelessWidget {
 
     final buttonEnabled = item.onButtonTap != null;
     // 禁用状态颜色：背景 4% 透明度，文字 50% 透明度
-    const disabledBgColor = Color.fromRGBO(57, 107, 223, 0.04);
-    const disabledTextColor = Color.fromRGBO(57, 107, 223, 0.5);
+    final disabledBgColor = AppColors.brandDynamic(context).withValues(alpha: 0.04);
+    final disabledTextColor = AppColors.brandDynamic(context).withValues(alpha: 0.5);
 
     return SizedBox(
       width: 80,

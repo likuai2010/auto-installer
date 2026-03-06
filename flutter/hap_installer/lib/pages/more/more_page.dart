@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
+import 'package:hap_installer/viewmodels/ThemeViewModel.dart';
 import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
@@ -10,6 +11,7 @@ import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/pages/acl/acl_page.dart';
 import 'package:hap_installer/pages/terminal/terminal_page.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/more_card.dart';
 import 'widgets/more_item.dart';
@@ -52,19 +54,14 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
-  /// 随系统切换深色模式
-  bool _followSystemDarkMode = true;
-
-  /// 深色模式开关
-  bool _darkMode = false;
-
   /// 应用版本
   final String _appVersion = '2.5.0';
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<ThemeViewModel>();
     return Container(
-      color: AppColors.pageBackground,
+      color: AppColors.pageBackgroundDynamic(context),
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
@@ -182,29 +179,26 @@ class _MorePageState extends State<MorePage> {
 
   /// 构建显示类列表项（深色模式相关）
   List<MoreItem> _buildDisplayItems() {
+    final theme = context.read<ThemeViewModel>();
     return [
       MoreItem(
         title: '随系统切换深色模式',
         icon: 'lib/assets/more_autoMode.svg',
         itemType: MoreItemType.switch_,
-        switchValue: _followSystemDarkMode,
+        switchValue: theme.followSystemDarkMode,
         onSwitchChanged: (value) {
-          setState(() {
-            _followSystemDarkMode = value;
-          });
+          theme.setFollowSystemDarkMode(value);
         },
       ),
       MoreItem(
         title: '深色模式',
         icon: 'lib/assets/more_dark.svg',
         itemType: MoreItemType.switch_,
-        switchValue: _darkMode,
-        onSwitchChanged: _followSystemDarkMode
+        switchValue: theme.darkMode,
+        onSwitchChanged: theme.followSystemDarkMode
             ? null
             : (value) {
-                setState(() {
-                  _darkMode = value;
-                });
+                theme.setDarkMode(value);
               },
       ),
     ];

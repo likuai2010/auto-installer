@@ -18,7 +18,7 @@ class TeamDevicePage extends StatelessWidget {
     return Consumer<EcoViewModel>(
       builder: (context, model, child) {
         return Container(
-          color: AppColors.pageBackground,
+          color: AppColors.backgroundSecondaryDynamic(context),
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             children: [

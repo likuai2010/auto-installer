@@ -17,14 +17,10 @@ class TeamDeviceItemWidget extends StatelessWidget {
   /// 是否显示下边框
   final bool showDivider;
 
-  /// 下边框颜色
-  final Color dividerColor;
-
   const TeamDeviceItemWidget({
     super.key,
     required this.item,
     this.showDivider = true,
-    this.dividerColor = AppColors.dividerColor,
   });
 
   @override
@@ -38,7 +34,7 @@ class TeamDeviceItemWidget extends StatelessWidget {
               ? BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: dividerColor,
+                      color: AppColors.compDividerDynamic(context),
                       width: 1,
                     ),
                   ),
@@ -56,7 +52,7 @@ class TeamDeviceItemWidget extends StatelessWidget {
                     top: 16,
                     bottom: 16,
                   ),
-                  child: _buildIcon(),
+                  child: _buildIcon(context),
                 ),
                 // 文字区域
                 Expanded(
@@ -66,10 +62,10 @@ class TeamDeviceItemWidget extends StatelessWidget {
                     children: [
                       Text(
                         item.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.titleTextDark,
+                          color: AppColors.fontPrimaryDynamic(context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -78,10 +74,10 @@ class TeamDeviceItemWidget extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           item.subtitle!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.descriptionTextLight,
+                            color: AppColors.fontSecondaryDynamic(context),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -91,7 +87,7 @@ class TeamDeviceItemWidget extends StatelessWidget {
                   ),
                 ),
                 // 右侧区域：选中勾选或删除按钮
-                _buildTrailing(),
+                _buildTrailing(context),
               ],
             ),
           ),
@@ -103,12 +99,12 @@ class TeamDeviceItemWidget extends StatelessWidget {
   /// 构建左侧图标
   ///
   /// 根据类型使用不同的 Material Icons 作为 fallback
-  Widget _buildIcon() {
+  Widget _buildIcon(BuildContext context) {
     final iconData = _getIconData();
     return Icon(
       iconData,
       size: 24,
-      color: AppColors.iconColor,
+      color: AppColors.iconPrimaryDynamic(context),
     );
   }
 
@@ -128,13 +124,13 @@ class TeamDeviceItemWidget extends StatelessWidget {
   ///
   /// 选中状态显示绿色勾选图标
   /// 历史项支持删除按钮
-  Widget _buildTrailing() {
+  Widget _buildTrailing(BuildContext context) {
     // 选中状态：显示绿色勾选图标
     if (item.isSelected) {
-      return const Icon(
+      return Icon(
         Icons.check_circle,
         size: 24,
-        color: AppColors.success,
+        color: AppColors.confirmDynamic(context),
       );
     }
 
@@ -143,12 +139,12 @@ class TeamDeviceItemWidget extends StatelessWidget {
       return InkWell(
         onTap: item.onDelete,
         borderRadius: BorderRadius.circular(20),
-        child: const Padding(
-          padding: EdgeInsets.all(8),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
           child: Icon(
             Icons.delete_outline,
             size: 20,
-            color: AppColors.descriptionTextLight,
+            color: AppColors.fontSecondaryDynamic(context),
           ),
         ),
       );

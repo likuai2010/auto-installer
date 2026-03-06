@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
       builder: (context, vm, _) {
         return Container(
           height: double.infinity,
-          color: AppColors.pageBackground,
+          color: AppColors.backgroundSecondaryDynamic(context),
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
@@ -159,16 +159,16 @@ class HomePage extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.brandDynamic(context),
             borderRadius: BorderRadius.circular(100),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '开始调试',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.white,
+                color: AppColors.buttonTextPrimary,
               ),
             ),
           ),

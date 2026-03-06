@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/hdc/common.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 
 /// 签名配置半模态框组件
@@ -39,13 +40,13 @@ class SignConfigBox extends StatelessWidget {
       child: Row(
         children: [
           // 标题
-          const Expanded(
+          Expanded(
             child: Text(
               '签名配置',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w500,
-                color: Color.fromRGBO(29, 27, 32, 1),
+                color: AppColors.fontPrimaryDynamic(context),
                 height: 32 / 24,
               ),
             ),
@@ -53,9 +54,9 @@ class SignConfigBox extends StatelessWidget {
           // 关闭按钮
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(
+            icon: Icon(
               Icons.close,
-              color: Color.fromRGBO(0, 0, 0, 0.6),
+              color: AppColors.fontSecondaryDynamic(context),
               size: 32,
             ),
           ),
@@ -95,31 +96,6 @@ class SignConfigBox extends StatelessWidget {
             showFilePicker: true,
             model: model,
           ),
-
-          // const SizedBox(height: 8),
-          // keyAlias - 密钥别名
-          /* _ConfigListItem(
-            title: 'keyAlias',
-            subtitle: '密钥别名',
-            supportingText: '',
-            value: model.signConfig?.keyAlias ?? '',
-            name: 'keyAlias',
-            showFilePicker: false,
-            model: model,
-          ), */
-
-          // const SizedBox(height: 8),
-          // keyPwd - 密钥密码
-          /* _ConfigListItem(
-            title: 'keyPwd',
-            subtitle: '密钥密码',
-            supportingText: '',
-            value: model.signConfig?.keystorePwd ?? '',
-            name: 'keystorePwd',
-            showFilePicker: false,
-            model: model,
-          ),
-         */
         ],
       ),
     );
@@ -154,7 +130,7 @@ class _ConfigListItem extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(minHeight: 96),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(255, 255, 255, 0.8),
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
@@ -180,10 +156,10 @@ class _ConfigListItem extends StatelessWidget {
                     // 标题
                     Text(
                       '$title${subtitle.isNotEmpty ? ' $subtitle' : ''}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(29, 27, 32, 1),
+                        color: AppColors.fontPrimaryDynamic(context),
                         height: 24 / 16,
                         letterSpacing: 0.5,
                       ),
@@ -194,10 +170,10 @@ class _ConfigListItem extends StatelessWidget {
                         supportingText,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(73, 69, 79, 1),
+                          color: AppColors.fontSecondaryDynamic(context),
                           height: 16 / 12,
                           letterSpacing: 0.25,
                         ),
@@ -224,13 +200,25 @@ class _ConfigListItem extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text('编辑 $name'),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.compBackgroundPrimaryDynamic(context),
+        title: Text(
+          '编辑 $name',
+          style: TextStyle(color: AppColors.fontPrimaryDynamic(context)),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            TextField(controller: controller),
+            TextField(
+              controller: controller,
+              style: TextStyle(color: AppColors.fontPrimaryDynamic(context)),
+              decoration: InputDecoration(
+                hintText: '请输入$name',
+                hintStyle:
+                    TextStyle(color: AppColors.fontTertiaryDynamic(context)),
+              ),
+            ),
             const SizedBox(height: 10),
             if (showFilePicker)
               TextButton(
@@ -240,22 +228,31 @@ class _ConfigListItem extends StatelessWidget {
                     controller.text = filePath;
                   }
                 },
-                child: const Text('选择文件'),
+                child: Text(
+                  '选择文件',
+                  style: TextStyle(color: AppColors.brandDynamic(context)),
+                ),
               ),
           ],
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('取消'),
+            child: Text(
+              '取消',
+              style: TextStyle(color: AppColors.fontSecondaryDynamic(context)),
+            ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(ctx).pop();
             },
           ),
           TextButton(
-            child: const Text('确认'),
+            child: Text(
+              '确认',
+              style: TextStyle(color: AppColors.brandDynamic(context)),
+            ),
             onPressed: () {
               _updateConfig(controller.text);
-              Navigator.of(context).pop();
+              Navigator.of(ctx).pop();
             },
           ),
         ],
@@ -335,16 +332,16 @@ class _ChangeButton extends StatelessWidget {
         height: 30,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(57, 107, 223, 0.08),
+          color: AppColors.buttonLightBackgroundDynamic(context),
           borderRadius: BorderRadius.circular(100),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
             '更换',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(57, 107, 223, 1),
+              color: AppColors.buttonLabelTextDynamic(context),
               height: 14 / 12,
             ),
           ),
@@ -409,7 +406,7 @@ class _ToastWidgetState extends State<_ToastWidget> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.7),
+                color: AppColors.darkBackgroundFourth,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Text(

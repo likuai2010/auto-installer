@@ -35,18 +35,24 @@ class TerminalInputBar extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.navBarIndicator,
+                color: AppColors.navBarIndicatorDynamic(context),
                 borderRadius: BorderRadius.circular(28),
               ),
               child: TextField(
                 controller: controller,
                 onSubmitted: onSubmitted,
                 enabled: !loading,
-                style: const TextStyle(fontSize: 14),
-                decoration: const InputDecoration(
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.fontPrimaryDynamic(context),
+                ),
+                decoration: InputDecoration(
                   hintText: '输入 HDC 命令...',
+                  hintStyle: TextStyle(
+                    color: AppColors.fontTertiaryDynamic(context),
+                  ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 12,
                   ),
@@ -59,25 +65,25 @@ class TerminalInputBar extends StatelessWidget {
             width: 48,
             height: 48,
             child: Material(
-              color: AppColors.navBarIndicator,
+              color: AppColors.navBarIndicatorDynamic(context),
               borderRadius: BorderRadius.circular(28),
               child: InkWell(
                 onTap: loading ? null : onSend,
                 borderRadius: BorderRadius.circular(28),
                 child: Center(
                   child: loading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: AppColors.primary,
+                            color: AppColors.brandDynamic(context),
                           ),
                         )
-                      : const Icon(
+                      : Icon(
                           Icons.send,
                           size: 24,
-                          color: AppColors.primary,
+                          color: AppColors.brandDynamic(context),
                         ),
                   // TODO 设计稿的 ICON
                   /* SvgPicture.asset(

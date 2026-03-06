@@ -13,7 +13,7 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         return Container(
-          color: AppColors.pageBackground,
+          color: AppColors.backgroundSecondaryDynamic(context),
           child: Expanded(
             child: model.historyList.isNotEmpty
                 ? ListView.builder(

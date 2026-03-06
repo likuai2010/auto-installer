@@ -30,7 +30,7 @@ class CertListItemWidget extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: AppColors.error,
+        color: AppColors.warningDynamic(context),
         child: const Icon(
           Icons.delete_outline,
           color: Colors.white,
@@ -39,7 +39,7 @@ class CertListItemWidget extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: AppColors.compBackgroundPrimaryDynamic(context),
           borderRadius: BorderRadius.circular(16),
         ),
         child: ClipRRect(
@@ -48,8 +48,6 @@ class CertListItemWidget extends StatelessWidget {
             height: 76,
             child: InkWell(
               onTap: item.onUse,
-              // TODO 用侧滑删除替代长按删除
-              // onLongPress: item.onLongPress,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -66,6 +64,10 @@ class CertListItemWidget extends StatelessWidget {
                         "lib/assets/certkey.svg",
                         width: 24,
                         height: 24,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconPrimaryDynamic(context),
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 0),
@@ -81,8 +83,8 @@ class CertListItemWidget extends StatelessWidget {
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: item.isExpired
-                                  ? AppColors.hintText
-                                  : AppColors.titleTextDark,
+                                  ? AppColors.fontTertiaryDynamic(context)
+                                  : AppColors.fontPrimaryDynamic(context),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -92,15 +94,15 @@ class CertListItemWidget extends StatelessWidget {
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: item.isExpired
-                                  ? AppColors.error
-                                  : AppColors.descriptionTextLight,
+                                  ? AppColors.warningDynamic(context)
+                                  : AppColors.fontSecondaryDynamic(context),
                             ),
                           ),
                         ],
                       ),
                     ),
                     // 右侧按钮
-                    _buildActionButton(),
+                    _buildActionButton(context),
                   ],
                 ),
               ),
@@ -117,22 +119,22 @@ class CertListItemWidget extends StatelessWidget {
   Future<bool?> _showDeleteConfirm(BuildContext context) async {
     return await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('确认删除'),
         content: const Text('删除后此证书签名的Profile将失效，确定要删除吗？'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(ctx, false),
             child: const Text('取消'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context, true);
+              Navigator.pop(ctx, true);
               item.onDelete?.call();
             },
-            child: const Text(
+            child: Text(
               '删除',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: AppColors.warningDynamic(context)),
             ),
           ),
         ],
@@ -146,10 +148,10 @@ class CertListItemWidget extends StatelessWidget {
   /// - 正在使用：显示"正在使用"文本
   /// - 未过期且非当前：显示"使用"按钮
   /// - 已过期：不显示按钮（通过滑动删除）
-  Widget _buildActionButton() {
+  Widget _buildActionButton(BuildContext context) {
     // 正在使用：显示"正在使用"文本
     if (item.isCurrent) {
-      return const SizedBox(
+      return SizedBox(
         width: 80,
         height: 30,
         child: Center(
@@ -158,7 +160,7 @@ class CertListItemWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: AppColors.success,
+              color: AppColors.confirmDynamic(context),
             ),
           ),
         ),
@@ -172,10 +174,9 @@ class CertListItemWidget extends StatelessWidget {
 
     // 未过期且非当前：显示使用按钮
     return _buildCapsuleButton(
+      context: context,
       label: '使用',
       onTap: item.onUse,
-      backgroundColor: AppColors.buttonLightBackground,
-      textColor: AppColors.buttonLabelText,
     );
   }
 
@@ -184,12 +185,13 @@ class CertListItemWidget extends StatelessWidget {
   /// 按钮尺寸: 80x30
   /// 圆角: 100（胶囊形）
   Widget _buildCapsuleButton({
+    required BuildContext context,
     required String label,
     required VoidCallback? onTap,
-    required Color backgroundColor,
-    required Color textColor,
   }) {
     final buttonEnabled = onTap != null;
+    final backgroundColor = AppColors.buttonLightBackgroundDynamic(context);
+    final textColor = AppColors.buttonLabelTextDynamic(context);
     // 禁用状态颜色：背景 4% 透明度，文字 50% 透明度
     final disabledBgColor = backgroundColor.withValues(alpha: 0.04);
     final disabledTextColor = textColor.withValues(alpha: 0.5);

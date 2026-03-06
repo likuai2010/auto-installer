@@ -49,7 +49,7 @@ class AppInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -64,10 +64,10 @@ class AppInfoCard extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(
+              errorBuilder: (context, error, stackTrace) => Icon(
                 Icons.apps,
                 size: 80,
-                color: AppColors.primary,
+                color: AppColors.brandDynamic(context),
               ),
             ),
           ),
@@ -75,20 +75,20 @@ class AppInfoCard extends StatelessWidget {
           // 标题
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w500,
-              color: AppColors.titleTextDark,
+              color: AppColors.fontPrimaryDynamic(context),
             ),
           ),
           const SizedBox(height: 8),
           // 描述
           Text(
             description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.normal,
-              color: AppColors.descriptionTextLight,
+              color: AppColors.fontSecondaryDynamic(context),
             ),
           ),
           const SizedBox(height: 24),

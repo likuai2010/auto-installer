@@ -16,14 +16,10 @@ class HomeSettingCard extends StatelessWidget {
   /// 卡片外边距（默认左右16，上下8）
   final EdgeInsetsGeometry? margin;
 
-  /// 分隔线颜色
-  final Color dividerColor;
-
   const HomeSettingCard({
     super.key,
     required this.items,
     this.margin,
-    this.dividerColor = AppColors.dividerColor,
   });
 
   @override
@@ -38,7 +34,7 @@ class HomeSettingCard extends StatelessWidget {
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: ClipRRect(
@@ -51,7 +47,6 @@ class HomeSettingCard extends StatelessWidget {
             return HomeSettingItemWidget(
               item: visibleItems[index],
               showDivider: index < visibleItems.length - 1,
-              dividerColor: dividerColor,
             );
           },
         ),

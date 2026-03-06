@@ -33,15 +33,15 @@ class CertListCard extends StatelessWidget {
             margin: margin,
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.compBackgroundPrimaryDynamic(context),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 '暂无证书',
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.hintText,
+                  color: AppColors.fontTertiaryDynamic(context),
                 ),
               ),
             ),

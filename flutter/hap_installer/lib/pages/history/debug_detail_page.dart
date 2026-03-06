@@ -13,12 +13,12 @@ class DebugDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: AppColors.backgroundSecondaryDynamic(context),
       appBar: AppBar(
         title: const Text('调试详情'),
-        backgroundColor: AppColors.pageBarBackground,
-        titleTextStyle: const TextStyle(
-          color: AppColors.pageBarTitle,
+        backgroundColor: AppColors.pageBarBackgroundDynamic(context),
+        titleTextStyle: TextStyle(
+          color: AppColors.pageBarTitleDynamic(context),
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
@@ -26,12 +26,14 @@ class DebugDetailPage extends StatelessWidget {
       body: Consumer<HistoryViewModel>(
         builder: (_, model, child) {
           if (model.current == null) {
-            return const Center(
-              child: Text(
-                "暂无调试信息",
-                style: TextStyle(
-                  color: AppColors.hintText,
-                  fontSize: 14,
+            return Center(
+              child: Builder(
+                builder: (context) => Text(
+                  "暂无调试信息",
+                  style: TextStyle(
+                    color: AppColors.fontTertiaryDynamic(context),
+                    fontSize: 14,
+                  ),
                 ),
               ),
             );
@@ -69,16 +71,20 @@ class DebugDetailPage extends StatelessWidget {
                       }
                     : null,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  disabledBackgroundColor: AppColors.buttonSecondary,
+                  backgroundColor: AppColors.brandDynamic(context),
+                  disabledBackgroundColor: AppColors.buttonSecondaryDynamic(context),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
                   ),
                 ),
-                child: Text(
-                  isFinished ? "返回" : "调试中",
-                  style: TextStyle(
-                    color: isFinished ? Colors.white : AppColors.hintText,
+                child: Builder(
+                  builder: (context) => Text(
+                    isFinished ? "返回" : "调试中",
+                    style: TextStyle(
+                      color: isFinished
+                          ? AppColors.buttonTextPrimary
+                          : AppColors.fontTertiaryDynamic(context),
+                    ),
                   ),
                 ),
               ),

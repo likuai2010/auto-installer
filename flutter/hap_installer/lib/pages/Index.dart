@@ -96,7 +96,13 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
               builder: (context) => const SignConfigBox(),
             );
           },
-          icon: SvgPicture.asset("lib/assets/edit.svg"),
+          icon: SvgPicture.asset(
+            "lib/assets/edit.svg",
+            colorFilter: ColorFilter.mode(
+              AppColors.iconPrimaryDynamic(context),
+              BlendMode.srcIn,
+            ),
+          ),
         ),
       );
     }
@@ -113,7 +119,7 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
     }
     return AppBar(
       title: Text(appBarTitleFor(pageSelected)),
-      backgroundColor: AppColors.pageBarBackground,
+      backgroundColor: AppColors.pageBarBackgroundDynamic(context),
       centerTitle: false,
       actions: actions,
     );

@@ -5,11 +5,11 @@ import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/pages/terminal/widgets/terminal_input_bar.dart';
 import 'package:hap_installer/pages/terminal/widgets/terminal_output.dart';
-import 'package:hap_installer/core/constants/app_colors.dart';
 
 /// HDC 命令行终端页面
 ///
 /// 提供类似终端的界面，用于执行 HDC 命令并查看输出
+/// 参考 ACL Page 的配色风格，使用 Theme 默认背景色
 class TerminalPage extends StatefulWidget {
   const TerminalPage({super.key});
 
@@ -72,43 +72,6 @@ class TerminalPageState extends State<TerminalPage> {
     });
   }
 
-  /// 清空命令输出结果
-  void clearResult() {
-    setState(() {
-      cmdResult = [];
-    });
-  }
-
-  /// 加载 HDC 日志文件
-  Future<void> loadLog() async {
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      final logPath = '${await getTempDir()}hdc.log';
-      final logFile = File(logPath);
-      if (await logFile.exists()) {
-        final log = await logFile.readAsString();
-        setState(() {
-          cmdResult = [log];
-        });
-      } else {
-        setState(() {
-          cmdResult = ['日志文件不存在: $logPath'];
-        });
-      }
-    } catch (e) {
-      setState(() {
-        cmdResult = ['加载日志失败: $e'];
-      });
-    }
-
-    setState(() {
-      loading = false;
-    });
-  }
-
   /// 滚动到底部
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -120,22 +83,23 @@ class TerminalPageState extends State<TerminalPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 参考 ACL Page：不显式设置背景色，使用 Theme 默认值
+    // 这样深色模式下外层是深灰色，与纯黑终端形成边框对比
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text('命令行工具'),
-        backgroundColor: AppColors.pageBarBackground,
         centerTitle: false,
         actions: [
           IconButton(
             onPressed: () async {
               final logPath = "${await getTempDir()}hdc.log";
-              var log = await File(logPath).readAsString();
+              final log = await File(logPath).readAsString();
               setState(() {
                 cmdResult = [log];
               });
             },
-            icon: const Icon(Icons.abc),
+            tooltip: '加载日志',
+            icon: const Icon(Icons.description_outlined),
           ),
           IconButton(
             onPressed: () {
@@ -143,12 +107,13 @@ class TerminalPageState extends State<TerminalPage> {
                 cmdResult = [];
               });
             },
+            tooltip: '清空',
             icon: const Icon(Icons.clear),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(16),
         child: TerminalOutput(
           cmdResult: cmdResult,
           scrollController: scrollController,

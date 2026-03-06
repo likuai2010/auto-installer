@@ -20,48 +20,48 @@ class DebugStepItemWidget extends StatelessWidget {
   final VoidCallback? onReset;
 
   /// 获取步骤状态图标
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     // loading == null: 待进行
     // loading == true: 进行中
     // loading == false && error == null: 完成
     // loading == false && error != null: 出现错误
     if (info.loading == null) {
       // 待进行 - 灰色圆环图标 (70% 进度)
-      return const SizedBox(
+      return SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(
           value: 0.7,
           strokeWidth: 2,
-          color: AppColors.hintText,
+          color: AppColors.fontTertiaryDynamic(context),
         ),
       );
     } else if (info.loading == true) {
       // 进行中 - 加载动画
-      return const SizedBox(
+      return SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: AppColors.primary,
+          color: AppColors.brandDynamic(context),
         ),
       );
     }
 
     // 完成 - 勾选图标
     if (info.error == null) {
-      return const Icon(
+      return Icon(
         Icons.check_circle,
         size: 24,
-        color: AppColors.success,
+        color: AppColors.confirmDynamic(context),
       );
     }
 
     // 出现错误 - 警告图标
-    return const Icon(
+    return Icon(
       Icons.warning_rounded,
       size: 24,
-      color: AppColors.warning,
+      color: AppColors.warningDynamic(context),
     );
   }
 
@@ -79,7 +79,7 @@ class DebugStepItemWidget extends StatelessWidget {
   }
 
   /// 构建错误详情区域
-  Widget _buildErrorSection() {
+  Widget _buildErrorSection(BuildContext context) {
     if (info.error == null || info.loading != false) {
       return const SizedBox.shrink();
     }
@@ -93,9 +93,9 @@ class DebugStepItemWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left: 40),
           child: Text(
             info.error!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.6,
-              color: AppColors.descriptionTextLight,
+              color: AppColors.fontSecondaryDynamic(context),
             ),
           ),
         ),
@@ -111,11 +111,11 @@ class DebugStepItemWidget extends StatelessWidget {
                 color: AppColors.buttonLightBackground,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: const Text(
+              child: Text(
                 "重置证书和Proflie",
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.primary,
+                  color: AppColors.brandDynamic(context),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -132,7 +132,7 @@ class DebugStepItemWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.compBackgroundPrimaryDynamic(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -141,7 +141,7 @@ class DebugStepItemWidget extends StatelessWidget {
           // 状态图标 + 标题 + 描述
           Row(
             children: [
-              _buildStatusIcon(),
+              _buildStatusIcon(context),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -149,18 +149,18 @@ class DebugStepItemWidget extends StatelessWidget {
                   children: [
                     Text(
                       _getStatusTitle(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.6,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryText,
+                        color: AppColors.fontPrimaryDynamic(context),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       info.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.6,
-                        color: AppColors.descriptionTextLight,
+                        color: AppColors.fontSecondaryDynamic(context),
                       ),
                     ),
                   ],
@@ -169,7 +169,7 @@ class DebugStepItemWidget extends StatelessWidget {
             ],
           ),
           // 错误详情区域
-          _buildErrorSection(),
+          _buildErrorSection(context),
         ],
       ),
     );

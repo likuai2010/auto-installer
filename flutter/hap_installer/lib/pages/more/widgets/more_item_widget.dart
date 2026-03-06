@@ -18,14 +18,10 @@ class MoreItemWidget extends StatelessWidget {
   /// 是否显示下边框
   final bool showDivider;
 
-  /// 下边框颜色
-  final Color dividerColor;
-
   const MoreItemWidget({
     super.key,
     required this.item,
     this.showDivider = true,
-    this.dividerColor = AppColors.dividerColor,
   });
 
   @override
@@ -39,7 +35,7 @@ class MoreItemWidget extends StatelessWidget {
               ? BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: dividerColor,
+                      color: AppColors.compDividerDynamic(context),
                       width: 1,
                     ),
                   ),
@@ -52,21 +48,21 @@ class MoreItemWidget extends StatelessWidget {
                 // 左侧图标
                 Padding(
                   padding: const EdgeInsets.only(right: 16),
-                  child: _buildIcon(),
+                  child: _buildIcon(context),
                 ),
                 // 标题
                 Expanded(
                   child: Text(
                     item.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(0, 0, 0, 0.9),
+                      color: AppColors.fontPrimaryDynamic(context),
                     ),
                   ),
                 ),
                 // 右侧元素
-                _buildTrailing(),
+                _buildTrailing(context),
               ],
             ),
           ),
@@ -78,13 +74,13 @@ class MoreItemWidget extends StatelessWidget {
   /// 构建左侧图标
   ///
   /// 优先使用 IconData，其次使用 SVG 路径
-  Widget _buildIcon() {
+  Widget _buildIcon(BuildContext context) {
     // 优先使用 Material Icon
     if (item.iconData != null) {
       return Icon(
         item.iconData,
         size: 24,
-        color: AppColors.iconColor,
+        color: AppColors.iconPrimaryDynamic(context),
       );
     }
 
@@ -93,42 +89,42 @@ class MoreItemWidget extends StatelessWidget {
       item.icon!,
       width: 24,
       height: 24,
-      colorFilter: const ColorFilter.mode(
-        AppColors.iconColor,
+      colorFilter: ColorFilter.mode(
+        AppColors.iconPrimaryDynamic(context),
         BlendMode.srcIn,
       ),
-      placeholderBuilder: (context) => const Icon(
+      placeholderBuilder: (context) => Icon(
         Icons.circle_outlined,
         size: 24,
-        color: AppColors.iconColor,
+        color: AppColors.iconPrimaryDynamic(context),
       ),
     );
   }
 
   /// 根据类型构建右侧元素
-  Widget _buildTrailing() {
+  Widget _buildTrailing(BuildContext context) {
     switch (item.itemType) {
       case MoreItemType.arrow:
-        return const Icon(
+        return Icon(
           Icons.chevron_right,
           size: 24,
-          color: Color.fromRGBO(0, 0, 0, 0.3),
+          color: AppColors.fontTertiaryDynamic(context),
         );
       case MoreItemType.switch_:
         return Switch(
           value: item.switchValue,
           onChanged: item.onSwitchChanged,
           // 选中状态
-          activeColor: AppColors.switchActiveThumb,
-          activeTrackColor: AppColors.switchActiveTrack,
+          activeColor: AppColors.switchActiveThumbDynamic(context),
+          activeTrackColor: AppColors.switchActiveTrackDynamic(context),
           // 未选中状态
-          inactiveThumbColor: AppColors.switchInactiveThumb,
-          inactiveTrackColor: AppColors.switchInactiveTrack,
+          inactiveThumbColor: AppColors.switchInactiveThumbDynamic(context),
+          inactiveTrackColor: AppColors.switchInactiveTrackDynamic(context),
           trackOutlineColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return Colors.transparent;
             }
-            return AppColors.switchTrackOutline;
+            return AppColors.switchTrackOutlineDynamic(context);
           }),
           trackOutlineWidth: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -140,14 +136,14 @@ class MoreItemWidget extends StatelessWidget {
       case MoreItemType.text:
         return Text(
           item.trailingText ?? '',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: Color.fromRGBO(0, 0, 0, 0.6),
+            color: AppColors.fontSecondaryDynamic(context),
           ),
         );
       case MoreItemType.button:
-        return _buildCapsuleButton();
+        return _buildCapsuleButton(context);
     }
   }
 
@@ -158,10 +154,10 @@ class MoreItemWidget extends StatelessWidget {
   /// 背景: rgba(57,107,223,0.08)
   /// 文字: 蓝色 12px
   /// 加载中: 显示圆环加载条
-  Widget _buildCapsuleButton() {
+  Widget _buildCapsuleButton(BuildContext context) {
     // 加载中状态：显示圆环加载条
     if (item.isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 80,
         height: 30,
         child: Center(
@@ -171,7 +167,7 @@ class MoreItemWidget extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor:
-                  AlwaysStoppedAnimation<Color>(AppColors.buttonLabelText),
+                  AlwaysStoppedAnimation<Color>(AppColors.brandDynamic(context)),
             ),
           ),
         ),
@@ -180,8 +176,8 @@ class MoreItemWidget extends StatelessWidget {
 
     final buttonEnabled = item.onButtonTap != null;
     // 禁用状态颜色
-    const disabledBgColor = Color.fromRGBO(57, 107, 223, 0.04);
-    const disabledTextColor = Color.fromRGBO(57, 107, 223, 0.5);
+    final disabledBgColor = AppColors.brandDynamic(context).withValues(alpha: 0.04);
+    final disabledTextColor = AppColors.brandDynamic(context).withValues(alpha: 0.5);
 
     return SizedBox(
       width: 80,
