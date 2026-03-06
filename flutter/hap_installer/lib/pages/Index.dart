@@ -174,7 +174,32 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
           scaffoldKey: scaffoldKey,
           animationController: controller,
           appBar: _createAppBar(context, PageSelected.values[screenIndex]),
-          body: createScreenFor(PageSelected.values[screenIndex]),
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            reverseDuration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.05, 0.0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: child,
+                ),
+              );
+            },
+            layoutBuilder: (currentChild, previousChildren) {
+              return currentChild ?? const SizedBox.shrink();
+            },
+            child: KeyedSubtree(
+              key: ValueKey(PageSelected.values[screenIndex]),
+              child: createScreenFor(PageSelected.values[screenIndex]),
+            ),
+          ),
           navigationRail: NavigationRail(
             extended: showLargeSizeLayout,
             destinations: _navRailDestinations,
