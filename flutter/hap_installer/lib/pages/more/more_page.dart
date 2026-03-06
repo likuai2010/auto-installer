@@ -87,20 +87,14 @@ class _MorePageState extends State<MorePage> {
         title: '命令行工具',
         icon: 'lib/assets/more_console.svg',
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const TerminalPage()),
-          );
+          toPage(context, (_) => const TerminalPage());
         },
       ),
       MoreItem.withIcon(
         title: 'ACL权限',
         iconData: Icons.settings_cell,
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AclPage()),
-          );
+          toPage(context, (_) => const AclPage());
         },
       ),
     ];

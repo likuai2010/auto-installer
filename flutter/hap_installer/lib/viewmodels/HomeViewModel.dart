@@ -31,10 +31,7 @@ class HomeViewModel {
   /// 将 HAP 安装到设备
   void startDebug(BuildContext context, EcoViewModel vm) {
     // 导航到调试详情页
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const DebugDetailPage()),
-    );
+    toPage(context, (_) => const DebugDetailPage());
     // 安装 HAP 到设备
     vm.installHap(context);
   }

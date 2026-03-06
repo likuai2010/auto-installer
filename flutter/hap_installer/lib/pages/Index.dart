@@ -36,7 +36,7 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
   initState() {
     super.initState();
     controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 300),
       value: 0,
       vsync: this,
     );

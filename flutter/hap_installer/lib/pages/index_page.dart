@@ -50,11 +50,7 @@ class IndexPage extends StatelessWidget {
               return Center(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const DebugDetailPage()),
-                    );
+                    toPage(context, (_) => const DebugDetailPage());
                     model.installHap(context);
                   },
                   child: const Padding(
