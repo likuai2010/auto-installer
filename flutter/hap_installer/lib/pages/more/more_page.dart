@@ -231,11 +231,6 @@ class _MorePageState extends State<MorePage> {
   List<MoreItem> _buildAboutItems() {
     return [
       MoreItem(
-        title: '充电支持',
-        icon: 'lib/assets/more_sponsor.svg',
-        onTap: () => toPage(context, (_) => const PayPage()),
-      ),
-      MoreItem(
         title: '应用版本',
         icon: 'lib/assets/tips.svg',
         itemType: MoreItemType.text,

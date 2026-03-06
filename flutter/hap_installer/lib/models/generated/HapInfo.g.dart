@@ -13,8 +13,11 @@ _$HapInfoImpl _$$HapInfoImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      version: json['version'] as String? ?? null,
-      icon: json['icon'] as String? ?? null,
+      version: json['version'] as String? ?? "",
+      icon:
+          (json['icon'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const [],
+      label: json['label'] as String? ?? "",
       deviceType: (json['deviceType'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -27,5 +30,6 @@ Map<String, dynamic> _$$HapInfoImplToJson(_$HapInfoImpl instance) =>
       'pathList': instance.pathList,
       'version': instance.version,
       'icon': instance.icon,
+      'label': instance.label,
       'deviceType': instance.deviceType,
     };

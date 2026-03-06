@@ -8,8 +8,9 @@ abstract class HapInfo with _$HapInfo {
   const factory HapInfo({
     @Default("") String packageName,
     @Default([]) List<String> pathList,
-    @Default(null) String? version,
-    @Default(null) String? icon,
+    @Default("") String version,
+    @Default([]) List<String> icon,
+    @Default("") String label,
     @Default([]) List<String> deviceType,
   }) = _HapInfo;
   factory HapInfo.fromJson(Map<String, dynamic> json) =>

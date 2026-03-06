@@ -13,6 +13,8 @@ class HomeSettingItem {
 
   /// 图标路径（激活状态）
   final String? activeIcon;
+  // 自定义icon
+  final List<String> iconPaths;
 
   /// 按钮文本
   final String buttonLabel;
@@ -37,6 +39,7 @@ class HomeSettingItem {
     required this.description,
     required this.icon,
     this.activeIcon,
+    this.iconPaths = const [],
     required this.buttonLabel,
     this.isActive = false,
     this.isVisible = true,

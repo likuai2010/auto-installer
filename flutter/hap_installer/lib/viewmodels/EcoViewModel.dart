@@ -15,6 +15,8 @@ import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
+import 'package:hap_installer/pages/more_page.dart';
+import 'package:hap_installer/viewmodels/restool.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
@@ -390,7 +392,7 @@ class EcoViewModel extends ChangeNotifier {
       hapInfo = HapInfo(
           packageName: moduleInfo.app?.bundleName ?? "未知",
           pathList: ["$appsDir/base_hnp.hap"],
-          version: moduleInfo.app?.versionName,
+          version: moduleInfo.app?.versionName  ?? "未知",
           deviceType: moduleInfo.module?.deviceTypes ?? []);
 
       final message = await cmd.buildHap(hnpInDir, "$appsDir/base_hnp.hap");
@@ -441,20 +443,20 @@ class EcoViewModel extends ChangeNotifier {
     currentDevice = id;
     cmd.changeTarget(id);
     notifyListeners();
+    historyViewModel?.initDebugAppList();
   }
 
   Future tryConnectToDevice(BuildContext context, String id) async {
     if (deviceList.contains(id)) {
-      currentDevice = id;
-      cmd.changeTarget(id);
-      notifyListeners();
+      changeDevice(id);
       return true;
     } else {
       final ips = id.split(":");
       var result = await connectDevice(context, ips.first, ips.last);
       if (result) {
-        currentDevice = id;
+        changeDevice(id);
       }
+    
       return result;
     }
   }
@@ -517,6 +519,7 @@ class EcoViewModel extends ChangeNotifier {
       throw FormatException("文件不存在: $hapPath");
     }
     await initDebugPath();
+
     final debugDir = Directory(debugPath);
     if (await debugDir.exists()) {
       await debugDir.delete(recursive: true);
@@ -536,21 +539,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    final err = await cmd.unzip_Hap(
-      pathList.last,
-      "module.json",
-      path.join(debugPath, "module.json"),
-    );
-    if (err != "成功") {
-      throw FormatException("解压文件失败: $err");
-    }
-    print("readModuleInfo  $hapPath  $err");
-    final moduleInfo = await cmd.readModuleInfo(debugPath);
-    return HapInfo(
-        packageName: moduleInfo.app?.bundleName ?? "未知",
-        pathList: pathList,
-        version: moduleInfo.app?.versionName,
-        deviceType: moduleInfo.module?.deviceTypes ?? []);
+    return await dumpToHap(pathList,debugPath);
   }
 
   initJavaRuntme(javapath, tempDir) async {
