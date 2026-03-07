@@ -48,7 +48,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   desktop_drop: e0b672a7d84c0a6cbc378595e82cdb15f2970a43
-  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   native_core: 007cf8dbac69628c704a22ac18f60a1b81657bef
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   pdf_render: 97e703cf7cd7122ab240825e8c99dc0616c5123c

@@ -22,8 +22,9 @@ HapInfo _$HapInfoFromJson(Map<String, dynamic> json) {
 mixin _$HapInfo {
   String get packageName => throw _privateConstructorUsedError;
   List<String> get pathList => throw _privateConstructorUsedError;
-  String? get version => throw _privateConstructorUsedError;
-  String? get icon => throw _privateConstructorUsedError;
+  String get version => throw _privateConstructorUsedError;
+  List<String> get icon => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
   List<String> get deviceType => throw _privateConstructorUsedError;
 
   /// Serializes this HapInfo to a JSON map.
@@ -43,8 +44,9 @@ abstract class $HapInfoCopyWith<$Res> {
   $Res call(
       {String packageName,
       List<String> pathList,
-      String? version,
-      String? icon,
+      String version,
+      List<String> icon,
+      String label,
       List<String> deviceType});
 }
 
@@ -65,8 +67,9 @@ class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
   $Res call({
     Object? packageName = null,
     Object? pathList = null,
-    Object? version = freezed,
-    Object? icon = freezed,
+    Object? version = null,
+    Object? icon = null,
+    Object? label = null,
     Object? deviceType = null,
   }) {
     return _then(_value.copyWith(
@@ -78,14 +81,18 @@ class _$HapInfoCopyWithImpl<$Res, $Val extends HapInfo>
           ? _value.pathList
           : pathList // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      version: freezed == version
+      version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String?,
-      icon: freezed == icon
+              as String,
+      icon: null == icon
           ? _value.icon
           : icon // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<String>,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
       deviceType: null == deviceType
           ? _value.deviceType
           : deviceType // ignore: cast_nullable_to_non_nullable
@@ -104,8 +111,9 @@ abstract class _$$HapInfoImplCopyWith<$Res> implements $HapInfoCopyWith<$Res> {
   $Res call(
       {String packageName,
       List<String> pathList,
-      String? version,
-      String? icon,
+      String version,
+      List<String> icon,
+      String label,
       List<String> deviceType});
 }
 
@@ -124,8 +132,9 @@ class __$$HapInfoImplCopyWithImpl<$Res>
   $Res call({
     Object? packageName = null,
     Object? pathList = null,
-    Object? version = freezed,
-    Object? icon = freezed,
+    Object? version = null,
+    Object? icon = null,
+    Object? label = null,
     Object? deviceType = null,
   }) {
     return _then(_$HapInfoImpl(
@@ -137,14 +146,18 @@ class __$$HapInfoImplCopyWithImpl<$Res>
           ? _value._pathList
           : pathList // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      version: freezed == version
+      version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String?,
-      icon: freezed == icon
-          ? _value.icon
+              as String,
+      icon: null == icon
+          ? _value._icon
           : icon // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<String>,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
       deviceType: null == deviceType
           ? _value._deviceType
           : deviceType // ignore: cast_nullable_to_non_nullable
@@ -159,10 +172,12 @@ class _$HapInfoImpl implements _HapInfo {
   const _$HapInfoImpl(
       {this.packageName = "",
       final List<String> pathList = const [],
-      this.version = null,
-      this.icon = null,
+      this.version = "",
+      final List<String> icon = const [],
+      this.label = "",
       final List<String> deviceType = const []})
       : _pathList = pathList,
+        _icon = icon,
         _deviceType = deviceType;
 
   factory _$HapInfoImpl.fromJson(Map<String, dynamic> json) =>
@@ -182,10 +197,19 @@ class _$HapInfoImpl implements _HapInfo {
 
   @override
   @JsonKey()
-  final String? version;
+  final String version;
+  final List<String> _icon;
   @override
   @JsonKey()
-  final String? icon;
+  List<String> get icon {
+    if (_icon is EqualUnmodifiableListView) return _icon;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_icon);
+  }
+
+  @override
+  @JsonKey()
+  final String label;
   final List<String> _deviceType;
   @override
   @JsonKey()
@@ -197,7 +221,7 @@ class _$HapInfoImpl implements _HapInfo {
 
   @override
   String toString() {
-    return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon, deviceType: $deviceType)';
+    return 'HapInfo(packageName: $packageName, pathList: $pathList, version: $version, icon: $icon, label: $label, deviceType: $deviceType)';
   }
 
   @override
@@ -209,7 +233,8 @@ class _$HapInfoImpl implements _HapInfo {
                 other.packageName == packageName) &&
             const DeepCollectionEquality().equals(other._pathList, _pathList) &&
             (identical(other.version, version) || other.version == version) &&
-            (identical(other.icon, icon) || other.icon == icon) &&
+            const DeepCollectionEquality().equals(other._icon, _icon) &&
+            (identical(other.label, label) || other.label == label) &&
             const DeepCollectionEquality()
                 .equals(other._deviceType, _deviceType));
   }
@@ -221,7 +246,8 @@ class _$HapInfoImpl implements _HapInfo {
       packageName,
       const DeepCollectionEquality().hash(_pathList),
       version,
-      icon,
+      const DeepCollectionEquality().hash(_icon),
+      label,
       const DeepCollectionEquality().hash(_deviceType));
 
   /// Create a copy of HapInfo
@@ -244,8 +270,9 @@ abstract class _HapInfo implements HapInfo {
   const factory _HapInfo(
       {final String packageName,
       final List<String> pathList,
-      final String? version,
-      final String? icon,
+      final String version,
+      final List<String> icon,
+      final String label,
       final List<String> deviceType}) = _$HapInfoImpl;
 
   factory _HapInfo.fromJson(Map<String, dynamic> json) = _$HapInfoImpl.fromJson;
@@ -255,9 +282,11 @@ abstract class _HapInfo implements HapInfo {
   @override
   List<String> get pathList;
   @override
-  String? get version;
+  String get version;
   @override
-  String? get icon;
+  List<String> get icon;
+  @override
+  String get label;
   @override
   List<String> get deviceType;
 

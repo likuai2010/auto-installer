@@ -128,10 +128,11 @@ class HomePage extends StatelessWidget {
       ),
       // 3. 安装包选择
       HomeSettingItem(
-        title: vm.hapInfo?.packageName ?? '未选择',
-        description: '软件安装包',
+        title: vm.hapInfo != null ? vm.hapInfo!.packageName : '未选择',
+        description: vm.hapInfo != null ? "${vm.hapInfo!.label} (${vm.hapInfo!.version})" : '软件安装包',
         icon: 'lib/assets/file_un_select.svg',
         activeIcon: 'lib/assets/file_select.svg',
+        iconPaths: vm.hapInfo?.icon ?? [],
         buttonLabel: vm.hapInfo != null ? '更换' : '选择',
         isActive: vm.hapInfo != null,
         isVisible: vm.currentDevice != null,

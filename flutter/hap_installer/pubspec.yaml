@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^2.19.6
+  sdk: ^3.0.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -53,7 +53,7 @@ dependencies:
       path: "packages/shared_preferences/shared_preferences"
       ref: "br_shared_preferences-v2.5.3_ohos"
   file_picker: ^5.3.1
-  archive: ^3.4.10
+  archive: ^4.0.9
   webview_flutter: ^4.4.2
   ohos_adapter:
     path: plugins/ohos_adapter

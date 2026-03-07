@@ -23,6 +23,8 @@ mixin _$AppInfo {
   String get bundleName => throw _privateConstructorUsedError;
   String get compileSdkVersion => throw _privateConstructorUsedError;
   String get versionName => throw _privateConstructorUsedError;
+  String get icon => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
 
   /// Serializes this AppInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +40,12 @@ abstract class $AppInfoCopyWith<$Res> {
   factory $AppInfoCopyWith(AppInfo value, $Res Function(AppInfo) then) =
       _$AppInfoCopyWithImpl<$Res, AppInfo>;
   @useResult
-  $Res call({String bundleName, String compileSdkVersion, String versionName});
+  $Res call(
+      {String bundleName,
+      String compileSdkVersion,
+      String versionName,
+      String icon,
+      String label});
 }
 
 /// @nodoc
@@ -59,6 +66,8 @@ class _$AppInfoCopyWithImpl<$Res, $Val extends AppInfo>
     Object? bundleName = null,
     Object? compileSdkVersion = null,
     Object? versionName = null,
+    Object? icon = null,
+    Object? label = null,
   }) {
     return _then(_value.copyWith(
       bundleName: null == bundleName
@@ -73,6 +82,14 @@ class _$AppInfoCopyWithImpl<$Res, $Val extends AppInfo>
           ? _value.versionName
           : versionName // ignore: cast_nullable_to_non_nullable
               as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -84,7 +101,12 @@ abstract class _$$AppInfoImplCopyWith<$Res> implements $AppInfoCopyWith<$Res> {
       __$$AppInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String bundleName, String compileSdkVersion, String versionName});
+  $Res call(
+      {String bundleName,
+      String compileSdkVersion,
+      String versionName,
+      String icon,
+      String label});
 }
 
 /// @nodoc
@@ -103,6 +125,8 @@ class __$$AppInfoImplCopyWithImpl<$Res>
     Object? bundleName = null,
     Object? compileSdkVersion = null,
     Object? versionName = null,
+    Object? icon = null,
+    Object? label = null,
   }) {
     return _then(_$AppInfoImpl(
       bundleName: null == bundleName
@@ -117,6 +141,14 @@ class __$$AppInfoImplCopyWithImpl<$Res>
           ? _value.versionName
           : versionName // ignore: cast_nullable_to_non_nullable
               as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -127,7 +159,9 @@ class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
   const _$AppInfoImpl(
       {this.bundleName = "",
       this.compileSdkVersion = "",
-      this.versionName = ""});
+      this.versionName = "",
+      this.icon = "",
+      this.label = ""});
 
   factory _$AppInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$AppInfoImplFromJson(json);
@@ -141,10 +175,16 @@ class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
   @override
   @JsonKey()
   final String versionName;
+  @override
+  @JsonKey()
+  final String icon;
+  @override
+  @JsonKey()
+  final String label;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AppInfo(bundleName: $bundleName, compileSdkVersion: $compileSdkVersion, versionName: $versionName)';
+    return 'AppInfo(bundleName: $bundleName, compileSdkVersion: $compileSdkVersion, versionName: $versionName, icon: $icon, label: $label)';
   }
 
   @override
@@ -154,7 +194,9 @@ class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
       ..add(DiagnosticsProperty('type', 'AppInfo'))
       ..add(DiagnosticsProperty('bundleName', bundleName))
       ..add(DiagnosticsProperty('compileSdkVersion', compileSdkVersion))
-      ..add(DiagnosticsProperty('versionName', versionName));
+      ..add(DiagnosticsProperty('versionName', versionName))
+      ..add(DiagnosticsProperty('icon', icon))
+      ..add(DiagnosticsProperty('label', label));
   }
 
   @override
@@ -167,13 +209,15 @@ class _$AppInfoImpl with DiagnosticableTreeMixin implements _AppInfo {
             (identical(other.compileSdkVersion, compileSdkVersion) ||
                 other.compileSdkVersion == compileSdkVersion) &&
             (identical(other.versionName, versionName) ||
-                other.versionName == versionName));
+                other.versionName == versionName) &&
+            (identical(other.icon, icon) || other.icon == icon) &&
+            (identical(other.label, label) || other.label == label));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, bundleName, compileSdkVersion, versionName);
+  int get hashCode => Object.hash(
+      runtimeType, bundleName, compileSdkVersion, versionName, icon, label);
 
   /// Create a copy of AppInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -195,7 +239,9 @@ abstract class _AppInfo implements AppInfo {
   const factory _AppInfo(
       {final String bundleName,
       final String compileSdkVersion,
-      final String versionName}) = _$AppInfoImpl;
+      final String versionName,
+      final String icon,
+      final String label}) = _$AppInfoImpl;
 
   factory _AppInfo.fromJson(Map<String, dynamic> json) = _$AppInfoImpl.fromJson;
 
@@ -205,6 +251,10 @@ abstract class _AppInfo implements AppInfo {
   String get compileSdkVersion;
   @override
   String get versionName;
+  @override
+  String get icon;
+  @override
+  String get label;
 
   /// Create a copy of AppInfo
   /// with the given fields replaced by the non-null parameter values.

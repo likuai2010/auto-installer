@@ -10,6 +10,8 @@ abstract class AppInfo with _$AppInfo {
     @Default("") String bundleName,
     @Default("") String compileSdkVersion,
     @Default("") String versionName,
+    @Default("") String icon,
+    @Default("") String label,
   }) = _AppInfo;
   // 从JSON构建
   factory AppInfo.fromJson(Map<String, dynamic> json) =>

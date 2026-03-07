@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
+import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
+import 'package:hap_installer/viewmodels/restool.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:process_run/shell.dart';
@@ -176,6 +178,31 @@ class CmdService {
   Future toApp(String packageName) async{
     var cmd = "hdc $_t shell aa start -U 'https://appgallery.huawei.com/app/detail?id=$packageName' --pb appLinkingOnly true";
     return await baseCmd(cmd);
+  }
+  Future<String?> sendFile(String localPath, String targetPath) async {
+    final result = await baseCmd('hdc $_t file send "$localPath" "$targetPath"');
+    return result;
+  }
+  Future<String?> recvFile(String remotePath, String targetPath) async {
+    final result = await baseCmd('hdc $_t file recv $remotePath $targetPath');
+    return result;
+  }
+  Future<String?> dumpAppPackageName() async {
+    if(_t.isEmpty) return null;
+    final result = await baseCmd('hdc $_t shell bm dump -g');
+    return result;
+  }
+  Future<String?> dumpAppDetail(String packageName) async {
+    final result = await baseCmd('hdc $_t shell bm dump -n $packageName');
+    return result;
+  }
+   Future<String?> dumpAppInstallTime(String packageName) async {
+    final result = await baseCmd('hdc $_t shell bm dump -n $packageName | grep installTime');
+    return result;
+  }
+  Future<String?> getDeviceName() async {
+    final result = await baseCmd('hdc $_t hidumper -c base | grep MarketName');
+    return result;
   }
   Future<String?> installHap(String filePath) async {
     if (!await File(filePath).exists()) {
@@ -486,3 +513,63 @@ Future<bool> runHdc() async {
     return false;
   }
 }
+
+dumpToHap(List<String> pathList, String debugPath) async{
+    final hapPath = pathList.last;
+    await getByHap(hapPath, "module.json", debugPath);
+    final info = await cmd.readModuleInfo(debugPath);
+    if(info.app == null || info.module == null) {
+      throw Exception("app info is null");
+    }
+    final packageName = info.app!.bundleName;
+    final appDir = Directory(path.join(debugPath, packageName.replaceAll(".", "_")));
+    if(!await appDir.exists()){
+      await appDir.create(recursive: true);
+    }
+    await getByHap(hapPath, "resources.index", debugPath);
+    const moduleName = "entry";
+    final icon = info.app!.icon;
+    final resResitems = resTool.dumpRes(path.join(debugPath, "resources.index"));
+    var iconValue = resResitems.firstWhere((f) => f.typeName == icon).values.first["value"] ?? "";
+    var iconList = List<String>.empty(growable: true);
+    if(iconValue.endsWith(".json")){
+      var iconPath = await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path);
+      var json = File(iconPath).readAsStringSync();
+      var iconJson = jsonDecode(json)["layered-image"];
+      var background = iconJson["background"].split(":").last;
+      var foreground = iconJson["foreground"].split(":").last;
+      var backgroundIcon = resResitems.firstWhere((f) => f.id == background).values.first["value"] ?? "";
+      var foregroundIcon = resResitems.firstWhere((f) => f.id == foreground).values.first["value"] ?? "";
+      iconList.add(await getByHap(hapPath, backgroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
+      iconList.add(await getByHap(hapPath, foregroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
+    } else {
+      iconList.add(await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path));
+    }
+    final label = info.app!.label;
+    final name = resResitems.firstWhere((f) => f.typeName == label).values.first["value"] ?? "";
+    var hapPathlList = <String>[];
+    for (var element in pathList) {
+      final newPath = path.join(appDir.path, path.basename(element));
+      await File(element).rename(newPath);
+      hapPathlList.add(newPath);
+    }
+    var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name, icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
+    await File(path.join(appDir.path, "hap_info.json")).writeAsString(jsonEncode(hapInfo.toJson()), flush: true);
+    return hapInfo;
+  }
+
+  Future<String> getByHap(String hapPath, String target, String outDir) async{
+    final outFile = File(path.join(outDir, target));
+    if(!await outFile.parent.exists()){
+      outFile.parent.create(recursive: true);
+    }
+    final err = await cmd.unzip_Hap(
+      hapPath,
+      target,
+      outFile.path,
+    );
+    if (err != "成功") {
+      throw FormatException("解压文件失败: $err");
+    }
+    return outFile.path;
+  }

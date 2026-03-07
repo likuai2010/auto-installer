@@ -9,6 +9,7 @@
     "ohos_adapter": "file:../har/ohos_adapter.har",
     "native_core": "file:../har/native_core.har",
     "pdf_render": "file:../har/pdf_render.har",
-    "@ohos/flutter_ohos": "har/flutter.har"
+    "@ohos/flutter_ohos": "har/flutter.har",
+    "shared_preferences_ohos": "file:../har/shared_preferences_ohos.har"
   }
 }

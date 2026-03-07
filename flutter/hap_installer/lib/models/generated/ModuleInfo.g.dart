@@ -11,6 +11,8 @@ _$AppInfoImpl _$$AppInfoImplFromJson(Map<String, dynamic> json) =>
       bundleName: json['bundleName'] as String? ?? "",
       compileSdkVersion: json['compileSdkVersion'] as String? ?? "",
       versionName: json['versionName'] as String? ?? "",
+      icon: json['icon'] as String? ?? "",
+      label: json['label'] as String? ?? "",
     );
 
 Map<String, dynamic> _$$AppInfoImplToJson(_$AppInfoImpl instance) =>
@@ -18,6 +20,8 @@ Map<String, dynamic> _$$AppInfoImplToJson(_$AppInfoImpl instance) =>
       'bundleName': instance.bundleName,
       'compileSdkVersion': instance.compileSdkVersion,
       'versionName': instance.versionName,
+      'icon': instance.icon,
+      'label': instance.label,
     };
 
 _$HnpPackageImpl _$$HnpPackageImplFromJson(Map<String, dynamic> json) =>

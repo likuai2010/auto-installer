@@ -70,6 +70,20 @@ class HomeSettingItemWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 0),
+                // 自定义图标区域（如果提供了iconPaths）
+                if (item.iconPaths.isNotEmpty)
+                  Stack(
+                    children: item.iconPaths.map((path) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Image.asset(
+                          path,
+                          width: 24,
+                          height: 24,
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 // 文字区域
                 Expanded(
                   child: Column(

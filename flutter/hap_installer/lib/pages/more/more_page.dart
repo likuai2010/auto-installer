@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/viewmodels/ThemeViewModel.dart';
 import 'package:hap_installer/hdc/common.dart';
-import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
@@ -230,11 +229,6 @@ class _MorePageState extends State<MorePage> {
   /// 构建关于类列表项
   List<MoreItem> _buildAboutItems() {
     return [
-      MoreItem(
-        title: '充电支持',
-        icon: 'lib/assets/more_sponsor.svg',
-        onTap: () => toPage(context, (_) => const PayPage()),
-      ),
       MoreItem(
         title: '应用版本',
         icon: 'lib/assets/tips.svg',
