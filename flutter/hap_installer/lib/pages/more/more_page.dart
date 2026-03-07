@@ -56,6 +56,23 @@ class _MorePageState extends State<MorePage> {
   /// 应用版本
   final String _appVersion = '2.5.0';
 
+  /// 自动连接开关状态
+  bool _autoConnect = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAutoConnect();
+  }
+
+  /// 加载自动连接设置
+  Future<void> _loadAutoConnect() async {
+    final value = await getAutoConnect();
+    if (mounted) {
+      setState(() => _autoConnect = value);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<ThemeViewModel>();

@@ -112,6 +112,7 @@ Future<String?> selectDir() async {
   result = await FilePicker.platform.getDirectoryPath();
   return result;
 }
+
 Future<String?> selectStoreFile() async {
   FilePickerResult? result;
   if (ohosAdapter.isOhos) {
@@ -153,4 +154,26 @@ Future<void> setLocalUrl(url) async {
   }
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('url', url);
+}
+
+/// 获取自动连接设置
+/// 默认返回 true (开启)
+Future<bool> getAutoConnect() async {
+  if (ohosAdapter.isOhos) {
+    final value = await ohosAdapter.getLocalKey("autoConnect");
+    return value != "false"; // 默认 true
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('autoConnect') ?? true;
+}
+
+/// 保存自动连接设置
+/// TODO 后续需对接实际的功能
+Future<void> setAutoConnect(bool value) async {
+  if (ohosAdapter.isOhos) {
+    await ohosAdapter.setLocalKey("autoConnect", value.toString());
+    return;
+  }
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('autoConnect', value);
 }

@@ -119,7 +119,18 @@ class EcoViewModel extends ChangeNotifier {
     return true;
   }
 
+  /// 自动连接设备
+  ///
+  /// 如果自动连接设置关闭，直接调用 builder 回调
+  /// 否则尝试连接到保存的设备 URL
   autoConnect(BuildContext context, Function() builder) async {
+    // 检查自动连接设置
+    final autoConnectEnabled = await getAutoConnect();
+    if (!autoConnectEnabled) {
+      builder();
+      return;
+    }
+
     if (currentDevice == null) {
       final url = await getLocalUrl();
       if (url == null || url == "") {

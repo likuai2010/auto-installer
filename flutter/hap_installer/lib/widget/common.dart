@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
+import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/widget/page_transitions.dart';
 
@@ -280,7 +281,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
 
   /// 构建底部输入区域
   ///
-  /// 包含 IP 输入框、冒号分隔符、端口输入框
+  /// 包含 IP 输入框、冒号分隔符、端口输入框和自动连接开关
   Widget _buildInputArea(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(
@@ -289,43 +290,84 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
         top: 8,
         bottom: 16,
       ),
-      child: Row(
+      child: Column(
         children: [
-          // IP 输入框
-          Expanded(
-            child: _buildInputField(
-              context: context,
-              controller: ipController,
-              placeholder: '输入IP地址...',
-              maxLength: 15,
-              onSubmitted: (_) => connectHdc(context),
-            ),
-          ),
-          // 冒号分隔符
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              ':',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: AppColors.fontPrimaryDynamic(context),
+          // IP/端口输入行
+          Row(
+            children: [
+              // IP 输入框
+              Expanded(
+                child: _buildInputField(
+                  context: context,
+                  controller: ipController,
+                  placeholder: '输入IP地址...',
+                  maxLength: 15,
+                  onSubmitted: (_) => connectHdc(context),
+                ),
               ),
-            ),
+              // 冒号分隔符
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  ':',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.fontPrimaryDynamic(context),
+                  ),
+                ),
+              ),
+              // 端口输入框
+              SizedBox(
+                width: 111,
+                child: _buildInputField(
+                  context: context,
+                  controller: portController,
+                  placeholder: '输入端口...',
+                  maxLength: 5,
+                  onSubmitted: (_) => connectHdc(context),
+                ),
+              ),
+            ],
           ),
-          // 端口输入框
-          SizedBox(
-            width: 111,
-            child: _buildInputField(
-              context: context,
-              controller: portController,
-              placeholder: '输入端口...',
-              maxLength: 5,
-              onSubmitted: (_) => connectHdc(context),
-            ),
-          ),
+          // 自动连接开关
+          const SizedBox(height: 12),
+          _buildAutoConnectSwitch(context),
         ],
       ),
+    );
+  }
+
+  /// 构建自动连接开关
+  ///
+  /// 允许用户设置是否在启动时自动连接上次设备
+  Widget _buildAutoConnectSwitch(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '自动连接上次设备',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColors.fontSecondaryDynamic(context),
+          ),
+        ),
+        FutureBuilder<bool>(
+          future: getAutoConnect(),
+          builder: (context, snapshot) {
+            final value = snapshot.data ?? true;
+            return Switch(
+              value: value,
+              onChanged: (newValue) async {
+                await setAutoConnect(newValue);
+                setState(() {});
+              },
+              activeColor: AppColors.switchActiveThumbDynamic(context),
+              activeTrackColor: AppColors.switchActiveTrackDynamic(context),
+            );
+          },
+        ),
+      ],
     );
   }
 
