@@ -162,7 +162,7 @@ class HomeSettingItemWidget extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: buttonEnabled
-                ? AppColors.buttonLightBackground
+                ? AppColors.buttonLightBackgroundDynamic(context)
                 : disabledBgColor,
             borderRadius: BorderRadius.circular(100),
           ),
@@ -171,8 +171,9 @@ class HomeSettingItemWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color:
-                  buttonEnabled ? AppColors.buttonLabelText : disabledTextColor,
+              color: buttonEnabled
+                  ? AppColors.buttonLabelTextDynamic(context)
+                  : disabledTextColor,
             ),
           ),
         ),

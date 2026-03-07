@@ -124,7 +124,7 @@ class AppInfoCard extends StatelessWidget {
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                color: AppColors.buttonBorderLight,
+                color: AppColors.buttonBorderLightDynamic(context),
                 width: 1,
               ),
             ),
@@ -132,15 +132,15 @@ class AppInfoCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (!isSmallScreen) ...[
-                  Icon(button.icon, size: 14, color: AppColors.buttonLabelText),
+                  Icon(button.icon, size: 14, color: AppColors.buttonLabelTextDynamic(context)),
                   const SizedBox(width: 6),
                 ],
                 Text(
                   button.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.buttonLabelText,
+                    color: AppColors.buttonLabelTextDynamic(context),
                   ),
                 ),
               ],

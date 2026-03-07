@@ -142,6 +142,7 @@ class AppColors {
   // 深色按钮扩展颜色
   static const Color darkButtonLightBackground = Color(0x14317AF7);
   static const Color darkButtonLabelText = Color(0xFF317AF7);
+  static const Color darkButtonBorderLight = Color(0x99317AF7);
 
   // ==================== 动态颜色方法 ====================
 
@@ -285,13 +286,17 @@ class AppColors {
   static Color switchTrackOutlineDynamic(BuildContext context) =>
       isDarkMode(context) ? darkSwitchTrackOutline : switchTrackOutline;
 
-  /// 获取浅色按钮背景色
+  /// 获取按钮浅色背景（动态适配深色模式）
   static Color buttonLightBackgroundDynamic(BuildContext context) =>
       isDarkMode(context) ? darkButtonLightBackground : buttonLightBackground;
 
-  /// 获取按钮标签文本颜色
+  /// 获取按钮标签文字颜色（动态适配深色模式）
   static Color buttonLabelTextDynamic(BuildContext context) =>
       isDarkMode(context) ? darkButtonLabelText : buttonLabelText;
+
+  /// 获取按钮边框颜色（动态适配深色模式）
+  static Color buttonBorderLightDynamic(BuildContext context) =>
+      isDarkMode(context) ? darkButtonBorderLight : buttonBorderLight;
 
   // ==================== 兼容旧 API 的别名 ====================
 
