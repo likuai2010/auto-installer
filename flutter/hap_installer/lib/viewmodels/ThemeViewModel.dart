@@ -37,9 +37,15 @@ class ThemeViewModel extends ChangeNotifier {
   /// 设置是否跟随系统深色模式
   ///
   /// [value] true 表示跟随系统，false 表示手动控制
+  /// 开启时会自动关闭手动深色模式（互斥逻辑）
   Future<void> setFollowSystemDarkMode(bool value) async {
     if (_followSystemDarkMode == value) return;
     _followSystemDarkMode = value;
+    if (value) {
+      // 开启跟随系统时，关闭手动深色模式
+      _darkMode = false;
+      await _prefs?.setBool(_keyDarkMode, false);
+    }
     await _prefs?.setBool(_keyFollowSystem, value);
     notifyListeners();
   }
@@ -47,10 +53,15 @@ class ThemeViewModel extends ChangeNotifier {
   /// 设置深色模式开关
   ///
   /// [value] true 表示深色模式，false 表示浅色模式
-  /// 注意：仅当 [followSystemDarkMode] 为 false 时生效
+  /// 开启时会自动关闭跟随系统模式（互斥逻辑）
   Future<void> setDarkMode(bool value) async {
     if (_darkMode == value) return;
     _darkMode = value;
+    if (value) {
+      // 开启深色模式时，关闭跟随系统
+      _followSystemDarkMode = false;
+      await _prefs?.setBool(_keyFollowSystem, false);
+    }
     await _prefs?.setBool(_keyDarkMode, value);
     notifyListeners();
   }

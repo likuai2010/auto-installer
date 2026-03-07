@@ -205,11 +205,9 @@ class _MorePageState extends State<MorePage> {
         icon: 'lib/assets/more_dark.svg',
         itemType: MoreItemType.switch_,
         switchValue: theme.darkMode,
-        onSwitchChanged: theme.followSystemDarkMode
-            ? null
-            : (value) {
-                theme.setDarkMode(value);
-              },
+        onSwitchChanged: (value) {
+          theme.setDarkMode(value);
+        },
       ),
     ];
   }
