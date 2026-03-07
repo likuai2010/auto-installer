@@ -158,15 +158,15 @@ class _MorePageState extends State<MorePage> {
           }
         },
       ),
-      // 仅桌面平台显示
-      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+      // 仅桌面平台显示（暂时屏蔽）
+      /* if (Platform.isWindows || Platform.isMacOS || Platform.isLinux)
         MoreItem.withIcon(
           title: '指定JavaHome',
           iconData: Icons.coffee_outlined,
           onTap: () {
             viewmodel.changeJaveHome(context);
           },
-        ),
+        ), */
     ];
   }
 
