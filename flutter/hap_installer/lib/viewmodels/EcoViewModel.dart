@@ -763,9 +763,7 @@ class EcoViewModel extends ChangeNotifier {
       var signConfig = this.signConfig!;
       bool nextStep = true;
       final model = historyViewModel!;
-
       model.createDebugHistory(hap);
-
       model.updateHistory((s) {
         s.finished = false;
       });
@@ -814,14 +812,18 @@ class EcoViewModel extends ChangeNotifier {
           }, "签名(${path.basename(p)})");
         }
       }
-
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.startSetp(4, () async {
-            return await cmd.installHap(await cmd.getOutPath(p));
+            final result =  await cmd.installHap(await cmd.getOutPath(p));
+            if(result == null){
+                await model.updateDebugApp(hap, signConfig.certPath);
+            }
+            return result;
           }, "调试(${path.basename(p)})");
         }
       }
+    
       model.updateHistory((setp) {
         setp.finished = true;
       });

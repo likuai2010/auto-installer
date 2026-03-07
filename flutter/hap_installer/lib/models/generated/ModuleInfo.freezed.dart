@@ -613,6 +613,8 @@ mixin _$Module {
       throw _privateConstructorUsedError;
   List<String> get deviceTypes => throw _privateConstructorUsedError;
   List<HnpPackage> get hnpPackages => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get packageName => throw _privateConstructorUsedError;
 
   /// Serializes this Module to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -631,7 +633,9 @@ abstract class $ModuleCopyWith<$Res> {
   $Res call(
       {List<RequestPermission> requestPermissions,
       List<String> deviceTypes,
-      List<HnpPackage> hnpPackages});
+      List<HnpPackage> hnpPackages,
+      String name,
+      String packageName});
 }
 
 /// @nodoc
@@ -652,6 +656,8 @@ class _$ModuleCopyWithImpl<$Res, $Val extends Module>
     Object? requestPermissions = null,
     Object? deviceTypes = null,
     Object? hnpPackages = null,
+    Object? name = null,
+    Object? packageName = null,
   }) {
     return _then(_value.copyWith(
       requestPermissions: null == requestPermissions
@@ -666,6 +672,14 @@ class _$ModuleCopyWithImpl<$Res, $Val extends Module>
           ? _value.hnpPackages
           : hnpPackages // ignore: cast_nullable_to_non_nullable
               as List<HnpPackage>,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      packageName: null == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -680,7 +694,9 @@ abstract class _$$ModuleImplCopyWith<$Res> implements $ModuleCopyWith<$Res> {
   $Res call(
       {List<RequestPermission> requestPermissions,
       List<String> deviceTypes,
-      List<HnpPackage> hnpPackages});
+      List<HnpPackage> hnpPackages,
+      String name,
+      String packageName});
 }
 
 /// @nodoc
@@ -699,6 +715,8 @@ class __$$ModuleImplCopyWithImpl<$Res>
     Object? requestPermissions = null,
     Object? deviceTypes = null,
     Object? hnpPackages = null,
+    Object? name = null,
+    Object? packageName = null,
   }) {
     return _then(_$ModuleImpl(
       requestPermissions: null == requestPermissions
@@ -713,6 +731,14 @@ class __$$ModuleImplCopyWithImpl<$Res>
           ? _value._hnpPackages
           : hnpPackages // ignore: cast_nullable_to_non_nullable
               as List<HnpPackage>,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      packageName: null == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -723,7 +749,9 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
   const _$ModuleImpl(
       {final List<RequestPermission> requestPermissions = const [],
       final List<String> deviceTypes = const [],
-      final List<HnpPackage> hnpPackages = const []})
+      final List<HnpPackage> hnpPackages = const [],
+      this.name = "",
+      this.packageName = ""})
       : _requestPermissions = requestPermissions,
         _deviceTypes = deviceTypes,
         _hnpPackages = hnpPackages;
@@ -760,8 +788,15 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
   }
 
   @override
+  @JsonKey()
+  final String name;
+  @override
+  @JsonKey()
+  final String packageName;
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Module(requestPermissions: $requestPermissions, deviceTypes: $deviceTypes, hnpPackages: $hnpPackages)';
+    return 'Module(requestPermissions: $requestPermissions, deviceTypes: $deviceTypes, hnpPackages: $hnpPackages, name: $name, packageName: $packageName)';
   }
 
   @override
@@ -771,7 +806,9 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
       ..add(DiagnosticsProperty('type', 'Module'))
       ..add(DiagnosticsProperty('requestPermissions', requestPermissions))
       ..add(DiagnosticsProperty('deviceTypes', deviceTypes))
-      ..add(DiagnosticsProperty('hnpPackages', hnpPackages));
+      ..add(DiagnosticsProperty('hnpPackages', hnpPackages))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('packageName', packageName));
   }
 
   @override
@@ -784,7 +821,10 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
             const DeepCollectionEquality()
                 .equals(other._deviceTypes, _deviceTypes) &&
             const DeepCollectionEquality()
-                .equals(other._hnpPackages, _hnpPackages));
+                .equals(other._hnpPackages, _hnpPackages) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.packageName, packageName) ||
+                other.packageName == packageName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -793,7 +833,9 @@ class _$ModuleImpl with DiagnosticableTreeMixin implements _Module {
       runtimeType,
       const DeepCollectionEquality().hash(_requestPermissions),
       const DeepCollectionEquality().hash(_deviceTypes),
-      const DeepCollectionEquality().hash(_hnpPackages));
+      const DeepCollectionEquality().hash(_hnpPackages),
+      name,
+      packageName);
 
   /// Create a copy of Module
   /// with the given fields replaced by the non-null parameter values.
@@ -815,7 +857,9 @@ abstract class _Module implements Module {
   const factory _Module(
       {final List<RequestPermission> requestPermissions,
       final List<String> deviceTypes,
-      final List<HnpPackage> hnpPackages}) = _$ModuleImpl;
+      final List<HnpPackage> hnpPackages,
+      final String name,
+      final String packageName}) = _$ModuleImpl;
 
   factory _Module.fromJson(Map<String, dynamic> json) = _$ModuleImpl.fromJson;
 
@@ -825,6 +869,10 @@ abstract class _Module implements Module {
   List<String> get deviceTypes;
   @override
   List<HnpPackage> get hnpPackages;
+  @override
+  String get name;
+  @override
+  String get packageName;
 
   /// Create a copy of Module
   /// with the given fields replaced by the non-null parameter values.

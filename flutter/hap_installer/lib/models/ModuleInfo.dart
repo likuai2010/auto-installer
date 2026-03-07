@@ -47,6 +47,8 @@ abstract class Module with _$Module {
     @Default([]) List<RequestPermission> requestPermissions,
     @Default([]) List<String> deviceTypes,
     @Default([]) List<HnpPackage> hnpPackages,
+    @Default("") String name,
+    @Default("") String packageName,
   }) = _Module;
   // 从JSON构建
   factory Module.fromJson(Map<String, dynamic> json) => _$ModuleFromJson(json);

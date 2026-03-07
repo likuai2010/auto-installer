@@ -48,6 +48,12 @@ class OhosAdapter {
   Future<void> setLocalUrl(String url) {
     return OhosAdapterPlatform.instance.setLocalKey("url", url);
   }
+  Future<void> setLocalKey(String key,String value) async {
+    await OhosAdapterPlatform.instance.setLocalKey(key, value);
+  }
+  Future<String> getLocalKey(String key) async {
+    return await OhosAdapterPlatform.instance.getLocalKey(key) ?? "";
+  }
 
   Future<bool> getFirstUse() async {
     return (await OhosAdapterPlatform.instance.getLocalKey("firstUse")) ==

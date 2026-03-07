@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -76,8 +78,8 @@ class HomeSettingItemWidget extends StatelessWidget {
                     children: item.iconPaths.map((path) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
-                        child: Image.asset(
-                          path,
+                        child: Image.file(
+                          File(path),
                           width: 24,
                           height: 24,
                         ),

@@ -527,33 +527,37 @@ dumpToHap(List<String> pathList, String debugPath) async{
       await appDir.create(recursive: true);
     }
     await getByHap(hapPath, "resources.index", debugPath);
-    const moduleName = "entry";
+    final moduleName = info.module!.packageName;
     final icon = info.app!.icon;
     final resResitems = resTool.dumpRes(path.join(debugPath, "resources.index"));
-    var iconValue = resResitems.firstWhere((f) => f.typeName == icon).values.first["value"] ?? "";
-    var iconList = List<String>.empty(growable: true);
-    if(iconValue.endsWith(".json")){
+    final resTypes= resResitems.map((f)=>f.typeName).toList();
+    print(resTypes);
+    final iconValue = resResitems.firstWhere((f) => f.typeName.contains(icon)).values.first["value"] ?? "";
+    final iconList = List<String>.empty(growable: true);
+    if(iconValue.contains(".json")){
       var iconPath = await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path);
       var json = File(iconPath).readAsStringSync();
       var iconJson = jsonDecode(json)["layered-image"];
       var background = iconJson["background"].split(":").last;
       var foreground = iconJson["foreground"].split(":").last;
-      var backgroundIcon = resResitems.firstWhere((f) => f.id == background).values.first["value"] ?? "";
-      var foregroundIcon = resResitems.firstWhere((f) => f.id == foreground).values.first["value"] ?? "";
+      var backgroundIcon = resResitems.firstWhere((f) => f.id.contains(background)).values.first["value"] ?? "";
+      var foregroundIcon = resResitems.firstWhere((f) => f.id.contains(foreground)).values.first["value"] ?? "";
       iconList.add(await getByHap(hapPath, backgroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
       iconList.add(await getByHap(hapPath, foregroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
     } else {
       iconList.add(await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path));
     }
     final label = info.app!.label;
-    final name = resResitems.firstWhere((f) => f.typeName == label).values.first["value"] ?? "";
+    final name = resResitems.firstWhere((f) => f.typeName.contains(label)).values.first["value"] ?? "";
     var hapPathlList = <String>[];
     for (var element in pathList) {
       final newPath = path.join(appDir.path, path.basename(element));
-      await File(element).rename(newPath);
-      hapPathlList.add(newPath);
+      if(element != newPath){
+        await File(element).copy(newPath);
+        hapPathlList.add(newPath);
+      }
     }
-    var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name, icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
+    var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
     await File(path.join(appDir.path, "hap_info.json")).writeAsString(jsonEncode(hapInfo.toJson()), flush: true);
     return hapInfo;
   }
