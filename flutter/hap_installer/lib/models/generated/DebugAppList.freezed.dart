@@ -20,10 +20,10 @@ DebugAppList _$DebugAppListFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DebugAppList {
-  String get time => throw _privateConstructorUsedError;
-  set time(String value) => throw _privateConstructorUsedError;
-  List<DebugApp> get payList => throw _privateConstructorUsedError;
-  set payList(List<DebugApp> value) => throw _privateConstructorUsedError;
+  List<DebugApp> get appList => throw _privateConstructorUsedError;
+  set appList(List<DebugApp> value) => throw _privateConstructorUsedError;
+  DateTime? get time => throw _privateConstructorUsedError;
+  set time(DateTime? value) => throw _privateConstructorUsedError;
 
   /// Serializes this DebugAppList to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $DebugAppListCopyWith<$Res> {
           DebugAppList value, $Res Function(DebugAppList) then) =
       _$DebugAppListCopyWithImpl<$Res, DebugAppList>;
   @useResult
-  $Res call({String time, List<DebugApp> payList});
+  $Res call({List<DebugApp> appList, DateTime? time});
 }
 
 /// @nodoc
@@ -59,18 +59,18 @@ class _$DebugAppListCopyWithImpl<$Res, $Val extends DebugAppList>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? time = null,
-    Object? payList = null,
+    Object? appList = null,
+    Object? time = freezed,
   }) {
     return _then(_value.copyWith(
-      time: null == time
+      appList: null == appList
+          ? _value.appList
+          : appList // ignore: cast_nullable_to_non_nullable
+              as List<DebugApp>,
+      time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      payList: null == payList
-          ? _value.payList
-          : payList // ignore: cast_nullable_to_non_nullable
-              as List<DebugApp>,
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -83,7 +83,7 @@ abstract class _$$DebugAppListImplCopyWith<$Res>
       __$$DebugAppListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String time, List<DebugApp> payList});
+  $Res call({List<DebugApp> appList, DateTime? time});
 }
 
 /// @nodoc
@@ -99,18 +99,18 @@ class __$$DebugAppListImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? time = null,
-    Object? payList = null,
+    Object? appList = null,
+    Object? time = freezed,
   }) {
     return _then(_$DebugAppListImpl(
-      time: null == time
+      appList: null == appList
+          ? _value.appList
+          : appList // ignore: cast_nullable_to_non_nullable
+              as List<DebugApp>,
+      time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      payList: null == payList
-          ? _value.payList
-          : payList // ignore: cast_nullable_to_non_nullable
-              as List<DebugApp>,
+              as DateTime?,
     ));
   }
 }
@@ -118,21 +118,21 @@ class __$$DebugAppListImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DebugAppListImpl implements _DebugAppList {
-  _$DebugAppListImpl({this.time = "", this.payList = const []});
+  _$DebugAppListImpl({this.appList = const [], this.time = null});
 
   factory _$DebugAppListImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebugAppListImplFromJson(json);
 
   @override
   @JsonKey()
-  String time;
+  List<DebugApp> appList;
   @override
   @JsonKey()
-  List<DebugApp> payList;
+  DateTime? time;
 
   @override
   String toString() {
-    return 'DebugAppList(time: $time, payList: $payList)';
+    return 'DebugAppList(appList: $appList, time: $time)';
   }
 
   /// Create a copy of DebugAppList
@@ -152,18 +152,18 @@ class _$DebugAppListImpl implements _DebugAppList {
 }
 
 abstract class _DebugAppList implements DebugAppList {
-  factory _DebugAppList({String time, List<DebugApp> payList}) =
+  factory _DebugAppList({List<DebugApp> appList, DateTime? time}) =
       _$DebugAppListImpl;
 
   factory _DebugAppList.fromJson(Map<String, dynamic> json) =
       _$DebugAppListImpl.fromJson;
 
   @override
-  String get time;
-  set time(String value);
+  List<DebugApp> get appList;
+  set appList(List<DebugApp> value);
   @override
-  List<DebugApp> get payList;
-  set payList(List<DebugApp> value);
+  DateTime? get time;
+  set time(DateTime? value);
 
   /// Create a copy of DebugAppList
   /// with the given fields replaced by the non-null parameter values.
@@ -180,11 +180,9 @@ DebugApp _$DebugAppFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DebugApp {
   String get packageName => throw _privateConstructorUsedError;
-  String get label => throw _privateConstructorUsedError;
-  String get icon => throw _privateConstructorUsedError;
+  HapInfo? get appInfo => throw _privateConstructorUsedError;
   DateTime? get installTime => throw _privateConstructorUsedError;
   DateTime? get certEndTime => throw _privateConstructorUsedError;
-  String? get appPath => throw _privateConstructorUsedError;
 
   /// Serializes this DebugApp to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -203,11 +201,11 @@ abstract class $DebugAppCopyWith<$Res> {
   @useResult
   $Res call(
       {String packageName,
-      String label,
-      String icon,
+      HapInfo? appInfo,
       DateTime? installTime,
-      DateTime? certEndTime,
-      String? appPath});
+      DateTime? certEndTime});
+
+  $HapInfoCopyWith<$Res>? get appInfo;
 }
 
 /// @nodoc
@@ -226,25 +224,19 @@ class _$DebugAppCopyWithImpl<$Res, $Val extends DebugApp>
   @override
   $Res call({
     Object? packageName = null,
-    Object? label = null,
-    Object? icon = null,
+    Object? appInfo = freezed,
     Object? installTime = freezed,
     Object? certEndTime = freezed,
-    Object? appPath = freezed,
   }) {
     return _then(_value.copyWith(
       packageName: null == packageName
           ? _value.packageName
           : packageName // ignore: cast_nullable_to_non_nullable
               as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      icon: null == icon
-          ? _value.icon
-          : icon // ignore: cast_nullable_to_non_nullable
-              as String,
+      appInfo: freezed == appInfo
+          ? _value.appInfo
+          : appInfo // ignore: cast_nullable_to_non_nullable
+              as HapInfo?,
       installTime: freezed == installTime
           ? _value.installTime
           : installTime // ignore: cast_nullable_to_non_nullable
@@ -253,11 +245,21 @@ class _$DebugAppCopyWithImpl<$Res, $Val extends DebugApp>
           ? _value.certEndTime
           : certEndTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      appPath: freezed == appPath
-          ? _value.appPath
-          : appPath // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
+  }
+
+  /// Create a copy of DebugApp
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $HapInfoCopyWith<$Res>? get appInfo {
+    if (_value.appInfo == null) {
+      return null;
+    }
+
+    return $HapInfoCopyWith<$Res>(_value.appInfo!, (value) {
+      return _then(_value.copyWith(appInfo: value) as $Val);
+    });
   }
 }
 
@@ -271,11 +273,12 @@ abstract class _$$DebugAppImplCopyWith<$Res>
   @useResult
   $Res call(
       {String packageName,
-      String label,
-      String icon,
+      HapInfo? appInfo,
       DateTime? installTime,
-      DateTime? certEndTime,
-      String? appPath});
+      DateTime? certEndTime});
+
+  @override
+  $HapInfoCopyWith<$Res>? get appInfo;
 }
 
 /// @nodoc
@@ -292,25 +295,19 @@ class __$$DebugAppImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? packageName = null,
-    Object? label = null,
-    Object? icon = null,
+    Object? appInfo = freezed,
     Object? installTime = freezed,
     Object? certEndTime = freezed,
-    Object? appPath = freezed,
   }) {
     return _then(_$DebugAppImpl(
       packageName: null == packageName
           ? _value.packageName
           : packageName // ignore: cast_nullable_to_non_nullable
               as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      icon: null == icon
-          ? _value.icon
-          : icon // ignore: cast_nullable_to_non_nullable
-              as String,
+      appInfo: freezed == appInfo
+          ? _value.appInfo
+          : appInfo // ignore: cast_nullable_to_non_nullable
+              as HapInfo?,
       installTime: freezed == installTime
           ? _value.installTime
           : installTime // ignore: cast_nullable_to_non_nullable
@@ -319,10 +316,6 @@ class __$$DebugAppImplCopyWithImpl<$Res>
           ? _value.certEndTime
           : certEndTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      appPath: freezed == appPath
-          ? _value.appPath
-          : appPath // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -332,11 +325,9 @@ class __$$DebugAppImplCopyWithImpl<$Res>
 class _$DebugAppImpl implements _DebugApp {
   const _$DebugAppImpl(
       {this.packageName = "",
-      this.label = "",
-      this.icon = "",
+      this.appInfo = null,
       this.installTime = null,
-      this.certEndTime = null,
-      this.appPath = ""});
+      this.certEndTime = null});
 
   factory _$DebugAppImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebugAppImplFromJson(json);
@@ -346,23 +337,17 @@ class _$DebugAppImpl implements _DebugApp {
   final String packageName;
   @override
   @JsonKey()
-  final String label;
-  @override
-  @JsonKey()
-  final String icon;
+  final HapInfo? appInfo;
   @override
   @JsonKey()
   final DateTime? installTime;
   @override
   @JsonKey()
   final DateTime? certEndTime;
-  @override
-  @JsonKey()
-  final String? appPath;
 
   @override
   String toString() {
-    return 'DebugApp(packageName: $packageName, label: $label, icon: $icon, installTime: $installTime, certEndTime: $certEndTime, appPath: $appPath)';
+    return 'DebugApp(packageName: $packageName, appInfo: $appInfo, installTime: $installTime, certEndTime: $certEndTime)';
   }
 
   @override
@@ -372,19 +357,17 @@ class _$DebugAppImpl implements _DebugApp {
             other is _$DebugAppImpl &&
             (identical(other.packageName, packageName) ||
                 other.packageName == packageName) &&
-            (identical(other.label, label) || other.label == label) &&
-            (identical(other.icon, icon) || other.icon == icon) &&
+            (identical(other.appInfo, appInfo) || other.appInfo == appInfo) &&
             (identical(other.installTime, installTime) ||
                 other.installTime == installTime) &&
             (identical(other.certEndTime, certEndTime) ||
-                other.certEndTime == certEndTime) &&
-            (identical(other.appPath, appPath) || other.appPath == appPath));
+                other.certEndTime == certEndTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, packageName, label, icon, installTime, certEndTime, appPath);
+  int get hashCode =>
+      Object.hash(runtimeType, packageName, appInfo, installTime, certEndTime);
 
   /// Create a copy of DebugApp
   /// with the given fields replaced by the non-null parameter values.
@@ -405,11 +388,9 @@ class _$DebugAppImpl implements _DebugApp {
 abstract class _DebugApp implements DebugApp {
   const factory _DebugApp(
       {final String packageName,
-      final String label,
-      final String icon,
+      final HapInfo? appInfo,
       final DateTime? installTime,
-      final DateTime? certEndTime,
-      final String? appPath}) = _$DebugAppImpl;
+      final DateTime? certEndTime}) = _$DebugAppImpl;
 
   factory _DebugApp.fromJson(Map<String, dynamic> json) =
       _$DebugAppImpl.fromJson;
@@ -417,15 +398,11 @@ abstract class _DebugApp implements DebugApp {
   @override
   String get packageName;
   @override
-  String get label;
-  @override
-  String get icon;
+  HapInfo? get appInfo;
   @override
   DateTime? get installTime;
   @override
   DateTime? get certEndTime;
-  @override
-  String? get appPath;
 
   /// Create a copy of DebugApp
   /// with the given fields replaced by the non-null parameter values.

@@ -1,5 +1,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hap_installer/models/HapInfo.dart';
 
 part 'generated/DebugAppList.freezed.dart';
 part 'generated/DebugAppList.g.dart';
@@ -7,8 +8,8 @@ part 'generated/DebugAppList.g.dart';
 @unfreezed
 abstract class DebugAppList with _$DebugAppList {
    factory DebugAppList({
-    @Default("") String time,
-    @Default([]) List<DebugApp> payList,
+    @Default([]) List<DebugApp> appList,
+    @Default(null) DateTime? time,
   }) = _DebugAppList;
   factory DebugAppList.fromJson(Map<String, dynamic> json) =>
       _$DebugAppListFromJson(json);
@@ -19,11 +20,9 @@ abstract class DebugAppList with _$DebugAppList {
 abstract class DebugApp with _$DebugApp {
   const factory DebugApp({
     @Default("") String packageName,
-    @Default("") String label,
-    @Default("") String icon,
+    @Default(null) HapInfo? appInfo,
     @Default(null) DateTime? installTime,
     @Default(null) DateTime? certEndTime,
-    @Default("") String? appPath,
   }) = _DebugApp;
   factory DebugApp.fromJson(Map<String, dynamic> json) =>
       _$DebugAppFromJson(json);

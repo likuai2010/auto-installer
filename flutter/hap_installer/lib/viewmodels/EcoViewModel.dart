@@ -15,8 +15,6 @@ import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
-import 'package:hap_installer/pages/more_page.dart';
-import 'package:hap_installer/viewmodels/restool.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;

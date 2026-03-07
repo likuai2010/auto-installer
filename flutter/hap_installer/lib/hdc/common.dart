@@ -23,7 +23,6 @@ Future<String> getTempDir() async {
       tempDir = (await getApplicationCacheDirectory()).path;
     } else {
       tempDir = (await getTemporaryDirectory()).path;
-
       if (Platform.isWindows) {
         if (containsChinese(tempDir)) {
           final dir = Directory("C:\\Temp");

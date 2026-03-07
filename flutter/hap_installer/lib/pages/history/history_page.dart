@@ -16,11 +16,11 @@ class HistoryPage extends StatelessWidget {
         return Container(
           color: AppColors.backgroundSecondaryDynamic(context),
           child: Expanded(
-            child: model.appList.payList.isNotEmpty
+            child: model.appList.appList.isNotEmpty
                 ? ListView.builder(
-                    itemCount: model.appList.payList.length,
+                    itemCount: model.appList.appList.length,
                     itemBuilder: (_, i) =>
-                        DebugAppItem(info: model.appList.payList[i]),
+                        DebugAppItem(info: model.appList.appList[i]),
                   )
                 : const Center(child: Text("没有调试的APP")),
           ),
@@ -62,10 +62,38 @@ class DebugAppItem extends StatelessWidget {
     return GroupDecoration(
       children: [
         ListItem(
-          leading: const Icon(Icons.check_circle),
-          title: info.packageName,
-          subTitle: info.appPath ?? "0.0.0",
-          tailling: Container(),
+          leading:
+          info.appInfo == null ? const Icon(Icons.check_circle) : 
+           Stack(
+               children: info.appInfo!.icon.map((path) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Image.asset(
+                    path,
+                    width: 24,
+                    height: 24,
+                  ),
+                );
+              }).toList(),
+            ),
+          title: "${info.appInfo?.label ?? "未知"}(${info.packageName})",
+          subTitle: "安装时间: ${info.installTime ?? "未知"} | 过期时间: ${info.certEndTime ?? "未知"}",
+          tailling: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(onPressed: ()=>{
+
+              }, child: Text("游戏模式")),
+              Row(
+                children: [
+                  TextButton(onPressed: ()=>{
+                  }, child: Text("续期")),
+                  TextButton(onPressed: ()=>{
+                  }, child: Text("卸载")),
+                ]),
+             
+            ],
+          ),
           onClick: () {
             // toPage(context, (_) => const DebugDetailPage());
           },

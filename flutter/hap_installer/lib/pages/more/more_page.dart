@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/viewmodels/ThemeViewModel.dart';
 import 'package:hap_installer/hdc/common.dart';
-import 'package:hap_installer/pages/pay_page.dart';
 import 'package:hap_installer/pages/privacy_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/widget/common.dart';
