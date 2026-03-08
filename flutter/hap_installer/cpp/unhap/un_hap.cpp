@@ -6,14 +6,12 @@ int _extractFile(unzFile zipfile, const char *destPath)
 {
     if (unzOpenCurrentFile(zipfile) != UNZ_OK)
     {
-        unzClose(zipfile);
         return 102;
     }
     FILE *dest_file = fopen(destPath, "wb");
     if (dest_file == NULL)
     {
         unzCloseCurrentFile(zipfile);
-        unzClose(zipfile);
         return 103;
     }
 
@@ -32,12 +30,8 @@ int _extractFile(unzFile zipfile, const char *destPath)
 extern "C" int extractFileByHap(const char *source, const char *fileName, const char *destination)
 {
     unzFile zipfile = unzOpen(source);
-    std::string message = "";
-
     if (zipfile == NULL)
-    {
         return 100;
-    }
     if (unzLocateFile(zipfile, fileName, 1) != UNZ_OK)
     {
         unzClose(zipfile);

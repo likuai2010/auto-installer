@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/models/DebugAppList.dart';
+import 'package:hap_installer/pages/history/debug_detail_page.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/PayList.dart';
+import 'package:hap_installer/widget/common.dart';
 import 'package:x509/x509.dart';
 
 import 'package:path/path.dart' as path;
@@ -39,6 +41,7 @@ class HistoryViewModel extends ChangeNotifier {
   initDebugAppList() async {
     if(loadingAppList) return;
     loadingAppList = true;
+    notifyListeners();
     try {
       var debugList = await getDebugApp();
       if(debugList == null){
@@ -95,7 +98,6 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   updateDebugAppList(DebugAppList list) async {
-  
     for (int i = 0; i < list.appList.length; i++) {
       final app = list.appList[i];
       if (app.appInfo == null) {
@@ -114,7 +116,8 @@ class HistoryViewModel extends ChangeNotifier {
         }
       }
       if(list.appList[i].appInfo != null){
-        await pullIcons(list.appList[i].appInfo!);
+        final result = await pullIcons(list.appList[i].appInfo!);
+        list.appList[i] = list.appList[i].copyWith(canReInstall: result);
       }
     }
     list.time = DateTime.now();
@@ -128,6 +131,14 @@ class HistoryViewModel extends ChangeNotifier {
       await cmd.makeDir(File(targetPath).parent.path);
       await cmd.sendFile(iconPath, targetPath);
     }
+    for (var p in info.pathList) {
+      final hapPath = path.join(remote,path.basename(p));
+      final size = await File(p).length();
+      // 小于500M
+      if (!await cmd.exitsPath(hapPath) && size < 1024 * 1024 * 500){
+          await cmd.sendFile(p, hapPath);
+      }
+    }
   }
   pullIcons(HapInfo info) async {
     var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
@@ -139,7 +150,37 @@ class HistoryViewModel extends ChangeNotifier {
         await cmd.recvFile(path.join(remote, p), iconPath);
       }
     }
+    final newList = List<String>.empty(growable: true);
+    for (var p in info.pathList) {
+      final hapPath = path.join(remote, path.basename(p));
+      final localPath = path.join(appDir, path.basename(p));
+      // 本地没有缓存就现在远程的
+      if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
+        newList.add(localPath);
+      } else if(await File(localPath).exists()){
+        newList.add(localPath);
+      }
+    }
+    return newList.length > 0;
   }
+  downloadHap(HapInfo info) async {
+    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
+    final newList = List<String>.empty(growable: true);
+    for (var p in info.pathList) {
+      final hapPath = path.join(remote, path.basename(p));
+      final localPath = path.join(appDir, path.basename(p));
+      // 本地没有缓存就现在远程的
+      if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
+        await cmd.recvFile(hapPath, appDir);
+        newList.add(localPath);
+      }else if(await File(localPath).exists()){
+         newList.add(localPath);
+      }
+    }
+    return info.copyWith(pathList: newList);
+  }
+
   saveDebugApp(DebugAppList app) async{
     final file = File(path.join(await getAppDir(), "debug_app_list.json"));
     await file.writeAsString(jsonEncode(app.toJson()));
@@ -179,8 +220,12 @@ class HistoryViewModel extends ChangeNotifier {
     if(loadingReinstall)
       return;
     loadingReinstall = true;
+    notifyListeners();
+    hap = await downloadHap(hap);
+    toPage(context, (_) => const DebugDetailPage());
     await viewmodel.installHap(context, hap);
     loadingReinstall = false;
+
   }
 
   createDebugHistory(HapInfo hapInfo) {

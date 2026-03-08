@@ -56,13 +56,12 @@ class CmdService {
     return unApp(hapPath, debugPath);
   }
 
-  unzip_Hap(String first, String s, String join) {
-    return unHap(first, s, join);
+  unzip_Hap(String first, String s, String join) async {
+    return await unHap(first, s, join);
   }
 
   unpackageHap(String hapPath, String outPath) async {
     var result = await baseUnPackCmd("-xvf \"${hapPath}\" -C \"${outPath}\"");
-  
     print("unpackageHap   $result");
   }
  
@@ -569,12 +568,6 @@ dumpToHap(List<String> pathList, String debugPath) async{
     final name = resResitems.firstWhere((f) => f.typeName.contains(label)).values.first["value"] ?? "";
     var hapPathlList = <String>[];
     for (var element in pathList) {
-      // final newPath = path.join(appDir.path, path.basename(element));
-      // final hap =  File(element);
-      // if(element != newPath && await hap.length() < 1024 * 1024 * 1024){
-      //   await File(element).copy(newPath);
-      //   hapPathlList.add(newPath);
-      // }
       hapPathlList.add(element);
     }
     var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
@@ -585,7 +578,7 @@ dumpToHap(List<String> pathList, String debugPath) async{
   Future<String> getByHap(String hapPath, String target, String outDir) async{
     final outFile = File(path.join(outDir, target));
     if(!await outFile.parent.exists()){
-      outFile.parent.create(recursive: true);
+      await outFile.parent.create(recursive: true);
     }
     final err = await cmd.unzip_Hap(
       hapPath,
@@ -593,7 +586,7 @@ dumpToHap(List<String> pathList, String debugPath) async{
       outFile.path,
     );
     if (err != "成功") {
-      throw FormatException("解压文件失败: $err");
+      throw FormatException("$err");
     }
     return outFile.path;
   }

@@ -100,11 +100,10 @@ class DebugAppItem extends StatelessWidget {
                   }, child: Text("游戏模式")),
                   Row(
                     children: [
-                      if(info.appInfo != null)
+                      if(info.appInfo != null && info.canReInstall)
                           TextButton(onPressed: () => {
                             if(!model.loadingReinstall){
-                              showAlert(context, title: Text("确定续期?"), content: Text("续期将重新创建证书, 已安装的其他应用不受影响"), onConfirm: (){
-                                  toPage(context, (_) => const DebugDetailPage());
+                              showAlert(context, title: Text("确定续期?"), content: Text("目前支持500m以下的应用. 续期将重新创建证书. 已安装的其他应用不受影响"), onConfirm: (){
                                   model.reInstall(context, info.appInfo!);
                               })
                             }

@@ -183,6 +183,7 @@ mixin _$DebugApp {
   HapInfo? get appInfo => throw _privateConstructorUsedError;
   DateTime? get installTime => throw _privateConstructorUsedError;
   DateTime? get certEndTime => throw _privateConstructorUsedError;
+  bool get canReInstall => throw _privateConstructorUsedError;
 
   /// Serializes this DebugApp to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -203,7 +204,8 @@ abstract class $DebugAppCopyWith<$Res> {
       {String packageName,
       HapInfo? appInfo,
       DateTime? installTime,
-      DateTime? certEndTime});
+      DateTime? certEndTime,
+      bool canReInstall});
 
   $HapInfoCopyWith<$Res>? get appInfo;
 }
@@ -227,6 +229,7 @@ class _$DebugAppCopyWithImpl<$Res, $Val extends DebugApp>
     Object? appInfo = freezed,
     Object? installTime = freezed,
     Object? certEndTime = freezed,
+    Object? canReInstall = null,
   }) {
     return _then(_value.copyWith(
       packageName: null == packageName
@@ -245,6 +248,10 @@ class _$DebugAppCopyWithImpl<$Res, $Val extends DebugApp>
           ? _value.certEndTime
           : certEndTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      canReInstall: null == canReInstall
+          ? _value.canReInstall
+          : canReInstall // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -275,7 +282,8 @@ abstract class _$$DebugAppImplCopyWith<$Res>
       {String packageName,
       HapInfo? appInfo,
       DateTime? installTime,
-      DateTime? certEndTime});
+      DateTime? certEndTime,
+      bool canReInstall});
 
   @override
   $HapInfoCopyWith<$Res>? get appInfo;
@@ -298,6 +306,7 @@ class __$$DebugAppImplCopyWithImpl<$Res>
     Object? appInfo = freezed,
     Object? installTime = freezed,
     Object? certEndTime = freezed,
+    Object? canReInstall = null,
   }) {
     return _then(_$DebugAppImpl(
       packageName: null == packageName
@@ -316,6 +325,10 @@ class __$$DebugAppImplCopyWithImpl<$Res>
           ? _value.certEndTime
           : certEndTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      canReInstall: null == canReInstall
+          ? _value.canReInstall
+          : canReInstall // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -327,7 +340,8 @@ class _$DebugAppImpl implements _DebugApp {
       {this.packageName = "",
       this.appInfo = null,
       this.installTime = null,
-      this.certEndTime = null});
+      this.certEndTime = null,
+      this.canReInstall = false});
 
   factory _$DebugAppImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebugAppImplFromJson(json);
@@ -344,10 +358,13 @@ class _$DebugAppImpl implements _DebugApp {
   @override
   @JsonKey()
   final DateTime? certEndTime;
+  @override
+  @JsonKey()
+  final bool canReInstall;
 
   @override
   String toString() {
-    return 'DebugApp(packageName: $packageName, appInfo: $appInfo, installTime: $installTime, certEndTime: $certEndTime)';
+    return 'DebugApp(packageName: $packageName, appInfo: $appInfo, installTime: $installTime, certEndTime: $certEndTime, canReInstall: $canReInstall)';
   }
 
   @override
@@ -361,13 +378,15 @@ class _$DebugAppImpl implements _DebugApp {
             (identical(other.installTime, installTime) ||
                 other.installTime == installTime) &&
             (identical(other.certEndTime, certEndTime) ||
-                other.certEndTime == certEndTime));
+                other.certEndTime == certEndTime) &&
+            (identical(other.canReInstall, canReInstall) ||
+                other.canReInstall == canReInstall));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, packageName, appInfo, installTime, certEndTime);
+  int get hashCode => Object.hash(runtimeType, packageName, appInfo,
+      installTime, certEndTime, canReInstall);
 
   /// Create a copy of DebugApp
   /// with the given fields replaced by the non-null parameter values.
@@ -390,7 +409,8 @@ abstract class _DebugApp implements DebugApp {
       {final String packageName,
       final HapInfo? appInfo,
       final DateTime? installTime,
-      final DateTime? certEndTime}) = _$DebugAppImpl;
+      final DateTime? certEndTime,
+      final bool canReInstall}) = _$DebugAppImpl;
 
   factory _DebugApp.fromJson(Map<String, dynamic> json) =
       _$DebugAppImpl.fromJson;
@@ -403,6 +423,8 @@ abstract class _DebugApp implements DebugApp {
   DateTime? get installTime;
   @override
   DateTime? get certEndTime;
+  @override
+  bool get canReInstall;
 
   /// Create a copy of DebugApp
   /// with the given fields replaced by the non-null parameter values.

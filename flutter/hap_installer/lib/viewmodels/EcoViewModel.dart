@@ -545,15 +545,15 @@ class EcoViewModel extends ChangeNotifier {
     }
     await initDebugPath();
 
-    final debugDir = Directory(debugPath);
-    if (await debugDir.exists()) {
-      await debugDir.delete(recursive: true);
+    final tempDir = Directory(path.join(debugPath, "temp"));
+    if (await tempDir.exists()) {
+      await tempDir.delete(recursive: true);
     }
-    await debugDir.create(recursive: true);
+    await tempDir.create(recursive: true);
     List<String> pathList = [];
     if (path.extension(hapPath, 1).contains("app")) {
-      await cmd.unzip_App(hapPath, debugPath);
-      final files = Directory(debugPath).list();
+      await cmd.unzip_App(hapPath, tempDir.path);
+      final files = tempDir.list();
       pathList = await files
           .where((f) => f.path.endsWith(".hap") || f.path.endsWith(".hsp"))
           .map((f) => f.path)

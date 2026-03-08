@@ -34,6 +34,7 @@ _$DebugAppImpl _$$DebugAppImplFromJson(Map<String, dynamic> json) =>
       certEndTime: json['certEndTime'] == null
           ? null
           : DateTime.parse(json['certEndTime'] as String),
+      canReInstall: json['canReInstall'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$DebugAppImplToJson(_$DebugAppImpl instance) =>
@@ -42,4 +43,5 @@ Map<String, dynamic> _$$DebugAppImplToJson(_$DebugAppImpl instance) =>
       'appInfo': instance.appInfo,
       'installTime': instance.installTime?.toIso8601String(),
       'certEndTime': instance.certEndTime?.toIso8601String(),
+      'canReInstall': instance.canReInstall,
     };

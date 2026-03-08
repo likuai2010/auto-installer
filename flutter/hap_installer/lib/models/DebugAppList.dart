@@ -23,6 +23,7 @@ abstract class DebugApp with _$DebugApp {
     @Default(null) HapInfo? appInfo,
     @Default(null) DateTime? installTime,
     @Default(null) DateTime? certEndTime,
+    @Default(false) bool canReInstall,
   }) = _DebugApp;
   factory DebugApp.fromJson(Map<String, dynamic> json) =>
       _$DebugAppFromJson(json);
