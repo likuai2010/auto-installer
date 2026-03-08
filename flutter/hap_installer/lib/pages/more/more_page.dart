@@ -168,9 +168,6 @@ class _MorePageState extends State<MorePage> {
                   ],
                 ),
               ),
-              onConfirm: () {
-                Navigator.of(context).pop();
-              },
             );
           }
         },
