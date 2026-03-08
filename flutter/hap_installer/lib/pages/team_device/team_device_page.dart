@@ -19,16 +19,18 @@ class TeamDevicePage extends StatelessWidget {
       builder: (context, model, child) {
         return Container(
           color: AppColors.backgroundSecondaryDynamic(context),
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            children: [
-              // 团队列表卡片
-              _buildTeamCard(model),
-              // 设备列表卡片
-              _buildDeviceCard(context, model),
-              // 历史连接列表卡片
-              _buildHistoryCard(context, model),
-            ],
+          child: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              children: [
+                // 团队列表卡片
+                _buildTeamCard(model),
+                // 设备列表卡片
+                _buildDeviceCard(context, model),
+                // 历史连接列表卡片
+                _buildHistoryCard(context, model),
+              ],
+            ),
           ),
         );
       },
