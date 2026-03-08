@@ -22,6 +22,8 @@ class HistoryViewModel extends ChangeNotifier {
 
   DebugHistory? current;
   bool loadingAppList = false;
+  bool loadingUninstall = false;
+  bool loadingReinstall = false;
 
 
   fetchDebugApp() async {
@@ -74,13 +76,16 @@ class HistoryViewModel extends ChangeNotifier {
         }else{
           debugList.add(DebugApp(packageName: info.packageName, appInfo: info, certEndTime: endTime));
         }
-        appList = appList.copyWith(time: DateTime.now(), appList: debugList);
+        final list = debugList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);
+        appList = appList.copyWith(time: DateTime.now(), appList: list);
         notifyListeners();
         await saveDebugApp(appList);
+        await pushIcons(info);
     }catch(e){
         print("updateDebugApp filuare" + e.toString());
     }
   }
+ 
   readEndTime(String cerPath) async{
     var cert = parsePem(File(cerPath).readAsStringSync());
     var x509 = cert.lastOrNull as X509Certificate;
@@ -90,27 +95,51 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   updateDebugAppList(DebugAppList list) async {
-      for (int i = 0; i < list.appList.length; i++) {
-        final app = list.appList[i];
-        if (app.appInfo == null) {
-          final appInfoFile = File(path.join((await getTempDir()), "apps", app.packageName.replaceAll(".", "_"), "hap_info.json"));
-          if(await appInfoFile.exists()){
-            final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
-            list.appList[i] = app.copyWith(appInfo: appInfo);
-          }
-        }
-        if(app.installTime == null){
-          var result = await cmd.dumpAppInstallTime(app.packageName);
-          var installTime = result?.trim().split(",").first;
-          if(installTime !=null && installTime.contains("installTime")){
-            final time = DateTime.fromMillisecondsSinceEpoch(int.parse(installTime.split(":").last.trim()));
-            list.appList[i] = app.copyWith(installTime: time);
-          }
+  
+    for (int i = 0; i < list.appList.length; i++) {
+      final app = list.appList[i];
+      if (app.appInfo == null) {
+        final appInfoFile = File(path.join((await getTempDir()), "apps", app.packageName.replaceAll(".", "_"), "hap_info.json"));
+        if(await appInfoFile.exists()){
+          final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
+          list.appList[i] = app.copyWith(appInfo: appInfo);
         }
       }
-      list.time = DateTime.now();
+      if(app.installTime == null) {
+        var result = await cmd.dumpAppInstallTime(app.packageName);
+        var installTime = result?.trim().split(",").first;
+        if (installTime != null && installTime.contains("installTime")){
+          final time = DateTime.fromMillisecondsSinceEpoch(int.parse(installTime.split(":").last.trim()));
+          list.appList[i] = app.copyWith(installTime: time);
+        }
+      }
+      if(list.appList[i].appInfo != null){
+        await pullIcons(list.appList[i].appInfo!);
+      }
+    }
+    list.time = DateTime.now();
   }
-
+  pushIcons(HapInfo info) async{
+    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
+    for (var p in info.icon) {
+      final iconPath = path.join(appDir, p);
+      final targetPath = path.join(remote, p);
+      await cmd.makeDir(File(targetPath).parent.path);
+      await cmd.sendFile(iconPath, targetPath);
+    }
+  }
+  pullIcons(HapInfo info) async {
+    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
+    for (var p in info.icon) {
+      final iconPath = path.join(appDir, p.trim());
+      if(!await File(iconPath).exists()){
+        await File(iconPath).parent.create(recursive: true);
+        await cmd.recvFile(path.join(remote, p), iconPath);
+      }
+    }
+  }
   saveDebugApp(DebugAppList app) async{
     final file = File(path.join(await getAppDir(), "debug_app_list.json"));
     await file.writeAsString(jsonEncode(app.toJson()));
@@ -128,15 +157,31 @@ class HistoryViewModel extends ChangeNotifier {
     return readDebugApp(appPath);
   }
 
-
-
-
   fetchPayList() async {
     final json = await rootBundle.loadString("assets/pay/list.json");
     payList = PayList.fromJson(jsonDecode(json));
     notifyListeners();
   }
-
+  unInstall(HapInfo info) async{
+    if(loadingUninstall)
+      return;
+    loadingUninstall = true;
+    var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
+    var list = appList.appList.toList();
+    await cmd.installHap(info.packageName);
+    list.removeAt(index);
+    appList = appList.copyWith(appList: list);
+    await saveDebugApp(appList);
+    loadingUninstall = false;
+    notifyListeners();
+  }
+  reInstall(BuildContext context, HapInfo hap) async{
+    if(loadingReinstall)
+      return;
+    loadingReinstall = true;
+    await viewmodel.installHap(context, hap);
+    loadingReinstall = false;
+  }
 
   createDebugHistory(HapInfo hapInfo) {
     current = DebugHistory(hapInfo: hapInfo);

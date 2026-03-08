@@ -770,10 +770,9 @@ class EcoViewModel extends ChangeNotifier {
     toask(context, error ?? "");
   }
 
-  installHap(BuildContext context) async {
-    if (hapInfo != null) {
-      var hap = hapInfo!;
-      var signConfig = this.signConfig!;
+  installHap(BuildContext context, HapInfo? hap) async {
+    if (hap != null) {
+     var signConfig = this.signConfig!;
       bool nextStep = true;
       final model = historyViewModel!;
       model.createDebugHistory(hap);

@@ -51,7 +51,7 @@ class IndexPage extends StatelessWidget {
                 child: FilledButton(
                   onPressed: () {
                     toPage(context, (_) => const DebugDetailPage());
-                    model.installHap(context);
+                    model.installHap(context, model.hapInfo);
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(8),

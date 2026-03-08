@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
@@ -436,7 +437,8 @@ class ResourceTable{
     if (dataOffset + 2+ dataLen > length) {
         throw Exception("resource length error");
     }
-    resourceItem.SetData(input.readString(size: dataLen));
+    final data = input.readBytes(dataLen);
+    resourceItem.SetData(data, dataLen);
     resourceItem.MarkCoverable();
   }
 
@@ -525,7 +527,8 @@ class ResourceTable{
     if (value_size + 2 > record.size) {
       throw Exception("value size error");
     }
-    final values = input.readString(size: value_size);
+    final values = input.readBytes(value_size);
+
     int name_size = input.readUint16();
     if (value_size + 2 + name_size + 2 > record.size) {
       throw Exception("name size error");
@@ -548,7 +551,7 @@ class ResourceTable{
     resItem.keyparams = keyParams;
     resItem.type = gResTypeMap[record.resType] ?? ResType.INVALID_RES_TYPE;
     resItem.SetLimitKey(ResourceUtil.PaserKeyParam(keyParams ?? []));
-    resItem.SetData(values);
+    resItem.SetData(values, value_size);
     resItem.MarkCoverable();
     return resItem;
   }
@@ -634,17 +637,53 @@ class ResourceItem{
     late String name;
     late List<KeyParam> keyparams;
     late ResType type;
-    late String data;
+
     late String limitKey_;
+    late Uint8List _data;
+    late int _datalen;
     SetLimitKey(String limitKey){
       limitKey_ = limitKey;
     }
-    SetData(String data,){
-      this.data = data;
+    SetData(InputStream values, int length){
+      _data = values.toUint8List();
+      _datalen = length;
+      if (_data[length - 1] == 0) {
+        _datalen = length - 1;
+      }
     }
     MarkCoverable(){
 
     }
+    IsArray(){
+      return type == ResType.STRARRAY || type == ResType.INTARRAY;
+    }
+    IsPair() 
+    {
+      return type == ResType.THEME || type == ResType.PLURAL || type == ResType.PATTERN;
+    }
+    String getValueString(){
+      
+      final str = utf8.decode(_data.sublist(0, _datalen), allowMalformed: true);
+      return str;
+    }
+    List<String> SplitValue() {
+      if (!(IsArray() || IsPair())) {
+          return [];
+      }
+      var result = List<String>.empty(growable: true);
+      var index = 0;
+       while (index < _datalen) {
+        int strLen = _data.length + index;
+        index += 2;
+        if (index + strLen >= _datalen) {
+            return result;
+        }
+        result.add(utf8.decode(_data.sublist(index, strLen), allowMalformed: true));
+        index = index + strLen + 1;
+       }
+      return result;
+    }
+    
 }
 
 class ResourceInfo {
@@ -672,7 +711,7 @@ class Restool {
         ..typeName = items.isNotEmpty ? "\$${gResTypStringMap[items[0].type.value]}:${items[0].name}" : "unknown"
         ..name = items.isNotEmpty ? items[0].name : "unknown"
         ..type =  gResTypStringMap[items[0].type.value] ?? ""
-        ..values = items.map((item) => {item.limitKey_: item.name, "value": item.data}).toList();
+        ..values = items.map((item) => {item.limitKey_: item.name, "value": item.getValueString()}).toList();
     }).toList();
   }
 

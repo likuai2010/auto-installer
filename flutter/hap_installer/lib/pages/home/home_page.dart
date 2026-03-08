@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
         description: vm.hapInfo != null ? "${vm.hapInfo!.label} (${vm.hapInfo!.version})" : '软件安装包',
         icon: 'lib/assets/file_un_select.svg',
         activeIcon: 'lib/assets/file_select.svg',
-        iconPaths: vm.hapInfo?.icon ?? [],
+        hapInfo: vm.hapInfo,
         buttonLabel: vm.hapInfo != null ? '更换' : '选择',
         isActive: vm.hapInfo != null,
         isVisible: vm.currentDevice != null,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/HapInfo.freezed.dart';
@@ -15,4 +17,5 @@ abstract class HapInfo with _$HapInfo {
   }) = _HapInfo;
   factory HapInfo.fromJson(Map<String, dynamic> json) =>
       _$HapInfoFromJson(json);
+
 }

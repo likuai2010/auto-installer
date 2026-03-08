@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hap_installer/pages/history/history_page.dart';
 
 import '../../../core/constants/app_colors.dart';
 import 'home_setting_item.dart';
@@ -73,19 +74,8 @@ class HomeSettingItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 0),
                 // 自定义图标区域（如果提供了iconPaths）
-                if (item.iconPaths.isNotEmpty)
-                  Stack(
-                    children: item.iconPaths.map((path) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Image.file(
-                          File(path),
-                          width: 24,
-                          height: 24,
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                if(item.hapInfo != null)
+                  AppIconItem(info: item.hapInfo!),
                 // 文字区域
                 Expanded(
                   child: Column(

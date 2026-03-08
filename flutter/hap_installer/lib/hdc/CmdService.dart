@@ -179,12 +179,25 @@ class CmdService {
     var cmd = "hdc $_t shell aa start -U 'https://appgallery.huawei.com/app/detail?id=$packageName' --pb appLinkingOnly true";
     return await baseCmd(cmd);
   }
+  Future<String?> makeDir(String targetPath) async {
+    final result = await baseCmd('hdc $_t shell mkdir -p "$targetPath"');
+    return result;
+  }
+   Future<bool> exitsPath(String targetPath) async {
+    final result = await baseCmd('hdc $_t shell ls "$targetPath"');
+    if(result.contains("No such file or directory")){
+      return false;
+    }
+    return true;
+  }
   Future<String?> sendFile(String localPath, String targetPath) async {
     final result = await baseCmd('hdc $_t file send "$localPath" "$targetPath"');
+    print("sendFile: " + result);
     return result;
   }
   Future<String?> recvFile(String remotePath, String targetPath) async {
     final result = await baseCmd('hdc $_t file recv $remotePath $targetPath');
+    print("recvFile: " + result);
     return result;
   }
   Future<String?> dumpAppPackageName() async {
@@ -202,6 +215,10 @@ class CmdService {
   }
   Future<String?> getDeviceName() async {
     final result = await baseCmd('hdc $_t hidumper -c base | grep MarketName');
+    return result;
+  }
+  unInstall(String packageName) async{
+    final result = await baseCmd('hdc $_t uninstall -s $packageName');
     return result;
   }
   Future<String?> installHap(String filePath) async {
@@ -532,7 +549,7 @@ dumpToHap(List<String> pathList, String debugPath) async{
     final resResitems = resTool.dumpRes(path.join(debugPath, "resources.index"));
     final iconValue = resResitems.firstWhere((f) => f.typeName.contains(icon)).values.first["value"] ?? "";
     final iconList = List<String>.empty(growable: true);
-    if(iconValue.contains(".json")){
+    if (iconValue.contains(".json")){
       var iconPath = await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path);
       var json = File(iconPath).readAsStringSync();
       var iconJson = jsonDecode(json)["layered-image"];
@@ -540,10 +557,13 @@ dumpToHap(List<String> pathList, String debugPath) async{
       var foreground = iconJson["foreground"].split(":").last;
       var backgroundIcon = resResitems.firstWhere((f) => f.id.contains(background)).values.first["value"] ?? "";
       var foregroundIcon = resResitems.firstWhere((f) => f.id.contains(foreground)).values.first["value"] ?? "";
-      iconList.add(await getByHap(hapPath, backgroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
-      iconList.add(await getByHap(hapPath, foregroundIcon.replaceFirst("$moduleName/", ""), appDir.path));
+      await getByHap(hapPath, backgroundIcon.replaceFirst("$moduleName/", ""), appDir.path);
+      await getByHap(hapPath, foregroundIcon.replaceFirst("$moduleName/", ""), appDir.path);
+      iconList.add(backgroundIcon.replaceFirst("$moduleName/", ""));
+      iconList.add(foregroundIcon.replaceFirst("$moduleName/", ""));
     } else {
-      iconList.add(await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path));
+      await getByHap(hapPath, iconValue.replaceFirst("$moduleName/", ""), appDir.path);
+      iconList.add(iconValue.replaceFirst("$moduleName/", ""));
     }
     final label = info.app!.label;
     final name = resResitems.firstWhere((f) => f.typeName.contains(label)).values.first["value"] ?? "";
