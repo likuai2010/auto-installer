@@ -94,6 +94,9 @@ class DebugAppItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(onPressed: ()=>{
+                    showAlert(context, title: Text("敬请期待"), onConfirm: (){
+                          
+                    })
                   }, child: Text("游戏模式")),
                   Row(
                     children: [

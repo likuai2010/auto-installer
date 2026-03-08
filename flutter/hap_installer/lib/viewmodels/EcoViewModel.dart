@@ -139,6 +139,9 @@ class EcoViewModel extends ChangeNotifier {
   autoConnect(BuildContext context, Function() builder) async {
     // 检查自动连接设置
     final autoConnectEnabled = await getAutoConnect();
+    if(currentDevice != null && historyViewModel != null && historyViewModel!.appList.appList.isEmpty){
+      historyViewModel?.initDebugAppList();
+    }
     if (!autoConnectEnabled) {
       builder();
       return;
