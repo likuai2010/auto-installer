@@ -9,9 +9,10 @@ import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/PayList.dart';
+import 'package:x509/x509.dart';
+
 import 'package:path/path.dart' as path;
 import '../hdc/common.dart';
-
 class HistoryViewModel extends ChangeNotifier {
   List<DebugHistory> historyList = [];
 
@@ -20,7 +21,7 @@ class HistoryViewModel extends ChangeNotifier {
   PayList payList = const PayList();
 
   DebugHistory? current;
-  bool loading = false;
+  bool loadingAppList = false;
 
 
   fetchDebugApp() async {
@@ -34,8 +35,8 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   initDebugAppList() async {
-    if(loading) return;
-    loading = true;
+    if(loadingAppList) return;
+    loadingAppList = true;
     try {
       var debugList = await getDebugApp();
       if(debugList == null){
@@ -55,12 +56,39 @@ class HistoryViewModel extends ChangeNotifier {
       await saveDebugApp(debugList);  
       final list = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);
       appList = debugList.copyWith(appList: list);
-      loading = false;
+      loadingAppList = false;
       notifyListeners();
     } catch (e) {
-     loading = false;
+     loadingAppList = false;
     }
   }
+  updateDebugApp(HapInfo info, String cerPath) async {
+    if(appList.appList.isEmpty)
+      return;
+    try {
+        var endTime = await readEndTime(cerPath);
+        var debugList = appList.appList.toList(growable: true);
+        var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
+        if (index > -1){
+          debugList[index] = debugList[index].copyWith(appInfo: info, certEndTime: endTime);
+        }else{
+          debugList.add(DebugApp(packageName: info.packageName, appInfo: info, certEndTime: endTime));
+        }
+        appList = appList.copyWith(time: DateTime.now(), appList: debugList);
+        notifyListeners();
+        await saveDebugApp(appList);
+    }catch(e){
+        print("updateDebugApp filuare" + e.toString());
+    }
+  }
+  readEndTime(String cerPath) async{
+    var cert = parsePem(File(cerPath).readAsStringSync());
+    var x509 = cert.lastOrNull as X509Certificate;
+    var tbs = x509.tbsCertificate;
+    print(cert);
+    return tbs.validity?.notAfter;
+  }
+
   updateDebugAppList(DebugAppList list) async {
       for (int i = 0; i < list.appList.length; i++) {
         final app = list.appList[i];

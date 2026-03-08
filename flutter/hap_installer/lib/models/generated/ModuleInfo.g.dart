@@ -62,6 +62,8 @@ _$ModuleImpl _$$ModuleImplFromJson(Map<String, dynamic> json) => _$ModuleImpl(
               ?.map((e) => HnpPackage.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      name: json['name'] as String? ?? "",
+      packageName: json['packageName'] as String? ?? "",
     );
 
 Map<String, dynamic> _$$ModuleImplToJson(_$ModuleImpl instance) =>
@@ -69,6 +71,8 @@ Map<String, dynamic> _$$ModuleImplToJson(_$ModuleImpl instance) =>
       'requestPermissions': instance.requestPermissions,
       'deviceTypes': instance.deviceTypes,
       'hnpPackages': instance.hnpPackages,
+      'name': instance.name,
+      'packageName': instance.packageName,
     };
 
 _$ModuleInfoImpl _$$ModuleInfoImplFromJson(Map<String, dynamic> json) =>
