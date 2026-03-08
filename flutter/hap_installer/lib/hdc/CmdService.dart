@@ -527,11 +527,9 @@ dumpToHap(List<String> pathList, String debugPath) async{
       await appDir.create(recursive: true);
     }
     await getByHap(hapPath, "resources.index", debugPath);
-    final moduleName = info.module!.packageName;
+    final moduleName = info.module!.name;
     final icon = info.app!.icon;
     final resResitems = resTool.dumpRes(path.join(debugPath, "resources.index"));
-    final resTypes= resResitems.map((f)=>f.typeName).toList();
-    print(resTypes);
     final iconValue = resResitems.firstWhere((f) => f.typeName.contains(icon)).values.first["value"] ?? "";
     final iconList = List<String>.empty(growable: true);
     if(iconValue.contains(".json")){
@@ -551,11 +549,13 @@ dumpToHap(List<String> pathList, String debugPath) async{
     final name = resResitems.firstWhere((f) => f.typeName.contains(label)).values.first["value"] ?? "";
     var hapPathlList = <String>[];
     for (var element in pathList) {
-      final newPath = path.join(appDir.path, path.basename(element));
-      if(element != newPath){
-        await File(element).copy(newPath);
-        hapPathlList.add(newPath);
-      }
+      // final newPath = path.join(appDir.path, path.basename(element));
+      // final hap =  File(element);
+      // if(element != newPath && await hap.length() < 1024 * 1024 * 1024){
+      //   await File(element).copy(newPath);
+      //   hapPathlList.add(newPath);
+      // }
+      hapPathlList.add(element);
     }
     var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
     await File(path.join(appDir.path, "hap_info.json")).writeAsString(jsonEncode(hapInfo.toJson()), flush: true);

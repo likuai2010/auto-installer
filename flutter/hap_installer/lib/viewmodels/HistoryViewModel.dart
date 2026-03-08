@@ -21,7 +21,7 @@ class HistoryViewModel extends ChangeNotifier {
   PayList payList = const PayList();
 
   DebugHistory? current;
-  bool loading = false;
+  bool loadingAppList = false;
 
 
   fetchDebugApp() async {
@@ -35,8 +35,8 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   initDebugAppList() async {
-    if(loading) return;
-    loading = true;
+    if(loadingAppList) return;
+    loadingAppList = true;
     try {
       var debugList = await getDebugApp();
       if(debugList == null){
@@ -56,10 +56,10 @@ class HistoryViewModel extends ChangeNotifier {
       await saveDebugApp(debugList);  
       final list = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);
       appList = debugList.copyWith(appList: list);
-      loading = false;
+      loadingAppList = false;
       notifyListeners();
     } catch (e) {
-     loading = false;
+     loadingAppList = false;
     }
   }
   updateDebugApp(HapInfo info, String cerPath) async {
