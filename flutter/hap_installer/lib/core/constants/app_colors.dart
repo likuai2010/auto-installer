@@ -144,6 +144,16 @@ class AppColors {
   static const Color darkButtonLabelText = Color(0xFF317AF7);
   static const Color darkButtonBorderLight = Color(0x99317AF7);
 
+  // ==================== SnackBar 颜色 ====================
+
+  // 浅色模式 SnackBar
+  static const Color snackBarBackground = Color(0xFFE5E5EA); // backgroundTertiary，比页面背景深一层
+  static const Color snackBarText = Color(0xE6000000); // fontPrimary
+
+  // 深色模式 SnackBar
+  static const Color darkSnackBarBackground = Color(0xFF2E3033); // darkBackgroundFourth
+  static const Color darkSnackBarText = Color(0xE6FFFFFF); // darkFontPrimary
+
   // ==================== 动态颜色方法 ====================
 
   /// 判断当前是否为深色模式
@@ -297,6 +307,14 @@ class AppColors {
   /// 获取按钮边框颜色（动态适配深色模式）
   static Color buttonBorderLightDynamic(BuildContext context) =>
       isDarkMode(context) ? darkButtonBorderLight : buttonBorderLight;
+
+  /// 获取 SnackBar 背景色（动态适配深色模式）
+  static Color snackBarBackgroundDynamic(BuildContext context) =>
+      isDarkMode(context) ? darkSnackBarBackground : snackBarBackground;
+
+  /// 获取 SnackBar 文本色（动态适配深色模式）
+  static Color snackBarTextDynamic(BuildContext context) =>
+      isDarkMode(context) ? darkSnackBarText : snackBarText;
 
   // ==================== 兼容旧 API 的别名 ====================
 

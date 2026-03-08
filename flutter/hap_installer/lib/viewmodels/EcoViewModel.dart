@@ -16,16 +16,29 @@ import 'package:hap_installer/models/ModuleInfo.dart';
 import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
+import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:process_run/shell.dart';
 // import 'package:flutter_file_saver/flutter_file_saver.dart';
 
+/// 显示 SnackBar 消息提示
 void toask(BuildContext context, [String message = ""]) {
   final messenger = ScaffoldMessenger.of(context);
   messenger.hideCurrentSnackBar();
-  messenger.showSnackBar(SnackBar(content: Text(message)));
+  messenger.showSnackBar(
+    SnackBar(
+      /// 根据当前主题自动适配深色/浅色模式配色：
+      content: Text(
+        message,
+        style: TextStyle(
+          color: AppColors.snackBarTextDynamic(context),
+        ),
+      ),
+      backgroundColor: AppColors.snackBarBackgroundDynamic(context),
+    ),
+  );
 }
 
 void showDownloadDialog(BuildContext context, String javaPath) {
@@ -401,7 +414,7 @@ class EcoViewModel extends ChangeNotifier {
       hapInfo = HapInfo(
           packageName: moduleInfo.app?.bundleName ?? "未知",
           pathList: ["$appsDir/base_hnp.hap"],
-          version: moduleInfo.app?.versionName  ?? "未知",
+          version: moduleInfo.app?.versionName ?? "未知",
           deviceType: moduleInfo.module?.deviceTypes ?? []);
 
       final message = await cmd.buildHap(hnpInDir, "$appsDir/base_hnp.hap");
@@ -465,7 +478,7 @@ class EcoViewModel extends ChangeNotifier {
       if (result) {
         changeDevice(id);
       }
-    
+
       return result;
     }
   }
@@ -548,7 +561,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    return await dumpToHap(pathList,debugPath);
+    return await dumpToHap(pathList, debugPath);
   }
 
   initJavaRuntme(javapath, tempDir) async {
