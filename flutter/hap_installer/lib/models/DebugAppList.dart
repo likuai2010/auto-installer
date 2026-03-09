@@ -24,6 +24,7 @@ abstract class DebugApp with _$DebugApp {
     @Default(null) DateTime? installTime,
     @Default(null) DateTime? certEndTime,
     @Default(false) bool canReInstall,
+    @Default(false) bool isGame,
   }) = _DebugApp;
   factory DebugApp.fromJson(Map<String, dynamic> json) =>
       _$DebugAppFromJson(json);

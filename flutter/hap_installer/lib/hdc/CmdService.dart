@@ -216,8 +216,20 @@ class CmdService {
     final result = await baseCmd('hdc $_t hidumper -c base | grep MarketName');
     return result;
   }
-  unInstall(String packageName) async{
+
+  Future<String?> unInstall(String packageName) async{
     final result = await baseCmd('hdc $_t uninstall -s $packageName');
+    return result;
+  }
+  Future<String?> setGameMode(String packageName, bool enable) async {
+    await baseCmd('hdc $_t shell cem publish -e game.assistant.custom.deviceTemplate');
+    await Future.delayed(new Duration(milliseconds: 500));
+    var result = "";
+    if(enable){
+      result = await baseCmd('hdc $_t shell hidumper -s 66006 -a "-se $packageName"');
+    }else{
+      result = await baseCmd('hdc $_t shell hidumper -s 66006 -a "-sc $packageName"');
+    }
     return result;
   }
   Future<String?> installHap(String filePath) async {

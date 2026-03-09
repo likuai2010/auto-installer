@@ -26,6 +26,7 @@ class HistoryViewModel extends ChangeNotifier {
   bool loadingAppList = false;
   bool loadingUninstall = false;
   bool loadingReinstall = false;
+  bool loadingGameMode = false;
 
 
   fetchDebugApp() async {
@@ -93,7 +94,6 @@ class HistoryViewModel extends ChangeNotifier {
     var cert = parsePem(File(cerPath).readAsStringSync());
     var x509 = cert.lastOrNull as X509Certificate;
     var tbs = x509.tbsCertificate;
-    print(cert);
     return tbs.validity?.notAfter;
   }
 
@@ -207,6 +207,7 @@ class HistoryViewModel extends ChangeNotifier {
     if(loadingUninstall)
       return;
     loadingUninstall = true;
+    notifyListeners();
     var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
     var list = appList.appList.toList();
     await cmd.installHap(info.packageName);
@@ -225,7 +226,18 @@ class HistoryViewModel extends ChangeNotifier {
     toPage(context, (_) => const DebugDetailPage());
     await viewmodel.installHap(context, hap);
     loadingReinstall = false;
-
+  }
+  setGame(DebugApp app) async {
+    if (loadingGameMode)
+      return;
+    loadingGameMode = true;
+    cmd.setGameMode(app.packageName, !app.isGame);
+    var index = appList.appList.indexWhere((d) => d.packageName == app.packageName);
+    var appInfo = appList.appList[index];
+    appList.appList[index] = appInfo.copyWith(isGame: !appInfo.isGame);
+    await saveDebugApp(appList);
+    loadingGameMode =false;
+    notifyListeners();
   }
 
   createDebugHistory(HapInfo hapInfo) {

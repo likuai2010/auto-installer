@@ -18,6 +18,9 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
+        if(model.loadingAppList){
+          return CircularProgressIndicator();
+        }
         return Container(
           color: AppColors.backgroundSecondaryDynamic(context),
           child: Expanded(
@@ -41,6 +44,7 @@ class HistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<HistoryViewModel>(context);
+  
     return GroupDecoration(
       children: [
         ListItem(
@@ -80,9 +84,6 @@ class DebugAppItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HistoryViewModel>(
       builder: (context, model, _) {
-        if(model.loadingAppList){
-          return CircularProgressIndicator();
-        }
         return GroupDecoration(
           children: [
             ListItem(
@@ -93,11 +94,15 @@ class DebugAppItem extends StatelessWidget {
               tailling: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(onPressed: ()=>{
-                    showAlert(context, title: Text("敬请期待"), onConfirm: (){
-                          
-                    })
-                  }, child: Text("游戏模式")),
+                  TextButton(onPressed: () async{
+                    if(info.isGame){
+                       showAlert(context, title: Text("关闭游戏模式"), content: Text("需要重启手机才能生效"), onConfirm: () async {
+                            await model.setGame(info);
+                        });
+                    }else{
+                        await model.setGame(info);
+                    }
+                  }, child: model.loadingReinstall ? CircularProgressIndicator() :(info.isGame ? Text("游戏") :  Text("应用"))) ,
                   Row(
                     children: [
                       if(info.appInfo != null && info.canReInstall)
