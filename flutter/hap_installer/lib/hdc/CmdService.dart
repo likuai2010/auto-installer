@@ -110,7 +110,7 @@ class CmdService {
 
 
   changeTarget(String device) {
-    _t = "-t $device";
+    _t = "-t ${device.replaceFirst("Unauthorized", "").trim()}";
   }
 
   Future<ModuleInfo> readModuleInfo(String debugDir) async {

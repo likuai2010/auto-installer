@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/models/DebugAppList.dart';
 import 'package:hap_installer/pages/history/debug_detail_page.dart';
+import 'package:hap_installer/pages/more/more_page.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
@@ -53,7 +54,7 @@ class HistoryViewModel extends ChangeNotifier {
         List<DebugApp> list = [];
         for (var element in packageNames.skip(1)) {
           if(element.trim().isNotEmpty){
-          list.add(DebugApp(packageName: element.trim()));
+              list.add(DebugApp(packageName: element.trim()));
           }
         }
         debugList = debugList.copyWith(appList: list);
@@ -65,7 +66,8 @@ class HistoryViewModel extends ChangeNotifier {
       loadingAppList = false;
       notifyListeners();
     } catch (e) {
-     loadingAppList = false;
+      loadingAppList = false;
+      notifyListeners();
     }
   }
   updateDebugApp(HapInfo info, String cerPath) async {
@@ -195,6 +197,9 @@ class HistoryViewModel extends ChangeNotifier {
     }
     var result = await cmd.recvFile("/data/local/tmp/debug_app_list.json", appPath);
     print("recv debug app list: $result");
+    if(result!.contains("[Fail]")){
+        throw FormatException("设备为授权");
+    }
     return readDebugApp(appPath);
   }
 
@@ -210,27 +215,37 @@ class HistoryViewModel extends ChangeNotifier {
     notifyListeners();
     var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
     var list = appList.appList.toList();
-    await cmd.installHap(info.packageName);
+    await cmd.unInstall(info.packageName);
     list.removeAt(index);
     appList = appList.copyWith(appList: list);
     await saveDebugApp(appList);
     loadingUninstall = false;
     notifyListeners();
   }
-  reInstall(BuildContext context, HapInfo hap) async{
+  reInstall(BuildContext context, HapInfo hap, bool reCert) async{
     if(loadingReinstall)
       return;
     loadingReinstall = true;
     notifyListeners();
-    hap = await downloadHap(hap);
-    toPage(context, (_) => const DebugDetailPage());
-    await viewmodel.installHap(context, hap);
+    try{
+        hap = await downloadHap(hap);
+        await getByHap(hap.pathList.last, "module.json", viewmodel.debugPath);
+        toPage(context, (_) => const DebugDetailPage());
+        await viewmodel.installHap(context, hap);
+    } on FormatException catch (e) {
+      toask(context, e.message);
+    }catch (e) {
+      toask(context, "$e");
+    }
+
     loadingReinstall = false;
+    notifyListeners();
   }
   setGame(DebugApp app) async {
     if (loadingGameMode)
       return;
     loadingGameMode = true;
+    notifyListeners();
     cmd.setGameMode(app.packageName, !app.isGame);
     var index = appList.appList.indexWhere((d) => d.packageName == app.packageName);
     var appInfo = appList.appList[index];

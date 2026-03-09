@@ -773,7 +773,7 @@ class EcoViewModel extends ChangeNotifier {
     toask(context, error ?? "");
   }
 
-  installHap(BuildContext context, HapInfo? hap) async {
+  installHap(BuildContext context, HapInfo? hap, [bool recert = false, bool reinstall = false]) async {
     if (hap != null) {
      var signConfig = this.signConfig!;
       bool nextStep = true;
@@ -827,14 +827,27 @@ class EcoViewModel extends ChangeNotifier {
           }, "签名(${path.basename(p)})");
         }
       }
+      final outPathList = <String>[];
+      for (var p in hap.pathList) {
+        outPathList.add(await cmd.getOutPath(p));
+      }
+      hap = hap.copyWith(pathList: outPathList);
+
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.startSetp(4, () async {
-            final result =  await cmd.installHap(await cmd.getOutPath(p));
-            if(result == null){
-                await model.updateDebugApp(hap, signConfig.certPath);
+            if (reinstall && recert){
+              await cmd.unInstall(hap!.packageName);
+              final result = await cmd.installHap(p);
+              return result;
+            } else {
+              final result = await cmd.installHap(p);
+              if(result == null){
+                await model.updateDebugApp(hap!, signConfig.certPath);
+              }
+              return result;
             }
-            return result;
+         
           }, "调试(${path.basename(p)})");
         }
       }

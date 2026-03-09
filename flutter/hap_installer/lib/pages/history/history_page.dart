@@ -19,7 +19,7 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         if(model.loadingAppList){
-          return CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator()) ;
         }
         return Container(
           color: AppColors.backgroundSecondaryDynamic(context),
@@ -96,23 +96,32 @@ class DebugAppItem extends StatelessWidget {
                 children: [
                   TextButton(onPressed: () async{
                     if(info.isGame){
-                       showAlert(context, title: Text("关闭游戏模式"), content: Text("需要重启手机才能生效"), onConfirm: () async {
-                            await model.setGame(info);
-                        });
+                      showAlert(context, title: Text("关闭游戏模式"), content: Text("需要重启手机才能生效"), onConfirm: () async {
+                          await model.setGame(info);
+                      });
                     }else{
-                        await model.setGame(info);
+                      showAlert(context, title: Text("切换游戏模式"), content: Text("开启游戏模式后, 可开启高性能开关"), onConfirm: () async {
+                          await model.setGame(info);
+                      });
                     }
-                  }, child: model.loadingReinstall ? CircularProgressIndicator() :(info.isGame ? Text("游戏") :  Text("应用"))) ,
+                  }, child: model.loadingGameMode ? CircularProgressIndicator() :(info.isGame ? Text("游戏模式") :  Text("应用模式"))) ,
                   Row(
                     children: [
                       if(info.appInfo != null && info.canReInstall)
                           TextButton(onPressed: () => {
                             if(!model.loadingReinstall){
-                              showAlert(context, title: Text("确定续期?"), content: Text("目前支持500m以下的应用. 续期将重新创建证书. 已安装的其他应用不受影响"), onConfirm: (){
-                                  model.reInstall(context, info.appInfo!);
-                              })
+                              showConfirm(context, title: Text("确定延期?"), content: Text("目前支持500m以下的应用. \n创建新证书将自动删除当前证书. 已安装的其他应用不受影响"), 
+                                confirmLabel: "创建新证书",
+                                cancelLabel: "使用当前证书",
+                                onConfirm: (){
+                                    model.reInstall(context, info.appInfo!, true);
+                                },
+                                onCancel: (){
+                                  model.reInstall(context, info.appInfo!, false);
+                                }
+                              )
                             }
-                          }, child: model.loadingReinstall ? CircularProgressIndicator() : Text("续期")),
+                          }, child: model.loadingReinstall ? CircularProgressIndicator() : Text("延期")),
                         TextButton(onPressed: ()=>{
                           showAlert(context, title: Text("确定卸载?"), onConfirm: (){
                               model.unInstall(info.appInfo!);

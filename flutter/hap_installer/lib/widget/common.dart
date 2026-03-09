@@ -457,3 +457,52 @@ void showAlert(
     },
   );
 }
+
+
+void showConfirm(
+  BuildContext context, {
+  Widget? title,
+  Widget? content,
+  String? confirmLabel,
+  String? cancelLabel,
+  Function()? onConfirm,
+  Function()? onCancel,
+}) {
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      return AlertDialog(
+        backgroundColor: AppColors.compBackgroundPrimaryDynamic(context),
+        title: title,
+        content: content,
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              confirmLabel ?? '确认',
+              style: TextStyle(color: AppColors.fontSecondaryDynamic(context)),
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              if (onConfirm != null) {
+                onConfirm();
+              }
+            },
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.brandDynamic(context),
+              foregroundColor: AppColors.buttonTextPrimary,
+            ),
+            child: Text(cancelLabel ?? '取消'),
+            onPressed: (){
+              Navigator.of(ctx).pop();
+               if (onCancel != null) {
+                onCancel();
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
