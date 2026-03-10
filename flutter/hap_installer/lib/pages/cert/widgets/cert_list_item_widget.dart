@@ -28,6 +28,14 @@ class CertListItemWidget extends StatefulWidget {
 }
 
 class _CertListItemWidgetState extends State<CertListItemWidget> {
+  /// 大屏幕宽度阈值（超过此宽度认为是PC端）
+  static const double _kLargeScreenThreshold = 600;
+
+  /// 判断是否为大屏幕设备
+  bool _isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width >= _kLargeScreenThreshold;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -85,9 +93,11 @@ class _CertListItemWidgetState extends State<CertListItemWidget> {
                         ArrowTooltip(
                           message: widget.item.certName,
                           child: Text(
-                            truncateMiddle(
-                                '${widget.item.certTypeLabel}: ${widget.item.certName}',
-                                20),
+                            _isLargeScreen(context)
+                                ? '${widget.item.certTypeLabel}: ${widget.item.certName}'
+                                : truncateMiddle(
+                                    '${widget.item.certTypeLabel}: ${widget.item.certName}',
+                                    20),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -95,6 +105,11 @@ class _CertListItemWidgetState extends State<CertListItemWidget> {
                                   ? AppColors.fontTertiaryDynamic(context)
                                   : AppColors.fontPrimaryDynamic(context),
                             ),
+                            // 大屏幕时允许文本溢出省略
+                            overflow: _isLargeScreen(context)
+                                ? TextOverflow.ellipsis
+                                : null,
+                            maxLines: 1,
                           ),
                         ),
                         const SizedBox(height: 4),
