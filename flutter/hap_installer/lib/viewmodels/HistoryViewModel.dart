@@ -129,12 +129,12 @@ class HistoryViewModel extends ChangeNotifier {
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p);
-      final targetPath = path.join(remote, p);
+      final targetPath ="$remote/$p";
       await cmd.makeDir(File(targetPath).parent.path);
       await cmd.sendFile(iconPath, targetPath);
     }
     for (var p in info.pathList) {
-      final hapPath = path.join(remote,path.basename(p));
+      final hapPath = "$remote/${path.basename(p)}";
       final size = await File(p).length();
       // 小于500M
       if (!await cmd.exitsPath(hapPath) && size < 1024 * 1024 * 500){
@@ -149,12 +149,12 @@ class HistoryViewModel extends ChangeNotifier {
       final iconPath = path.join(appDir, p.trim());
       if(!await File(iconPath).exists()){
         await File(iconPath).parent.create(recursive: true);
-        await cmd.recvFile(path.join(remote, p), iconPath);
+        await cmd.recvFile("$remote/$p", iconPath);
       }
     }
     final newList = List<String>.empty(growable: true);
     for (var p in info.pathList) {
-      final hapPath = path.join(remote, path.basename(p));
+      final hapPath = "$remote/${path.basename(p)}";
       final localPath = path.join(appDir, path.basename(p));
       // 本地没有缓存就现在远程的
       if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
@@ -170,7 +170,7 @@ class HistoryViewModel extends ChangeNotifier {
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     final newList = List<String>.empty(growable: true);
     for (var p in info.pathList) {
-      final hapPath = path.join(remote, path.basename(p));
+      final hapPath = "$remote/${path.basename(p)}";
       final localPath = path.join(appDir, path.basename(p));
       // 本地没有缓存就现在远程的
       if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
@@ -197,8 +197,8 @@ class HistoryViewModel extends ChangeNotifier {
     }
     var result = await cmd.recvFile("/data/local/tmp/debug_app_list.json", appPath);
     print("recv debug app list: $result");
-    if(result!.contains("[Fail]")){
-        throw FormatException("设备为授权");
+    if(result!.contains("[Fail]") && result!.contains("Unauthorized")){
+      throw FormatException("设备未授权");
     }
     return readDebugApp(appPath);
   }

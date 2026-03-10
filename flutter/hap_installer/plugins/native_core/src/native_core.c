@@ -59,14 +59,14 @@ FFI_PLUGIN_EXPORT char* signCmd(int argc, const char *args[], const char *tempDi
 //     fclose(serr);
     void* go_library = dlopen("libsigner_go.so", RTLD_LAZY | RTLD_GLOBAL);
     if (!go_library) {
-        return "load signer_go.so 失败";
+        return "load signer_go.so failure";
     }
     Sign_Cmd_T cmd = (Sign_Cmd_T)dlsym(go_library, "Sign_Cmd");
     char* result = cmd(argc, (char**)args, tempDir);
     return result;
    //freopen("/dev/tty", "w", stdout);
 #endif
-  return "signCmd不支持";
+  return "signCmd no support";
 }
 
 

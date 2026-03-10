@@ -222,14 +222,15 @@ class CmdService {
     return result;
   }
   Future<String?> setGameMode(String packageName, bool enable) async {
-    await baseCmd('hdc $_t shell cem publish -e game.assistant.custom.deviceTemplate');
-    await Future.delayed(new Duration(milliseconds: 500));
-    var result = "";
+    var result = await baseCmd('hdc $_t shell cem publish -e game.assistant.custom.deviceTemplate');
+    print(result);
+    await Future.delayed(new Duration(milliseconds: 1000));
     if(enable){
       result = await baseCmd('hdc $_t shell hidumper -s 66006 -a "-se $packageName"');
     }else{
       result = await baseCmd('hdc $_t shell hidumper -s 66006 -a "-sc $packageName"');
     }
+    print(result);
     return result;
   }
   Future<String?> installHap(String filePath) async {
