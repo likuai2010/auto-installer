@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../utils/string_utils.dart';
+import '../../../widget/arrow_tooltip.dart';
 import 'cert_item.dart';
 
 /// 证书列表项组件
@@ -12,7 +14,7 @@ import 'cert_item.dart';
 /// 左侧图标: 24x24，padding 16px（无背景）
 /// 右侧按钮: 80x30，圆角100（胶囊形）
 /// 支持从右向左滑动显示删除按钮
-class CertListItemWidget extends StatelessWidget {
+class CertListItemWidget extends StatefulWidget {
   /// 证书项数据
   final CertItem item;
 
@@ -22,9 +24,14 @@ class CertListItemWidget extends StatelessWidget {
   });
 
   @override
+  State<CertListItemWidget> createState() => _CertListItemWidgetState();
+}
+
+class _CertListItemWidgetState extends State<CertListItemWidget> {
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(item.certName),
+      key: Key(widget.item.certName),
       direction: DismissDirection.endToStart,
       confirmDismiss: (direction) => _showDeleteConfirm(context),
       background: Container(
@@ -46,65 +53,67 @@ class CertListItemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: SizedBox(
             height: 76,
-            child: InkWell(
-              onTap: item.onUse,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    // 图标（无背景容器）
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 0,
-                        right: 16,
-                        top: 16,
-                        bottom: 16,
-                      ),
-                      child: SvgPicture.asset(
-                        "lib/assets/certkey.svg",
-                        width: 24,
-                        height: 24,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.iconPrimaryDynamic(context),
-                          BlendMode.srcIn,
-                        ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  // 图标（无背景容器）
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 0,
+                      right: 16,
+                      top: 16,
+                      bottom: 16,
+                    ),
+                    child: SvgPicture.asset(
+                      "lib/assets/certkey.svg",
+                      width: 24,
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconPrimaryDynamic(context),
+                        BlendMode.srcIn,
                       ),
                     ),
-                    const SizedBox(width: 0),
-                    // 文字区域
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${item.certTypeLabel}: ${item.certName}',
+                  ),
+                  // 文字区域
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// 箭头提示框 -> 在文本下方显示完整的证书名称
+                        ArrowTooltip(
+                          message: widget.item.certName,
+                          child: Text(
+                            truncateMiddle(
+                                '${widget.item.certTypeLabel}: ${widget.item.certName}',
+                                20),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: item.isExpired
+                              color: widget.item.isExpired
                                   ? AppColors.fontTertiaryDynamic(context)
                                   : AppColors.fontPrimaryDynamic(context),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '于${item.formattedExpireTime}过期',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: item.isExpired
-                                  ? AppColors.warningDynamic(context)
-                                  : AppColors.fontSecondaryDynamic(context),
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '于${widget.item.formattedExpireTime}过期',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: widget.item.isExpired
+                                ? AppColors.warningDynamic(context)
+                                : AppColors.fontSecondaryDynamic(context),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    // 右侧按钮
-                    _buildActionButton(context),
-                  ],
-                ),
+                  ),
+                  // 右侧按钮
+                  _buildActionButton(context),
+                ],
               ),
             ),
           ),
@@ -130,7 +139,7 @@ class CertListItemWidget extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx, true);
-              item.onDelete?.call();
+              widget.item.onDelete?.call();
             },
             child: Text(
               '删除',
@@ -150,7 +159,7 @@ class CertListItemWidget extends StatelessWidget {
   /// - 已过期：不显示按钮（通过滑动删除）
   Widget _buildActionButton(BuildContext context) {
     // 正在使用：显示"正在使用"文本
-    if (item.isCurrent) {
+    if (widget.item.isCurrent) {
       return SizedBox(
         width: 80,
         height: 30,
@@ -168,7 +177,7 @@ class CertListItemWidget extends StatelessWidget {
     }
 
     // 已过期：不显示按钮（统一通过滑动删除）
-    if (item.isExpired) {
+    if (widget.item.isExpired) {
       return const SizedBox(width: 80, height: 30);
     }
 
@@ -176,7 +185,7 @@ class CertListItemWidget extends StatelessWidget {
     return _buildCapsuleButton(
       context: context,
       label: '使用',
-      onTap: item.onUse,
+      onTap: widget.item.onUse,
     );
   }
 
