@@ -45,7 +45,10 @@ class _CertListItemWidgetState extends State<CertListItemWidget> {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: AppColors.warningDynamic(context),
+        decoration: BoxDecoration(
+          color: AppColors.warningDynamic(context),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(
           Icons.delete_outline,
           color: Colors.white,
