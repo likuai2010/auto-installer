@@ -85,12 +85,6 @@ class TerminalInputBar extends StatelessWidget {
                           size: 24,
                           color: AppColors.brandDynamic(context),
                         ),
-                  // TODO 设计稿的 ICON
-                  /* SvgPicture.asset(
-                          "lib/assets/terminal_send.svg",
-                          width: 24,
-                          height: 24,
-                        ), */
                 ),
               ),
             ),

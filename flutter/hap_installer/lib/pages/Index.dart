@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hap_installer/pages/team_device/team_device_page.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/pages/cert/cert_page.dart';
 import 'package:hap_installer/pages/history/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
-import 'package:hap_installer/pages/team_device/team_device_page.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
@@ -110,7 +110,22 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
       actions.add(
         IconButton(
           onPressed: () {
-            scaffoldKey.currentState?.openEndDrawer();
+            /// 显示半模态弹窗
+            showModalBottomSheet<void>(
+              context: context,
+              isScrollControlled: true, // 允许自定义高度
+              useSafeArea: true, // 适配安全区域
+              showDragHandle: true, // 显示拖拽手柄
+              constraints: BoxConstraints(
+                maxHeight: // 限制最大高度为 70%
+                    MediaQuery.of(context).size.height * 0.7,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              backgroundColor: AppColors.backgroundSecondaryDynamic(context),
+              builder: (context) => const TeamDevicePage(),
+            );
             viewmodel.checkDevices(null);
           },
           icon: const Icon(Icons.settings),
@@ -155,14 +170,6 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
     setState(() {
       screenIndex = screenSelected;
     });
-  }
-
-  Widget? buildDrawer(PageSelected pageSelected) {
-    if (pageSelected == PageSelected.home) {
-      // TODO 重构 Drawer 为 半模态，内部组件为卡片样式以统一风格
-      return const Drawer(child: TeamDevicePage());
-    }
-    return null;
   }
 
   @override
@@ -214,7 +221,6 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
             },
             selectedIndex: screenIndex,
           ),
-          drawer: buildDrawer(PageSelected.values[screenIndex]),
         );
       },
     );
