@@ -173,11 +173,11 @@ class HistoryViewModel extends ChangeNotifier {
       final hapPath = "$remote/${path.basename(p)}";
       final localPath = path.join(appDir, path.basename(p));
       // 本地没有缓存就现在远程的
-      if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
-        await cmd.recvFile(hapPath, appDir);
-        newList.add(localPath);
-      }else if(await File(localPath).exists()){
-         newList.add(localPath);
+      if(await File(localPath).exists()){
+          newList.add(localPath);
+      }else if(await cmd.exitsPath(hapPath)){
+          await cmd.recvFile(hapPath, appDir);
+          newList.add(localPath);
       }
     }
     return info.copyWith(pathList: newList);
@@ -231,7 +231,7 @@ class HistoryViewModel extends ChangeNotifier {
         hap = await downloadHap(hap);
         await getByHap(hap.pathList.last, "module.json", viewmodel.debugPath);
         toPage(context, (_) => const DebugDetailPage());
-        await viewmodel.installHap(context, hap);
+        await viewmodel.installHap(context, hap, reCert, true);
     } on FormatException catch (e) {
       toask(context, e.message);
     }catch (e) {

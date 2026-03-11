@@ -800,7 +800,7 @@ class EcoViewModel extends ChangeNotifier {
         nextStep = await model.startSetp(2, () async {
           final udid = await cmd.getUdid();
           if (udid.length != 64) {
-            throw FormatException("UDID不合法: " + udid);
+            throw FormatException("UDID不合法: $udid");
           }
           var udids = signConfig.udids.toList();
           if (!udids.contains(udid)) {
@@ -816,6 +816,15 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.startSetp(2, () async {
           final module = await cmd.readModuleInfo(debugPath);
+          if(recert){
+            await eco.deleteCertList([signConfig.certId]);
+            signConfig.certId = "";
+          }
+          if (recert || reinstall) {
+            if (await File(signConfig.profilePath).exists()){
+              await File(signConfig.profilePath).delete();
+            }
+          }
           await eco.autoCreateProfile(signConfig, module, () => !isLogin);
           return null;
         });
@@ -832,17 +841,21 @@ class EcoViewModel extends ChangeNotifier {
         outPathList.add(await cmd.getOutPath(p));
       }
       hap = hap.copyWith(pathList: outPathList);
-
+      
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.startSetp(4, () async {
+            // 证书变更需要卸载重装
             if (reinstall && recert){
-              await cmd.unInstall(hap!.packageName);
+              await cmd.unInstall(hap!.packageName, hap.pathList.length > 1, true);
               final result = await cmd.installHap(p);
+              if(result == null){
+                await model.updateDebugApp(hap!, signConfig.certPath);
+              }
               return result;
             } else {
               final result = await cmd.installHap(p);
-              if(result == null){
+              if (result == null){
                 await model.updateDebugApp(hap!, signConfig.certPath);
               }
               return result;

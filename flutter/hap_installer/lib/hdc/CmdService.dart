@@ -146,9 +146,17 @@ class CmdService {
 
 
   Future<String> getOutPath(String inPath) async {
+  
+    var basename = path.basenameWithoutExtension(inPath).trim();
+    var outPath = basename;
+    if (basename.endsWith("_signed")){
+      outPath += path.extension(inPath);
+    } else {
+      outPath += ( "_signed${path.extension(inPath)}");
+    }
     final outFile = path.join(
       await getTempDir(),
-      "${path.basenameWithoutExtension(inPath).trim()}_signed${path.extension(inPath)}",
+      outPath,
     );
     return outFile;
   }
@@ -217,8 +225,8 @@ class CmdService {
     return result;
   }
 
-  Future<String?> unInstall(String packageName) async{
-    final result = await baseCmd('hdc $_t uninstall -s $packageName');
+  Future<String?> unInstall(String packageName, [bool hsp = false, bool keep = false]) async{
+    final result = await baseCmd('hdc $_t uninstall ${hsp?"-s":""} ${keep?"-k":""} $packageName');
     return result;
   }
   Future<String?> setGameMode(String packageName, bool enable) async {
@@ -240,6 +248,10 @@ class CmdService {
     print("installHap $filePath");
     final result = await baseCmd('hdc $_t install "$filePath"');
     print("installHap failure: $result");
+    return formatError(result);
+  }
+
+  formatError(String result){
     if (result.contains("success")) {
       return null;
     } else if (result.contains("9568322")) {
@@ -268,6 +280,22 @@ class CmdService {
       return "调试失败: $result";
     }
   }
+
+//  Future<String?> reInstallHap(String filePath, String packageName) async {
+//     if (!await File(filePath).exists()) {
+//       return "文件不存在 $filePath";
+//     }
+//     var remotePath = "/data/local/tmp/temp.hap";
+//     await sendFile(filePath, remotePath);
+//     var shred = ""
+//     if(filePath.endsWith(".hsp")){
+
+//     }
+//     final result = await baseCmd('hdc $_t shell bm uninstall -s -k -n $packageName && bm install $remotePath && rm $remotePath');
+//     print("installHap failure: $result");
+//     return formatError(result);
+//   }
+
 
   Future<String> connectHdc(String url) async {
     if (url.length <= 5) {
