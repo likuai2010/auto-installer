@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hap_installer/models/DebugAppList.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
@@ -98,7 +99,7 @@ class DebugAppItem extends StatelessWidget {
                           await model.setGame(info);
                       });
                     }else{
-                      showAlert(context, title: Text("切换游戏模式"), content: Text("目前不支持支持328以上系统版本, 切换游戏模式后, 长安底部状态条开启高性能开关"), onConfirm: () async {
+                      showAlert(context, title: Text("切换游戏模式"), content: Text("目前不支持支持328以上系统版本, 切换游戏模式后, 长按底部状态条开启高性能开关"), onConfirm: () async {
                           await model.setGame(info);
                       });
                     }
@@ -153,14 +154,25 @@ class AppIconItem extends StatelessWidget {
         return Stack(
             children: info.icon.map((path) {
               if(File(iconPath(model,info.packageName, path)).existsSync()){
+                if(path.contains("svg")){
+                  return SvgPicture.file(
+                    File(iconPath(model, info.packageName, path)),
+                    colorFilter: ColorFilter.mode(
+                      AppColors.iconPrimaryDynamic(context),
+                      BlendMode.srcIn,
+                    ),
+                    width: 24,
+                    height: 24,
+                  );
+                }
                 return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Image.file(
-                  File(iconPath(model, info.packageName, path)),
-                  width: 24,
-                  height: 24,
-                ),
-                );
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Image.file(
+                    File(iconPath(model, info.packageName, path)),
+                    width: 24,
+                    height: 24,
+                    ),
+                  );
               }else{
                 return Container();
               }
