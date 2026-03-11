@@ -19,20 +19,18 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         if(model.loadingAppList){
-          return const Center(child: CircularProgressIndicator()) ;
+          return Container(
+              color: AppColors.backgroundSecondaryDynamic(context),
+              child: const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            );
         }
-        return Container(
-          color: AppColors.backgroundSecondaryDynamic(context),
-          child: Expanded(
-            child: model.appList.appList.isNotEmpty
-                ? ListView.builder(
-                    itemCount: model.appList.appList.length,
-                    itemBuilder: (_, i) =>
-                        DebugAppItem(info: model.appList.appList[i]),
-                  )
-                : const Center(child: Text("没有调试的APP")),
-          ),
-        );
+        return model.appList.appList.isNotEmpty ? ListView.builder(
+                  itemCount: model.appList.appList.length,
+                  itemBuilder: (_, i) =>
+                      DebugAppItem(info: model.appList.appList[i]),
+                ) : const Center(child: Text("没有调试的APP"));
       },
     );
   }
@@ -100,7 +98,7 @@ class DebugAppItem extends StatelessWidget {
                           await model.setGame(info);
                       });
                     }else{
-                      showAlert(context, title: Text("切换游戏模式"), content: Text("开启游戏模式后, 可开启高性能开关"), onConfirm: () async {
+                      showAlert(context, title: Text("切换游戏模式"), content: Text("目前不支持支持328以上系统版本, 切换游戏模式后, 长安底部状态条开启高性能开关"), onConfirm: () async {
                           await model.setGame(info);
                       });
                     }
