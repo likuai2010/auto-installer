@@ -96,11 +96,11 @@ class DebugAppItem extends StatelessWidget {
                   TextButton(onPressed: () async{
                     if(info.isGame){
                       showAlert(context, title: Text("关闭游戏模式"), content: Text("需要重启手机才能生效"), onConfirm: () async {
-                          await model.setGame(info);
+                          await model.setGame(info, context);
                       });
                     }else{
                       showAlert(context, title: Text("切换游戏模式"), content: Text("目前不支持支持328以上系统版本, 切换游戏模式后, 长按底部状态条开启高性能开关"), onConfirm: () async {
-                          await model.setGame(info);
+                          await model.setGame(info, context);
                       });
                     }
                   }, child: model.loadingGameMode ? CircularProgressIndicator() :(info.isGame ? Text("游戏模式") :  Text("应用模式"))) ,

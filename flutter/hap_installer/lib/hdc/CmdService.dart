@@ -224,7 +224,7 @@ class CmdService {
   Future<String?> setGameMode(String packageName, bool enable) async {
     var result = await baseCmd('hdc $_t shell cem publish -e game.assistant.custom.deviceTemplate');
     print(result);
-    await Future.delayed(new Duration(milliseconds: 1000));
+    await Future.delayed(new Duration(milliseconds: 500));
     if(enable){
       result = await baseCmd('hdc $_t shell hidumper -s 66006 -a "-se $packageName"');
     }else{

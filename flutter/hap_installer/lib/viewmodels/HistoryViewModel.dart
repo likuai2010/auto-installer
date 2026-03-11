@@ -241,16 +241,20 @@ class HistoryViewModel extends ChangeNotifier {
     loadingReinstall = false;
     notifyListeners();
   }
-  setGame(DebugApp app) async {
+  setGame(DebugApp app, BuildContext context) async {
     if (loadingGameMode)
       return;
     loadingGameMode = true;
     notifyListeners();
-    cmd.setGameMode(app.packageName, !app.isGame);
-    var index = appList.appList.indexWhere((d) => d.packageName == app.packageName);
-    var appInfo = appList.appList[index];
-    appList.appList[index] = appInfo.copyWith(isGame: !appInfo.isGame);
-    await saveDebugApp(appList);
+    var result = await cmd.setGameMode(app.packageName, !app.isGame);
+    if(result?.contains("success") == true){
+      var index = appList.appList.indexWhere((d) => d.packageName == app.packageName);
+      var appInfo = appList.appList[index];
+      appList.appList[index] = appInfo.copyWith(isGame: !appInfo.isGame);
+      await saveDebugApp(appList);
+    }else{
+      toask(context, "切换失败:$result");
+    }
     loadingGameMode =false;
     notifyListeners();
   }
