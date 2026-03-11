@@ -46,9 +46,9 @@ class HistoryViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       var debugList = await getDebugApp();
+      var result = await cmd.dumpAppPackageName();
       if(debugList == null){
         debugList = DebugAppList(time: DateTime.now(), appList: []);
-        var result = await cmd.dumpAppPackageName();
         if(result == null || result.contains("Fail") ) return;
         var packageNames = result.split("\n") ?? [];
         List<DebugApp> list = [];
@@ -58,6 +58,12 @@ class HistoryViewModel extends ChangeNotifier {
           }
         }
         debugList = debugList.copyWith(appList: list);
+      }else{
+        if(result != null && !result.contains("Fail")){
+          final filter = debugList.appList.where((d)=>result.contains(d.packageName)).toList();
+          debugList = debugList.copyWith(appList: filter);
+        }
+        
       }
       await updateDebugAppList(debugList);
       await saveDebugApp(debugList);  
@@ -100,6 +106,7 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   updateDebugAppList(DebugAppList list) async {
+    var needInstallTimes = List<String>.empty(growable: true);
     for (int i = 0; i < list.appList.length; i++) {
       final app = list.appList[i];
       if (app.appInfo == null) {
@@ -110,18 +117,32 @@ class HistoryViewModel extends ChangeNotifier {
         }
       }
       if(app.installTime == null) {
-        var result = await cmd.dumpAppInstallTime(app.packageName);
-        var installTime = result?.trim().split(",").first;
-        if (installTime != null && installTime.contains("installTime")){
-          final time = DateTime.fromMillisecondsSinceEpoch(int.parse(installTime.split(":").last.trim()));
-          list.appList[i] = app.copyWith(installTime: time);
-        }
+        needInstallTimes.add(app.packageName);
       }
       if(list.appList[i].appInfo != null){
         final result = await pullIcons(list.appList[i].appInfo!);
         list.appList[i] = list.appList[i].copyWith(canReInstall: result);
       }
     }
+    if(needInstallTimes.isNotEmpty){
+      final result = await cmd.dumpAppInstallTimes(needInstallTimes);
+      var installTime = result!.trim().split(",");
+      var timeDict = <String, DateTime>{};
+      for (int i = 0; i < needInstallTimes.length; i++) {
+          final p = needInstallTimes[i];
+          final timeString = installTime[i];
+          final time = DateTime.fromMillisecondsSinceEpoch(int.parse(timeString.split(":").last.trim()));
+          timeDict[p] = time;
+      }
+      for (var i = 0; i < list.appList.length; i++) {
+          final app = list.appList[i];
+          if(timeDict.containsKey(app.packageName)){
+            list.appList[i] = app.copyWith(installTime: timeDict[app.packageName]);
+          }
+      }
+    }
+   
+    
     list.time = DateTime.now();
   }
   pushIcons(HapInfo info) async{

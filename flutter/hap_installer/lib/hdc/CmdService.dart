@@ -216,9 +216,18 @@ class CmdService {
     final result = await baseCmd('hdc $_t shell bm dump -n $packageName');
     return result;
   }
-   Future<String?> dumpAppInstallTime(String packageName) async {
-    final result = await baseCmd('hdc $_t shell bm dump -n $packageName | grep installTime');
+  Future<String?> dumpAppInstallTime(String packageName) async {
+    final result = await baseCmd('hdc $_t shell bm dump -n $packageName | grep installTime -m 1');
     return result;
+  }
+    Future<String?> dumpAppInstallTimes(List<String> packageNames) async {
+    var cmd = "";
+    for (var p in packageNames) {
+      cmd+= "&& bm dump -n $p | grep installTime -m 1 ";
+    }
+    cmd = cmd.replaceFirst("&& ", '');
+    cmd += "";
+    return await baseCmd('hdc $_t shell $cmd');
   }
   Future<String?> getDeviceName() async {
     final result = await baseCmd('hdc $_t hidumper -c base | grep MarketName');
