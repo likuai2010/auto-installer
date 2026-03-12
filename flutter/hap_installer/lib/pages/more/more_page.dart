@@ -19,21 +19,32 @@ import 'widgets/more_item.dart';
 void showTips(BuildContext context) {
   showDialog(
     context: context,
-    builder: (_) {
+    builder: (ctx) {
       return AlertDialog(
+        backgroundColor: AppColors.compBackgroundPrimaryDynamic(context),
         title: const Text('温馨提示'),
         content: const Text(
           '使用本工具安装App需要打开"开发者模式"，当您关闭"开发者模式"后，所有使用本工具安装的App都将失效。请前往设置-关于本机页面连点5次"软件版本"以开启开发者模式。具体安装步骤请查看更多-使用教程',
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('知道了'),
-            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              '知道了',
+              style: TextStyle(color: AppColors.fontSecondaryDynamic(context)),
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
           ),
           if (!Platform.isLinux)
             FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.brandDynamic(context),
+                foregroundColor: AppColors.buttonTextPrimary,
+              ),
               child: const Text('查看使用教程'),
-              onPressed: () => toPage(context, (_) => const UserGuidePage()),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                toPage(context, (_) => const UserGuidePage());
+              },
             ),
         ],
       );
