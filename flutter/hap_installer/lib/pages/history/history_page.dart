@@ -20,12 +20,7 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         if(model.loadingAppList){
-          return Container(
-              color: AppColors.backgroundSecondaryDynamic(context),
-              child: const Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            );
+          return  Center(child: CircularProgressIndicator());
         }
         return model.appList.appList.isNotEmpty ? ListView.builder(
                   itemCount: model.appList.appList.length,

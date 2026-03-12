@@ -178,9 +178,9 @@ class HistoryViewModel extends ChangeNotifier {
       final hapPath = "$remote/${path.basename(p)}";
       final localPath = path.join(appDir, path.basename(p));
       // 本地没有缓存就现在远程的
-      if (!await File(localPath).exists() && await cmd.exitsPath(hapPath)){
+      if(await File(localPath).exists()){
         newList.add(localPath);
-      } else if(await File(localPath).exists()){
+      } else if (await cmd.exitsPath(hapPath)){
         newList.add(localPath);
       }
     }

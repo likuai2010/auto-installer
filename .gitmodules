@@ -1,27 +1,15 @@
 [submodule "flutter/hap_installer/cpp/third_party/bounds_checking_function/source"]
 	path = flutter/hap_installer/cpp/third_party/bounds_checking_function/source
 	url = https://gitee.com/openharmony/third_party_bounds_checking_function.git
-[submodule "flutter/hap_installer/cpp/hdctools/source"]
-	path = flutter/hap_installer/cpp/hdctools/source
-	url = https://gitee.com/openharmony/developtools_hdc.git
 [submodule "flutter/hap_installer/cpp/hapsigner/source"]
 	path = flutter/hap_installer/cpp/hapsigner/source
 	url = https://gitee.com/openharmony/developtools_hapsigner.git
-[submodule "flutter/hap_installer/cpp/hdctools/third_party/libusb/source"]
-	path = flutter/hap_installer/cpp/hdctools/third_party/libusb/source
-	url = https://gitee.com/openharmony/third_party_libusb.git
-[submodule "flutter/hap_installer/cpp/third_party/openssl/source"]
-	path = flutter/hap_installer/cpp/third_party/openssl/source
-	url = https://gitee.com/openharmony/third_party_openssl.git
 [submodule "flutter/hap_installer/cpp/hapsigner/third_party/zlib2/source"]
 	path = flutter/hap_installer/cpp/hapsigner/third_party/zlib2/source
 	url = https://gitee.com/openharmony/third_party_zlib.git
 [submodule "flutter/hap_installer/cpp/hapsigner/third_party/json/source"]
 	path = flutter/hap_installer/cpp/hapsigner/third_party/json/source
 	url = https://gitee.com/openharmony/third_party_json.git
-[submodule "flutter/hap_installer/cpp/hdctools/third_party/libuv/source"]
-	path = flutter/hap_installer/cpp/hdctools/third_party/libuv/source
-	url = https://gitee.com/openharmony/third_party_libuv.git
 [submodule "flutter/hap_installer/cpp/hapsigner/third_party/bzip2/source"]
 	path = flutter/hap_installer/cpp/hapsigner/third_party/bzip2/source
 	url = https://gitee.com/openharmony/third_party_bzip2.git
@@ -34,6 +22,3 @@
 [submodule "flutter/hap_installer/cpp/third_party/cJSON/source"]
 	path = flutter/hap_installer/cpp/third_party/cJSON/source
 	url = https://gitee.com/openharmony/third_party_cJSON.git
-[submodule "flutter/hap_installer/cpp/packing_tool/source"]
-	path = flutter/hap_installer/cpp/packing_tool/source
-	url = https://gitee.com/openharmony/developtools_packing_tool.git
