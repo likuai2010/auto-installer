@@ -392,7 +392,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
         onSubmitted: onSubmitted,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           color: AppColors.fontPrimaryDynamic(context),
         ),
         decoration: InputDecoration(
@@ -401,7 +401,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           hintText: placeholder,
           hintStyle: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: AppColors.fontTertiaryDynamic(context),
           ),
         ),
@@ -458,7 +458,6 @@ void showAlert(
   );
 }
 
-
 void showConfirm(
   BuildContext context, {
   Widget? title,
@@ -494,9 +493,9 @@ void showConfirm(
               foregroundColor: AppColors.buttonTextPrimary,
             ),
             child: Text(cancelLabel ?? '取消'),
-            onPressed: (){
+            onPressed: () {
               Navigator.of(ctx).pop();
-               if (onCancel != null) {
+              if (onCancel != null) {
                 onCancel();
               }
             },
