@@ -14,10 +14,10 @@
   },
   "overrides": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
-    "ohos_adapter": "file:./har/ohos_adapter.har",
+    "ohos_adapter": "../plugins/ohos_adapter/ohos",
     "@ohos/flutter_module": "file:./entry",
-    "native_core": "file:./har/native_core.har",
-    "pdf_render": "file:./har/pdf_render.har",
-    "shared_preferences_ohos": "file:./har/shared_preferences_ohos.har"
+    "native_core": "../plugins/native_core/ohos",
+    "pdf_render": "../../../../../.pub-cache/git/fluttertpc_pdf_render-5f6b852c2507914ad67bd982b9507bda0eaf223a/ohos",
+    "shared_preferences_ohos": "../../../../../.pub-cache/git/flutter_packages-77228ef90aa39dbb01981e608056598be4aea03c/packages/shared_preferences/shared_preferences_ohos/ohos"
   }
 }

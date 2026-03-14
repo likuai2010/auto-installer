@@ -44,7 +44,7 @@ class CmdService {
 
   startServer() async {
     if (ohosAdapter.isOhos) {
-      ohosAdapter.startServer();
+      await ohosAdapter.startServer();
     }
     if (Platform.isAndroid) {
       final temp = await getTempDir();

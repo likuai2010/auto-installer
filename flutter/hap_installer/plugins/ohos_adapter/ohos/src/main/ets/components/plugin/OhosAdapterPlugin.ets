@@ -15,7 +15,7 @@ import { common, Want } from '@kit.AbilityKit';
 import { hdcServer } from 'libhdc_z.so';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
-import HdcUtils from './HdcUtils';
+import { hdcUtils as HdcUtils} from './HdcUtils';
 import { deviceInfo } from '@kit.BasicServicesKit';
 
 
@@ -76,6 +76,11 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
     else if(call.method == "appDir") {
       result.success(context.filesDir)
     }
+    else if(call.method == "startServer") {
+      HdcUtils.startHdc(context).then((res)=>{
+        result.success(res)
+      })
+    }
     else if(call.method == "hdcCmd") {
       const args = call.argument("args") as string;
       HdcUtils.hdcCmd(context, args).then((res)=>{
@@ -88,9 +93,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       HdcUtils.GoSign(args).then((res)=>{
         result.success(res)
       })
-    } else if(call.method == "startServer") {
-      hdcServer(context.tempDir)
-    } else if(call.method == "getKey") {
+    }  else if(call.method == "getKey") {
       let ret = preferences.getPreferencesSync(context,{name:"hap_installer"})
       const key = call.argument("key") as string;
       result.success(ret.getSync(key,"127.0.0.1:12345") as string)

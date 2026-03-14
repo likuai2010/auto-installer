@@ -98,7 +98,7 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   Future<bool> init(BuildContext context) async {
-    cmd.startServer();
+    await cmd.startServer();
     cmd.javaHome = await getJavaDir();
     if (Platform.isMacOS) {
       cmd.javaHome = path.join(cmd.javaHome, "Contents", "Home");
