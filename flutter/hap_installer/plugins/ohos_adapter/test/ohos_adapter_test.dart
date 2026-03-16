@@ -33,11 +33,7 @@ class MockOhosAdapterPlatform
     throw UnimplementedError();
   }
   
-  @override
-  Future<String?> selectFile() {
-    // TODO: implement selectFile
-    throw UnimplementedError();
-  }
+ 
   
   @override
   Future<String?> signCmd(String cmd) {
@@ -54,6 +50,42 @@ class MockOhosAdapterPlatform
   @override
   Future<String?> tempDir() {
     // TODO: implement tempDir
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<String?> deviceType() {
+    // TODO: implement deviceType
+    throw UnimplementedError();
+  }
+  
+  @override
+  externalCmd(String device, String cmd) {
+    // TODO: implement externalCmd
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<String?> getLocalKey(String key) {
+    // TODO: implement getLocalKey
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<bool?> hasJit() {
+    // TODO: implement hasJit
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<String?> selectFile(List<String> filter) {
+    // TODO: implement selectFile
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<void> setLocalKey(String key, String value) {
+    // TODO: implement setLocalKey
     throw UnimplementedError();
   }
 }

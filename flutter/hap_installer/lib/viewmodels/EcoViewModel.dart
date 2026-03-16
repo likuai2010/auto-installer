@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
@@ -120,14 +121,15 @@ class EcoViewModel extends ChangeNotifier {
     await initSignConfig();
 
     await tarnsformAssert(javapath);
-
+    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
     final url = await getLocalUrl();
     ip = url?.split(":").first ?? ip;
     port = url?.split(":").last ?? port;
     await loadUserInfo(context);
-    readHistory();
+    await readHistory();
+    await autoConnect( context, () => showConnectDeviceBox(context, viewmodel));
 
     return true;
   }
@@ -139,9 +141,7 @@ class EcoViewModel extends ChangeNotifier {
   autoConnect(BuildContext context, Function() builder) async {
     // 检查自动连接设置
     final autoConnectEnabled = await getAutoConnect();
-    if(currentDevice != null && historyViewModel != null && historyViewModel!.appList.appList.isEmpty){
-      historyViewModel?.initDebugAppList();
-    }
+   
     if (!autoConnectEnabled) {
       builder();
       return;
@@ -157,6 +157,9 @@ class EcoViewModel extends ChangeNotifier {
           builder();
         }
       }
+    }
+    if(currentDevice != null && historyViewModel != null && historyViewModel!.appList.appList.isEmpty){
+      historyViewModel?.initDebugAppList();
     }
   }
 
@@ -312,6 +315,10 @@ class EcoViewModel extends ChangeNotifier {
     fileLoading = true;
     notifyListeners();
     try {
+
+      // var hap = File("/data/storage/el1/bundle/entry.hap");
+      // var reusult = await hap.exists();
+      // await hap.copy("/data/storage/el2/base/haps/entry/files/entry.hap");
       final filePath = await selectFile();
       if (filePath != null) {
         hapInfo = await _loadApp(context, filePath);
@@ -508,7 +515,25 @@ class EcoViewModel extends ChangeNotifier {
       return "请输入正确端口或地址";
     } else {
       final result = await cmd.connectHdc(url);
-      await checkDevices(url);
+      var count = 0;
+      while(true){
+        count += 1;
+        final deviceList = await cmd.targetList();
+        if(count > 4){
+          if(deviceList.contains("Unauthorized"))
+            return "设备未授权!";
+          break;
+        }
+        if(deviceList.contains("Unauthorized") || deviceList.contains('[Empty]')){
+          await Future.delayed(const Duration(seconds: 1));
+          continue;
+        } else if(deviceList.contains(url)){
+          await checkDevices(url);
+          return "连接成功";
+        }
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      
 
       return result;
     }
@@ -772,10 +797,23 @@ class EcoViewModel extends ChangeNotifier {
     print("installHap: $error");
     toask(context, error ?? "");
   }
+  installAutoInstaller() async{
+    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
+    if(!result){
+        await copyAssert("ohos", "auto_installer.hap", tempDir);
+        var signConfig = this.signConfig!;
+        final module = new ModuleInfo(app: new AppInfo(bundleName: "com.xiaobai.autoinstaller", versionName: "1.0.0"), module: new Module(requestPermissions: [], deviceTypes: [],hnpPackages: [], name: "entry", packageName: "entry"));
+        await eco.autoCreateProfile(signConfig, module, () => !isLogin);
+        final hapPath = path.join(tempDir, "auto_installer.hap");
+        var result =  await cmd.signHap(hapPath, signConfig);
+        result = await cmd.installHap(hapPath);
+    }
+   
+  }
 
   installHap(BuildContext context, HapInfo? hap, [bool recert = false, bool reinstall = false]) async {
     if (hap != null) {
-     var signConfig = this.signConfig!;
+      var signConfig = this.signConfig!;
       bool nextStep = true;
       final model = historyViewModel!;
       model.createDebugHistory(hap);
@@ -845,14 +883,18 @@ class EcoViewModel extends ChangeNotifier {
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.startSetp(4, () async {
+            if(reinstall && hap!.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
+              installAutoInstaller();
+              return await cmd.instalerSelf(p, hap.packageName);
+            } 
             // 证书变更需要卸载重装
             if (reinstall && recert){
-              await cmd.unInstall(hap!.packageName, hap.pathList.length > 1, true);
-              final result = await cmd.installHap(p);
-              if(result == null){
-                await model.updateDebugApp(hap!, signConfig.certPath);
-              }
-              return result;
+                await cmd.unInstall(hap!.packageName, hap.pathList.length > 1, true);
+                  final result = await cmd.installHap(p);
+                  if(result == null){
+                    await model.updateDebugApp(hap!, signConfig.certPath);
+                  }
+                  return result;
             } else {
               final result = await cmd.installHap(p);
               if (result == null){

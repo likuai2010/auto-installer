@@ -58,12 +58,18 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<bool?> hasJit() async {
     return null;
   }
-
+  externalCmd(String device, String cmd) async {
+    return null;
+  }
+  
   Future<void> startServer() async {}
 
   Future<void> setLocalKey(String key, String value) async {}
   Future<String?> getLocalKey(String key) async {
     return null;
-  
   }
+   Future<bool> canOpenLink(String link) async {
+    return false;
+  }
+  
 }

@@ -11,12 +11,12 @@ import {
 
 import fs from '@ohos.file.fs';
 import  { fileUri, picker } from '@kit.CoreFileKit';
-import { common, Want } from '@kit.AbilityKit';
-import { hdcServer } from 'libhdc_z.so';
+import { common, Context, Want } from '@kit.AbilityKit';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { hdcUtils as HdcUtils} from './HdcUtils';
 import { deviceInfo } from '@kit.BasicServicesKit';
+import { bundleManager } from '@kit.AbilityKit';
 
 
 /** OhosAdapterPlugin **/
@@ -33,6 +33,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
   onDetachedFromAbility(): void {
   }
 
+
   getUniqueClassName(): string {
     return "OhosAdapterPlugin"
   }
@@ -47,9 +48,24 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       this.channel.setMethodCallHandler(null)
     }
   }
-
-  onMethodCall(call: MethodCall, result: MethodResult): void {
+  async initDownloadDir(context: Context) : Promise<string | undefined>{
+    try {
+      const documentSaveOptions = new picker.DocumentSaveOptions();
+      documentSaveOptions.pickerMode = picker.DocumentPickerMode.DOWNLOAD;
+      const documentViewPicker = new picker.DocumentViewPicker(context);
+      const path = await documentViewPicker.save(documentSaveOptions)
+      const dir = new fileUri.FileUri(path[0]).path;
+      return dir;
+    } catch (e) {
+      return undefined;
+    }
+  }
+  downloadDir: string | undefined = undefined
+  async  onMethodCall(call: MethodCall, result: MethodResult): Promise<void> {
     const  context = this.binding!.getAbility().context;
+    if(!this.downloadDir){
+      this.downloadDir = await this.initDownloadDir(context);
+    }
     if (call.method == "getPlatformVersion") {
       result.success("OpenHarmony ^ ^ ")
     } else if(call.method == "openUrl") {
@@ -65,7 +81,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       })
     }
     else if(call.method == "tempDir") {
-      result.success(context.tempDir)
+      result.success(this.downloadDir ?? context.tempDir)
     }
     else if(call.method == "deviceType") {
       result.success(deviceInfo.deviceType)
@@ -74,10 +90,36 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       result.success(false)
     }
     else if(call.method == "appDir") {
-      result.success(context.filesDir)
+      result.success(this.downloadDir ?? context.filesDir)
     }
     else if(call.method == "startServer") {
       HdcUtils.startHdc(context).then((res)=>{
+        result.success(res)
+      })
+    }
+    else if(call.method == "canOpenLink") {
+      try {
+        let data: boolean = bundleManager.canOpenLink(call.argument("link"));
+        console.info('testTag', 'canOpenLink successfully: %{public}s', JSON.stringify(data));
+        result.success(true)
+      } catch (err) {
+        let message = (err as BusinessError).message;
+        console.error('testTag', 'canOpenLink failed: %{public}s', message);
+        result.success(false)
+      }
+    }
+    else if(call.method == "externalCmd") {
+      let want: Want = {
+        deviceId: '', // 空表示本地设备
+        bundleName: 'com.xiaobai.autoinstaller',
+        abilityName: 'EntryAbility',
+        // 如果需要传参
+        parameters: {
+          device:  call.argument("device") as string,
+          cmd:  call.argument("cmd") as string,
+        }
+      };
+      context.startAbility(want).then((res)=>{
         result.success(res)
       })
     }

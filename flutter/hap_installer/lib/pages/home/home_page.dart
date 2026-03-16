@@ -18,8 +18,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    viewmodel.autoConnect(
-        context, () => showConnectDeviceBox(context, viewmodel));
     return Consumer<EcoViewModel>(
       builder: (context, vm, _) {
         return Container(
@@ -68,28 +66,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  showConnectDeviceBox(BuildContext context, EcoViewModel vm) {
-    if (vm.deviceLoaing) {
-      return;
-    } else {
-      showModalBottomSheet<void>(
-        isScrollControlled: true,
-        useSafeArea: true,
-        context: context,
-        builder: (context) {
-          // 获取键盘高度
-          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-          return Padding(
-            padding: EdgeInsets.only(bottom: keyboardHeight),
-            child: ConnectDeviceBox(
-              ip: vm.ip,
-              port: vm.port,
-            ),
-          );
-        },
-      );
-    }
-  }
+ 
 
   /// 构建设置项列表
   ///
@@ -178,3 +155,27 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
+ showConnectDeviceBox(BuildContext context, EcoViewModel vm) {
+    if (vm.deviceLoaing) {
+      return;
+    } else {
+      showModalBottomSheet<void>(
+        isScrollControlled: true,
+        useSafeArea: true,
+        context: context,
+        builder: (context) {
+          // 获取键盘高度
+          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+          return Padding(
+            padding: EdgeInsets.only(bottom: keyboardHeight),
+            child: ConnectDeviceBox(
+              ip: vm.ip,
+              port: vm.port,
+            ),
+          );
+        },
+      );
+    }
+  }

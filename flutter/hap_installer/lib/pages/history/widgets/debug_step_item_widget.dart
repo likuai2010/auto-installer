@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
+import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 
 /// 调试步骤项组件
 ///
@@ -78,6 +79,31 @@ class DebugStepItemWidget extends StatelessWidget {
     return "出现错误";
   }
 
+  Widget BuildReset(BuildContext context){
+      if(info.error != null && info.error!.contains("请等待安装")){
+          return Container();
+      } else {
+        return GestureDetector(
+            onTap: onReset,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.buttonLightBackground,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Text(
+                "重置证书和Proflie",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.brandDynamic(context),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          );
+      }
+  }
+
   /// 构建错误详情区域
   Widget _buildErrorSection(BuildContext context) {
     if (info.error == null || info.loading != false) {
@@ -103,24 +129,7 @@ class DebugStepItemWidget extends StatelessWidget {
         // 重置按钮
         Padding(
           padding: const EdgeInsets.only(left: 40),
-          child: GestureDetector(
-            onTap: onReset,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.buttonLightBackground,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Text(
-                "重置证书和Proflie",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.brandDynamic(context),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
+          child: BuildReset(context)
         ),
       ],
     );

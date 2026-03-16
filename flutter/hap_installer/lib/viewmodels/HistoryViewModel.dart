@@ -12,6 +12,7 @@ import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/PayList.dart';
 import 'package:hap_installer/widget/common.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:x509/x509.dart';
 
 import 'package:path/path.dart' as path;
@@ -39,7 +40,29 @@ class HistoryViewModel extends ChangeNotifier {
     final json = await File(appPath).readAsString();
     return DebugAppList.fromJson(jsonDecode(json));
   }
+  String packageName = "com.xiaobai.hap_installer";
+  Future<DebugAppList> initHapInstaller(DebugAppList debugList) async{
+    var appList = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);;
+    if(ohosAdapter.isOhos){
+      var appDir = path.join(viewmodel.debugPath, packageName.replaceAll(".", "_"));
+      var hapInstaller = appList.firstWhere((f)=>f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
+      if(hapInstaller.appInfo == null){
+        final hapInfo = await dumpToHap(["/data/storage/el1/bundle/entry.hap"], viewmodel.debugPath);
+        hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
+      }
+      final hapFile = File(path.join(appDir, path.basename(hapInstaller.appInfo!.pathList.first)));
+      if(!await hapFile.exists()){
+        if(! await hapFile.parent.exists()){
+          await hapFile.parent.create();
+        }
 
+        await File("/data/storage/el1/bundle/entry.hap").copy(hapFile.path);
+      }
+      appList.removeWhere((f)=>f.packageName == packageName);
+      appList = [hapInstaller, ...appList];
+    }
+     return debugList.copyWith(appList: appList);
+  }
   initDebugAppList() async {
     if(loadingAppList) return;
     loadingAppList = true;
@@ -63,12 +86,11 @@ class HistoryViewModel extends ChangeNotifier {
           final filter = debugList.appList.where((d)=>result.contains(d.packageName)).toList();
           debugList = debugList.copyWith(appList: filter);
         }
-        
       }
+      debugList = await initHapInstaller(debugList);
       await updateDebugAppList(debugList);
       await saveDebugApp(debugList);  
-      final list = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);
-      appList = debugList.copyWith(appList: list);
+      appList = debugList;
       loadingAppList = false;
       notifyListeners();
     } catch (e) {
@@ -141,8 +163,6 @@ class HistoryViewModel extends ChangeNotifier {
           }
       }
     }
-   
-    
     list.time = DateTime.now();
   }
   pushIcons(HapInfo info) async{
@@ -156,9 +176,10 @@ class HistoryViewModel extends ChangeNotifier {
     }
     for (var p in info.pathList) {
       final hapPath = "$remote/${path.basename(p)}";
-      final size = await File(p).length();
+      final file = File(p);
+      await file.rename(path.join(appDir, path.basename(p)));
       // 小于500M
-      if (!await cmd.exitsPath(hapPath) && size < 1024 * 1024 * 500){
+      if (!await cmd.exitsPath(hapPath) && await file.length() < 1024 * 1024 * 500){
           await cmd.sendFile(p, hapPath);
       }
     }
@@ -229,14 +250,14 @@ class HistoryViewModel extends ChangeNotifier {
     payList = PayList.fromJson(jsonDecode(json));
     notifyListeners();
   }
-  unInstall(HapInfo info) async{
+  unInstall(String packageName) async{
     if(loadingUninstall)
       return;
     loadingUninstall = true;
     notifyListeners();
-    var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
+    var index = appList.appList.indexWhere((d) => d.packageName == packageName);
     var list = appList.appList.toList();
-    await cmd.unInstall(info.packageName);
+    await cmd.unInstall(packageName);
     list.removeAt(index);
     appList = appList.copyWith(appList: list);
     await saveDebugApp(appList);

@@ -44,6 +44,9 @@ class OhosAdapter {
   Future<void> startServer() {
     return OhosAdapterPlatform.instance.startServer();
   }
+ Future<void> externalCmd(String device, String cmd) {
+    return OhosAdapterPlatform.instance.externalCmd(device, cmd);
+  }
 
   Future<void> setLocalUrl(String url) {
     return OhosAdapterPlatform.instance.setLocalKey("url", url);
@@ -66,6 +69,9 @@ class OhosAdapter {
 
   Future<String?> getLocalUrl() {
     return OhosAdapterPlatform.instance.getLocalKey("url");
+  }
+    Future<bool> canOpenLink(String link) async {
+    return await OhosAdapterPlatform.instance.canOpenLink(link);
   }
 }
 

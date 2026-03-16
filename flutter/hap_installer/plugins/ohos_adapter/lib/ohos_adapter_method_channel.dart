@@ -67,6 +67,11 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   Future<void> startServer() async {
     methodChannel.invokeMethod<void>('startServer');
   }
+  @override
+  Future<void> externalCmd(String device, String cmd) async {
+    return await methodChannel
+        .invokeMethod<void>('externalCmd', {"device": device, "cmd": cmd});
+  }
 
   @override
   Future<String?> getLocalKey(String key) async {
@@ -79,5 +84,10 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   Future<void> setLocalKey(String key, String value) async {
     return await methodChannel
         .invokeMethod<void>('setKey', {"key": key, "value": value});
+  }
+  @override
+  Future<bool> canOpenLink(String link) async {
+    return await methodChannel
+        .invokeMethod<bool>('canOpenLink', {"link": link}) ??  false;
   }
 }

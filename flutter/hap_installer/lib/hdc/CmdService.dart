@@ -43,6 +43,7 @@ class CmdService {
   String javaHome = "";
 
   startServer() async {
+
     if (ohosAdapter.isOhos) {
       await ohosAdapter.startServer();
     }
@@ -250,6 +251,17 @@ class CmdService {
     print(result);
     return result;
   }
+   Future<String?> instalerSelf(String filePath, String packageName) async {
+    if (!await File(filePath).exists()) {
+      return "文件不存在 $filePath";
+    }
+    print("installHap $filePath");
+    await baseCmd("hdc $_t shell rm /data/local/tmp/${path.basename(filePath)}");
+    await sendFile(filePath, "/data/local/tmp/${path.basename(filePath)}");
+    await ohosAdapter.externalCmd(_t.replaceAll("-t ", ""), "hdc shell bm uninstall -n ${packageName} && bm install -p /data/local/tmp/${path.basename(filePath)}");
+    return "请等待安装....";
+  }
+
   Future<String?> installHap(String filePath) async {
     if (!await File(filePath).exists()) {
       return "文件不存在 $filePath";
