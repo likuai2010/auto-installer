@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hap_installer/pages/history/history_page.dart';
@@ -49,33 +47,36 @@ class HomeSettingItemWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                // 图标（无背景容器）
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 0,
-                    right: 16,
-                    top: 16,
-                    bottom: 16,
-                  ),
-                  child: SvgPicture.asset(
-                    item.currentIcon,
-                    width: 24,
-                    height: 24,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.iconPrimaryDynamic(context),
-                      BlendMode.srcIn,
+                // 当 hapInfo 存在时直接显示应用图标，否则显示 SVG 占位图标
+                if (item.hapInfo != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+                    child: AppIconItem(info: item.hapInfo!),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 0,
+                      right: 16,
+                      top: 16,
+                      bottom: 16,
                     ),
-                    placeholderBuilder: (context) => Icon(
-                      Icons.circle_outlined,
-                      size: 24,
-                      color: AppColors.iconPrimaryDynamic(context),
+                    child: SvgPicture.asset(
+                      item.currentIcon,
+                      width: 24,
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconPrimaryDynamic(context),
+                        BlendMode.srcIn,
+                      ),
+                      placeholderBuilder: (context) => Icon(
+                        Icons.circle_outlined,
+                        size: 24,
+                        color: AppColors.iconPrimaryDynamic(context),
+                      ),
                     ),
                   ),
-                ),
                 const SizedBox(width: 0),
-                // 自定义图标区域（如果提供了iconPaths）
-                if(item.hapInfo != null)
-                  AppIconItem(info: item.hapInfo!),
                 // 文字区域
                 Expanded(
                   child: Column(
