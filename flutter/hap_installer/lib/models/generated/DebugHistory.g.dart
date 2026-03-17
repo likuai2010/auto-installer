@@ -17,13 +17,7 @@ _$DebugHistoryImpl _$$DebugHistoryImplFromJson(Map<String, dynamic> json) =>
       setps: (json['setps'] as List<dynamic>?)
               ?.map((e) => SetpInfo.fromJson(e as Map<String, dynamic>))
               .toList() ??
-          const [
-            SetpInfo(name: "登录检查"),
-            SetpInfo(name: "连接状态检查"),
-            SetpInfo(name: "请求签名"),
-            SetpInfo(name: "签名应用"),
-            SetpInfo(name: "安装应用")
-          ],
+          const [],
     );
 
 Map<String, dynamic> _$$DebugHistoryImplToJson(_$DebugHistoryImpl instance) =>

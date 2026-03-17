@@ -19,6 +19,8 @@ import { deviceInfo } from '@kit.BasicServicesKit';
 import { bundleManager } from '@kit.AbilityKit';
 
 
+
+
 /** OhosAdapterPlugin **/
 export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -93,7 +95,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       result.success(this.downloadDir ?? context.filesDir)
     }
     else if(call.method == "startServer") {
-      HdcUtils.startHdc(context).then((res)=>{
+      HdcUtils.startHdc(this.downloadDir ?? context.filesDir).then((res)=>{
         result.success(res)
       })
     }
@@ -104,7 +106,7 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
         result.success(true)
       } catch (err) {
         let message = (err as BusinessError).message;
-        console.error('testTag', 'canOpenLink failed: %{public}s', message);
+        console.error('testTag', 'canOpenLink failed: %{public}s', call.argument("link"), message);
         result.success(false)
       }
     }
@@ -120,7 +122,9 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
         }
       };
       context.startAbility(want).then((res)=>{
-        result.success(res)
+          result.success(res)
+      }).catch((err: Error)=>{
+          result.success(err.message)
       })
     }
     else if(call.method == "hdcCmd") {

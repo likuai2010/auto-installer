@@ -11,13 +11,7 @@ abstract class DebugHistory with _$DebugHistory {
     @Default(false) bool finished,
     @Default(null) DateTime? start,
     @Default(null) DateTime? end,
-    @Default([
-      SetpInfo(name: "登录检查"),
-      SetpInfo(name: "连接状态检查"),
-      SetpInfo(name: "请求签名"),
-      SetpInfo(name: "签名应用"),
-      SetpInfo(name: "安装应用"),
-    ])
+    @Default([])
     List<SetpInfo> setps,
   }) = _DebugHistory;
   factory DebugHistory.fromJson(Map<String, dynamic> json) =>

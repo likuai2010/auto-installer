@@ -33,14 +33,16 @@ class _AppState extends State<App> {
         viewmodel.openFile(context, url);
       }
     });
+    viewmodel.historyViewModel = historyViewmodel;
+    viewmodel.themeHistoryViewModel = themeViewModel;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: themeViewModel),
-        ChangeNotifierProvider(create: (_) => HistoryViewModel()),
+        ChangeNotifierProvider(create: (_) => historyViewmodel),
         ChangeNotifierProxyProvider<HistoryViewModel, EcoViewModel>(
           create: (context) => viewmodel,
           update: (_, history, __) {
-            viewmodel.historyViewModel = history;
+            viewmodel.historyViewModel = historyViewmodel;
             return viewmodel;
           },
         ),

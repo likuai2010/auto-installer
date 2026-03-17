@@ -6,25 +6,15 @@ import fileIo from '@ohos.file.fs';
 import { taskpool } from '@kit.ArkTS';
 
 @Concurrent
-async function backgroundStartDaemon(workPath: string): Promise<boolean> {
-  // const filesToDelete = ["hdc.socket", "hdc.pid", "hdc.out", ".HDCServer.pid"];
-  // filesToDelete.forEach(fileName => {
-  //   let filePath = workPath + fileName;
-  //   try {
-  //     if (fileIo.accessSync(filePath)) {
-  //       fileIo.unlinkSync(filePath);
-  //     }
-  //   } catch (e) {
-  //     // Ignore cleanup errors
-  //   }
-  // });
+async function backgroundStartDaemon(workPath: string, prot: number): Promise<boolean> {
   try {
-    return hdc.startDaemon();
+    return hdc.startDaemon(workPath, prot);;
   }catch (e) {
     return false;
   }
 
 }
+
 
 @Concurrent
 async function backgroundExecuteCommand(cmd: string): Promise<string> {
@@ -32,10 +22,9 @@ async function backgroundExecuteCommand(cmd: string): Promise<string> {
 }
 
 export class HdcUtils{
-  workPath: string = ""
-  async startHdc(context:common.Context){
+  async startHdc(authDir: string, port: number = 18713){
     try {
-      let task = new taskpool.Task(backgroundStartDaemon, this.workPath);
+      let task = new taskpool.Task(backgroundStartDaemon, authDir, port);
       const retCode = await taskpool.execute(task);
       console.warn('startDaemon returned: %{public}s', JSON.stringify(retCode));
       const isSuccess = (typeof retCode === 'number' && retCode === 0) || retCode === true;

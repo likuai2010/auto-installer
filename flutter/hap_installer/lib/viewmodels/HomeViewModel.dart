@@ -33,7 +33,9 @@ class HomeViewModel {
     // 导航到调试详情页
     toPage(context, (_) => const DebugDetailPage());
     // 安装 HAP 到设备
-    vm.installHap(context, vm.hapInfo);
+    if (vm.hapInfo != null){
+      vm.installHap(vm.hapInfo!);
+    }
   }
 }
 

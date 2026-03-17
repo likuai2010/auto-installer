@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/hdc/common.dart';
 import 'package:hap_installer/models/AuthInfo.dart';
 import 'package:hap_installer/models/HapInfo.dart';
@@ -217,11 +218,11 @@ class CmdService {
     final result = await baseCmd('hdc $_t shell bm dump -n $packageName');
     return result;
   }
-  Future<String?> dumpAppInstallTime(String packageName) async {
+  Future<String> dumpAppInstallTime(String packageName) async {
     final result = await baseCmd('hdc $_t shell bm dump -n $packageName | grep installTime -m 1');
     return result;
   }
-    Future<String?> dumpAppInstallTimes(List<String> packageNames) async {
+  Future<String?> dumpAppInstallTimes(List<String> packageNames) async {
     var cmd = "";
     for (var p in packageNames) {
       cmd+= "&& bm dump -n $p | grep installTime -m 1 ";
@@ -230,12 +231,15 @@ class CmdService {
     cmd += "";
     return await baseCmd('hdc $_t shell $cmd');
   }
-  Future<String?> getDeviceName() async {
+  Future<String> setRemoteDebug([int port = 12345]) async {
+    return await baseCmd('hdc $_t tmode port $port');
+  }
+  Future<String> getDeviceName() async {
     final result = await baseCmd('hdc $_t hidumper -c base | grep MarketName');
     return result;
   }
 
-  Future<String?> unInstall(String packageName, [bool hsp = false, bool keep = false]) async{
+  Future<String> unInstall(String packageName, [bool hsp = false, bool keep = false]) async{
     final result = await baseCmd('hdc $_t uninstall ${hsp?"-s":""} ${keep?"-k":""} $packageName');
     return result;
   }
@@ -592,7 +596,7 @@ Future<bool> runHdc() async {
   }
 }
 
-dumpToHap(List<String> pathList, String debugPath) async{
+dumpHapInfo(List<String> pathList, String debugPath) async{
     final hapPath = pathList.last;
     await getByHap(hapPath, "module.json", debugPath);
     final info = await cmd.readModuleInfo(debugPath);
@@ -632,7 +636,9 @@ dumpToHap(List<String> pathList, String debugPath) async{
     for (var element in pathList) {
       hapPathlList.add(element);
     }
-    var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList , pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
+    final acl = eco.getAcl(info);
+    var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList, acl: acl, pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
+    
     await File(path.join(appDir.path, "hap_info.json")).writeAsString(jsonEncode(hapInfo.toJson()), flush: true);
     return hapInfo;
   }

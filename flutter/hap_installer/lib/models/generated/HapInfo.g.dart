@@ -22,6 +22,8 @@ _$HapInfoImpl _$$HapInfoImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      acl: (json['acl'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$HapInfoImplToJson(_$HapInfoImpl instance) =>
@@ -32,4 +34,5 @@ Map<String, dynamic> _$$HapInfoImplToJson(_$HapInfoImpl instance) =>
       'icon': instance.icon,
       'label': instance.label,
       'deviceType': instance.deviceType,
+      'acl': instance.acl,
     };

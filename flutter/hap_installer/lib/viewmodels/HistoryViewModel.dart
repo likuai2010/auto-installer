@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
+import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/models/DebugAppList.dart';
 import 'package:hap_installer/pages/history/debug_detail_page.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
@@ -47,7 +48,7 @@ class HistoryViewModel extends ChangeNotifier {
       var appDir = path.join(viewmodel.debugPath, packageName.replaceAll(".", "_"));
       var hapInstaller = appList.firstWhere((f)=>f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
       if(hapInstaller.appInfo == null){
-        final hapInfo = await dumpToHap(["/data/storage/el1/bundle/entry.hap"], viewmodel.debugPath);
+        final hapInfo = await dumpHapInfo(["/data/storage/el1/bundle/entry.hap"], viewmodel.debugPath);
         hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
       }
       final hapFile = File(path.join(appDir, path.basename(hapInstaller.appInfo!.pathList.first)));
@@ -72,7 +73,10 @@ class HistoryViewModel extends ChangeNotifier {
       var result = await cmd.dumpAppPackageName();
       if(debugList == null){
         debugList = DebugAppList(time: DateTime.now(), appList: []);
-        if(result == null || result.contains("Fail") ) return;
+        if(result == null || result.contains("Fail") ){
+           loadingAppList = false;
+          return;
+        }
         var packageNames = result.split("\n") ?? [];
         List<DebugApp> list = [];
         for (var element in packageNames.skip(1)) {
@@ -98,11 +102,12 @@ class HistoryViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  updateDebugApp(HapInfo info, String cerPath) async {
-    if(appList.appList.isEmpty)
+  updateDebugApp(HapInfo info, String? cerPath) async {
+    if(loadingAppList){
       return;
+    }
     try {
-        var endTime = await readEndTime(cerPath);
+        var endTime = cerPath != null ? await readEndTime(cerPath) : null;
         var debugList = appList.appList.toList(growable: true);
         var index = appList.appList.indexWhere((d) => d.packageName == info.packageName);
         if (index > -1){
@@ -271,9 +276,13 @@ class HistoryViewModel extends ChangeNotifier {
     notifyListeners();
     try{
         hap = await downloadHap(hap);
-        await getByHap(hap.pathList.last, "module.json", viewmodel.debugPath);
+        if(hap.acl.isEmpty){
+          await getByHap(hap.pathList.last, "module.json", viewmodel.debugPath);
+          final module = await await cmd.readModuleInfo(viewmodel.debugPath);
+          hap = hap.copyWith(acl: eco.getAcl(module));
+        }
         toPage(context, (_) => const DebugDetailPage());
-        await viewmodel.installHap(context, hap, reCert, true);
+        await viewmodel.installHap(hap, reCert, true);
     } on FormatException catch (e) {
       toask(context, e.message);
     }catch (e) {
@@ -300,16 +309,15 @@ class HistoryViewModel extends ChangeNotifier {
     loadingGameMode =false;
     notifyListeners();
   }
-
-  createDebugHistory(HapInfo hapInfo) {
-    current = DebugHistory(hapInfo: hapInfo);
-    addDebugHistory(current!);
+  DebugHistory createDebugHistory(HapInfo hapInfo) {
+    var current = DebugHistory(hapInfo: hapInfo);
+    addDebugHistory(current);
+    return current;
   }
 
-  updateHistory(Function(DebugHistory) update) {
-    if (current != null) {
-      update(current!);
-    }
+  updateHistory(DebugHistory debug, Function(DebugHistory) update) {
+    current = debug;
+    update(debug);
     notifyListeners();
   }
 
@@ -330,7 +338,44 @@ class HistoryViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+  Future<bool> newSetp(
+    DebugHistory record,
+    String label,
+    Future<String?> Function() builder
+  ) async {
+    final newSetp = SetpInfo(name: label);
+    List<SetpInfo> modifiableList = List.from(current!.setps);
+    modifiableList.add(newSetp);
+    record.setps = modifiableList;
+    final index = record.setps.length - 1;
+    notifyListeners();
+    updateStep(index, (setp) {
+      return setp.copyWith(loading: true, error: "正在${label}...");
+    });
+    try {
+      final error = await builder();
+      updateStep(index, (setp) {
+        return setp.copyWith(loading: false, error: error);
+      });
+      return error == null;
+    } on FormatException catch (e) {
+      updateStep(index, (setp) {
+        return setp.copyWith(
+          loading: false,
+          error: "$label失败: ${e.message}",
+        );
+      });
+      return false;
+    } catch (e) {
+      updateStep(index, (setp) {
+        return setp.copyWith(
+          loading: false,
+          error: "$label失败: $e",
+        );
+      });
+      return false;
+    }
+  }
   Future<bool> startSetp(
     int index,
     Future<String?> Function() builder, [
@@ -376,3 +421,5 @@ class HistoryViewModel extends ChangeNotifier {
 
 
 }
+
+final historyViewmodel = HistoryViewModel();

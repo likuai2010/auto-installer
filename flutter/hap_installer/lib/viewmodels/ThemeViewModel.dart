@@ -11,18 +11,21 @@ class ThemeViewModel extends ChangeNotifier {
   /// 是否启用深色模式（仅当不跟随系统时生效）
   bool _darkMode = false;
 
+  bool _autoPort = true;
   /// SharedPreferences 实例
   SharedPreferences? _prefs;
 
   /// 持久化存储的 Key
   static const String _keyFollowSystem = 'theme_follow_system';
   static const String _keyDarkMode = 'theme_dark_mode';
+    static const String _keyAutoPort = 'hdc_autoPort';
 
   /// 获取当前是否跟随系统深色模式
   bool get followSystemDarkMode => _followSystemDarkMode;
 
   /// 获取当前是否启用深色模式
   bool get darkMode => _darkMode;
+  bool get autoPort => _autoPort;
 
   /// 从 SharedPreferences 加载主题设置
   ///
@@ -63,6 +66,13 @@ class ThemeViewModel extends ChangeNotifier {
       await _prefs?.setBool(_keyFollowSystem, false);
     }
     await _prefs?.setBool(_keyDarkMode, value);
+    notifyListeners();
+  }
+
+   Future<void> setAutoPort(bool value) async {
+    if (_autoPort == value) return;
+    _autoPort = value;
+    await _prefs?.setBool(_keyAutoPort, value);
     notifyListeners();
   }
 

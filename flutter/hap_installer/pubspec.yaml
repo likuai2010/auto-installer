@@ -91,6 +91,7 @@ flutter:
     - assets/html/
     - assets/macos/
     - assets/windows/
+    - assets/ohos/
     - assets/linux/
     - assets/jar/
     - lib/assets/

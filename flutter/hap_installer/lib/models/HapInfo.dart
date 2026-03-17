@@ -14,6 +14,7 @@ abstract class HapInfo with _$HapInfo {
     @Default([]) List<String> icon,
     @Default("") String label,
     @Default([]) List<String> deviceType,
+    @Default([]) List<String> acl,
   }) = _HapInfo;
   factory HapInfo.fromJson(Map<String, dynamic> json) =>
       _$HapInfoFromJson(json);

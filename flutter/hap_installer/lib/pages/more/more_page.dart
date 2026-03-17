@@ -129,14 +129,15 @@ class _MorePageState extends State<MorePage> {
 
   /// 构建设置类列表项
   List<MoreItem> _buildSettingItems() {
+    final theme = context.read<ThemeViewModel>();
     return [
       MoreItem(
-        title: '清空缓存',
+        title: '清空数据',
         icon: 'lib/assets/more_cleanCache.svg',
         onTap: () {
           showAlert(
             context,
-            title: const Text('是否清理缓存?'),
+            title: const Text('是否所有数据?'),
             onConfirm: () {
               viewmodel.clearCache(context);
             },
@@ -155,6 +156,17 @@ class _MorePageState extends State<MorePage> {
               viewmodel.resetSignConfig();
             },
           );
+        },
+      ),
+       MoreItem(
+        title: '自动无线调试端口',
+        icon: 'lib/assets/more_dark.svg',
+        itemType: MoreItemType.switch_,
+        switchValue: theme.autoPort,
+        onSwitchChanged: (value) {
+          showAlert(context, title: const Text("无线调试端口"), content: const Text(
+            "连接设备成功后将设置无线调试端口为(12345). 后续无需输入端口自动连接"
+          ), onConfirm: () => theme.setAutoPort(value));
         },
       ),
       MoreItem.withIcon(

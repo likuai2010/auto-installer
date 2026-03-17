@@ -22,6 +22,8 @@ import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:process_run/shell.dart';
+
+import 'ThemeViewModel.dart';
 // import 'package:flutter_file_saver/flutter_file_saver.dart';
 
 /// 显示 SnackBar 消息提示
@@ -51,6 +53,7 @@ void showDownloadDialog(BuildContext context, String javaPath) {
     },
   );
 }
+const defalut_port = 12345;
 
 class EcoViewModel extends ChangeNotifier {
   bool isLogin = false;
@@ -82,10 +85,10 @@ class EcoViewModel extends ChangeNotifier {
   String ipHistoryPath = "";
   String debugPath = "";
   String ip = "127.0.0.1";
-  String port = "12345";
+  String port = "$defalut_port";
 
   HistoryViewModel? historyViewModel;
-
+  ThemeViewModel? themeHistoryViewModel;
   EcoViewModel();
   initDebugPath() async {
     if (debugPath == "") {
@@ -157,9 +160,6 @@ class EcoViewModel extends ChangeNotifier {
           builder();
         }
       }
-    }
-    if(currentDevice != null && historyViewModel != null && historyViewModel!.appList.appList.isEmpty){
-      historyViewModel?.initDebugAppList();
     }
   }
 
@@ -310,6 +310,7 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   toSelectFile(BuildContext context) async {
+    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
     if (!await checkJava(context)) return;
     if (fileLoading) return;
     fileLoading = true;
@@ -486,14 +487,21 @@ class EcoViewModel extends ChangeNotifier {
       final ips = id.split(":");
       var result = await connectDevice(context, ips.first, ips.last);
       if (result) {
-        changeDevice(id);
+        if(themeHistoryViewModel?.autoPort == true && !ips.last.contains("$defalut_port")){
+          var message = await cmd.setRemoteDebug();
+          print("setRemoteDebug: $message");
+          if(message.contains("successful")){
+            result = await connectDevice(context, ips.first, "$defalut_port");
+          }
+        }else{
+          changeDevice(id);
+        }
       }
-
       return result;
     }
   }
 
-  Future connectDevice(BuildContext context, String ip, String port) async {
+  Future<bool> connectDevice(BuildContext context, String ip, String port) async {
     deviceLoaing = true;
     notifyListeners();
     this.ip = ip;
@@ -533,8 +541,6 @@ class EcoViewModel extends ChangeNotifier {
         }
         await Future.delayed(const Duration(seconds: 1));
       }
-      
-
       return result;
     }
   }
@@ -589,7 +595,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    return await dumpToHap(pathList, debugPath);
+    return await dumpHapInfo(pathList, debugPath);
   }
 
   initJavaRuntme(javapath, tempDir) async {
@@ -798,44 +804,70 @@ class EcoViewModel extends ChangeNotifier {
     toask(context, error ?? "");
   }
   installAutoInstaller() async{
-    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
-    if(!result){
+    const papckage = "com.xiaobai.autoinstaller";
+    final time = await cmd.dumpAppInstallTime(papckage);
+    if(!time.contains("installTime")){
         await copyAssert("ohos", "auto_installer.hap", tempDir);
         var signConfig = this.signConfig!;
-        final module = new ModuleInfo(app: new AppInfo(bundleName: "com.xiaobai.autoinstaller", versionName: "1.0.0"), module: new Module(requestPermissions: [], deviceTypes: [],hnpPackages: [], name: "entry", packageName: "entry"));
-        await eco.autoCreateProfile(signConfig, module, () => !isLogin);
+        signConfig.packageName = papckage;
+        signConfig.profilePath = "$storeDir/${signConfig.packageName.replaceAll(".", "_")}.p7b";
+        await eco.autoCreateProfile(signConfig, []);
         final hapPath = path.join(tempDir, "auto_installer.hap");
-        var result =  await cmd.signHap(hapPath, signConfig);
-        result = await cmd.installHap(hapPath);
+        var result = await cmd.signHap(hapPath, signConfig);
+        final outPath = await cmd.getOutPath(hapPath);
+        result = await cmd.installHap(outPath);
+        return result;
     }
-   
   }
 
-  installHap(BuildContext context, HapInfo? hap, [bool recert = false, bool reinstall = false]) async {
-    if (hap != null) {
-      var signConfig = this.signConfig!;
-      bool nextStep = true;
-      final model = historyViewModel!;
-      model.createDebugHistory(hap);
-      model.updateHistory((s) {
-        s.finished = false;
-      });
-      model.updateStep(0, (setp) {
-        return setp.copyWith(loading: false, error: !isLogin ? "未登录" : null);
-      });
-      nextStep = await model.startSetp(1, () async {
-        if (Platform.isAndroid) {
-          await _connectHdc("$ip:$port");
+  _installHap(HapInfo hap, [SignConfig? signConfig, bool recert = false, bool reinstall = false]) async {
+    final model = historyViewModel!;
+    final current = model.createDebugHistory(hap);
+    bool nextStep = true;
+    model.updateHistory(current, (debug){
+      return debug.copyWith(finished: false);
+    });
+    if(signConfig == null) {
+        nextStep = await model.newSetp(current, "设备检查", () async {
+          return currentDevice == null ? "未连接设备" : null;
+        });
+        for (var p in hap.pathList) {
+          if (nextStep) {
+            nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
+              String? result;
+              // 证书变更需要卸载重装
+              if (reinstall){
+                await cmd.unInstall(hap.packageName, hap.pathList.length > 1, !recert);
+              } 
+              result = await cmd.installHap(p);
+              if (result == null){
+                await model.updateDebugApp(hap, null);
+              }
+              return result;
+            });
+          }
         }
-        return currentDevice == null ? "未连接设备" : null;
-      });
-
+        if (nextStep){
+          await model.newSetp(current, "更新历史", () async {
+            await model.updateDebugApp(hap, null);
+              return null;
+          });
+        }
+    } else {
       signConfig.packageName = hap.packageName;
       signConfig.profilePath =
-          "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
-
+        "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
+      final model = historyViewModel!;
+      nextStep = await model.newSetp(current, "登录检查", () async {
+        return !isLogin ? "未登录" : null;
+      });
       if (nextStep) {
-        nextStep = await model.startSetp(2, () async {
+        nextStep = await model.newSetp(current, "设备检查", () async {
+          return currentDevice == null ? "未连接设备" : null;
+        });
+      }
+      if (nextStep) {
+        nextStep = await model.newSetp(current, "获取设备udid", () async {
           final udid = await cmd.getUdid();
           if (udid.length != 64) {
             throw FormatException("UDID不合法: $udid");
@@ -846,15 +878,14 @@ class EcoViewModel extends ChangeNotifier {
             signConfig.udids = udids;
           }
           return null;
-        }, "获取设备udid");
+        });
       }
       if (await eco.autoRefreshToken()) {
         await saveJsonToFile(jsonEncode(eco.authInfo!.toJson()), userInfoPath);
       }
       if (nextStep) {
-        nextStep = await model.startSetp(2, () async {
-          final module = await cmd.readModuleInfo(debugPath);
-          if(recert){
+        nextStep = await model.newSetp(current, "请求签名", () async {
+          if (recert) {
             await eco.deleteCertList([signConfig.certId]);
             signConfig.certId = "";
           }
@@ -863,15 +894,15 @@ class EcoViewModel extends ChangeNotifier {
               await File(signConfig.profilePath).delete();
             }
           }
-          await eco.autoCreateProfile(signConfig, module, () => !isLogin);
+          await eco.autoCreateProfile(signConfig, hap.acl);
           return null;
         });
       }
       for (var p in hap.pathList) {
         if (nextStep) {
-          nextStep = await model.startSetp(3, () async {
+          nextStep = await model.newSetp(current, "签名(${path.basename(p)})", () async {
             return await cmd.signHap(p, signConfig);
-          }, "签名(${path.basename(p)})");
+          });
         }
       }
       final outPathList = <String>[];
@@ -879,38 +910,39 @@ class EcoViewModel extends ChangeNotifier {
         outPathList.add(await cmd.getOutPath(p));
       }
       hap = hap.copyWith(pathList: outPathList);
-      
       for (var p in hap.pathList) {
         if (nextStep) {
-          nextStep = await model.startSetp(4, () async {
-            if(reinstall && hap!.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
-              installAutoInstaller();
+          nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
+            if(reinstall && hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
+              var result = await installAutoInstaller();
+              if (result != null) {
+                return result;
+              }
               return await cmd.instalerSelf(p, hap.packageName);
             } 
+            String? result;
             // 证书变更需要卸载重装
-            if (reinstall && recert){
-                await cmd.unInstall(hap!.packageName, hap.pathList.length > 1, true);
-                  final result = await cmd.installHap(p);
-                  if(result == null){
-                    await model.updateDebugApp(hap!, signConfig.certPath);
-                  }
-                  return result;
-            } else {
-              final result = await cmd.installHap(p);
-              if (result == null){
-                await model.updateDebugApp(hap!, signConfig.certPath);
-              }
-              return result;
-            }
-         
-          }, "调试(${path.basename(p)})");
+            if (reinstall){
+              await cmd.unInstall(hap.packageName, hap.pathList.length > 1, !recert);
+            } 
+            result = await cmd.installHap(p);
+            return result;
+          });
         }
       }
-    
-      model.updateHistory((setp) {
-        setp.finished = true;
-      });
+      if (nextStep){
+        await model.newSetp(current, "更新历史", () async {
+            await model.updateDebugApp(hap, signConfig.certPath);
+            return null;
+        });
+      }
     }
+    model.updateHistory(current, (debug){
+      return debug.copyWith(finished: true);
+    });
+  }
+  installHap(HapInfo hap, [bool recert = false, bool reinstall = false]) async {
+    _installHap(hap, signConfig = signConfig, recert = recert, reinstall = reinstall);
   }
 
   bool _checkUrlOrPort(String url) {

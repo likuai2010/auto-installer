@@ -13,6 +13,9 @@
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
+    "querySchemes": [
+      "xiaobai"
+    ],
     "abilities": [
       {
         "name": "EntryAbility",

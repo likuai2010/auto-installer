@@ -184,13 +184,7 @@ class _$DebugHistoryImpl implements _DebugHistory {
       this.finished = false,
       this.start = null,
       this.end = null,
-      this.setps = const [
-        SetpInfo(name: "登录检查"),
-        SetpInfo(name: "连接状态检查"),
-        SetpInfo(name: "请求签名"),
-        SetpInfo(name: "签名应用"),
-        SetpInfo(name: "安装应用")
-      ]});
+      this.setps = const []});
 
   factory _$DebugHistoryImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebugHistoryImplFromJson(json);

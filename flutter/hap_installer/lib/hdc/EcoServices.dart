@@ -240,14 +240,14 @@ class EcoService {
     String name,
     String certId,
     List<String> deviceIds,
-    ModuleInfo? moduleJson, [
+    List<String> aclList, [
     String packageName = "com.xiaobai.testgo",
   ]) async {
     const uri =
         "https://connect-api.cloud.huawei.com/api/cps/provision-manage/v1/ide/test/provision/add";
     final params = {
       "provisionName": name,
-      "aclPermissionList": getAcl(moduleJson),
+      "aclPermissionList": aclList,
       "deviceList": deviceIds,
       "certList": [certId],
       "packageName": packageName,
@@ -301,15 +301,11 @@ class EcoService {
 
   Future<bool> autoCreateProfile(
     SignConfig config,
-    ModuleInfo moduleJson,
-    Function unLogin,
+    List<String> acl,
   ) async {
     const certName = "xiaobai-debug";
     if (config.certId.isEmpty) {
       print(" EcoService create cert");
-      if (unLogin()) {
-       throw const FormatException("请登录华为账号");
-      }
       final certList = await getCertList();
       final debugCerts = certList.where((d) => d.certType == 1);
       CertInfo? xiaobaiDebug;
@@ -338,9 +334,6 @@ class EcoService {
     }
     var udid = config.udids.last;
     if (udid.isNotEmpty) {
-      if (unLogin()) {
-        throw const FormatException("请登录华为账号");
-      }
       var deviceList = await this.deviceList();
       if (deviceList.where((d) => d.udid == udid).isEmpty) {
         try {
@@ -356,12 +349,11 @@ class EcoService {
     if (!await File(config.profilePath).exists()) {
       final deviceList = await this.deviceList();
       final deviceIds = deviceList.map((d) => d.id).toList();
-      if (unLogin()) return false;
       var provisionFileUrl = await createProfile(
         profileName,
         config.certId,
         deviceIds,
-        moduleJson,
+        acl,
         config.packageName,
       );
       await downloadFile(provisionFileUrl, config.profilePath);
