@@ -174,10 +174,9 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
     setState(() {
       connecting = true;
     });
-    final result = await viewmodel.connectDevice(
+    final result = await viewmodel.tryConnectToDevice(
       context,
-      ipController.text,
-      portController.text,
+      "${ipController.text}:${portController.text}"
     );
     if (!mounted) return;
     setState(() {

@@ -138,8 +138,9 @@ class _MorePageState extends State<MorePage> {
           showAlert(
             context,
             title: const Text('是否所有数据?'),
+            content: const Text('清空后,将重新登录和连接设备'),
             onConfirm: () {
-              viewmodel.clearCache(context);
+              viewmodel.clearAll(context);
             },
           );
         },

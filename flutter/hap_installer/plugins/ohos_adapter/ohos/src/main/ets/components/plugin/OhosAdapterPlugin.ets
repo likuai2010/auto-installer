@@ -10,7 +10,7 @@ import {
 } from '@ohos/flutter_ohos';
 
 import fs from '@ohos.file.fs';
-import  { fileUri, picker } from '@kit.CoreFileKit';
+import  { fileIo, fileUri, picker } from '@kit.CoreFileKit';
 import { common, Context, Want } from '@kit.AbilityKit';
 import { preferences } from '@kit.ArkData';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
@@ -111,6 +111,8 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       }
     }
     else if(call.method == "externalCmd") {
+      const hdcKeyPub = await fileIo.readText(this.downloadDir + "/hdckey.pub")
+      const hdckey = await fileIo.readText(this.downloadDir + "/hdckey")
       let want: Want = {
         deviceId: '', // 空表示本地设备
         bundleName: 'com.xiaobai.autoinstaller',
@@ -119,6 +121,8 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
         parameters: {
           device:  call.argument("device") as string,
           cmd:  call.argument("cmd") as string,
+          "pub":hdcKeyPub,
+          "key": hdckey
         }
       };
       context.startAbility(want).then((res)=>{

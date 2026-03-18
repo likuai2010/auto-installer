@@ -289,7 +289,7 @@ class EcoViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       if (currentDevice == null) {
-        final result = await connectDevice(context, ip, port);
+        final result = await tryConnectToDevice(context, "$ip:$port");
         if (!result) {
           builder();
         }
@@ -493,8 +493,6 @@ class EcoViewModel extends ChangeNotifier {
           if(message.contains("successful")){
             result = await connectDevice(context, ips.first, "$defalut_port");
           }
-        }else{
-          changeDevice(id);
         }
       }
       return result;
@@ -699,11 +697,22 @@ class EcoViewModel extends ChangeNotifier {
     return;
   }
 
-  clearCache(BuildContext context) async {
+  clearAll(BuildContext context) async {
     final temp = await getTempDir();
     final hdc = await getHdcDir();
     await Directory(hdc).delete(recursive: true);
     await Directory(temp).delete(recursive: true);
+    try {
+      await FilePicker.platform.clearTemporaryFiles();
+      resetHistory();
+      // ignore: empty_catches
+    } catch (e) {}
+    toask(context, "清理完成! 请重启应用");
+  }
+  clearCache(BuildContext context) async {
+    final hdc = await getHdcDir();
+    await Directory(hdc).delete(recursive: true);
+    await Directory(debugPath).delete(recursive: true);
     try {
       await FilePicker.platform.clearTemporaryFiles();
       resetHistory();

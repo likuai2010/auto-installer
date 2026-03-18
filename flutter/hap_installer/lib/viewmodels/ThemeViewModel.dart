@@ -18,7 +18,7 @@ class ThemeViewModel extends ChangeNotifier {
   /// 持久化存储的 Key
   static const String _keyFollowSystem = 'theme_follow_system';
   static const String _keyDarkMode = 'theme_dark_mode';
-    static const String _keyAutoPort = 'hdc_autoPort';
+  static const String _keyAutoPort = 'hdc_autoPort';
 
   /// 获取当前是否跟随系统深色模式
   bool get followSystemDarkMode => _followSystemDarkMode;
@@ -34,6 +34,7 @@ class ThemeViewModel extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
     _followSystemDarkMode = _prefs?.getBool(_keyFollowSystem) ?? true;
     _darkMode = _prefs?.getBool(_keyDarkMode) ?? false;
+    _autoPort = _prefs?.getBool(_keyAutoPort) ?? false;
     notifyListeners();
   }
 
