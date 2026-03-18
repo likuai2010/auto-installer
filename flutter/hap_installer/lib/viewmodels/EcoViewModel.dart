@@ -825,6 +825,7 @@ class EcoViewModel extends ChangeNotifier {
         var result = await cmd.signHap(hapPath, signConfig);
         final outPath = await cmd.getOutPath(hapPath);
         result = await cmd.installHap(outPath);
+        await File(outPath).delete();
         return result;
     }
   }
@@ -939,12 +940,10 @@ class EcoViewModel extends ChangeNotifier {
           });
         }
       }
-      if (nextStep){
-        await model.newSetp(current, "更新历史", () async {
-            await model.updateDebugApp(hap, signConfig.certPath);
-            return null;
-        });
-      }
+      await model.newSetp(current, "更新调试历史", () async {
+        await model.updateDebugApp(hap, signConfig.certPath);
+        return null;
+      });
     }
     model.updateHistory(current, (debug){
       return debug.copyWith(finished: true);

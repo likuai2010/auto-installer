@@ -133,7 +133,8 @@ class HistoryViewModel extends ChangeNotifier {
   }
   addCalendar(BuildContext context, DebugApp app) async{
     if(app.appInfo != null){
-      final result = await ohosAdapter.addCalendar(app.appInfo!.label, app.certEndTime!.millisecondsSinceEpoch);
+      final time = app.certEndTime?.millisecondsSinceEpoch ?? app.installTime!.add(Duration(days: 180)).microsecondsSinceEpoch;
+      final result = await ohosAdapter.addCalendar(app.appInfo!.label, time);
       if(result){
         toask(context, "添加系统日历成功");
       }else{

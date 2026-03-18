@@ -177,7 +177,11 @@ class CmdService {
           'signtool sign-app -mode localSign -keyAlias xiaobai -appCertFile "${signConfig.certPath}" -profileFile "${signConfig.profilePath}" -inFile "$inPath" -signAlg SHA256withECDSA -keystoreFile "${signConfig.keystoreFile}" -keystorePwd "${signConfig.keystorePwd}" -keyPwd "${signConfig.keystorePwd}" -outFile "$outPath" -signCode 1';
     }
     final error = await baseSign(cmd);
+
     if (error.contains("success") || error.contains("签名成功")) {
+      if(ohosAdapter.isOhos){
+        await File(inPath).delete();
+      }
       return null;
     } else {
       return "签名失败: $error";

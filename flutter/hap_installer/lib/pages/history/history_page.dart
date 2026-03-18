@@ -7,6 +7,7 @@ import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
+import 'package:intl/intl.dart';
 import 'debug_detail_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
@@ -64,7 +65,7 @@ class DebugAppItem extends StatelessWidget {
     if(info.appInfo == null){
       return  "${info.appInfo?.label ?? "未知"} (${info.packageName})";
     }
-    return "${info.appInfo?.label ?? "未知"} \n(${info.appInfo?.version} ${info.appInfo?.deviceType})";
+    return "${info.appInfo?.label ?? "未知"} \n(${info.appInfo?.version})";
   }
   time(){
     var endTime = info.certEndTime;
@@ -72,7 +73,9 @@ class DebugAppItem extends StatelessWidget {
       endTime = info.installTime!.add(Duration(days: 180));
     }
     var isAfter = endTime != null ? DateTime.now().isAfter(endTime) : false;
-    return "安装时间: ${info.installTime ?? "未知"} \n过期时间: ${endTime ?? "未知"} ${isAfter ? "已过期":""}";
+    String formatted1 = DateFormat('yyyy-MM-dd').format(endTime!);
+    String formatted2 = DateFormat('yyyy-MM-dd').format(info.installTime!);
+    return "安装时间: ${formatted2 ?? "未知"} \n过期时间: ${formatted1} ${isAfter ? "已过期":""}";
   }
   @override
   Widget build(BuildContext context) {
