@@ -6,7 +6,7 @@
     },
     {
       "name": "CALENDAR_desc",
-      "value": "用来调试应用到期提醒"
+      "value": "用来提醒应用即将到期"
     },
     {
       "name": "EntryAbility_desc",

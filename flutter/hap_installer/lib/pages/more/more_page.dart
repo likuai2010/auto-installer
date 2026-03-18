@@ -65,7 +65,7 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   /// 应用版本
-  final String _appVersion = '2.5.0';
+  final String _appVersion = '3.0.0';
 
   /// 自动连接开关状态
   bool _autoConnect = true;

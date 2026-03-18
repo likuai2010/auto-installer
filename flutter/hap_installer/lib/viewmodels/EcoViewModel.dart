@@ -923,10 +923,13 @@ class EcoViewModel extends ChangeNotifier {
 
       final unSignedList = hap.pathList;
       hap = hap.copyWith(pathList: outPathList);
+
+     
+
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
-            if(reinstall && hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
+            if(hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
               var result = await installAutoInstaller();
               if (result != null) {
                 return result;
@@ -943,7 +946,6 @@ class EcoViewModel extends ChangeNotifier {
           });
         }
       }
-     
       await model.newSetp(current, "更新调试历史", () async {
         if(nextStep && !reinstall){
           for (var p in unSignedList) {
