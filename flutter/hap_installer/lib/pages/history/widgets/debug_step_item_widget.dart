@@ -12,6 +12,7 @@ class DebugStepItemWidget extends StatelessWidget {
     super.key,
     required this.info,
     this.onReset,
+    this.onUnInstall,
   });
 
   /// 步骤信息
@@ -19,6 +20,7 @@ class DebugStepItemWidget extends StatelessWidget {
 
   /// 重置按钮点击回调
   final VoidCallback? onReset;
+  final VoidCallback? onUnInstall;
 
   /// 获取步骤状态图标
   Widget _buildStatusIcon(BuildContext context) {
@@ -80,7 +82,30 @@ class DebugStepItemWidget extends StatelessWidget {
   }
 
   Widget BuildReset(BuildContext context){
-      if(info.error != null && info.error!.contains("请等待安装")){
+      if (info.error == null) {
+        return Container();
+      }
+      if(info.error!.contains("签名不一致导致安装失败")){
+          return GestureDetector(
+            onTap: onUnInstall,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.buttonLightBackground,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Text(
+                "卸载设备上的应用",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.brandDynamic(context),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          );
+      }
+      if(info.error!.contains("请等待安装")){
           return Container();
       } else {
         return GestureDetector(

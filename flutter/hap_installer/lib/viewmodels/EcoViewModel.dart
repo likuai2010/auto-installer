@@ -825,6 +825,7 @@ class EcoViewModel extends ChangeNotifier {
         var result = await cmd.signHap(hapPath, signConfig);
         final outPath = await cmd.getOutPath(hapPath);
         result = await cmd.installHap(outPath);
+        await File(hapPath).delete();
         await File(outPath).delete();
         return result;
     }
@@ -919,6 +920,8 @@ class EcoViewModel extends ChangeNotifier {
       for (var p in hap.pathList) {
         outPathList.add(await cmd.getOutPath(p));
       }
+
+      final unSignedList = hap.pathList;
       hap = hap.copyWith(pathList: outPathList);
       for (var p in hap.pathList) {
         if (nextStep) {
@@ -940,7 +943,13 @@ class EcoViewModel extends ChangeNotifier {
           });
         }
       }
+     
       await model.newSetp(current, "更新调试历史", () async {
+        if(nextStep && !reinstall){
+          for (var p in unSignedList) {
+              await File(p).delete();
+          }
+        }
         await model.updateDebugApp(hap, signConfig.certPath);
         return null;
       });

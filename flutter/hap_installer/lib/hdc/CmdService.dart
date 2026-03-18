@@ -179,9 +179,6 @@ class CmdService {
     final error = await baseSign(cmd);
 
     if (error.contains("success") || error.contains("签名成功")) {
-      if(ohosAdapter.isOhos){
-        await File(inPath).delete();
-      }
       return null;
     } else {
       return "签名失败: $error";
@@ -290,7 +287,7 @@ class CmdService {
     } else if (result.contains("9568297")) {
       return "由于设备sdk版本较低导致安装失败! (tip: 该问题是由于编译打包所使用的SDK版本与设备镜像版本不匹配)";
     } else if (result.contains("9568332")) {
-      return "签名不一致导致安装失败! (tip: 设备上已安装的应用与新安装的应用中签名不一致或者多个包（HAP和HSP）之间的签名存在差异)";
+      return "签名不一致导致安装失败! (tip: 设备上已安装的不同签名的应用,请卸载重试)";
     } else if (result.contains("9568329")) {
       return "签名信息中的包名与应用的包名(bundleName)不一致! (tip: 用户导入了三方提供的HSP模块，且该HSP既非集成态HSP，又非同包名的HSP，造成包名不一致)";
     } else if (result.contains("9568320")) {

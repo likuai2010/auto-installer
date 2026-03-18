@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
+import 'package:path/path.dart';
 import 'widgets/debug_step_item_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -49,6 +50,10 @@ class DebugDetailPage extends StatelessWidget {
                   info: step,
                   onReset: () {
                     model.resetProfile(context);
+                  },
+                  onUnInstall: () async {
+                    await model.unInstall(model.current!.hapInfo.packageName);
+                    Navigator.pop(context);
                   },
                 );
               },
