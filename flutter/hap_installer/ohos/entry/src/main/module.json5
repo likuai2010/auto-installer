@@ -62,8 +62,25 @@
         "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
       },
       {
-        "name": "ohos.permission.kernel.ALLOW_EXECUTABLE_FORT_MEMORY"
+        "name": "ohos.permission.READ_CALENDAR",
+        "reason": "$string:CALENDAR_desc",
+        "usedScene": {
+          "abilities": [
+            "FormAbility"
+          ],
+          "when": "inuse"
+        }
       },
+      {
+        "name": "ohos.permission.WRITE_CALENDAR",
+        "reason": "$string:CALENDAR_desc",
+        "usedScene": {
+          "abilities": [
+            "FormAbility"
+          ],
+          "when": "inuse"
+        }
+      }
     ]
   }
 }

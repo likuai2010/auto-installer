@@ -5,6 +5,10 @@
       "value": "模块描述"
     },
     {
+      "name": "CALENDAR_desc",
+      "value": "用来调试应用到期提醒"
+    },
+    {
       "name": "EntryAbility_desc",
       "value": "description"
     },

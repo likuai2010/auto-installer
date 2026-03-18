@@ -104,7 +104,7 @@ class DebugAppItem extends StatelessWidget {
                       if(info.appInfo != null && info.canReInstall)
                           TextButton(onPressed: () => {
                             if(!model.loadingReinstall){
-                              showConfirm(context, title: Text("确定延期?"), content: Text("目前支持500m以下的应用. \n创建新证书将自动删除当前证书. 已安装的其他应用不受影响"), 
+                              showConfirm(context, title: Text("确定续期?"), content: Text("目前支持500m以下的应用. \n创建新证书将自动删除当前证书. 已安装的其他应用不受影响"), 
                                 confirmLabel: "创建新证书",
                                 cancelLabel: "使用当前证书",
                                 onConfirm: (){
@@ -115,15 +115,24 @@ class DebugAppItem extends StatelessWidget {
                                 }
                               )
                             }
-                          }, child: model.loadingReinstall ? CircularProgressIndicator() : Text("延期")),
+                          }, child: model.loadingReinstall ? CircularProgressIndicator() : Text("续期")),
+                        
                         TextButton(onPressed: ()=>{
                           showAlert(context, title: Text("确定卸载?"), onConfirm: (){
                               model.unInstall(info.packageName);
                           })
                         }, child: Text("卸载")),
                     ]),
-                
+                    if(info.appInfo != null && info.canReInstall)
+                    TextButton(onPressed: () => {
+                      showAlert(context, title: Text("确定添加日程提醒?"), 
+                          onConfirm: (){
+                              model.addCalendar(context, info);
+                          },
+                        )
+                    }, child: Text("日程提醒")),
                 ],
+                
               ),
               onClick: () {
                 // toPage(context, (_) => const DebugDetailPage());

@@ -70,8 +70,11 @@ class OhosAdapter {
   Future<String?> getLocalUrl() {
     return OhosAdapterPlatform.instance.getLocalKey("url");
   }
-    Future<bool> canOpenLink(String link) async {
+  Future<bool> canOpenLink(String link) async {
     return await OhosAdapterPlatform.instance.canOpenLink(link);
+  }
+   Future<bool> addCalendar(String appName, int startTime) async {
+    return await OhosAdapterPlatform.instance.addCalendar(appName, startTime) > 0;
   }
 }
 

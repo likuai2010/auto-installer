@@ -90,4 +90,9 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
     return await methodChannel
         .invokeMethod<bool>('canOpenLink', {"link": link}) ??  false;
   }
+  @override
+  Future<int> addCalendar(String appName, int time) async {
+   return await methodChannel
+        .invokeMethod<int>('addCalendar', {"appName": appName, "startTime": time}) ??  0;
+  }
 }

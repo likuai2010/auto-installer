@@ -17,8 +17,8 @@ import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { hdcUtils as HdcUtils} from './HdcUtils';
 import { deviceInfo } from '@kit.BasicServicesKit';
 import { bundleManager } from '@kit.AbilityKit';
-
-
+import { addAndUpdateEvent, initMgr } from './CalendarUtils';
+import { calendarManager } from '@kit.CalendarKit';
 
 
 /** OhosAdapterPlugin **/
@@ -26,10 +26,14 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
   private channel: MethodChannel | null = null;
   binding: AbilityPluginBinding | null  = null;
   constructor() {
-  }
 
-  onAttachedToAbility(binding: AbilityPluginBinding): void {
+  }
+  private mgr?: calendarManager.CalendarManager = undefined
+
+  async onAttachedToAbility(binding: AbilityPluginBinding): Promise<void> {
     this.binding = binding;
+    const  context = this.binding!.getAbility().context;
+    this.mgr = await initMgr(context);
   }
 
   onDetachedFromAbility(): void {
@@ -75,6 +79,15 @@ export default class OhosAdapterPlugin implements FlutterPlugin, AbilityAware, M
       requestBackground()
       openUrl(url, context)
       result.success("")
+    }
+    else if(call.method == "addCalendar") {
+
+      if(this.mgr){
+        let id = await addAndUpdateEvent(this.mgr, call.argument("startTime") as number, call.argument("appName") as string)
+        result.success(id);
+      }else{
+        result.success(0);
+      }
     }
     else if(call.method == "selectFile") {
       let filter = call.argument("filter") as string[];

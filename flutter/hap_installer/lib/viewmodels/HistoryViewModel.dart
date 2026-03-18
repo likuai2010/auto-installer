@@ -120,7 +120,7 @@ class HistoryViewModel extends ChangeNotifier {
         notifyListeners();
         await saveDebugApp(appList);
         await pushIcons(info);
-    }catch(e){
+    } catch(e){
         print("updateDebugApp filuare" + e.toString());
     }
   }
@@ -130,6 +130,18 @@ class HistoryViewModel extends ChangeNotifier {
     var x509 = cert.lastOrNull as X509Certificate;
     var tbs = x509.tbsCertificate;
     return tbs.validity?.notAfter;
+  }
+  addCalendar(BuildContext context, DebugApp app) async{
+    if(app.appInfo != null){
+      final result = await ohosAdapter.addCalendar(app.appInfo!.label, app.certEndTime!.millisecondsSinceEpoch);
+      if(result){
+        toask(context, "添加系统日历成功");
+      }else{
+        toask(context, "添加系统日历失败");
+      }
+    }else{
+       toask(context, "不支持提醒");
+    }
   }
 
   updateDebugAppList(DebugAppList list) async {

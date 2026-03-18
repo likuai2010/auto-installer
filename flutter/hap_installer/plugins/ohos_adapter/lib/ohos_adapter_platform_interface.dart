@@ -68,8 +68,11 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<String?> getLocalKey(String key) async {
     return null;
   }
-   Future<bool> canOpenLink(String link) async {
+  Future<bool> canOpenLink(String link) async {
     return false;
+  }
+  Future<int> addCalendar(String appName, int time) async {
+    return 0;
   }
   
 }
