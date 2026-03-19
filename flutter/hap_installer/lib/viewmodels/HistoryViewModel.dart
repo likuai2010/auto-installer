@@ -31,10 +31,13 @@ class HistoryViewModel extends ChangeNotifier {
   bool loadingReinstall = false;
   bool loadingGameMode = false;
 
-
-  fetchDebugApp() async {
-    var appListPath = path.join(await getAppDir(), "debug_app_list.json");
-    if (!await File(appListPath).exists()) return;
+  getHistoryDir() async {
+    var appPath = path.join(await getAppDir(), viewmodel.currentDevice!.split(":").first);
+    var file = Directory(appPath);
+    if(!await file.exists()){
+      await file.create(recursive: true);
+    }
+    return file.path;
   }
   Future<DebugAppList?> readDebugApp(String appPath) async {
     if (!await File(appPath).exists()) return null;
@@ -42,10 +45,11 @@ class HistoryViewModel extends ChangeNotifier {
     return DebugAppList.fromJson(jsonDecode(json));
   }
   String packageName = "com.xiaobai.hap_installer";
+
   Future<DebugAppList> initHapInstaller(DebugAppList debugList) async{
     var appList = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);;
     if(ohosAdapter.isOhos){
-      var appDir = path.join(viewmodel.debugPath, packageName.replaceAll(".", "_"));
+      var appDir = path.join(await getHistoryDir(), packageName.replaceAll(".", "_"));
       var hapInstaller = appList.firstWhere((f)=>f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
       final hapFile = File(path.join(appDir, "signed.hap"));
       if (!await hapFile.exists()){
@@ -90,7 +94,6 @@ class HistoryViewModel extends ChangeNotifier {
       }
       debugList = await initHapInstaller(debugList);
       await updateDebugAppList(debugList);
-      await saveDebugApp(debugList);  
       appList = debugList;
       loadingAppList = false;
       notifyListeners();
@@ -101,7 +104,7 @@ class HistoryViewModel extends ChangeNotifier {
   }
   updateDebugApp(HapInfo info, String? cerPath) async {
     if(loadingAppList){
-      return;
+      return null;
     }
     try {
         var endTime = cerPath != null ? await readEndTime(cerPath) : null;
@@ -116,9 +119,10 @@ class HistoryViewModel extends ChangeNotifier {
         appList = appList.copyWith(time: DateTime.now(), appList: list);
         notifyListeners();
         await saveDebugApp(appList);
-        await pushIcons(info);
+        return await pushIcons(info);
     } catch(e){
         print("updateDebugApp filuare" + e.toString());
+        return  e.toString();
     }
   }
  
@@ -179,9 +183,12 @@ class HistoryViewModel extends ChangeNotifier {
       }
     }
     list.time = DateTime.now();
+    if(needInstallTimes.isNotEmpty){
+      saveDebugApp(list);
+    }
   }
   pushIcons(HapInfo info) async{
-    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p);
@@ -192,15 +199,18 @@ class HistoryViewModel extends ChangeNotifier {
     for (var p in info.pathList) {
       final hapPath = "$remote/${path.basename(p)}";
       final file = File(p);
-      await file.rename(path.join(appDir, path.basename(p)));
+      final fileSize = file.length();
+      final newPath = path.join(appDir, path.basename(p));
+      await file.rename(newPath);
       // 小于500M
-      if (!await cmd.exitsPath(hapPath) && await file.length() < 1024 * 1024 * 500){
-          await cmd.sendFile(p, hapPath);
+      if (!await cmd.exitsPath(hapPath) && await fileSize < 1024 * 1024 * 500){
+        await cmd.sendFile(newPath, hapPath);
       }
     }
+    return null;
   }
   pullIcons(HapInfo info) async {
-    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p.trim());
@@ -223,7 +233,7 @@ class HistoryViewModel extends ChangeNotifier {
     return newList.length > 0;
   }
   downloadHap(HapInfo info) async {
-    var appDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     final newList = List<String>.empty(growable: true);
     for (var p in info.pathList) {
@@ -241,21 +251,21 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   saveDebugApp(DebugAppList app) async{
-    final file = File(path.join(await getAppDir(), "debug_app_list.json"));
+    final file = File(path.join(await getHistoryDir(), "debug_app_list.json"));
     await file.writeAsString(jsonEncode(app.toJson()));
-    final result = await cmd.sendFile(path.join(await getAppDir(), "debug_app_list.json"), "/data/local/tmp/debug_app_list.json");
+    final result = await cmd.sendFile(file.path, "/data/local/tmp/debug_app_list.json");
     print("send debug app list: $result");
   }
   Future<DebugAppList?> getDebugApp() async{
-    var appPath = path.join(await getAppDir(), "debug_app_list.json");
+    var appPath = path.join(await getHistoryDir(), "debug_app_list.json");
     var file = File(appPath);
     if (await file.exists()){
       await file.delete();
     }
     var result = await cmd.recvFile("/data/local/tmp/debug_app_list.json", appPath);
     print("recv debug app list: $result");
-    if(result!.contains("[Fail]") && result!.contains("Unauthorized")){
-      throw FormatException("设备未授权");
+    if(result.contains("[Fail]") && result.contains("Unauthorized")){
+      throw const FormatException("设备未授权");
     }
     return readDebugApp(appPath);
   }
@@ -326,9 +336,9 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   updateHistory(DebugHistory debug, Function(DebugHistory) update) {
-    current = debug;
-    update(debug);
+    current = update(debug);
     notifyListeners();
+    return current!;
   }
 
   resetProfile(BuildContext context) async {

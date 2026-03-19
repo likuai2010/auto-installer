@@ -124,7 +124,6 @@ class EcoViewModel extends ChangeNotifier {
     await initSignConfig();
 
     await tarnsformAssert(javapath);
-    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
     firstUse = await getFirstUse() ?? true;
     await setFirstUse();
     final url = await getLocalUrl();
@@ -833,9 +832,9 @@ class EcoViewModel extends ChangeNotifier {
 
   _installHap(HapInfo hap, [SignConfig? signConfig, bool recert = false, bool reinstall = false]) async {
     final model = historyViewModel!;
-    final current = model.createDebugHistory(hap);
+    var current = model.createDebugHistory(hap);
     bool nextStep = true;
-    model.updateHistory(current, (debug){
+    current = model.updateHistory(current, (debug){
       return debug.copyWith(finished: false);
     });
     if(signConfig == null) {
@@ -850,18 +849,13 @@ class EcoViewModel extends ChangeNotifier {
               if (reinstall){
                 await cmd.unInstall(hap.packageName, hap.pathList.length > 1, !recert);
               } 
-              result = await cmd.installHap(p);
-              if (result == null){
-                await model.updateDebugApp(hap, null);
-              }
-              return result;
+              return await cmd.installHap(p);
             });
           }
         }
         if (nextStep){
           await model.newSetp(current, "更新历史", () async {
-            await model.updateDebugApp(hap, null);
-              return null;
+              return await model.updateDebugApp(hap, null);
           });
         }
     } else {
@@ -946,15 +940,19 @@ class EcoViewModel extends ChangeNotifier {
           });
         }
       }
+      if(nextStep){
+        hapInfo = null;
+        notifyListeners();
+      }
       await model.newSetp(current, "更新调试历史", () async {
         if(nextStep && !reinstall){
           for (var p in unSignedList) {
               await File(p).delete();
           }
         }
-        await model.updateDebugApp(hap, signConfig.certPath);
-        return null;
+        return await model.updateDebugApp(hap, signConfig.certPath);
       });
+      
     }
     model.updateHistory(current, (debug){
       return debug.copyWith(finished: true);
