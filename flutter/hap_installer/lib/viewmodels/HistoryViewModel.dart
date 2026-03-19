@@ -31,11 +31,11 @@ class HistoryViewModel extends ChangeNotifier {
   bool loadingReinstall = false;
   bool loadingGameMode = false;
 
-  getHistoryDir() async {
-    var appPath = path.join(await getAppDir(), viewmodel.currentDevice!.split(":").first);
+  getHistoryDir(){
+    var appPath = path.join(viewmodel.tempDir, viewmodel.currentDevice!.split(":").first);
     var file = Directory(appPath);
-    if(!await file.exists()){
-      await file.create(recursive: true);
+    if(!file.existsSync()){
+       file.createSync(recursive: true);
     }
     return file.path;
   }
@@ -49,8 +49,8 @@ class HistoryViewModel extends ChangeNotifier {
   Future<DebugAppList> initHapInstaller(DebugAppList debugList) async{
     var appList = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);;
     if(ohosAdapter.isOhos){
-      var appDir = path.join(await getHistoryDir(), packageName.replaceAll(".", "_"));
-      var hapInstaller = appList.firstWhere((f)=>f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
+      var appDir = path.join(getHistoryDir(), packageName.replaceAll(".", "_"));
+      var hapInstaller = appList.firstWhere((f)=> f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
       final hapFile = File(path.join(appDir, "signed.hap"));
       if (!await hapFile.exists()){
         if(!await hapFile.parent.exists()){
@@ -188,7 +188,7 @@ class HistoryViewModel extends ChangeNotifier {
     }
   }
   pushIcons(HapInfo info) async{
-    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p);
@@ -210,7 +210,7 @@ class HistoryViewModel extends ChangeNotifier {
     return null;
   }
   pullIcons(HapInfo info) async {
-    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p.trim());
@@ -233,7 +233,7 @@ class HistoryViewModel extends ChangeNotifier {
     return newList.length > 0;
   }
   downloadHap(HapInfo info) async {
-    var appDir = path.join(await getHistoryDir(), info.packageName.replaceAll(".", "_"));
+    var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     final newList = List<String>.empty(growable: true);
     for (var p in info.pathList) {
@@ -251,13 +251,13 @@ class HistoryViewModel extends ChangeNotifier {
   }
 
   saveDebugApp(DebugAppList app) async{
-    final file = File(path.join(await getHistoryDir(), "debug_app_list.json"));
+    final file = File(path.join(getHistoryDir(), "debug_app_list.json"));
     await file.writeAsString(jsonEncode(app.toJson()));
     final result = await cmd.sendFile(file.path, "/data/local/tmp/debug_app_list.json");
     print("send debug app list: $result");
   }
   Future<DebugAppList?> getDebugApp() async{
-    var appPath = path.join(await getHistoryDir(), "debug_app_list.json");
+    var appPath = path.join(getHistoryDir(), "debug_app_list.json");
     var file = File(appPath);
     if (await file.exists()){
       await file.delete();

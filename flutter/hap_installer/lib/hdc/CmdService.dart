@@ -639,7 +639,6 @@ dumpHapInfo(List<String> pathList, String debugPath) async{
     }
     final acl = eco.getAcl(info);
     var hapInfo = HapInfo(packageName: info.app?.bundleName ?? "", label: name.trim(), icon: iconList, acl: acl, pathList: hapPathlList,version: info.app!.versionName,deviceType: info.module!.deviceTypes);
-    
     await File(path.join(appDir.path, "hap_info.json")).writeAsString(jsonEncode(hapInfo.toJson()), flush: true);
     return hapInfo;
   }

@@ -21,7 +21,7 @@ class HistoryPage extends StatelessWidget {
     return Consumer<HistoryViewModel>(
       builder: (context, model, child) {
         if(model.loadingAppList){
-          return  Center(child: CircularProgressIndicator());
+          return  const Center(child: CircularProgressIndicator());
         }
         return model.appList.appList.isNotEmpty ? ListView.builder(
                   itemCount: model.appList.appList.length,
@@ -153,7 +153,7 @@ class AppIconItem extends StatelessWidget {
   final HapInfo info;
 
   iconPath(EcoViewModel model,String packageName, String icon){
-    return path.join(model.debugPath, packageName.replaceAll(".", "_"),  icon);
+    return path.join(model.historyViewModel?.getHistoryDir() ?? model.debugPath, packageName.replaceAll(".", "_"),  icon);
   }
   Widget build(BuildContext context) {
      return Consumer<EcoViewModel>(
