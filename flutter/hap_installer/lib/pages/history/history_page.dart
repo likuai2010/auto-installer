@@ -8,6 +8,7 @@ import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:intl/intl.dart';
+import 'package:ohos_adapter/ohos_adapter.dart';
 import 'debug_detail_page.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
@@ -126,7 +127,7 @@ class DebugAppItem extends StatelessWidget {
                           })
                         }, child: Text("卸载")),
                     ]),
-                    if(info.appInfo != null && info.canReInstall)
+                    if(info.appInfo != null && info.canReInstall && ohosAdapter.isOhos)
                     TextButton(onPressed: () => {
                       showAlert(context, title: Text("确定添加日程提醒?"), 
                           onConfirm: (){

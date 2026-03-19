@@ -41,7 +41,13 @@ Future<String> getTempDir() async {
   }
   return appDir.path + "/";
 }
-
+Future<String> getHome() async {
+  if (ohosAdapter.isOhos){
+    return await ohosAdapter.tempDir() ?? "";
+  }
+  final homeDir = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
+  return "${homeDir ?? ""}/.harmony";
+}
 bool containsChinese(String path) {
   // 正则匹配中文字符（包括简体、繁体、标点符号等）
   final RegExp chineseRegex = RegExp(r'[\u4e00-\u9fa5]'); // Unicode 范围：常用汉字

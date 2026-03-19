@@ -12,6 +12,7 @@ import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/models/DebugHistory.dart';
 import 'package:hap_installer/models/HapInfo.dart';
 import 'package:hap_installer/models/PayList.dart';
+import 'package:hap_installer/viewmodels/HomeViewModel.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:x509/x509.dart';
@@ -57,7 +58,7 @@ class HistoryViewModel extends ChangeNotifier {
           await hapFile.parent.create();
         }
         await File("/data/storage/el1/bundle/entry.hap").copy(hapFile.path);
-        final hapInfo = await dumpHapInfo([hapFile.path], viewmodel.debugPath);
+        final hapInfo = await dumpHapInfo([hapFile.path], getHistoryDir()?? viewmodel.debugPath);
         hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
       }
       appList.removeWhere((f)=>f.packageName == packageName);
@@ -150,12 +151,10 @@ class HistoryViewModel extends ChangeNotifier {
     var needInstallTimes = List<String>.empty(growable: true);
     for (int i = 0; i < list.appList.length; i++) {
       final app = list.appList[i];
-      if (app.appInfo == null) {
-        final appInfoFile = File(path.join((await getTempDir()), "apps", app.packageName.replaceAll(".", "_"), "hap_info.json"));
-        if(await appInfoFile.exists()){
-          final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
-          list.appList[i] = app.copyWith(appInfo: appInfo);
-        }
+      final appInfoFile = File(path.join(getHistoryDir() ?? viewmodel.debugPath, app.packageName.replaceAll(".", "_"), "hap_info.json"));
+      if(await appInfoFile.exists()){
+        final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
+        list.appList[i] = app.copyWith(appInfo: appInfo);
       }
       if(app.installTime == null) {
         needInstallTimes.add(app.packageName);

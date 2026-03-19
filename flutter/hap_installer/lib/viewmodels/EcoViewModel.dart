@@ -109,7 +109,6 @@ class EcoViewModel extends ChangeNotifier {
     }
     hdcDir = await getHdcDir();
     final storeDir = Directory(path.join(await getAppDir(), "store"));
-
     if (!await storeDir.exists()) {
       await storeDir.create(recursive: true);
     }
@@ -180,7 +179,37 @@ class EcoViewModel extends ChangeNotifier {
     historyList = await readIpHistoryFromFile(ipHistoryPath);
     notifyListeners();
   }
+  initAutoConnectConfig(BuildContext context) async {
+    var localDir = await getHome();
+    var remoteDir = "storage/media/100/local/files/Docs/Download/com.xiaobai.hap_installer/";
 
+   
+    await cmd.targetList();
+    await cmd.openApp(viewmodel.debugPath);
+    await Future.delayed(Duration(microseconds: 300));
+    var message = "";
+    if (await File("$localDir/hdckey").exists()){
+      message = await cmd.sendFile("$localDir/hdckey", "/$remoteDir");
+      if(message.contains("successful")){
+        message = "同步成功";
+      }
+    } else {
+      print("sendPubKey $localDir");
+      message = "文件不存在: $localDir/hdckey}";
+    }
+    if (await File("$localDir/hdckey").exists()){
+      message = await cmd.sendFile("$localDir/hdckey.pub", "/$remoteDir");
+      if(message.contains("successful")){
+        message = "同步成功";
+      }
+    }
+    else {
+      print("sendPubKey $localDir");
+      message = "文件不存在: $localDir/hdckey}";
+    }
+     await cmd.setRemoteDebug();
+    toask(context, message = message);
+  }
   String? baseHap() {
     if (hnpBaseHap == null) {
       return null;
@@ -309,16 +338,11 @@ class EcoViewModel extends ChangeNotifier {
   }
 
   toSelectFile(BuildContext context) async {
-    var result =  await ohosAdapter.canOpenLink("xiaobai://com.xiaobai.auto_installer/open");
     if (!await checkJava(context)) return;
     if (fileLoading) return;
     fileLoading = true;
     notifyListeners();
     try {
-
-      // var hap = File("/data/storage/el1/bundle/entry.hap");
-      // var reusult = await hap.exists();
-      // await hap.copy("/data/storage/el2/base/haps/entry/files/entry.hap");
       final filePath = await selectFile();
       if (filePath != null) {
         hapInfo = await _loadApp(context, filePath);
@@ -592,7 +616,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    return await dumpHapInfo(pathList, debugPath);
+    return await dumpHapInfo(pathList, historyViewModel?.getHistoryDir() ?? debugPath);
   }
 
   initJavaRuntme(javapath, tempDir) async {
@@ -917,9 +941,6 @@ class EcoViewModel extends ChangeNotifier {
 
       final unSignedList = hap.pathList;
       hap = hap.copyWith(pathList: outPathList);
-
-     
-
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
@@ -952,8 +973,13 @@ class EcoViewModel extends ChangeNotifier {
         }
         return await model.updateDebugApp(hap, signConfig.certPath);
       });
-      
+      if (hap.packageName == "com.xiaobai.hap_installer" && !reinstall){
+        await model.newSetp(current, "同步连接信息", () async {
+            return "同步成功后,无需输入ip和端口自动连接";
+        });
+      }
     }
+   
     model.updateHistory(current, (debug){
       return debug.copyWith(finished: true);
     });

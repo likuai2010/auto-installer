@@ -200,7 +200,7 @@ class CmdService {
     }
     return true;
   }
-  Future<String?> sendFile(String localPath, String targetPath) async {
+  Future<String> sendFile(String localPath, String targetPath) async {
     final result = await baseCmd('hdc $_t file send "$localPath" "$targetPath"');
     print("sendFile: " + result);
     return result;

@@ -4,7 +4,6 @@ import 'package:hap_installer/pages/history/debug_detail_page.dart';
 import 'package:hap_installer/pages/user_guide_page.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/widget/common.dart';
-import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 
 /// 首页视图模型
 ///

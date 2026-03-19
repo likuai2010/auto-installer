@@ -13,6 +13,7 @@ class DebugStepItemWidget extends StatelessWidget {
     required this.info,
     this.onReset,
     this.onUnInstall,
+    this.onSync
   });
 
   /// 步骤信息
@@ -21,6 +22,8 @@ class DebugStepItemWidget extends StatelessWidget {
   /// 重置按钮点击回调
   final VoidCallback? onReset;
   final VoidCallback? onUnInstall;
+  final VoidCallback? onSync;
+  
 
   /// 获取步骤状态图标
   Widget _buildStatusIcon(BuildContext context) {
@@ -96,6 +99,26 @@ class DebugStepItemWidget extends StatelessWidget {
               ),
               child: Text(
                 "卸载设备上的应用",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.brandDynamic(context),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          );
+      }
+      if(info.name.contains("同步连接信息")){
+          return GestureDetector(
+            onTap: onSync,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.buttonLightBackground,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Text(
+                "一键同步",
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.brandDynamic(context),
