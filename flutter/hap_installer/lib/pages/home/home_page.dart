@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                     AppInfoButton(
                       label: '使用教程',
                       icon: Icons.menu_book_outlined,
-                      onTap: () => homeViewModel.openTutorial(context),
+                      onTap: () => homeViewModel.openTutorial(),
                     ),
                   ],
                 ),

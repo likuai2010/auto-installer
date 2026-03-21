@@ -21,8 +21,8 @@ class HomeViewModel {
 
   /// 打开使用教程
   /// 跳转到用户引导页面
-  Future<void> openTutorial(BuildContext context) async {
-    toPage(context, (_) => const UserGuidePage());
+  Future<void> openTutorial() async {
+    await openByUrl('https://gitee.com/xiaobai-studio/XiaoBaiGuide');
   }
 
   /// 开始调试
