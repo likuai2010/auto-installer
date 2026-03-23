@@ -493,6 +493,7 @@ class EcoViewModel extends ChangeNotifier {
     if (userInfo != null) {
       userInfo!.changeTeamId(info);
       eco.initUserInfo(userInfo);
+      signConfig?.certId = "";
       saveJsonToFile(jsonEncode(userInfo!.toJson()), userInfoPath);
       notifyListeners();
     }
