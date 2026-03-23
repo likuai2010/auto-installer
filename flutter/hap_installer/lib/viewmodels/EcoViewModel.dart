@@ -476,14 +476,15 @@ class EcoViewModel extends ChangeNotifier {
     try {
       hapInfo = await _loadApp(context, filePath);
     } on FormatException catch (e) {
-      print("openFile error ${e.message}");
-      toask(context, e.message);
-    } catch (e) {
-      print("openFile error $e");
-      toask(context, "$e");
+      print("openFile format error ${context == null} ${e.message} ${e.source}");
+      //toask(context, e.message);
+    } catch (e, stackTrace) {
+      print("openFile error ${e} ${stackTrace} ");
+      //toask(context, "$e");
+    }finally{
+      fileLoading = false;
+      notifyListeners();
     }
-    fileLoading = false;
-    notifyListeners();
   }
 
   changeTeam(TeamInfo info) {
@@ -616,7 +617,7 @@ class EcoViewModel extends ChangeNotifier {
     } else {
       pathList = [hapPath];
     }
-    return await dumpHapInfo(pathList, historyViewModel?.getHistoryDir() ?? debugPath);
+    return await dumpHapInfo(pathList, debugPath);
   }
 
   initJavaRuntme(javapath, tempDir) async {
@@ -917,8 +918,6 @@ class EcoViewModel extends ChangeNotifier {
           if (recert) {
             await eco.deleteCertList([signConfig.certId]);
             signConfig.certId = "";
-          }
-          if (recert || reinstall) {
             if (await File(signConfig.profilePath).exists()){
               await File(signConfig.profilePath).delete();
             }
@@ -966,14 +965,18 @@ class EcoViewModel extends ChangeNotifier {
         notifyListeners();
       }
       await model.newSetp(current, "更新调试历史", () async {
+      
+        final dd = await model.updateDebugApp(hap, signConfig.certPath);
         if(nextStep && !reinstall){
           for (var p in unSignedList) {
+            if (File(p).existsSync()){
               await File(p).delete();
+            }
           }
         }
-        return await model.updateDebugApp(hap, signConfig.certPath);
+        return dd;
       });
-      if (hap.packageName == "com.xiaobai.hap_installer" && !reinstall){
+      if (hap.packageName == "com.xiaobai.hap_installer" && !reinstall && !ohosAdapter.isOhos){
         await model.newSetp(current, "同步连接信息", () async {
             return "同步成功后,无需输入ip和端口自动连接";
         });

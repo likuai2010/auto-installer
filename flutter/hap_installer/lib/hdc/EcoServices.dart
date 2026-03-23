@@ -258,7 +258,10 @@ class EcoService {
       if (msg.contains("certList")) {
         msg = "当前证书失效, 请点击下方重置证书";
       }
-      throw FormatException("Profile创建失败: ${msg}");
+      if(msg.contains("exceeds limit")){
+        msg = "本月签名过多,请使用其他账号或团队";
+      }
+      throw FormatException("${msg}");
     }
     return result!.provisionFileUrl!;
   }

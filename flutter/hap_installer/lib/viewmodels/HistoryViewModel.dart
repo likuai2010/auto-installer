@@ -33,6 +33,9 @@ class HistoryViewModel extends ChangeNotifier {
   bool loadingGameMode = false;
 
   getHistoryDir(){
+    if(viewmodel.currentDevice == null){
+      return null;
+    }
     var appPath = path.join(viewmodel.tempDir, viewmodel.currentDevice!.split(":").first);
     var file = Directory(appPath);
     if(!file.existsSync()){
@@ -53,18 +56,18 @@ class HistoryViewModel extends ChangeNotifier {
       var appDir = path.join(getHistoryDir(), packageName.replaceAll(".", "_"));
       var hapInstaller = appList.firstWhere((f)=> f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
       final hapFile = File(path.join(appDir, "signed.hap"));
-      if (!await hapFile.exists()){
+      if (hapInstaller.appInfo == null || !await File(path.join(appDir, path.basename(hapInstaller.appInfo!.pathList.first))).exists()){
         if(!await hapFile.parent.exists()){
           await hapFile.parent.create();
         }
         await File("/data/storage/el1/bundle/entry.hap").copy(hapFile.path);
-        final hapInfo = await dumpHapInfo([hapFile.path], getHistoryDir()?? viewmodel.debugPath);
+        final hapInfo = await dumpHapInfo([hapFile.path], viewmodel.debugPath);
         hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
       }
       appList.removeWhere((f)=>f.packageName == packageName);
       appList = [hapInstaller, ...appList];
     }
-     return debugList.copyWith(appList: appList);
+    return debugList.copyWith(appList: appList);
   }
   initDebugAppList() async {
     if(loadingAppList) return;
@@ -151,7 +154,7 @@ class HistoryViewModel extends ChangeNotifier {
     var needInstallTimes = List<String>.empty(growable: true);
     for (int i = 0; i < list.appList.length; i++) {
       final app = list.appList[i];
-      final appInfoFile = File(path.join(getHistoryDir() ?? viewmodel.debugPath, app.packageName.replaceAll(".", "_"), "hap_info.json"));
+      final appInfoFile = File(path.join(viewmodel.debugPath, app.packageName.replaceAll(".", "_"), "hap_info.json"));
       if(await appInfoFile.exists()){
         final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
         list.appList[i] = app.copyWith(appInfo: appInfo);
@@ -188,9 +191,15 @@ class HistoryViewModel extends ChangeNotifier {
   }
   pushIcons(HapInfo info) async{
     var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
+    var tempDir = path.join(viewmodel.debugPath, info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
       final iconPath = path.join(appDir, p);
+      final tempIcon = File(path.join(tempDir, p));
+      if (await tempIcon.exists()){
+        await File(iconPath).parent.create(recursive: true);
+        await tempIcon.copy(iconPath);
+      }
       final targetPath ="$remote/$p";
       await cmd.makeDir(File(targetPath).parent.path);
       await cmd.sendFile(iconPath, targetPath);
@@ -200,10 +209,12 @@ class HistoryViewModel extends ChangeNotifier {
       final file = File(p);
       final fileSize = file.length();
       final newPath = path.join(appDir, path.basename(p));
-      await file.rename(newPath);
-      // 小于500M
-      if (!await cmd.exitsPath(hapPath) && await fileSize < 1024 * 1024 * 500){
-        await cmd.sendFile(newPath, hapPath);
+      if(await file.exists()){
+        await file.rename(newPath);
+        // 小于500M
+        if (!await cmd.exitsPath(hapPath) && await fileSize < 1024 * 1024 * 500){
+          await cmd.sendFile(newPath, hapPath);
+        }
       }
     }
     return null;
@@ -229,6 +240,7 @@ class HistoryViewModel extends ChangeNotifier {
         newList.add(localPath);
       }
     }
+    print("pullIcons ${newList}");
     return newList.length > 0;
   }
   downloadHap(HapInfo info) async {
