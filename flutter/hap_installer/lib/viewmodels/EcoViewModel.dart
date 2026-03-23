@@ -233,7 +233,9 @@ class EcoViewModel extends ChangeNotifier {
         teamList = list;
         if (teamList.isNotEmpty &&
             !teamList.any((t) => t.id == userInfo?.teamId)) {
-          userInfo?.changeTeamId(teamList.first);
+          if(userInfo?.teamId == null){
+              userInfo?.changeTeamId(teamList.first);
+          }
         }
       } else {
         toask(context, '获取团队信息失败(tip: 请关闭代理软件, ip必须在国内!)');
