@@ -20,9 +20,10 @@ class HomeViewModel {
   }
 
   /// 打开使用教程
-  /// 跳转到用户引导页面
-  Future<void> openTutorial() async {
-    await openByUrl('https://gitee.com/xiaobai-studio/XiaoBaiGuide');
+  ///
+  /// 导航到用户引导页面（WebView页）
+  Future<void> openTutorial(BuildContext context) async {
+    toPage(context, (_) => const UserGuidePage());
   }
 
   /// 开始调试
@@ -32,7 +33,7 @@ class HomeViewModel {
     // 导航到调试详情页
     toPage(context, (_) => const DebugDetailPage());
     // 安装 HAP 到设备
-    if (vm.hapInfo != null){
+    if (vm.hapInfo != null) {
       vm.installHap(vm.hapInfo!);
     }
   }

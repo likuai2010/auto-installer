@@ -54,7 +54,11 @@ dependencies:
       ref: "br_shared_preferences-v2.5.3_ohos"
   file_picker: ^5.3.1
   archive: ^4.0.9
-  webview_flutter: ^4.4.2
+  webview_flutter: 
+    git: 
+        url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+        path: "packages/webview_flutter/webview_flutter"
+        ref: "br_webview_flutter-v4.13.0_ohos"
   ohos_adapter:
     path: plugins/ohos_adapter
   pdf_render:
