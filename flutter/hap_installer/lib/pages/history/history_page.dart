@@ -260,7 +260,12 @@ class AppIconItem extends StatelessWidget {
 
   /// 获取图标文件路径
   String iconPath(EcoViewModel model, String packageName, String icon) {
-    return path.join(model.historyViewModel?.getHistoryDir() ?? model.debugPath, packageName.replaceAll(".", "_"), icon);
+    final tempPath = path.join( model.debugPath, packageName.replaceAll(".", "_"), icon);
+    final appPath = path.join(model.historyViewModel?.getHistoryDir() ?? model.debugPath, packageName.replaceAll(".", "_"), icon);
+    if(File(appPath).existsSync()){
+      return appPath;
+    }
+    return tempPath;
   }
 
   @override

@@ -258,7 +258,13 @@ class EcoService {
       if (msg.contains("certList")) {
         msg = "当前证书失效, 请点击下方重置证书";
       }
-      throw FormatException("Profile创建失败: ${msg}");
+       if (msg.contains("not exist")) {
+        msg = "当前证书不存在, 请点击下方重置证书";
+      }
+      if(msg.contains("exceeds limit")){
+        msg = "本月签名过多,请使用其他账号或团队";
+      }
+      throw FormatException("${msg}");
     }
     return result!.provisionFileUrl!;
   }
@@ -312,7 +318,13 @@ class EcoService {
       final devCerts = debugCerts.where((d) => d.certName == certName);
       if (devCerts.isNotEmpty) {
         xiaobaiDebug = devCerts.first;
+        // 无效证书
+        if(xiaobaiDebug.status == 2){
+           await deleteCertList([xiaobaiDebug.id]);
+           xiaobaiDebug = null;
+        }
       }
+     
       // 没有则创建
       if (xiaobaiDebug == null) {
         // 最多三个证书
