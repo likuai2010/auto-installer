@@ -113,6 +113,20 @@ class EcoViewModel extends ChangeNotifier {
       await storeDir.create(recursive: true);
     }
     await initDebugPath();
+    if(ohosAdapter.isOhos){
+      final localDir = await ohosAdapter.tempDir();
+      final key = await File("$localDir/hdckey");
+      final pub = await File("$localDir/hdckey.pub");
+      if (! (await key.exists() && await pub.exists())){
+          if(await key.exists()){
+            await key.delete();
+          }
+          if(await pub.exists()){
+            await pub.delete();
+          }
+      }
+    }
+
     this.storeDir = storeDir.path;
 
     signConfigPath = path.join(await getAppDir(), "signConfig.json");
@@ -197,7 +211,7 @@ class EcoViewModel extends ChangeNotifier {
       print("sendPubKey $localDir");
       message = "文件不存在: $localDir/hdckey}";
     }
-    if (await File("$localDir/hdckey").exists()){
+    if (await File("$localDir/hdckey.pub").exists()){
       message = await cmd.sendFile("$localDir/hdckey.pub", "/$remoteDir");
       if(message.contains("successful")){
         message = "同步成功";
@@ -205,9 +219,9 @@ class EcoViewModel extends ChangeNotifier {
     }
     else {
       print("sendPubKey $localDir");
-      message = "文件不存在: $localDir/hdckey}";
+      message = "文件不存在: $localDir/hdckey.pub}";
     }
-     await cmd.setRemoteDebug();
+    await cmd.setRemoteDebug();
     toask(context, message = message);
   }
   String? baseHap() {
@@ -949,7 +963,7 @@ class EcoViewModel extends ChangeNotifier {
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
-            if(hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos){
+            if(hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos && currentDevice?.contains("127.0.0.1") == true){
               var result = await installAutoInstaller();
               if (result != null) {
                 return result;
