@@ -230,7 +230,9 @@ class CmdService {
     }
     cmd = cmd.replaceFirst("&& ", '');
     cmd += "";
-    return await baseCmd('hdc $_t shell $cmd');
+    final  dd =  await baseCmd('hdc $_t shell $cmd');
+    print("dumpAppInstallTimes: $dd");
+    return dd;
   }
   Future<String> setRemoteDebug([int port = 12345]) async {
     return await baseCmd('hdc $_t tmode port $port');

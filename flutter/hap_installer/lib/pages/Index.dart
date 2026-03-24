@@ -8,11 +8,13 @@ import 'package:hap_installer/pages/cert/cert_page.dart';
 import 'package:hap_installer/pages/history/history_page.dart';
 import 'package:hap_installer/pages/home/home_page.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
+import 'package:hap_installer/viewmodels/HistoryViewModel.dart';
 import 'package:hap_installer/widget/navigation_transition.dart';
 import 'package:hap_installer/widget/common.dart';
 import 'package:hap_installer/widget/constants.dart';
 import 'package:hap_installer/widget/sign_config_box.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:provider/provider.dart';
 
 const double mediumWidthBreakpoint = 1000;
 const double largeWidthBreakpoint = 1500;
@@ -103,6 +105,17 @@ class _IndexState extends State<Index> with SingleTickerProviderStateMixin {
               BlendMode.srcIn,
             ),
           ),
+        ),
+      );
+    }
+    if (pageSelected == PageSelected.history) {
+      actions.add(
+        IconButton(
+          onPressed: () {
+             final history = context.read<HistoryViewModel>();
+             history.initDebugAppList();
+          },
+          icon: const Icon(Icons.refresh),
         ),
       );
     }

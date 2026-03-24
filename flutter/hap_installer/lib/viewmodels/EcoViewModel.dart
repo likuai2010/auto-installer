@@ -493,6 +493,7 @@ class EcoViewModel extends ChangeNotifier {
     if (userInfo != null) {
       userInfo!.changeTeamId(info);
       eco.initUserInfo(userInfo);
+      signConfig?.certId = "";
       saveJsonToFile(jsonEncode(userInfo!.toJson()), userInfoPath);
       notifyListeners();
     }
@@ -918,10 +919,13 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.newSetp(current, "请求签名", () async {
           if (recert) {
-            await eco.deleteCertList([signConfig.certId]);
+            await eco.deleteXiaobaiCert(signConfig.certId);
             signConfig.certId = "";
+          
+          }
+          if(recert || reinstall){
             if (await File(signConfig.profilePath).exists()){
-              await File(signConfig.profilePath).delete();
+                await File(signConfig.profilePath).delete();
             }
           }
           await eco.autoCreateProfile(signConfig, hap.acl);

@@ -79,7 +79,8 @@ class HistoryViewModel extends ChangeNotifier {
       if(debugList == null){
         debugList = DebugAppList(time: DateTime.now(), appList: []);
         if(result == null || result.contains("Fail") ){
-           loadingAppList = false;
+          loadingAppList = false;
+          notifyListeners();
           return;
         }
         var packageNames = result.split("\n") ?? [];
@@ -101,7 +102,8 @@ class HistoryViewModel extends ChangeNotifier {
       appList = debugList;
       loadingAppList = false;
       notifyListeners();
-    } catch (e) {
+    } catch (e, stack) {
+      print("加载失败: $e $stack" );
       loadingAppList = false;
       notifyListeners();
     }
@@ -155,7 +157,7 @@ class HistoryViewModel extends ChangeNotifier {
     for (int i = 0; i < list.appList.length; i++) {
       final app = list.appList[i];
       final appInfoFile = File(path.join(viewmodel.debugPath, app.packageName.replaceAll(".", "_"), "hap_info.json"));
-      if(await appInfoFile.exists()){
+      if(app.appInfo == null && await appInfoFile.exists()){
         final appInfo = HapInfo.fromJson(jsonDecode(appInfoFile.readAsStringSync()));
         list.appList[i] = app.copyWith(appInfo: appInfo);
       }
@@ -174,8 +176,12 @@ class HistoryViewModel extends ChangeNotifier {
       for (int i = 0; i < needInstallTimes.length; i++) {
           final p = needInstallTimes[i];
           final timeString = installTime[i];
-          final time = DateTime.fromMillisecondsSinceEpoch(int.parse(timeString.split(":").last.trim()));
-          timeDict[p] = time;
+          final tiemString = timeString.split(":").last.trim();
+          final timeInt = int.tryParse(tiemString);
+          if(timeInt != null){
+              final time = DateTime.fromMillisecondsSinceEpoch(timeInt);
+              timeDict[p] = time;
+          }
       }
       for (var i = 0; i < list.appList.length; i++) {
           final app = list.appList[i];
@@ -233,6 +239,7 @@ class HistoryViewModel extends ChangeNotifier {
     for (var p in info.pathList) {
       final hapPath = "$remote/${path.basename(p)}";
       final localPath = path.join(appDir, path.basename(p));
+      print("pullIcons ${info.packageName}  ${p}");
       // 本地没有缓存就现在远程的
       if(await File(localPath).exists()){
         newList.add(localPath);
@@ -240,7 +247,7 @@ class HistoryViewModel extends ChangeNotifier {
         newList.add(localPath);
       }
     }
-    print("pullIcons ${newList}");
+    print("pullIcons ${info.packageName}  ${newList}");
     return newList.length > 0;
   }
   downloadHap(HapInfo info) async {
@@ -263,7 +270,7 @@ class HistoryViewModel extends ChangeNotifier {
 
   saveDebugApp(DebugAppList app) async{
     final file = File(path.join(getHistoryDir(), "debug_app_list.json"));
-    await file.writeAsString(jsonEncode(app.toJson()));
+    await file.writeAsString(jsonEncode(app.toJson()), flush: true);
     final result = await cmd.sendFile(file.path, "/data/local/tmp/debug_app_list.json");
     print("send debug app list: $result");
   }

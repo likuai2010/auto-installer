@@ -304,7 +304,14 @@ class EcoService {
     print("found acl  ${intersectionList.toList()} ${pers}");
     return intersectionList.toList();
   }
-
+  Future deleteXiaobaiCert(cerId) async{
+    final certList = await getCertList();
+    final devCerts = certList.where((d) => d.certType == 1 && d.certName == "xiaobai-debug");
+    final xiaobaiDebug = devCerts.firstOrNull;
+    if (xiaobaiDebug != null){
+      await deleteCertList([xiaobaiDebug.id]);
+    }
+  }
   Future<bool> autoCreateProfile(
     SignConfig config,
     List<String> acl,
