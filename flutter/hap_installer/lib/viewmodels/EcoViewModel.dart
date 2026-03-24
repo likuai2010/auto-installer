@@ -872,21 +872,21 @@ class EcoViewModel extends ChangeNotifier {
     }
   }
 
-  _installHap(HapInfo hap, [SignConfig? signConfig, bool recert = false, bool reinstall = false]) async {
+  _installHap(HapInfo hap, [SignConfig? config, bool recert = false, bool reinstall = false]) async {
     final model = historyViewModel!;
     var current = model.createDebugHistory(hap);
     bool nextStep = true;
     current = model.updateHistory(current, (debug){
       return debug.copyWith(finished: false);
     });
-    if(signConfig == null) {
+    if(config == null) {
         nextStep = await model.newSetp(current, "设备检查", () async {
           return currentDevice == null ? "未连接设备" : null;
         });
+        final unSignedList = hap.pathList;
         for (var p in hap.pathList) {
           if (nextStep) {
             nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
-              String? result;
               // 证书变更需要卸载重装
               if (reinstall){
                 await cmd.unInstall(hap.packageName, hap.pathList.length > 1, !recert);
@@ -897,12 +897,20 @@ class EcoViewModel extends ChangeNotifier {
         }
         if (nextStep){
           await model.newSetp(current, "更新历史", () async {
-              return await model.updateDebugApp(hap, null);
+              final result =  await model.updateDebugApp(hap, null);
+              if(nextStep && !reinstall){
+                for (var p in unSignedList) {
+                  if (File(p).existsSync()){
+                    await File(p).delete();
+                  }
+                }
+              }
+              return result;
           });
         }
     } else {
-      signConfig.packageName = hap.packageName;
-      signConfig.profilePath =
+      config.packageName = hap.packageName;
+      config.profilePath =
         "$storeDir/${hap.packageName.replaceAll(".", "_")}.p7b";
       final model = historyViewModel!;
       nextStep = await model.newSetp(current, "登录检查", () async {
@@ -919,10 +927,10 @@ class EcoViewModel extends ChangeNotifier {
           if (udid.length != 64) {
             throw FormatException("UDID不合法: $udid");
           }
-          var udids = signConfig.udids.toList();
+          var udids = config.udids.toList();
           if (!udids.contains(udid)) {
             udids.add(udid);
-            signConfig.udids = udids;
+            config.udids = udids;
           }
           return null;
         });
@@ -933,23 +941,22 @@ class EcoViewModel extends ChangeNotifier {
       if (nextStep) {
         nextStep = await model.newSetp(current, "请求签名", () async {
           if (recert) {
-            await eco.deleteXiaobaiCert(signConfig.certId);
-            signConfig.certId = "";
-          
+            await eco.deleteXiaobaiCert(config.certId);
+            config.certId = "";
           }
           if(recert || reinstall){
-            if (await File(signConfig.profilePath).exists()){
-                await File(signConfig.profilePath).delete();
+            if (await File(config.profilePath).exists()){
+                await File(config.profilePath).delete();
             }
           }
-          await eco.autoCreateProfile(signConfig, hap.acl);
+          await eco.autoCreateProfile(config, hap.acl);
           return null;
         });
       }
       for (var p in hap.pathList) {
         if (nextStep) {
           nextStep = await model.newSetp(current, "签名(${path.basename(p)})", () async {
-            return await cmd.signHap(p, signConfig);
+            return await cmd.signHap(p, config);
           });
         }
       }
@@ -986,7 +993,7 @@ class EcoViewModel extends ChangeNotifier {
       }
       await model.newSetp(current, "更新调试历史", () async {
       
-        final dd = await model.updateDebugApp(hap, signConfig.certPath);
+        final dd = await model.updateDebugApp(hap, config.certPath);
         if(nextStep && !reinstall){
           for (var p in unSignedList) {
             if (File(p).existsSync()){
@@ -1008,7 +1015,7 @@ class EcoViewModel extends ChangeNotifier {
     });
   }
   installHap(HapInfo hap, [bool signed = false, bool recert = false, bool reinstall = false]) async {
-    _installHap(hap, signConfig = signed ? null: signConfig, recert = recert, reinstall = reinstall);
+    _installHap(hap, signed ? null : signConfig, recert, reinstall);
   }
 
   bool _checkUrlOrPort(String url) {

@@ -226,7 +226,11 @@ class HistoryViewModel extends ChangeNotifier {
       final fileSize = file.length();
       final newPath = path.join(appDir, path.basename(p));
       if(await file.exists()){
-        await file.rename(newPath);
+        await File(newPath).parent.create(recursive: true);
+        await file.copy(newPath);
+        if(newPath != file.path){
+          await file.delete();
+        }
         // 小于500M
         if (!await cmd.exitsPath(hapPath) && await fileSize < 1024 * 1024 * 500){
           await cmd.sendFile(newPath, hapPath);

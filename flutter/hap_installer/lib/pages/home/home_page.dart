@@ -62,7 +62,6 @@ class HomePage extends StatelessWidget {
                 if (_canStartDebug(vm)) ...[
                   const SizedBox(height: 8),
                   _buildStartButton(context, vm),
-                  const SizedBox(height: 8),
                   _buildinstallButton(context, vm)
                 ],
               ],
@@ -138,7 +137,7 @@ class HomePage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: InkWell(
-        onTap: () => homeViewModel.startDebug(context, vm),
+        onTap: () => homeViewModel.startDebug(context, vm, false),
         borderRadius: BorderRadius.circular(100),
         child: Container(
           width: double.infinity,
@@ -177,7 +176,7 @@ class HomePage extends StatelessWidget {
           ),
           child: const Center(
             child: Text(
-              '直接安装(需要签名的hap)',
+              '直接安装(需要已签名的文件)',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

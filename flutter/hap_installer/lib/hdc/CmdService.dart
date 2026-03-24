@@ -181,9 +181,19 @@ class CmdService {
     if (error.contains("success") || error.contains("签名成功")) {
       return null;
     } else {
-      return "签名失败: $error";
+      return "签名失败: ${formartSignResult(error)}";
     }
   }
+  formartSignResult(String error){
+    if(error.contains("ECDSA verification failure")){
+      return "证书无效, 请重新创建证书";
+    }
+    if(error.contains(".p12")){
+      return "证书配置无效, 请到更多里重置证书配置";
+    }
+    return error;
+  }
+
   // "org.xbstudio.gitstorebox"
   Future toApp(String packageName) async{
     var cmd = "hdc $_t shell aa start -U 'https://appgallery.huawei.com/app/detail?id=$packageName' --pb appLinkingOnly true";
@@ -230,7 +240,7 @@ class CmdService {
     }
     cmd = cmd.replaceFirst("&& ", '');
     cmd += "";
-    final  dd =  await baseCmd('hdc $_t shell $cmd');
+    final  dd = await baseCmd('hdc $_t shell $cmd');
     print("dumpAppInstallTimes: $dd");
     return dd;
   }
@@ -300,12 +310,18 @@ class CmdService {
       return "hap包不支持当前设备安装!";
     } else if (result.contains("9568407")) {
       return "安装hnp包失败!（tip: hnp签名失败）";
-    } 
-    else if (result.contains("E001005")) {
+    }
+    else if (result.contains("956842")) {
+      return "签名里的设备设备未授权,请重新签名";
+    }
+     else if (result.contains("E001005")) {
       return "当前设备(${_t.replaceAll("-t ","")})未连接,请重新连接设备!";
     } 
+    else if (result.contains("unauthorized")) {
+      return "当前设备(${_t.replaceAll("-t ","")})未授权, 请重启小白调试助手,并同意授权!";
+    } 
      else {
-      return "调试失败: $result";
+      return result;
     }
   }
 
@@ -355,9 +371,9 @@ class CmdService {
     final result = await baseCmd(cmd);
     final udid = result.split(":");
     if (udid.length > 1) {
-      return udid.last.trim();
+      return formatError(udid.last.trim());
     } else {
-      return "获取udid失败: $result";
+      return "${formatError(result)}";
     }
   }
 

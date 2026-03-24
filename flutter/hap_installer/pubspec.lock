@@ -1001,35 +1001,48 @@ packages:
   webview_flutter:
     dependency: "direct main"
     description:
-      name: webview_flutter
-      sha256: c3e4fe614b1c814950ad07186007eff2f2e5dd2935eba7b9a9a1af8e5885f1ba
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/webview_flutter/webview_flutter"
+      ref: "br_webview_flutter-v4.13.0_ohos"
+      resolved-ref: "9987a470abf4f01109eb8a9828a2095d4ab9d4c0"
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+    source: git
     version: "4.13.0"
   webview_flutter_android:
     dependency: transitive
     description:
-      name: webview_flutter_android
-      sha256: "0a42444056b24ed832bdf3442d65c5194f6416f7e782152384944053c2ecc9a3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.10.0"
+      path: "packages/webview_flutter/webview_flutter_android"
+      ref: "br_webview_flutter-v4.13.0_ohos"
+      resolved-ref: "9987a470abf4f01109eb8a9828a2095d4ab9d4c0"
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+    source: git
+    version: "4.7.0"
+  webview_flutter_ohos:
+    dependency: transitive
+    description:
+      path: "packages/webview_flutter/webview_flutter_ohos"
+      ref: "br_webview_flutter-v4.13.0_ohos"
+      resolved-ref: "9987a470abf4f01109eb8a9828a2095d4ab9d4c0"
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+    source: git
+    version: "4.7.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
-      name: webview_flutter_platform_interface
-      sha256: "63d26ee3aca7256a83ccb576a50272edd7cfc80573a4305caa98985feb493ee0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.14.0"
+      path: "packages/webview_flutter/webview_flutter_platform_interface"
+      ref: "br_webview_flutter-v4.13.0_ohos"
+      resolved-ref: "9987a470abf4f01109eb8a9828a2095d4ab9d4c0"
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+    source: git
+    version: "2.13.1"
   webview_flutter_wkwebview:
     dependency: transitive
     description:
-      name: webview_flutter_wkwebview
-      sha256: fb46db8216131a3e55bcf44040ca808423539bc6732e7ed34fb6d8044e3d512f
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.23.0"
+      path: "packages/webview_flutter/webview_flutter_wkwebview"
+      ref: "br_webview_flutter-v4.13.0_ohos"
+      resolved-ref: "9987a470abf4f01109eb8a9828a2095d4ab9d4c0"
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+    source: git
+    version: "3.22.0"
   win32:
     dependency: transitive
     description:
