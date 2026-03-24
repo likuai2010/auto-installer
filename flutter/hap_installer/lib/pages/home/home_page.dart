@@ -149,7 +149,7 @@ class HomePage extends StatelessWidget {
           ),
           child: const Center(
             child: Text(
-              '开始调试',
+              '开始调试(自动签名)',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class HomePage extends StatelessWidget {
           ),
           child: const Center(
             child: Text(
-              '直接安装',
+              '直接安装(需要签名的hap)',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

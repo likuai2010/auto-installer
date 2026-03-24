@@ -55,12 +55,22 @@ class HistoryViewModel extends ChangeNotifier {
     if(ohosAdapter.isOhos){
       var appDir = path.join(getHistoryDir(), packageName.replaceAll(".", "_"));
       var hapInstaller = appList.firstWhere((f)=> f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
-      final hapFile = File(path.join(appDir, "signed.hap"));
-      if (hapInstaller.appInfo == null || !await File(path.join(appDir, path.basename(hapInstaller.appInfo!.pathList.first))).exists()){
+      var canCopy = false;
+      final baseHap = File("/data/storage/el1/bundle/entry.hap");
+      if (hapInstaller.appInfo == null){
+        canCopy = true;
+      } else if(hapInstaller.appInfo != null){
+        final oldHap = File(hapInstaller.appInfo!.pathList.first);
+        if( await baseHap.exists() && await oldHap.exists() && baseHap.length() != oldHap.length()){
+          canCopy = true;
+        }
+      }
+      if(canCopy){
+        final hapFile = File(path.join(appDir, "base.hap"));
         if(!await hapFile.parent.exists()){
           await hapFile.parent.create();
         }
-        await File("/data/storage/el1/bundle/entry.hap").copy(hapFile.path);
+        baseHap.copy(hapFile.path);
         final hapInfo = await dumpHapInfo([hapFile.path], viewmodel.debugPath);
         hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
       }
