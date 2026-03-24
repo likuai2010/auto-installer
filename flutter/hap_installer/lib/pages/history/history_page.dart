@@ -77,7 +77,10 @@ class DebugAppItem extends StatelessWidget {
       endTime = info.installTime!.add(Duration(days: 180));
     }
     var isAfter = endTime != null ? DateTime.now().isAfter(endTime) : false;
-    String formatted1 = DateFormat('yyyy-MM-dd').format(endTime!);
+    String formatted1 = "未知";
+    if(endTime != null){
+        formatted1 = DateFormat('yyyy-MM-dd').format(endTime);
+    }
     if(info.installTime != null){
         String formatted2 = DateFormat('yyyy-MM-dd').format(info.installTime!);
         return "安装时间: $formatted2 \n过期时间: $formatted1 ${isAfter ? "已过期" : ""}";
