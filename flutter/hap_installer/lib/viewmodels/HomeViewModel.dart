@@ -29,12 +29,12 @@ class HomeViewModel {
   /// 开始调试
   ///
   /// 将 HAP 安装到设备
-  void startDebug(BuildContext context, EcoViewModel vm) {
+  void startDebug(BuildContext context, EcoViewModel vm, [bool signed = false]) {
     // 导航到调试详情页
     toPage(context, (_) => const DebugDetailPage());
     // 安装 HAP 到设备
     if (vm.hapInfo != null) {
-      vm.installHap(vm.hapInfo!);
+      vm.installHap(vm.hapInfo!, signed);
     }
   }
 }

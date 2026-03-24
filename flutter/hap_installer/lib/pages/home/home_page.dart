@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hap_installer/viewmodels/EcoViewModel.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:hap_installer/widget/FileDropArea.dart';
 import 'widgets/home_setting_item.dart';
 import 'package:hap_installer/viewmodels/HomeViewModel.dart';
 import 'package:hap_installer/widget/common.dart';
@@ -50,13 +51,19 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 // 设置列表卡片
-                HomeSettingCard(
+                FileDropArea(child: HomeSettingCard(
                   items: _buildSettingItems(context, vm),
-                ),
+                ), onSearch: (value) {
+                  if(value.path != null){
+                    viewmodel.openFile(context, value.path!);
+                  }
+                }),
                 // 开始调试按钮（条件显示）
                 if (_canStartDebug(vm)) ...[
                   const SizedBox(height: 8),
                   _buildStartButton(context, vm),
+                  const SizedBox(height: 8),
+                  _buildinstallButton(context, vm)
                 ],
               ],
             ),
@@ -140,7 +147,7 @@ class HomePage extends StatelessWidget {
             color: AppColors.brandDynamic(context),
             borderRadius: BorderRadius.circular(100),
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               '开始调试',
               style: TextStyle(
@@ -154,7 +161,36 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
+    Widget _buildinstallButton(BuildContext context, EcoViewModel vm) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: InkWell(
+        onTap: () => homeViewModel.startDebug(context, vm, true),
+        borderRadius: BorderRadius.circular(100),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: AppColors.brandDynamic(context),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: const Center(
+            child: Text(
+              '直接安装',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.buttonTextPrimary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
+
 
 
  showConnectDeviceBox(BuildContext context, EcoViewModel vm) {
@@ -179,3 +215,5 @@ class HomePage extends StatelessWidget {
       );
     }
   }
+
+  

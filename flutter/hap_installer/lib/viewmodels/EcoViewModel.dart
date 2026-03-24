@@ -1007,8 +1007,8 @@ class EcoViewModel extends ChangeNotifier {
       return debug.copyWith(finished: true);
     });
   }
-  installHap(HapInfo hap, [bool recert = false, bool reinstall = false]) async {
-    _installHap(hap, signConfig = signConfig, recert = recert, reinstall = reinstall);
+  installHap(HapInfo hap, [bool signed = false, bool recert = false, bool reinstall = false]) async {
+    _installHap(hap, signConfig = signed ? null: signConfig, recert = recert, reinstall = reinstall);
   }
 
   bool _checkUrlOrPort(String url) {
