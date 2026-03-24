@@ -3,7 +3,7 @@
     "bundleName": "com.xiaobai.hap_installer",
     "vendor": "hap_installer",
     "versionCode": 1,
-    "versionName": "1.0.0",
+    "versionName": "3.1.0",
     "icon": "$media:icon",
     "label": "$string:app_name"
   }
