@@ -175,9 +175,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
       connecting = true;
     });
     final result = await viewmodel.tryConnectToDevice(
-      context,
-      "${ipController.text}:${portController.text}"
-    );
+        context, "${ipController.text}:${portController.text}");
     if (!mounted) return;
     setState(() {
       connecting = false;
@@ -299,7 +297,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                 child: _buildInputField(
                   context: context,
                   controller: ipController,
-                  placeholder: '输入IP地址...',
+                  placeholder: '输入IP地址',
                   maxLength: 15,
                   onSubmitted: (_) => connectHdc(context),
                 ),
@@ -322,7 +320,7 @@ class _ConnectDeviceBoxState extends State<ConnectDeviceBox> {
                 child: _buildInputField(
                   context: context,
                   controller: portController,
-                  placeholder: '输入端口...',
+                  placeholder: '输入端口',
                   maxLength: 5,
                   onSubmitted: (_) => connectHdc(context),
                 ),
