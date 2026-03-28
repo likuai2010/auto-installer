@@ -99,6 +99,23 @@ flutter:
     - assets/linux/
     - assets/jar/
     - lib/assets/
+  fonts:
+    - family: HarmonyOSSansSC
+      fonts:
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Thin.ttf
+          weight: 100
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Light.ttf
+          weight: 300
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Regular.ttf
+          weight: 400
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Medium.ttf
+          weight: 500
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Semibold.ttf
+          weight: 600
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Bold.ttf
+          weight: 700
+        - asset: lib/assets/fonts/HarmonyOS_SansSC/HarmonyOS_SansSC_Black.ttf
+          weight: 900
 
   # To add assets to your application, add an assets section, like this:
   # assets:

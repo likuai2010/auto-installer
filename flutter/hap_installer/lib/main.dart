@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 /// 全局主题 ViewModel 实例
 final themeViewModel = ThemeViewModel();
+const String globalFontFamily = 'HarmonyOSSansSC';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,10 +53,12 @@ class _AppState extends State<App> {
           title: '小白调试助手',
           themeMode: theme.themeMode,
           theme: ThemeData(
+            fontFamily: globalFontFamily,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
             brightness: Brightness.light,
           ),
           darkTheme: ThemeData(
+            fontFamily: globalFontFamily,
             colorSchemeSeed: Colors.black,
             brightness: Brightness.dark,
           ),
