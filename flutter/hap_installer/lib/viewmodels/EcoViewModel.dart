@@ -22,6 +22,7 @@ import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:process_run/shell.dart';
+import 'package:hap_installer/utils/bundled_asset_cache.dart';
 
 import 'ThemeViewModel.dart';
 // import 'package:flutter_file_saver/flutter_file_saver.dart';
@@ -768,14 +769,21 @@ class EcoViewModel extends ChangeNotifier {
     String targetDir, [
     String? target,
   ]) async {
+    final isTool = const {'macos', 'windows', 'linux'}.contains(dir);
     try {
+      final file = File(path.join(targetDir, target ?? fileName));
+      // Certificates and keys belong to the user, not the application cache.
+      if (!isTool && await file.exists()) return;
       final bytes = await rootBundle.load('assets/$dir/$fileName');
-      File file = File(path.join(targetDir, target ?? fileName));
-      if (!await file.exists()) {
-        await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
-      }
+      await syncBundledAsset(
+        file,
+        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+        refresh: isTool,
+      );
     } catch (e) {
       print("copyAssert error $e");
+      // Never continue signing with a stale tool after an update failed.
+      if (isTool) rethrow;
     }
   }
 
