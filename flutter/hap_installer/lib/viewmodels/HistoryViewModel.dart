@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hap_installer/core/debug_app_install_time.dart';
+import 'package:hap_installer/core/hap_renewal.dart';
 import 'package:hap_installer/hdc/CmdService.dart';
 import 'package:hap_installer/hdc/EcoServices.dart';
 import 'package:hap_installer/models/DebugAppList.dart';
@@ -50,30 +52,36 @@ class HistoryViewModel extends ChangeNotifier {
   }
   String packageName = "com.xiaobai.hap_installer";
 
+  bool isSelfApp(String appPackageName) =>
+      viewmodel.isLocalOhosDevice && appPackageName == packageName;
+
+  Future<HapInfo> _loadSelfHap() async {
+    final hapFile = await resolveSelfHap(ohosAdapter.cacheSelfHap);
+    final HapInfo info = await dumpHapInfo([hapFile.path], viewmodel.debugPath);
+    if (info.packageName != packageName) {
+      throw const FormatException('读取到的安装包不属于本应用，已停止续期');
+    }
+    return info;
+  }
+
   Future<DebugAppList> initHapInstaller(DebugAppList debugList) async{
-    var appList = debugList.appList..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);;
-    if(ohosAdapter.isOhos){
-      var appDir = path.join(getHistoryDir(), packageName.replaceAll(".", "_"));
+    var appList = debugList.appList.toList()
+      ..sort((a, b) => b.appInfo?.label.compareTo(a.appInfo?.label ?? "") ?? 0);
+    if(viewmodel.isLocalOhosDevice){
       var hapInstaller = appList.firstWhere((f)=> f.packageName == packageName, orElse:  ()=> new DebugApp(packageName: packageName, canReInstall: false));
-      var canCopy = false;
-      final baseHap = File("/data/storage/el1/bundle/entry.hap");
-      if (hapInstaller.appInfo == null){
-        canCopy = true;
-      } else if(hapInstaller.appInfo != null){
-        final oldHap = File(hapInstaller.appInfo!.pathList.first);
-        if( await baseHap.exists() && await oldHap.exists() && baseHap.length() != oldHap.length()){
-          canCopy = true;
-        }
+      try {
+        hapInstaller = hapInstaller.copyWith(appInfo: await _loadSelfHap());
+      } catch (error) {
+        // Keep the entry available so a click can retry and show the real error.
+        print('读取自身安装包失败: $error');
+        hapInstaller = hapInstaller.copyWith(
+          appInfo: hapInstaller.appInfo ?? HapInfo(
+            packageName: packageName,
+            label: '小白调试助手',
+          ),
+        );
       }
-      if(canCopy){
-        final hapFile = File(path.join(appDir, "base.hap"));
-        if(!await hapFile.parent.exists()){
-          await hapFile.parent.create();
-        }
-        baseHap.copy(hapFile.path);
-        final hapInfo = await dumpHapInfo([hapFile.path], viewmodel.debugPath);
-        hapInstaller = hapInstaller.copyWith(appInfo: hapInfo);
-      }
+      hapInstaller = hapInstaller.copyWith(canReInstall: true);
       appList.removeWhere((f)=>f.packageName == packageName);
       appList = [hapInstaller, ...appList];
     }
@@ -180,18 +188,17 @@ class HistoryViewModel extends ChangeNotifier {
       }
     }
     if(needInstallTimes.isNotEmpty){
-      final result = await cmd.dumpAppInstallTimes(needInstallTimes);
-      var installTime = result!.trim().split(",");
       var timeDict = <String, DateTime>{};
-      for (int i = 0; i < needInstallTimes.length; i++) {
-          final p = needInstallTimes[i];
-          final timeString = installTime[i];
-          final tiemString = timeString.split(":").last.trim();
-          final timeInt = int.tryParse(tiemString);
-          if(timeInt != null){
-              final time = DateTime.fromMillisecondsSinceEpoch(timeInt);
-              timeDict[p] = time;
+      for (final packageName in needInstallTimes) {
+        try {
+          final result = await cmd.dumpAppInstallTime(packageName);
+          final installTime = parseDebugAppInstallTime(result);
+          if (installTime != null) {
+            timeDict[packageName] = installTime;
           }
+        } catch (error) {
+          print("获取安装时间失败 ($packageName): $error");
+        }
       }
       for (var i = 0; i < list.appList.length; i++) {
           final app = list.appList[i];
@@ -202,7 +209,11 @@ class HistoryViewModel extends ChangeNotifier {
     }
     list.time = DateTime.now();
     if(needInstallTimes.isNotEmpty){
-      saveDebugApp(list);
+      try {
+        await saveDebugApp(list);
+      } catch (error) {
+        print("保存调试应用列表失败: $error");
+      }
     }
   }
   pushIcons(HapInfo info) async{
@@ -240,6 +251,7 @@ class HistoryViewModel extends ChangeNotifier {
     return null;
   }
   pullIcons(HapInfo info) async {
+    if (isSelfApp(info.packageName)) return true;
     var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     for (var p in info.icon) {
@@ -265,6 +277,9 @@ class HistoryViewModel extends ChangeNotifier {
     return newList.length > 0;
   }
   downloadHap(HapInfo info) async {
+    if (isSelfApp(info.packageName)) {
+      return _loadSelfHap();
+    }
     var appDir = path.join(getHistoryDir(), info.packageName.replaceAll(".", "_"));
     final remote = "/data/local/tmp/${info.packageName.replaceAll(".", "_")}";
     final newList = List<String>.empty(growable: true);
@@ -326,23 +341,36 @@ class HistoryViewModel extends ChangeNotifier {
       return;
     loadingReinstall = true;
     notifyListeners();
+    final targetDevice = viewmodel.currentDevice;
     try{
+        if (isSelfApp(hap.packageName) && viewmodel.signConfig == null) {
+          throw const FormatException('请先完成签名配置，再进行续期');
+        }
         hap = await downloadHap(hap);
+        if(hap.pathList.isEmpty){
+          throw const FormatException("找不到可续期的安装包，请重新导入HAP文件");
+        }
         if(hap.acl.isEmpty){
           await getByHap(hap.pathList.last, "module.json", viewmodel.debugPath);
-          final module = await await cmd.readModuleInfo(viewmodel.debugPath);
+          final module = await cmd.readModuleInfo(viewmodel.debugPath);
           hap = hap.copyWith(acl: eco.getAcl(module));
         }
+        if (targetDevice != viewmodel.currentDevice) {
+          throw const FormatException('续期期间连接设备已改变，请重试');
+        }
+        if (!context.mounted) return;
         toPage(context, (_) => const DebugDetailPage());
-        await viewmodel.installHap(hap, reCert, true);
+        await viewmodel.installHap(hap, recert: reCert, reinstall: true);
+    } on PlatformException catch (e) {
+      if (context.mounted) toask(context, e.message ?? '读取自身安装包失败，请重试');
     } on FormatException catch (e) {
-      toask(context, e.message);
+      if (context.mounted) toask(context, e.message);
     }catch (e) {
-      toask(context, "$e");
+      if (context.mounted) toask(context, "$e");
+    } finally {
+      loadingReinstall = false;
+      notifyListeners();
     }
-
-    loadingReinstall = false;
-    notifyListeners();
   }
   setGame(DebugApp app, BuildContext context) async {
     if (loadingGameMode)

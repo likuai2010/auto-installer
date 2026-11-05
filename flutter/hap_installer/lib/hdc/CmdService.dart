@@ -268,15 +268,22 @@ class CmdService {
     print(result);
     return result;
   }
-   Future<String?> instalerSelf(String filePath, String packageName) async {
+   Future<String?> instalerSelf(String filePath, String packageName, {bool keepData = true}) async {
+    final target = _t;
     if (!await File(filePath).exists()) {
       return "文件不存在 $filePath";
     }
     print("installHap $filePath");
-    await baseCmd("hdc $_t shell rm /data/local/tmp/${path.basename(filePath)}");
-    await sendFile(filePath, "/data/local/tmp/${path.basename(filePath)}");
-    await ohosAdapter.externalCmd(_t.replaceAll("-t ", ""), "hdc shell bm uninstall -n ${packageName} && bm install -p /data/local/tmp/${path.basename(filePath)}");
-    return "请等待安装....";
+    if (_t != target) return '续期期间连接设备已改变，请重试';
+    await baseCmd("hdc $target shell rm /data/local/tmp/${path.basename(filePath)}");
+    if (_t != target) return '续期期间连接设备已改变，请重试';
+    final transfer = await sendFile(filePath, "/data/local/tmp/${path.basename(filePath)}");
+    if (!transfer.contains("FileTransfer finish") || transfer.contains("[Fail]")) {
+      return "传输续期安装包失败: $transfer";
+    }
+    if (_t != target) return '续期期间连接设备已改变，请重试';
+    await ohosAdapter.externalCmd(target.replaceAll("-t ", ""), "hdc shell bm uninstall ${keepData ? '-k ' : ''}-n ${packageName} && bm install -p /data/local/tmp/${path.basename(filePath)}");
+    return null;
   }
 
   Future<String?> installHap(String filePath) async {

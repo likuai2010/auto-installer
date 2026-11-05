@@ -34,7 +34,7 @@ class HomeViewModel {
     toPage(context, (_) => const DebugDetailPage());
     // 安装 HAP 到设备
     if (vm.hapInfo != null) {
-      vm.installHap(vm.hapInfo!, signed);
+      vm.installHap(vm.hapInfo!, signed: signed);
     }
   }
 }

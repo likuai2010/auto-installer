@@ -18,6 +18,7 @@ import 'package:hap_installer/models/SignConfig.dart';
 import 'package:hap_installer/pages/more/more_page.dart';
 import 'package:hap_installer/widget/DownloadDialog.dart';
 import 'package:hap_installer/core/constants/app_colors.dart';
+import 'package:hap_installer/core/hap_renewal.dart';
 import 'package:ohos_adapter/ohos_adapter.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
@@ -76,6 +77,8 @@ class EcoViewModel extends ChangeNotifier {
   AuthInfo? userInfo;
   HapInfo? hapInfo;
   String? currentDevice;
+  bool get isLocalOhosDevice =>
+      ohosAdapter.isOhos && isLoopbackDevice(currentDevice);
   SignConfig? signConfig;
   String storeDir = "";
   String hdcDir = "";
@@ -853,26 +856,48 @@ class EcoViewModel extends ChangeNotifier {
     print("installHap: $error");
     toask(context, error ?? "");
   }
-  installAutoInstaller() async{
-    const papckage = "com.xiaobai.autoinstaller";
-    final time = await cmd.dumpAppInstallTime(papckage);
-    if(!time.contains("installTime")){
-        await copyAssert("ohos", "auto_installer.hap", tempDir);
-        var signConfig = this.signConfig!;
-        signConfig.packageName = papckage;
-        signConfig.profilePath = "$storeDir/${signConfig.packageName.replaceAll(".", "_")}.p7b";
-        await eco.autoCreateProfile(signConfig, []);
-        final hapPath = path.join(tempDir, "auto_installer.hap");
-        var result = await cmd.signHap(hapPath, signConfig);
-        final outPath = await cmd.getOutPath(hapPath);
-        result = await cmd.installHap(outPath);
-        await File(hapPath).delete();
-        await File(outPath).delete();
-        return result;
+  Future<String?> installAutoInstaller({required String expectedDevice}) async {
+    const packageName = "com.xiaobai.autoinstaller";
+    final time = await cmd.dumpAppInstallTime(packageName);
+    await copyAssert("ohos", "auto_installer.hap", tempDir);
+    final helperConfig = signConfig!.copyWith(
+      packageName: packageName,
+      profilePath: "$storeDir/${packageName.replaceAll(".", "_")}.p7b",
+    );
+    final helperProfile = File(helperConfig.profilePath);
+    if (await helperProfile.exists()) {
+      await helperProfile.delete();
     }
+    await eco.autoCreateProfile(helperConfig, []);
+    final hapPath = path.join(tempDir, "auto_installer.hap");
+    final signError = await cmd.signHap(hapPath, helperConfig);
+    if (signError != null) {
+      return signError;
+    }
+    final outPath = await cmd.getOutPath(hapPath);
+    if (currentDevice != expectedDevice) {
+      return '续期期间连接设备已改变，请重试';
+    }
+    // The helper's debug signature expires too; refresh it before handoff.
+    if (time.contains("installTime")) {
+      await cmd.unInstall(packageName);
+    }
+    if (currentDevice != expectedDevice) {
+      return '续期期间连接设备已改变，请重试';
+    }
+    final result = await cmd.installHap(outPath);
+    await File(hapPath).delete();
+    await File(outPath).delete();
+    return result;
   }
 
   _installHap(HapInfo hap, [SignConfig? config, bool recert = false, bool reinstall = false]) async {
+    final targetDevice = currentDevice;
+    String? checkInstallDevice() {
+      if (currentDevice == null) return '未连接设备';
+      if (currentDevice != targetDevice) return '安装期间连接设备已改变，请重试';
+      return null;
+    }
     final model = historyViewModel!;
     var current = model.createDebugHistory(hap);
     bool nextStep = true;
@@ -881,12 +906,14 @@ class EcoViewModel extends ChangeNotifier {
     });
     if(config == null) {
         nextStep = await model.newSetp(current, "设备检查", () async {
-          return currentDevice == null ? "未连接设备" : null;
+          return checkInstallDevice();
         });
         final unSignedList = hap.pathList;
         for (var p in hap.pathList) {
           if (nextStep) {
             nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
+              final deviceError = checkInstallDevice();
+              if (deviceError != null) return deviceError;
               // 证书变更需要卸载重装
               if (reinstall){
                 await cmd.unInstall(hap.packageName, hap.pathList.length > 1, !recert);
@@ -897,6 +924,8 @@ class EcoViewModel extends ChangeNotifier {
         }
         if (nextStep){
           await model.newSetp(current, "更新历史", () async {
+              final deviceError = checkInstallDevice();
+              if (deviceError != null) return deviceError;
               final result =  await model.updateDebugApp(hap, null);
               if(nextStep && !reinstall){
                 for (var p in unSignedList) {
@@ -918,7 +947,7 @@ class EcoViewModel extends ChangeNotifier {
       });
       if (nextStep) {
         nextStep = await model.newSetp(current, "设备检查", () async {
-          return currentDevice == null ? "未连接设备" : null;
+          return checkInstallDevice();
         });
       }
       if (nextStep) {
@@ -950,6 +979,7 @@ class EcoViewModel extends ChangeNotifier {
             }
           }
           await eco.autoCreateProfile(config, hap.acl);
+          await saveSignConfig();
           return null;
         });
       }
@@ -967,15 +997,24 @@ class EcoViewModel extends ChangeNotifier {
 
       final unSignedList = hap.pathList;
       hap = hap.copyWith(pathList: outPathList);
+      final isSelfInstall = hap.packageName == "com.xiaobai.hap_installer" &&
+          isLocalOhosDevice;
+      bool handedOff = false;
       for (var p in hap.pathList) {
         if (nextStep) {
-          nextStep = await model.newSetp(current, "调试(${path.basename(p)})", () async {
-            if(hap.packageName == "com.xiaobai.hap_installer" && ohosAdapter.isOhos && currentDevice?.contains("127.0.0.1") == true){
-              var result = await installAutoInstaller();
+          nextStep = await model.newSetp(current, isSelfInstall ? "移交续期安装" : "调试(${path.basename(p)})", () async {
+            final deviceError = checkInstallDevice();
+            if (deviceError != null) return deviceError;
+            if(isSelfInstall){
+              var result = await installAutoInstaller(expectedDevice: targetDevice!);
               if (result != null) {
                 return result;
               }
-              return await cmd.instalerSelf(p, hap.packageName);
+              final handoffError = checkInstallDevice();
+              if (handoffError != null) return handoffError;
+              result = await cmd.instalerSelf(p, hap.packageName, keepData: !recert);
+              handedOff = result == null;
+              return result;
             } 
             String? result;
             // 证书变更需要卸载重装
@@ -987,12 +1026,18 @@ class EcoViewModel extends ChangeNotifier {
           });
         }
       }
+      if (handedOff) {
+        // The helper now owns installation and may stop this process at any time.
+        model.updateHistory(current, (debug) => debug.copyWith(finished: true));
+        return;
+      }
       if(nextStep){
         hapInfo = null;
         notifyListeners();
       }
       await model.newSetp(current, "更新调试历史", () async {
-      
+        final deviceError = checkInstallDevice();
+        if (deviceError != null) return deviceError;
         final dd = await model.updateDebugApp(hap, config.certPath);
         if(nextStep && !reinstall){
           for (var p in unSignedList) {
@@ -1014,8 +1059,13 @@ class EcoViewModel extends ChangeNotifier {
       return debug.copyWith(finished: true);
     });
   }
-  installHap(HapInfo hap, [bool signed = false, bool recert = false, bool reinstall = false]) async {
-    _installHap(hap, signed ? null : signConfig, recert, reinstall);
+  Future<void> installHap(
+    HapInfo hap, {
+    bool signed = false,
+    bool recert = false,
+    bool reinstall = false,
+  }) async {
+    await _installHap(hap, signed ? null : signConfig, recert, reinstall);
   }
 
   bool _checkUrlOrPort(String url) {
