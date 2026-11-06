@@ -647,7 +647,7 @@ class ResourceItem{
     SetData(InputStream values, int length){
       _data = values.toUint8List();
       _datalen = length;
-      if (_data[length - 1] == 0) {
+      if (length > 0 && _data[length - 1] == 0) {
         _datalen = length - 1;
       }
     }
