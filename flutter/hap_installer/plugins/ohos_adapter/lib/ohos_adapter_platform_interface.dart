@@ -44,6 +44,10 @@ abstract class OhosAdapterPlatform extends PlatformInterface {
   Future<String?> appDir() async {
     return null;
   }
+
+  Future<String?> cacheSelfHap() async {
+    throw UnimplementedError('cacheSelfHap() has not been implemented.');
+  }
   Future<String?> hdcCmd(String cmd) async {
     return null;
   }

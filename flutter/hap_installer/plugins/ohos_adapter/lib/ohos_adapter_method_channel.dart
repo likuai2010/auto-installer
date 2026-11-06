@@ -45,6 +45,11 @@ class MethodChannelOhosAdapter extends OhosAdapterPlatform {
   }
 
   @override
+  Future<String?> cacheSelfHap() async {
+    return await methodChannel.invokeMethod<String>('cacheSelfHap');
+  }
+
+  @override
   Future<String?> hdcCmd(String cmd) async {
     return await methodChannel.invokeMethod<String>('hdcCmd', {"args": cmd});
   }

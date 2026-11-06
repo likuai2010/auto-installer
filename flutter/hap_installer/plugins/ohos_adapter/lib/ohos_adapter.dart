@@ -25,6 +25,10 @@ class OhosAdapter {
     return OhosAdapterPlatform.instance.appDir();
   }
 
+  Future<String?> cacheSelfHap() {
+    return OhosAdapterPlatform.instance.cacheSelfHap();
+  }
+
   Future<String?> hdcCmd(String cmd) {
     return OhosAdapterPlatform.instance.hdcCmd(cmd);
   }
